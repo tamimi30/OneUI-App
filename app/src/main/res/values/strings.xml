@@ -158,7 +158,7 @@
      About Activity
      ═══════════════════════════════════════════════════════════════ -->
 
-    <string name="about_title">About</string>
+    <string name="about_title">About Font Viewer Plus</string>
     <string name="about_button_status">Status</string>
     <string name="about_button_github">GitHub</string>
     <string name="about_error_no_browser">No browser app found</string>
