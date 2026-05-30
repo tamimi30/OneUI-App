@@ -153,7 +153,7 @@
          About Activity
          ═══════════════════════════════════════════════════════════════ -->
 
-    <string name="about_title">حول</string>
+    <string name="about_title">حول Font Viewer Plus</string>
     <string name="about_button_status">الحالة</string>
     <string name="about_button_github">GitHub</string>
     <string name="about_error_no_browser">لا يوجد تطبيق متصفح</string>
