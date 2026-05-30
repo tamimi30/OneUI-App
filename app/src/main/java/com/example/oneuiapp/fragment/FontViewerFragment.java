@@ -248,17 +248,13 @@ public class FontViewerFragment extends Fragment {
         // ★ NEW: Observe preview text changes from SettingsViewModel ★
         settingsViewModel.getPreviewText().observe(getViewLifecycleOwner(), previewText -> {
             if (previewSentence != null && previewText != null) {
-                // إحاطة النص بمسافة غير قابلة للكسر لمنع قص الحروف المائلة من الأطراف
-                String safePreviewText = "\u00A0" + previewText + "\u00A0";
-                previewSentence.setText(safePreviewText);
-                
+                previewSentence.setText(previewText);
                 if (currentTypeface != null) {
                     applyFontToPreviewTexts();
                 }
                 Log.d(TAG, "Preview text updated from settings");
             }
         });
-
 
         if (savedInstanceState != null) {
             currentFontPath        = savedInstanceState.getString(KEY_FONT_PATH);
@@ -353,15 +349,14 @@ public class FontViewerFragment extends Fragment {
                 Toast.LENGTH_SHORT).show();
         }
     }
+
     private void updatePreviewTexts() {
         if (previewSentence == null) {
             return;
         }
 
         String previewText = SettingsHelper.getPreviewText(requireContext());
-        // إحاطة النص بمسافة غير قابلة للكسر لمنع قص الحروف المائلة من الأطراف
-        String safePreviewText = "\u00A0" + previewText + "\u00A0";
-        previewSentence.setText(safePreviewText);
+        previewSentence.setText(previewText);
 
         if (currentTypeface != null) {
             applyFontToPreviewTexts();
