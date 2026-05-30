@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
+        <com.example.oneuiapp.widget.OneUiTextView
             android:id="@+id/app_info_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             android:textColor="@color/oui_primary_text_color"
             android:textAlignment="center" />
 
-        <TextView
+        <com.example.oneuiapp.widget.OneUiTextView
             android:id="@+id/app_info_version"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
-        <TextView
+        <com.example.oneuiapp.widget.OneUiTextView
             android:id="@+id/app_info_update_notice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
