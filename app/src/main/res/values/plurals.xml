@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="trash_days_remaining">
+        <item quantity="zero">Today</item>
+        <item quantity="one">1 day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+
+    <plurals name="font_count_subtitle">
+        <item quantity="zero">No Fonts</item>
+        <item quantity="one">1 Font</item>
+        <item quantity="other">%d Fonts</item>
+    </plurals>
+
+    <plurals name="dialog_move_to_trash_question">
+        <item quantity="one">Do you want to move 1 file to the Trash?</item>
+        <item quantity="other">Do you want to move %d files to the Trash?</item>
+    </plurals>
+
+    <plurals name="dialog_delete_permanently_question">
+        <item quantity="one">Do you want to delete 1 file permanently?</item>
+        <item quantity="other">Do you want to delete %d files permanently?</item>
+    </plurals>
+
+    <plurals name="progress_moving_to_trash">
+        <item quantity="one">Moving 1 file to Trash…</item>
+        <item quantity="other">Moving files to Trash…</item>
+    </plurals>
+
+    <plurals name="progress_restoring">
+        <item quantity="one">Restoring 1 file…</item>
+        <item quantity="other">Restoring files…</item>
+    </plurals>
+
+    <plurals name="progress_deleting">
+        <item quantity="one">Deleting 1 file permanently…</item>
+        <item quantity="other">Deleting files permanently…</item>
+    </plurals>
+</resources>

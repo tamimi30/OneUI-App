@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="sesl_round_and_bgcolor_dark">#010102</color>
+    <color name="sesl_round_and_bgcolor_light">#f1f1f3</color>
+    <color name="sesl_action_bar_background_color_dark">#010102</color>
+    <color name="sesl_action_bar_background_color_light">#f1f1f3</color>
+    <color name="sesl_list_ripple_color_dark">#29ffffff</color>
+    <color name="sesl_list_ripple_color_light">#1a000000</color>
+    <color name="sesl_btn_background_color_light">#e4e4e7</color>
+    <color name="sesl_btn_background_color_dark">#2d2d30</color>
+
+</resources>

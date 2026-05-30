@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         قسم الثيم (Theme Section) - أول قسم في الإعدادات
+         يستخدم HorizontalRadioPreference لعرض الصور
+         ★ android:key="category_theme" مضاف لتمكين تحديث النصوص يدوياً
+           في onConfigurationChanged بدون تدمير الشاشة ★
+         ★ android:title="@string/settings_theme" مضاف لعرض عنوان القسم ★
+         ═══════════════════════════════════════════════════════════════ -->
+    <PreferenceCategory
+        android:key="category_theme"
+        android:title="@string/settings_theme">
+
+        <dev.oneuiproject.oneui.preference.HorizontalRadioPreference
+            android:key="theme_mode"
+            android:title="@string/settings_theme"
+            app:entries="@array/settings_theme_entries"
+            app:entriesImage="@array/settings_theme_entries_image"
+            app:entryValues="@array/settings_theme_values"
+            android:defaultValue="0"
+            android:persistent="false"
+            app:viewType="image" />
+
+        <SwitchPreferenceCompat
+            android:key="theme_auto"
+            android:defaultValue="true"
+            android:persistent="false"
+            android:title="@string/settings_theme_system" />
+
+    </PreferenceCategory>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         قسم خلفية القوائم والمعاينة (List and Preview Background Section)
+         ★ android:key="category_list_background" لتمكين تحديث العنوان يدوياً
+           في onConfigurationChanged ★
+         ═══════════════════════════════════════════════════════════════ -->
+    <PreferenceCategory
+        android:key="category_list_background"
+        android:title="@string/settings_list_background_section">
+
+        <!-- ★ الثيم الأسود: خلفية سوداء للقوائم والمعاينة في الوضع الداكن ★
+             - مستقل تماماً عن خيار الثيم الفاتح/الداكن
+             - لا يعدّل الثيم المحدد، يُعيد فقط بناء الواجهة باستخدام layouts مختلفة
+             - القيمة الافتراضية: معطّل -->
+        <SwitchPreferenceCompat
+            android:key="theme_transparent"
+            android:defaultValue="false"
+            android:persistent="false"
+            android:title="@string/settings_theme_transparent"
+            android:summary="@string/settings_theme_transparent_description" />
+
+    </PreferenceCategory>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         قسم عام (General Section)
+         يضم: اللغة، نمط الخط، معاينة الخطوط، ترجمة معلومات الخط، نص المعاينة
+         ★ android:key="category_general" لتحديث عنوان القسم يدوياً ★
+         ═══════════════════════════════════════════════════════════════ -->
+    <PreferenceCategory
+        android:key="category_general"
+        android:title="@string/settings_general">
+
+        <DropDownPreference
+            android:key="language_mode"
+            android:title="@string/settings_language"
+            android:entries="@array/settings_language_entries"
+            android:entryValues="@array/settings_language_values"
+            android:defaultValue="0"
+            android:persistent="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <com.example.oneuiapp.custom.CustomDropDownPreference
+            android:key="font_mode"
+            android:title="@string/settings_font"
+            android:entries="@array/settings_font_entries"
+            android:entryValues="@array/settings_font_values"
+            android:defaultValue="0"
+            android:persistent="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            android:key="font_preview_enabled"
+            android:title="@string/settings_font_preview"
+            android:summary="@string/settings_font_preview_description"
+            android:persistent="false"
+            android:defaultValue="true" />
+
+        <SwitchPreferenceCompat
+            android:key="enable_translation"
+            android:title="@string/settings_translation"
+            android:summary="@string/settings_translation_description"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <EditTextPreference
+            android:key="preview_text"
+            android:title="@string/settings_preview_text"
+            android:summary="@string/settings_preview_text_summary"
+            android:dialogTitle="@string/settings_preview_text_dialog_title"
+            android:dialogMessage="@string/settings_preview_text_dialog_message"
+            android:persistent="false"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         قسم حول التطبيق والتواصل (About Section) - بدون عنوان
+         ★ android:key="category_about" لتحديث عناوين العناصر يدوياً ★
+         ═══════════════════════════════════════════════════════════════ -->
+    <PreferenceCategory
+        android:key="category_about">
+
+        <Preference
+            android:key="about_app"
+            android:persistent="false"
+            android:title="@string/about_title" />
+
+        <!-- ★ خيار الإبلاغ عن خطأ أو اقتراح تحسين ★
+             عند الضغط: يفتح نافذة اختيار تطبيق بريد إلكتروني
+             يتم التعامل مع الضغط في SettingsFragment.initPreferences() -->
+        <Preference
+            android:key="report_issue"
+            android:persistent="false"
+            android:title="@string/settings_report_issue" />
+
+    </PreferenceCategory>
+
+    <!-- ★ تمّ حذف InsetPreferenceCategory (footer_space) ★
+         PreferenceRelatedCard تضيف الفراغ السفلي تلقائياً عند عرضها.
+         الإبقاء على footer_space يُسبّب فراغاً مزدوجاً غير مرغوب فيه. -->
+
+</PreferenceScreen>

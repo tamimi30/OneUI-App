@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/font_viewer_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    android:overScrollMode="always"
+    android:scrollbars="vertical"
+    android:fillViewport="true">
+       
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@color/oui_round_and_bgcolor"
+        android:orientation="vertical"
+        android:paddingBottom="104dp">
+
+        <dev.oneuiproject.oneui.widget.RoundLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
+            android:clipToPadding="false"
+            android:paddingVertical="27dp"
+            android:paddingHorizontal="27dp"
+            android:orientation="vertical">
+
+            <!--
+                ★ حاوية معلومات الوزن — في أعلى العارض (نسخة الثيم الشفاف) ★
+                تُعرض هنا نتيجةً واحدة فقط في أي وقت:
+                  • weight_label_text : نص ثابت للخطوط غير المتغيرة (مثل "Bold, Condensed")
+                  • weight_spinner    : منتقي تفاعلي للخطوط المتغيرة (Variable Fonts)
+                كلاهما يبدأ مخفياً (gone) ويُظهره FontViewerFragment بعد تحميل الخط.
+            -->
+
+            <!-- وصف الوزن والعرض للخطوط الثابتة -->
+            <TextView
+                android:id="@+id/weight_label_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="17sp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone" />
+
+            <!-- منتقي الوزن للخطوط المتغيرة -->
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/weight_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone" />
+
+            <!-- معاينة النص -->
+            <TextView
+                android:id="@+id/preview_sentence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:clipToPadding="false"
+                android:lineSpacingExtra="7dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:textSize="18sp"
+                android:textColor="@color/font_preview_text_color" />
+        
+        </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+        
+    </LinearLayout>
+    
+</androidx.core.widget.NestedScrollView>

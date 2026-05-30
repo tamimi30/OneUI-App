@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--
+        ★ خيار "إفراغ" داخل قائمة الثلاث نقاط — يظهر فقط في شاشة سلة المحذوفات ★
+
+        app:showAsAction="never":
+            يُدرج هذا العنصر داخل قائمة الثلاث نقاط (Overflow Menu) التلقائية للنظام.
+            النظام يُولِّد زر الثلاث نقاط تلقائياً إذا كان هناك عنصر واحد على الأقل مرئياً،
+            ويُخفي الزر بالكامل إذا كانت جميع العناصر مخفية (setVisible(false)).
+
+        الرؤية (Visibility):
+            يُظهر action_empty_trash فقط عند وجود عناصر في السلة — يُتحكَّم فيه عبر
+            emptyTrashItem.setVisible(count != null && count > 0) في onCreateOptionsMenu()،
+            وعبر invalidateOptionsMenu() التي تستدعيها MainActivity.updateFontsCount()
+            كلما تغيّر عدد عناصر السلة.
+
+        عند الضغط:
+            تُعالَج النقرة في TrashFragment.onOptionsItemSelected()
+            باستدعاء handleEmptyTrash() مباشرةً.
+
+        عند الضغط المطوّل:
+            Android يعرض تلقائياً قيمة android:title كـ tooltip.
+    -->
+    <item
+        android:id="@+id/action_empty_trash"
+        android:title="@string/action_empty_trash"
+        app:showAsAction="never" />
+
+</menu>

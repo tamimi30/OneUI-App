@@ -1,0 +1,338 @@
+package com.example.oneuiapp.data.entity;
+
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.ColumnInfo;
+import androidx.room.Index;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * FontEntity - الكيان الأساسي لتمثيل الخطوط في قاعدة البيانات
+ * 
+ * يخزن المعلومات الأساسية والوصفية لكل خط
+ *
+ * ★ الإصدار 2: إضافة حقل weight_width_label لتخزين وصف الوزن والعرض ★
+ * مثال: "Bold, Condensed" أو "VF · Regular" أو "غير معروف"
+ *
+ * ★ الإصدار 3: إضافة حقل is_favorite لدعم قائمة المفضلة ★
+ *
+ * ★ الإصدار 4: إضافة حقول سلة المحذوفات (is_trashed, deleted_at, original_path) ★
+ */
+@Entity(
+    tableName = "fonts",
+    indices = {
+        @Index(value = "path", unique = true),
+        @Index(value = "is_system_font"),
+        @Index(value = "last_modified"),
+        @Index(value = "is_favorite"),  // ★ index للمفضلة لأداء أفضل عند الاستعلام ★
+        @Index(value = "is_trashed"),   // ★ index للسلة لأداء أفضل عند الاستعلام ★
+        @Index(value = "deleted_at")    // ★ index لتاريخ الحذف لحساب الـ 30 يوماً بكفاءة ★
+    }
+)
+public class FontEntity {
+    
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    private long id;
+    
+    @NonNull
+    @ColumnInfo(name = "path")
+    private String path;
+    
+    @NonNull
+    @ColumnInfo(name = "file_name")
+    private String fileName;
+    
+    @Nullable
+    @ColumnInfo(name = "real_name")
+    private String realName;
+    
+    @ColumnInfo(name = "size")
+    private long size;
+    
+    @ColumnInfo(name = "last_modified")
+    private long lastModified;
+    
+    @Nullable
+    @ColumnInfo(name = "font_type")
+    private String fontType;
+    
+    @ColumnInfo(name = "ttc_index")
+    private int ttcIndex;
+    
+    @ColumnInfo(name = "is_system_font")
+    private boolean isSystemFont;
+    
+    @ColumnInfo(name = "is_variable_font")
+    private boolean isVariableFont;
+    
+    @ColumnInfo(name = "is_cached")
+    private boolean isCached;
+    
+    @ColumnInfo(name = "last_access_time")
+    private long lastAccessTime;
+    
+    @ColumnInfo(name = "access_count")
+    private int accessCount;
+    
+    @ColumnInfo(name = "created_at")
+    private long createdAt;
+    
+    @ColumnInfo(name = "updated_at")
+    private long updatedAt;
+
+    // ★ الحقل الجديد: وصف الوزن والعرض المُستخرج من جدول OS/2 ★
+    // أمثلة: "Bold, Condensed" / "VF · Regular" / "غير معروف"
+    // يُعبأ بواسطة FontWeightWidthExtractor عند المزامنة أو في الخلفية
+    @Nullable
+    @ColumnInfo(name = "weight_width_label")
+    private String weightWidthLabel;
+
+    // ════════════════════════════════════════════════════════════
+    // ★ حقل المفضلة — الإصدار 3 ★
+    // القيمة الافتراضية false: الخط غير مفضل عند الإضافة
+    // يُستخدم لبناء قائمة المفضلة وعرض أيقونة النجمة بجانب العنصر
+    // ════════════════════════════════════════════════════════════
+    @ColumnInfo(name = "is_favorite", defaultValue = "0")
+    private boolean isFavorite;
+
+    // ════════════════════════════════════════════════════════════
+    // ★ حقول سلة المحذوفات — الإصدار 4 ★
+    // ════════════════════════════════════════════════════════════
+
+    // هل الملف موجود حالياً في سلة المحذوفات؟
+    // القيمة الافتراضية false: الخط ليس في السلة عند الإضافة
+    @ColumnInfo(name = "is_trashed", defaultValue = "0")
+    private boolean isTrashed;
+
+    // الطابع الزمني (Unix ms) للحظة نقل الملف إلى السلة
+    // يُستخدم لحساب الأيام المتبقية قبل الحذف النهائي (30 يوماً)
+    // القيمة 0 تعني أن الملف لم يُنقل إلى السلة بعد
+    @ColumnInfo(name = "deleted_at", defaultValue = "0")
+    private long deletedAt;
+
+    // المسار الأصلي للملف قبل نقله إلى مجلد .Trash
+    // يُستخدم عند استعادة الملف لإعادته إلى موقعه الصحيح
+    // القيمة null تعني أن الملف لم يُنقل إلى السلة بعد
+    @Nullable
+    @ColumnInfo(name = "original_path")
+    private String originalPath;
+    
+    public FontEntity(@NonNull String path, @NonNull String fileName) {
+        this.path = path;
+        this.fileName = fileName;
+        this.size = 0;
+        this.lastModified = 0;
+        this.ttcIndex = 0;
+        this.isSystemFont = false;
+        this.isVariableFont = false;
+        this.isCached = false;
+        this.lastAccessTime = 0;
+        this.accessCount = 0;
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
+        this.isFavorite = false;   // ★ القيمة الافتراضية للمفضلة ★
+        this.isTrashed = false;    // ★ القيمة الافتراضية: الخط ليس في السلة ★
+        this.deletedAt = 0;        // ★ القيمة الافتراضية: لم يُنقل إلى السلة بعد ★
+        this.originalPath = null;  // ★ القيمة الافتراضية: لا يوجد مسار أصلي محفوظ ★
+    }
+    
+    public long getId() {
+        return id;
+    }
+    
+    public void setId(long id) {
+        this.id = id;
+    }
+    
+    @NonNull
+    public String getPath() {
+        return path;
+    }
+    
+    public void setPath(@NonNull String path) {
+        this.path = path;
+    }
+    
+    @NonNull
+    public String getFileName() {
+        return fileName;
+    }
+    
+    public void setFileName(@NonNull String fileName) {
+        this.fileName = fileName;
+    }
+    
+    @Nullable
+    public String getRealName() {
+        return realName;
+    }
+    
+    public void setRealName(@Nullable String realName) {
+        this.realName = realName;
+    }
+    
+    public long getSize() {
+        return size;
+    }
+    
+    public void setSize(long size) {
+        this.size = size;
+    }
+    
+    public long getLastModified() {
+        return lastModified;
+    }
+    
+    public void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
+    }
+    
+    @Nullable
+    public String getFontType() {
+        return fontType;
+    }
+    
+    public void setFontType(@Nullable String fontType) {
+        this.fontType = fontType;
+    }
+    
+    public int getTtcIndex() {
+        return ttcIndex;
+    }
+    
+    public void setTtcIndex(int ttcIndex) {
+        this.ttcIndex = ttcIndex;
+    }
+    
+    public boolean isSystemFont() {
+        return isSystemFont;
+    }
+    
+    public void setSystemFont(boolean systemFont) {
+        isSystemFont = systemFont;
+    }
+    
+    public boolean isVariableFont() {
+        return isVariableFont;
+    }
+    
+    public void setVariableFont(boolean variableFont) {
+        isVariableFont = variableFont;
+    }
+    
+    public boolean isCached() {
+        return isCached;
+    }
+    
+    public void setCached(boolean cached) {
+        isCached = cached;
+    }
+    
+    public long getLastAccessTime() {
+        return lastAccessTime;
+    }
+    
+    public void setLastAccessTime(long lastAccessTime) {
+        this.lastAccessTime = lastAccessTime;
+    }
+    
+    public int getAccessCount() {
+        return accessCount;
+    }
+    
+    public void setAccessCount(int accessCount) {
+        this.accessCount = accessCount;
+    }
+    
+    public long getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+    
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // ★ getter/setter للحقل الجديد weight_width_label ★
+    // ════════════════════════════════════════════════════════════
+
+    @Nullable
+    public String getWeightWidthLabel() {
+        return weightWidthLabel;
+    }
+
+    public void setWeightWidthLabel(@Nullable String weightWidthLabel) {
+        this.weightWidthLabel = weightWidthLabel;
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // ★ getter/setter لحقل المفضلة — الإصدار 3 ★
+    // ════════════════════════════════════════════════════════════
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // ★ getter/setter لحقول سلة المحذوفات — الإصدار 4 ★
+    // ════════════════════════════════════════════════════════════
+
+    public boolean isTrashed() {
+        return isTrashed;
+    }
+
+    public void setTrashed(boolean trashed) {
+        isTrashed = trashed;
+    }
+
+    public long getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(long deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    @Nullable
+    public String getOriginalPath() {
+        return originalPath;
+    }
+
+    public void setOriginalPath(@Nullable String originalPath) {
+        this.originalPath = originalPath;
+    }
+    
+    public String getDisplayName() {
+        if (realName != null && !realName.isEmpty()) {
+            return realName;
+        }
+        
+        String name = fileName;
+        if (name.toLowerCase().endsWith(".ttf") || 
+            name.toLowerCase().endsWith(".otf") ||
+            name.toLowerCase().endsWith(".ttc")) {
+            return name.substring(0, name.length() - 4);
+        }
+        return name;
+    }
+    
+    public void recordAccess() {
+        this.lastAccessTime = System.currentTimeMillis();
+        this.accessCount++;
+        this.updatedAt = System.currentTimeMillis();
+    }
+}

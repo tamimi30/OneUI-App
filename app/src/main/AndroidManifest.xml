@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         ★ إصلاح المشكلة (1): أذونات الخدمة الأمامية ★
+         ════════════════════════════════════════════════════════════════
+         FOREGROUND_SERVICE: مطلوب للإعلان عن أي خدمة أمامية (API 28+).
+         FOREGROUND_SERVICE_DATA_SYNC: مطلوب تحديداً لنوع dataSync (API 34+).
+         بدون هذين الإذنين يرمي النظام SecurityException عند استدعاء
+         startForeground() مما يمنع حماية العملية من القتل.
+         ════════════════════════════════════════════════════════════════ -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"
+        android:minSdkVersion="33" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"
+        android:minSdkVersion="33" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"
+        android:minSdkVersion="33" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        android:hardwareAccelerated="true"
+        android:supportsRtl="true"
+        android:localeConfig="@xml/locale_config"
+        android:resizeableActivity="true"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="36">
+
+        <meta-data
+            android:name="SamsungBasicInteraction"
+            android:value="SEP10" />
+        <meta-data
+            android:name="com.samsung.android.icon_container.has_icon_container"
+            android:value="true" />
+        <meta-data
+            android:name="com.samsung.android.icon_container.feature_appicon"
+            android:value="ADAPTIVEICON_SHADOW" />
+
+        <meta-data
+            android:name="theming-meta"
+            android:value="meta_998_sesl_app" />
+        <meta-data
+            android:name="theming-meta-xml"
+            android:value="@xml/meta_998_sesl_app" />
+
+        <!-- ★ بدون locale|layoutDirection في configChanges ★
+             عند تغيير اللغة، يقوم النظام بإعادة بناء هذه الأنشطة تلقائياً
+             في الخلفية (بدون علم المستخدم). عند الرجوع إليها يجد المستخدم
+             اللغة محدّثة بالكامل. هذا السلوك هو المطلوب لحل مشكلة عدم
+             تحديث الفراجمنتات الأخرى عند الرجوع للخلف.
+             ملاحظة: لم نضف uiMode عمداً لأنه يُسبّب خللاً في الثيم. -->
+        <activity
+            android:name=".activity.MainActivity"
+            android:configChanges="orientation|screenLayout|screenSize"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.Starting">
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+
+            <meta-data
+                android:name="com.sec.android.app.launcher.icon_theme"
+                android:value="themeColor" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="android.intent.action.SEARCH" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
+        <activity
+            android:name=".activity.HomeActivity"
+            android:configChanges="orientation|screenSize|screenLayout" />
+
+        <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
+        <activity
+            android:name=".activity.AboutActivity" />
+
+        <activity
+            android:name=".activity.LicensesActivity"
+            android:configChanges="orientation|screenSize|screenLayout" />
+
+        <!-- ★ locale|layoutDirection موجود هنا فقط ★
+             SettingsActivity هي الشاشة التي يرى فيها المستخدم تغيير اللغة
+             بشكل مباشر، لذا نمنع تدميرها لتفادي وميض الصور والرسومات.
+             التحديث يتم يدوياً في onConfigurationChanged عبر LanguageHelper.
+             ملاحظة: لم نضف uiMode عمداً لأنه يُسبّب خللاً في الثيم. -->
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection" />
+
+        <!-- ════════════════════════════════════════════════════════════════
+             ★ إصلاح المشكلة (1): تسجيل OperationForegroundService ★
+             ════════════════════════════════════════════════════════════════
+             هذه الخدمة الأمامية تمنع نظام Android من قتل عملية التطبيق
+             عند إزالته من قائمة التطبيقات الأخيرة أثناء أي عملية ضخمة
+             (نقل / استعادة / حذف / إفراغ السلة).
+
+             android:foregroundServiceType="dataSync":
+               يُخبر Android أن الخدمة تُزامن بيانات (نقل ملفات)،
+               وهو النوع المناسب لعمليات الملفات الضخمة.
+               مطلوب على API 29+ وإلا يرمي IllegalArgumentException.
+
+             android:exported="false":
+               يمنع أي تطبيق خارجي من تشغيل أو إيقاف هذه الخدمة.
+             ════════════════════════════════════════════════════════════════ -->
+        <service
+            android:name=".utils.OperationForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- ════════════════════════════════════════════════════════════════
+             ★ إصلاح المشكلة (4): تسجيل NotificationActionReceiver ★
+             ════════════════════════════════════════════════════════════════
+             هذا الـ Receiver يستقبل إشارة الإلغاء عند ضغط المستخدم على زر
+             "إلغاء" في الإشعار الموسَّع أثناء أي عملية (نقل / استعادة / حذف).
+
+             android:exported="false":
+               يمنع أي تطبيق خارجي من إرسال إشارة إلغاء وهمية لتطبيقنا.
+               الـ PendingIntent الداخلي يعمل بصلاحيات التطبيق نفسه
+               بغض النظر عن قيمة exported.
+
+             intent-filter:
+               يجب أن يطابق ACTION_CANCEL المُعرَّف في NotificationActionReceiver
+               وهو "com.example.oneuiapp.ACTION_CANCEL_OPERATION".
+               بدون هذا التسجيل، يُهمل Android إشارة البث تماماً
+               ولا يصل ضغط زر "إلغاء" إلى أي مكان في التطبيق.
+             ════════════════════════════════════════════════════════════════ -->
+        <receiver
+            android:name=".utils.NotificationActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.oneuiapp.ACTION_CANCEL_OPERATION" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+</manifest>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--
+        ★ خيار "تغيير مجلد الخطوط" داخل قائمة الثلاث نقاط — يظهر فقط في شاشة الخطوط المحلية ★
+
+        app:showAsAction="never":
+            يُدرج هذا العنصر داخل قائمة الثلاث نقاط (Overflow Menu) التلقائية للنظام.
+            النظام يُولِّد زر الثلاث نقاط تلقائياً إذا كان هناك عنصر واحد على الأقل مرئياً،
+            ويُخفي الزر بالكامل إذا كانت جميع العناصر مخفية (setVisible(false)).
+
+        الرؤية (Visibility):
+            يُظهر action_change_folder فقط عند وجود مجلد محفوظ — يُتحكَّم فيه عبر
+            changeFolderItem.setVisible(mViewModel.hasSavedFolder()) في onCreateOptionsMenu()،
+            وعبر invalidateOptionsMenu() فور اختيار المجلد لأول مرة.
+
+        عند الضغط:
+            تُعالَج النقرة في LocalFontListFragment.onOptionsItemSelected()
+            باستدعاء openFolderPickerPublic() مباشرةً.
+    -->
+    <item
+        android:id="@+id/action_change_folder"
+        android:title="@string/action_change_folder"
+        app:showAsAction="never" />
+
+</menu>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <attr name="customFontFamily" format="reference" />
+  
+    <declare-styleable name="OneUiTextView">
+        <attr name="maxFontLevel">
+            <enum name="tiny" value="1" />
+            <enum name="extra_small" value="2" />
+            <enum name="small" value="3" />
+            <enum name="medium" value="4" />
+            <enum name="large" value="5" />
+            <enum name="extra_large" value="6" />
+            <enum name="huge" value="7" />
+            <enum name="extra_huge" value="8" />
+        </attr>
+            
+        <attr name="minFontLevel">
+            <enum name="tiny" value="1" />
+            <enum name="extra_small" value="2" />
+            <enum name="small" value="3" />
+            <enum name="medium" value="4" />
+            <enum name="large" value="5" />
+            <enum name="extra_large" value="6" />
+            <enum name="huge" value="7" />
+            <enum name="extra_huge" value="8" />
+        </attr>
+      
+    </declare-styleable>
+  
+</resources>

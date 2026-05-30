@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    قائمة إجراءات سلة المحذوفات — تُستخدم في شريط الـ Action Mode
+    يُحمَّل هذا الملف عبر drawerLayout.setActionModeMenu(R.menu.menu_trash_actions)
+    داخل TrashSelectionManager#activateSelectionMode()
+
+    ★ (13): إجراءان فقط — استعادة وحذف نهائي
+    ★ (14): النصوص تتغيّر ديناميكياً في TrashSelectionManager#updateActionModeUI()
+            بين "حذف"/"حذف الكل" و"استعاده"/"استعادة الكل"
+
+    ترتيب العناصر في شريط الأسفل (Bottom Bar):
+      - action_restore أولاً (الاستعادة على اليمين)
+      - action_delete ثانياً  (الحذف على اليسار)
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--
+        زر الاستعادة
+        ★ (13): الأيقونة ic_oui_refresh كما هو محدد في المتطلبات
+        النص الافتراضي "استعاده" — يُحدَّث في updateActionModeUI()
+    -->
+    <item
+        android:id="@+id/action_restore"
+        android:icon="@drawable/ic_oui_refresh"
+        android:title="@string/action_restore"
+        app:showAsAction="always" />
+
+    <!--
+        زر الحذف النهائي
+        ★ (13): الأيقونة ic_oui_delete_outline كما هو محدد في المتطلبات
+        النص الافتراضي "حذف" — يُحدَّث في updateActionModeUI()
+    -->
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_oui_delete_outline"
+        android:title="@string/action_delete"
+        app:showAsAction="always" />
+
+</menu>
