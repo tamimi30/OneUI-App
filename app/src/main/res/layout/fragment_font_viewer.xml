@@ -50,13 +50,14 @@
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
-                <com.example.oneuiapp.widget.FontPreviewTextView                    android:id="@+id/preview_sentence"
+                <com.example.oneuiapp.widget.OneUiTextView
+                    android:id="@+id/preview_sentence"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="7dp"
                     android:textSize="18sp"
-                    android:paddingHorizontal="12dp"
+                    android:paddingHorizontal="4dp"
                     app:maxFontLevel="small"
                     app:minFontLevel="small"
                     android:textColor="@color/font_preview_text_color" />
