@@ -368,7 +368,7 @@ public class FontViewerFragment extends Fragment {
     /**
      * ★ التعديل: ربط عناصر واجهة الوزن الجديدة بجانب معاينة النص ★
      */
-    private void initViews(View view) {
+        private void initViews(View view) {
         previewSentence = view.findViewById(R.id.preview_sentence);
         // ★ ربط عنصري عرض الوزن في أعلى الصفحة ★
         weightLabelText = view.findViewById(R.id.weight_label_text);
@@ -393,14 +393,16 @@ public class FontViewerFragment extends Fragment {
                 previewSentence.getPaddingBottom()
         );
 
-        // 3. التصحيح: جلب العنصر الأب (Parent) للـ TextView وتطبيق خصائص منع القص عليه
+        // 3. جلب العنصر الأب (Parent) للـ TextView وتطبيق خصائص منع القص عليه
         if (previewSentence.getParent() instanceof ViewGroup) {
             ViewGroup parent = (ViewGroup) previewSentence.getParent();
             // السماح للأبناء بالرسم خارج حدودهم الصارمة
             parent.setClipChildren(false); 
             // منع الأب من قص محتوى الأبناء عند حواف الـ Padding
             parent.setClipToPadding(false);
-    }
+        }
+    } // <--- هذا هو القوس الذي كان مفقوداً وتسبب في الخطأ
+
 
 
 
