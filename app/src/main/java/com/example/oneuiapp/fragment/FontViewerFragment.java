@@ -373,7 +373,32 @@ public class FontViewerFragment extends Fragment {
         // ★ ربط عنصري عرض الوزن في أعلى الصفحة ★
         weightLabelText = view.findViewById(R.id.weight_label_text);
         weightSpinner   = view.findViewById(R.id.weight_spinner);
+
+        // ---------------------------------------------------------
+        // ★ حل مشكلة قص أطراف الحروف المائلة (Italic Clipping) ★
+        // ---------------------------------------------------------
+        
+        // 1. تحويل القيمة إلى بكسل برمجياً (12dp عادةً كافية جداً لاحتواء أطراف الحروف المائلة)
+        int horizontalPaddingPx = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                27f,
+                getResources().getDisplayMetrics()
+        );
+
+        // 2. تطبيق الـ Padding على الجانبين فقط مع الحفاظ على البادنج العلوي والسفلي الحالي
+        previewSentence.setPadding(
+                horizontalPaddingPx,
+                previewSentence.getPaddingTop(),
+                horizontalPaddingPx,
+                previewSentence.getPaddingBottom()
+        );
+
+        // 3. السر هنا: إخبار الـ TextView بعدم قص أي رسم (حبر) يدخل في منطقة الـ Padding.
+        // هذا يعني أن الحرف المائل في بداية أو نهاية أي سطر (حتى بعد الالتفاف)
+        // سيتمكن من التمدد ورسم أطرافه داخل مساحة الـ 12dp التي أضفناها دون أن يختفي.
+        previewSentence.setClipToPadding(false);
     }
+
 
     // ─────────────────────────────────────────────────────────
     // دوال loadFontFromPath — ترتيب التفويض يحافظ على تعيين currentWeightWidthLabel
