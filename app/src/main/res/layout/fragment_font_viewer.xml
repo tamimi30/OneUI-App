@@ -17,18 +17,10 @@
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="27dp"
+            android:paddingVertical="27dp"
             android:clipChildren="false"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
-
-            <!--
-                ★ حاوية معلومات الوزن — في أعلى العارض ★
-                تُعرض هنا نتيجةً واحدة فقط في أي وقت:
-                  • weight_label_text : نص ثابت للخطوط غير المتغيرة (مثل "Bold, Condensed")
-                  • weight_spinner    : منتقي تفاعلي للخطوط المتغيرة (Variable Fonts)
-                كلاهما يبدأ مخفياً (gone) ويُظهره FontViewerFragment بعد تحميل الخط.
-            -->
 
             <!-- وصف الوزن والعرض للخطوط الثابتة -->
             <TextView
@@ -49,14 +41,32 @@
                 android:layout_gravity="left"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/preview_sentence"
+                
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:lineSpacingExtra="7dp"
-                android:textSize="18sp"
-                android:textColor="@color/font_preview_text_color" />
+                android:clipToPadding="false"
+                android:clipChildren="false"
+                android:orientation="horizontal">
+                 
+                <Space
+                    android:layout_width="27dp"
+                    android:layout_height="match_parent"/>        
+                
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/preview_sentence"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lineSpacingExtra="7dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/font_preview_text_color" />
+                    
+                <Space
+                    android:layout_width="27dp"
+                    android:layout_height="match_parent"/>
+                    
+            </LinearLayout>
         
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
         
