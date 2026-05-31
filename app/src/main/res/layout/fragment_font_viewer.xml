@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingVertical="27dp"
+            android:clipChildren="false"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
@@ -51,15 +52,16 @@
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
-                <com.example.oneuiapp.widget.OneUiTextView
-                    android:id="@+id/preview_sentence"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:lineSpacingExtra="7dp"
-                    android:textSize="18sp"
-                    app:maxFontLevel="small"
-                    app:minFontLevel="small"
-                    android:textColor="@color/font_preview_text_color" />
+            <com.example.oneuiapp.widget.UnclippedTextView
+                android:id="@+id/preview_sentence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="7dp"
+                android:paddingHorizontal="27dp"
+                android:textSize="18sp"
+                app:maxFontLevel="small"
+                app:minFontLevel="small"
+                android:textColor="@color/font_preview_text_color" />
         
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
         
