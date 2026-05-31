@@ -784,7 +784,7 @@ public class FontViewerFragment extends Fragment {
 
     private void applyFontSize() {
         if (previewSentence != null) {
-            previewSentence.setTextSize(TypedValue.COMPLEX_UNIT_SP, currentFontSize);
+            previewSentence.setTextSize(TypedValue.COMPLEX_UNIT_DIP, currentFontSize);
         }
     }
 
