@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:layout_marginHorizontal="27dp"
+                android:layout_marginHorizontal="24dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
@@ -58,7 +58,7 @@
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="7dp"
                     android:textSize="18sp"
-                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginHorizontal="13dp"
                     app:maxFontLevel="small"
                     app:minFontLevel="small"
                     android:textColor="@color/font_preview_text_color" />
