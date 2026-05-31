@@ -47,8 +47,6 @@
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:clipChildren="false"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
                 android:orientation="horizontal">
                  
                 <Space
@@ -62,6 +60,7 @@
                     android:layout_height="wrap_content"
                     android:layout_width="350dp"
                     android:lineSpacingExtra="7dp"
+                    android:layout_marginHorizontal="-15dp"
                     android:textSize="18sp"
                     android:textColor="@color/font_preview_text_color" />
                     
