@@ -59,6 +59,7 @@
                 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/preview_sentence"
+                    android:layout_height="wrap_content"
                     android:layout_width="350dp"
                     android:lineSpacingExtra="7dp"
                     android:textSize="18sp"
