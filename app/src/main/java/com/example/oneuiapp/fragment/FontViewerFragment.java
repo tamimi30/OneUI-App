@@ -375,33 +375,44 @@ public class FontViewerFragment extends Fragment {
         weightSpinner   = view.findViewById(R.id.weight_spinner);
 
         // ---------------------------------------------------------
-        // ★ حل مشكلة قص أطراف الحروف المائلة (Italic Clipping) ★
+        // ★ الحل النهائي لمشكلة قص أطراف الحروف المائلة ★
         // ---------------------------------------------------------
         
-        // 1. تحويل القيمة إلى بكسل برمجياً (12dp)
-        int horizontalPaddingPx = (int) TypedValue.applyDimension(
+        // 1. حساب منطقة الأمان (12dp) التي سيدخل فيها طرف الحرف
+        int safeSpacePx = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 27f,
                 getResources().getDisplayMetrics()
         );
 
-        // 2. تطبيق الـ Padding على الجانبين فقط
+        // 2. تطبيق مساحة الأمان كـ Margins (من الخارج) بدلاً من Padding (من الداخل)
+        ViewGroup.LayoutParams layoutParams = previewSentence.getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) layoutParams;
+            marginParams.leftMargin += safeSpacePx;
+            marginParams.rightMargin += safeSpacePx;
+            previewSentence.setLayoutParams(marginParams);
+        }
+
+        // 3. تصفير الـ Padding الأفقي للـ TextView لضمان عدم تفعيل أي مقص داخلي
         previewSentence.setPadding(
-                horizontalPaddingPx,
-                previewSentence.getPaddingTop(),
-                horizontalPaddingPx,
+                0, 
+                previewSentence.getPaddingTop(), 
+                0, 
                 previewSentence.getPaddingBottom()
         );
 
-        // 3. جلب العنصر الأب (Parent) للـ TextView وتطبيق خصائص منع القص عليه
+        // 4. السر الأول: السماح للـ TextView بالرسم خارج حدوده الهندسية لتدخل الحروف في منطقة الـ Margin
+        previewSentence.setClipToBounds(false);
+
+        // 5. السر الثاني: السماح للحاوية (الأب) بعرض رسم الـ TextView الذي يخرج عن حدوده
         if (previewSentence.getParent() instanceof ViewGroup) {
             ViewGroup parent = (ViewGroup) previewSentence.getParent();
-            // السماح للأبناء بالرسم خارج حدودهم الصارمة
-            parent.setClipChildren(false); 
-            // منع الأب من قص محتوى الأبناء عند حواف الـ Padding
+            parent.setClipChildren(false);
             parent.setClipToPadding(false);
         }
-    } // <--- هذا هو القوس الذي كان مفقوداً وتسبب في الخطأ
+    }
+
 
 
 
