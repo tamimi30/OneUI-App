@@ -47,6 +47,8 @@
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:clipChildren="false"
+                android:layout_gravity="center_horizontal"
+                andrpid:gravity="center_horizontal"
                 android:orientation="horizontal">
                  
                 <Space
@@ -57,9 +59,7 @@
                 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/preview_sentence"
-                    android:layout_width="400dp"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="-15dp"
+                    android:layout_width="350dp"
                     android:lineSpacingExtra="7dp"
                     android:textSize="18sp"
                     android:textColor="@color/font_preview_text_color" />
