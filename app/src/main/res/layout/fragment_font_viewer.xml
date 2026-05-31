@@ -52,6 +52,7 @@
                 <Space
                     android:layout_width="27dp"
                     android:clipToPadding="false"
+                    android:background="@android:color/transparent" 
                     android:layout_height="match_parent"/>        
                 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -65,6 +66,7 @@
                 <Space
                     android:layout_width="27dp"
                     android:clipToPadding="false"
+                    android:background="@android:color/transparent"
                     android:layout_height="match_parent"/>
                     
             </LinearLayout>
