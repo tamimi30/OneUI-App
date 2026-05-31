@@ -57,6 +57,7 @@
                     android:layout_height="wrap_content"
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="7dp"
+                    android:paddingStart="27dp"
                     android:textSize="18sp"
                     app:maxFontLevel="small"
                     app:minFontLevel="small"
