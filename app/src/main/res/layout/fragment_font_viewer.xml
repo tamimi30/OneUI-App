@@ -60,7 +60,6 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:lineSpacingExtra="7dp"
-                    android:gravity="start"
                     android:textSize="18sp"
                     android:textColor="@color/font_preview_text_color" />
                     
