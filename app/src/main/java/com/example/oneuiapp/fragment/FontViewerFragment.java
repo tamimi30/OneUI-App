@@ -378,14 +378,14 @@ public class FontViewerFragment extends Fragment {
         // ★ حل مشكلة قص أطراف الحروف المائلة (Italic Clipping) ★
         // ---------------------------------------------------------
         
-        // 1. تحويل القيمة إلى بكسل برمجياً (12dp عادةً كافية جداً لاحتواء أطراف الحروف المائلة)
+        // 1. تحويل القيمة إلى بكسل برمجياً (12dp)
         int horizontalPaddingPx = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 27f,
                 getResources().getDisplayMetrics()
         );
 
-        // 2. تطبيق الـ Padding على الجانبين فقط مع الحفاظ على البادنج العلوي والسفلي الحالي
+        // 2. تطبيق الـ Padding على الجانبين فقط
         previewSentence.setPadding(
                 horizontalPaddingPx,
                 previewSentence.getPaddingTop(),
@@ -393,11 +393,15 @@ public class FontViewerFragment extends Fragment {
                 previewSentence.getPaddingBottom()
         );
 
-        // 3. السر هنا: إخبار الـ TextView بعدم قص أي رسم (حبر) يدخل في منطقة الـ Padding.
-        // هذا يعني أن الحرف المائل في بداية أو نهاية أي سطر (حتى بعد الالتفاف)
-        // سيتمكن من التمدد ورسم أطرافه داخل مساحة الـ 12dp التي أضفناها دون أن يختفي.
-        previewSentence.setClipToPadding(false);
+        // 3. التصحيح: جلب العنصر الأب (Parent) للـ TextView وتطبيق خصائص منع القص عليه
+        if (previewSentence.getParent() instanceof ViewGroup) {
+            ViewGroup parent = (ViewGroup) previewSentence.getParent();
+            // السماح للأبناء بالرسم خارج حدودهم الصارمة
+            parent.setClipChildren(false); 
+            // منع الأب من قص محتوى الأبناء عند حواف الـ Padding
+            parent.setClipToPadding(false);
     }
+
 
 
     // ─────────────────────────────────────────────────────────
