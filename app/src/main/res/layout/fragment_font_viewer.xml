@@ -54,11 +54,9 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/preview_sentence"
-                android:layout_width="match_parent"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="7dp"
-                android:layout_marginHorizontal="-27dp"
-                android:paddingHorizontal="54dp"
                 android:textSize="18sp"
                 android:textColor="@color/font_preview_text_color" />
         
