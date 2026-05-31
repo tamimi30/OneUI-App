@@ -80,7 +80,7 @@ public class FontViewerFragment extends Fragment {
 
     private static final float DEFAULT_FONT_SIZE   = 18f;
     private static final float MIN_FONT_SIZE       = 12f;
-    private static final float MAX_FONT_SIZE       = 90f;
+    private static final float MAX_FONT_SIZE       = 45f;
     private static final float DEFAULT_FONT_WEIGHT = 400f;
 
     // ★ مراجع واجهة المستخدم ★
@@ -248,10 +248,7 @@ public class FontViewerFragment extends Fragment {
         // ★ NEW: Observe preview text changes from SettingsViewModel ★
         settingsViewModel.getPreviewText().observe(getViewLifecycleOwner(), previewText -> {
             if (previewSentence != null && previewText != null) {
-                
-                // ★ استخدام الدالة الجديدة لإضافة الفراغ بدلاً من setText العادية ★
-                setSafePreviewText(previewText);
-                
+                previewSentence.setText(previewText);
                 if (currentTypeface != null) {
                     applyFontToPreviewTexts();
                 }
@@ -280,9 +277,8 @@ public class FontViewerFragment extends Fragment {
             loadLastUsedFont();
         }
 
-            updatePreviewTexts();
+        updatePreviewTexts();
     }
-
 
     @Override
     public void onResume() {
@@ -353,24 +349,6 @@ public class FontViewerFragment extends Fragment {
                 Toast.LENGTH_SHORT).show();
         }
     }
-    
-    // ★ الدالة الجديدة: إضافة فراغ داخلي لحماية الحروف المائلة في كل السطور ★
-    private void setSafePreviewText(String text) {
-        if (previewSentence == null || text == null) return;
-
-        // 1. تحويل 10dp إلى بكسلات لتعمل كفراغ داخلي آمن
-        int spacePx = (int) (27f * getResources().getDisplayMetrics().density);
-
-        // 2. إضافة مسافة غير مرئية في النهاية لحماية الذيل الأيمن في آخر سطر
-        android.text.SpannableString spannable = new android.text.SpannableString(text + "\u00A0");
-
-        // 3. تطبيق الفراغ الداخلي على كل السطور (السطر الأول + الأسطر الملتفة)
-        spannable.setSpan(new android.text.style.LeadingMarginSpan.Standard(spacePx, spacePx),
-                0, spannable.length(), android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        previewSentence.setText(spannable);
-    }
-
 
     private void updatePreviewTexts() {
         if (previewSentence == null) {
@@ -378,9 +356,7 @@ public class FontViewerFragment extends Fragment {
         }
 
         String previewText = SettingsHelper.getPreviewText(requireContext());
-        
-        // ★ استخدام الدالة الجديدة لإضافة الفراغ بدلاً من setText العادية ★
-        setSafePreviewText(previewText);
+        previewSentence.setText(previewText);
 
         if (currentTypeface != null) {
             applyFontToPreviewTexts();
@@ -388,7 +364,6 @@ public class FontViewerFragment extends Fragment {
 
         applyFontSize();
     }
-
 
     /**
      * ★ التعديل: ربط عناصر واجهة الوزن الجديدة بجانب معاينة النص ★
@@ -784,7 +759,7 @@ public class FontViewerFragment extends Fragment {
 
     private void applyFontSize() {
         if (previewSentence != null) {
-            previewSentence.setTextSize(TypedValue.COMPLEX_UNIT_DIP, currentFontSize);
+            previewSentence.setTextSize(TypedValue.COMPLEX_UNIT_SP, currentFontSize);
         }
     }
 
