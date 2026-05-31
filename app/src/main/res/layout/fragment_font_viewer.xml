@@ -52,6 +52,7 @@
                 <Space
                     android:layout_width="27dp"
                     android:clipToPadding="false"
+                    android:layout_weight="1"  
                     android:background="@android:color/transparent" 
                     android:layout_height="match_parent"/>        
                 
@@ -59,8 +60,6 @@
                     android:id="@+id/preview_sentence"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="-15dp"
-                    android:layout_weight="1"
                     android:lineSpacingExtra="7dp"
                     android:textSize="18sp"
                     android:textColor="@color/font_preview_text_color" />
@@ -68,6 +67,7 @@
                 <Space
                     android:layout_width="27dp"
                     android:clipToPadding="false"
+                    android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:layout_height="match_parent"/>
                     
