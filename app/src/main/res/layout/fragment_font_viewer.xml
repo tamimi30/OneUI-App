@@ -55,7 +55,6 @@
                     android:id="@+id/preview_sentence"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:includeFontPadding="false"
                     android:lineSpacingExtra="7dp"
                     android:textSize="18sp"
                     app:maxFontLevel="small"
