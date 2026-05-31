@@ -368,53 +368,12 @@ public class FontViewerFragment extends Fragment {
     /**
      * ★ التعديل: ربط عناصر واجهة الوزن الجديدة بجانب معاينة النص ★
      */
-        private void initViews(View view) {
+    private void initViews(View view) {
         previewSentence = view.findViewById(R.id.preview_sentence);
         // ★ ربط عنصري عرض الوزن في أعلى الصفحة ★
         weightLabelText = view.findViewById(R.id.weight_label_text);
         weightSpinner   = view.findViewById(R.id.weight_spinner);
-
-        // ---------------------------------------------------------
-        // ★ الحل الصحيح لمشكلة قص أطراف الحروف المائلة ★
-        // ---------------------------------------------------------
-        
-        // 1. حساب منطقة الأمان (12dp)
-        int safeSpacePx = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                27f,
-                getResources().getDisplayMetrics()
-        );
-
-        // 2. تطبيق مساحة الأمان كـ Margins (هوامش خارجية)
-        ViewGroup.LayoutParams layoutParams = previewSentence.getLayoutParams();
-        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
-            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) layoutParams;
-            // إضافة مساحة الأمان للهوامش الحالية لتجنب إلغاء أي هوامش سابقة
-            marginParams.leftMargin += safeSpacePx;
-            marginParams.rightMargin += safeSpacePx;
-            previewSentence.setLayoutParams(marginParams);
-        }
-
-        // 3. تصفير الـ Padding الأفقي الداخلي للـ TextView
-        previewSentence.setPadding(
-                0, 
-                previewSentence.getPaddingTop(), 
-                0, 
-                previewSentence.getPaddingBottom()
-        );
-
-        // 4. تعطيل القص من جهة الحاوية (الأب) للسماح لأطراف الحروف بالظهور في مساحة الهامش
-        if (previewSentence.getParent() instanceof ViewGroup) {
-            ViewGroup parent = (ViewGroup) previewSentence.getParent();
-            parent.setClipChildren(false);
-            parent.setClipToPadding(false);
-        }
     }
-
-
-
-
-
 
     // ─────────────────────────────────────────────────────────
     // دوال loadFontFromPath — ترتيب التفويض يحافظ على تعيين currentWeightWidthLabel
