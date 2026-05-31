@@ -375,26 +375,27 @@ public class FontViewerFragment extends Fragment {
         weightSpinner   = view.findViewById(R.id.weight_spinner);
 
         // ---------------------------------------------------------
-        // ★ الحل النهائي لمشكلة قص أطراف الحروف المائلة ★
+        // ★ الحل الصحيح لمشكلة قص أطراف الحروف المائلة ★
         // ---------------------------------------------------------
         
-        // 1. حساب منطقة الأمان (12dp) التي سيدخل فيها طرف الحرف
+        // 1. حساب منطقة الأمان (12dp)
         int safeSpacePx = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 27f,
                 getResources().getDisplayMetrics()
         );
 
-        // 2. تطبيق مساحة الأمان كـ Margins (من الخارج) بدلاً من Padding (من الداخل)
+        // 2. تطبيق مساحة الأمان كـ Margins (هوامش خارجية)
         ViewGroup.LayoutParams layoutParams = previewSentence.getLayoutParams();
         if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) layoutParams;
+            // إضافة مساحة الأمان للهوامش الحالية لتجنب إلغاء أي هوامش سابقة
             marginParams.leftMargin += safeSpacePx;
             marginParams.rightMargin += safeSpacePx;
             previewSentence.setLayoutParams(marginParams);
         }
 
-        // 3. تصفير الـ Padding الأفقي للـ TextView لضمان عدم تفعيل أي مقص داخلي
+        // 3. تصفير الـ Padding الأفقي الداخلي للـ TextView
         previewSentence.setPadding(
                 0, 
                 previewSentence.getPaddingTop(), 
@@ -402,16 +403,14 @@ public class FontViewerFragment extends Fragment {
                 previewSentence.getPaddingBottom()
         );
 
-        // 4. السر الأول: السماح للـ TextView بالرسم خارج حدوده الهندسية لتدخل الحروف في منطقة الـ Margin
-        previewSentence.setClipToBounds(false);
-
-        // 5. السر الثاني: السماح للحاوية (الأب) بعرض رسم الـ TextView الذي يخرج عن حدوده
+        // 4. تعطيل القص من جهة الحاوية (الأب) للسماح لأطراف الحروف بالظهور في مساحة الهامش
         if (previewSentence.getParent() instanceof ViewGroup) {
             ViewGroup parent = (ViewGroup) previewSentence.getParent();
             parent.setClipChildren(false);
             parent.setClipToPadding(false);
         }
     }
+
 
 
 
