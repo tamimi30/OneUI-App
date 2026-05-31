@@ -37,7 +37,7 @@
                 android:layout_gravity="left"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="17sp"
-                android:layout_marginHorizontal="27dp"
+                android:paddingHorizontal="27dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:layout_marginHorizontal="22dp"
+                android:layout_marginVertical="22dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
@@ -58,8 +58,6 @@
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="7dp"
                     android:textSize="18sp"
-                    android:layout_marginStart="11dp"
-                    android:layout_marginEnd="27dp"
                     app:maxFontLevel="small"
                     app:minFontLevel="small"
                     android:textColor="@color/font_preview_text_color" />
