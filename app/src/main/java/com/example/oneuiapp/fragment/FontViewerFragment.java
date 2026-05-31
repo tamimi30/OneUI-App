@@ -359,7 +359,7 @@ public class FontViewerFragment extends Fragment {
         if (previewSentence == null || text == null) return;
 
         // 1. تحويل 10dp إلى بكسلات لتعمل كفراغ داخلي آمن
-        int spacePx = (int) (18f * getResources().getDisplayMetrics().density);
+        int spacePx = (int) (27f * getResources().getDisplayMetrics().density);
 
         // 2. إضافة مسافة غير مرئية في النهاية لحماية الذيل الأيمن في آخر سطر
         android.text.SpannableString spannable = new android.text.SpannableString(text + "\u00A0");
