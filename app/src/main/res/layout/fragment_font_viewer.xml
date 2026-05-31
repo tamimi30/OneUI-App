@@ -48,7 +48,7 @@
                 android:clipToPadding="false"
                 android:clipChildren="false"
                 android:layout_gravity="center_horizontal"
-                andrpid:gravity="center_horizontal"
+                android:gravity="center_horizontal"
                 android:orientation="horizontal">
                  
                 <Space
