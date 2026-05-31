@@ -57,7 +57,7 @@
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="7dp"
                     android:textSize="18sp"
-                    android:paddingHorizontal="4dp"
+                    android:paddingHorizontal="0dp"
                     app:maxFontLevel="small"
                     app:minFontLevel="small"
                     android:textColor="@color/font_preview_text_color" />
