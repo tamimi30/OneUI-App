@@ -35,7 +35,7 @@
         android:gravity="center"
         android:text="18"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="20sp"
+        android:textSize="24dp"
         android:fontFamily="sec"
         android:tooltipText="@string/font_size_and_style"
         app:layout_location="root" />
