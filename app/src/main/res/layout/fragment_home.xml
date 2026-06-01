@@ -128,17 +128,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingVertical="28dp"
-                android:paddingHorizontal="26dp">
+                android:paddingHorizontal="18dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_features"
-                    android:textSize="20sp"
+                    android:textSize="21sp"
                     android:textColor="?android:attr/textColorPrimary"
                     android:fontFamily="sans-serif-medium"
                     android:textStyle="bold"
-                    android:layout_marginBottom="20dp" />
+                    android:layout_marginBottom="18dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -146,7 +146,7 @@
                     android:text="@string/feature1"
                     android:textSize="15sp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="16dp" />
+                    android:layout_marginBottom="11dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -154,7 +154,7 @@
                     android:text="@string/feature2"
                     android:textSize="15sp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="16dp" />
+                    android:layout_marginBottom="11dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -162,7 +162,7 @@
                     android:text="@string/feature3"
                     android:textSize="15sp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="16dp" />
+                    android:layout_marginBottom="11dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -170,17 +170,17 @@
                     android:text="@string/feature4"
                     android:textSize="15sp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="28dp" />
+                    android:layout_marginBottom="18dp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_about"
-                    android:textSize="20sp"
+                    android:textSize="21sp"
                     android:textColor="?android:attr/textColorPrimary"
                     android:fontFamily="sans-serif-medium"
                     android:textStyle="bold"
-                    android:layout_marginBottom="20dp" />
+                    android:layout_marginBottom="18dp" />
 
                 <TextView
                     android:layout_width="match_parent"
