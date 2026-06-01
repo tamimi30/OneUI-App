@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
+        android:id="@+id/about_app_bar"
         style="?attr/appBarLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,28 +13,24 @@
         app:seslHeightProportion="0.5">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
+            android:id="@+id/about_ctl"
             style="?attr/collapsingToolbarLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_scrollFlags="exitUntilCollapsed|scroll"
-            app:expandedTitleMarginStart="24dp"
-            app:expandedTitleMarginBottom="48dp">
+            app:layout_scrollFlags="exitUntilCollapsed|scroll">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="?attr/actionBarSize"
+                android:layout_marginTop="@dimen/sesl_action_bar_height_with_padding"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="32dp"
                 app:isCustomTitle="true">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/header_app_icon"
+                    android:id="@+id/about_header_app_icon"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
-                    android:src="@mipmap/ic_launcher"
                     android:antialias="true" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -45,23 +40,46 @@
                     android:gravity="center"
                     android:text="@string/app_name"
                     android:textSize="30sp"
-                    app:fontFamily="@font/samsungsharpsans_bold"
-                    android:textColor="@color/secondary_text_default_material"/>
+                    android:textColor="@color/oui_primary_text_color"
+                    app:fontFamily="@font/samsungsharpsans_bold" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/header_app_subtitle"
+                    android:id="@+id/about_header_app_version"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="@string/app_subtitle"
                     android:textSize="14sp"
                     android:textColor="@color/about_page_secondary_text_color" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/about_header_github"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="?attr/actionBarItemBackground"
+                        app:srcCompat="@drawable/about_page_github" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/about_header_telegram"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/actionBarItemBackground"
+                        app:srcCompat="@drawable/about_page_telegram" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/about_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:background="@android:color/transparent"
@@ -72,7 +90,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_container"
+        android:id="@+id/about_bottom_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -84,12 +102,11 @@
             android:paddingHorizontal="24dp">
 
             <ImageView
-                android:id="@+id/bottom_app_icon"
+                android:id="@+id/about_bottom_app_icon"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:src="@mipmap/ic_launcher"/>
+                android:layout_alignParentStart="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -97,7 +114,7 @@
                 android:layout_marginStart="24dp"
                 android:paddingTop="14dp"
                 android:paddingBottom="14dp"
-                android:layout_toEndOf="@id/bottom_app_icon"
+                android:layout_toEndOf="@id/about_bottom_app_icon"
                 android:orientation="vertical">
 
                 <TextView
@@ -108,115 +125,32 @@
                     android:textAppearance="?android:attr/textAppearanceListItem" />
 
                 <TextView
-                    android:id="@+id/bottom_app_version"
+                    android:id="@+id/about_bottom_app_version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Version 1.0"
                     android:textAppearance="?android:attr/textAppearanceListItemSecondary"
                     android:textColor="?android:attr/textColorSecondary" />
 
             </LinearLayout>
 
         </RelativeLayout>
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:overScrollMode="always"
-            android:fillViewport="true"
-            android:scrollbars="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title_features"
-                    android:textSize="22sp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:fontFamily="sans-serif"
-                    android:textStyle="bold"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feature1"
-                    android:textSize="16sp"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:padding="0dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feature2"
-                    android:textSize="16sp"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:padding="0dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feature3"
-                    android:textSize="16sp"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:padding="0dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feature4"
-                    android:textSize="16sp"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:padding="0dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title_about"
-                    android:textSize="22sp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:fontFamily="sans-serif"
-                    android:textStyle="bold"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/about_text"
-                    android:textSize="16sp"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:padding="0dp" />
-
-            </LinearLayout>
-
-        </androidx.core.widget.NestedScrollView>
+        <include android:id="@+id/about_bottom_content"
+            layout="@layout/activity_about_content" />
 
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/swipe_up_container"
+        android:id="@+id/about_swipe_up_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
-        android:focusable="false"
-        android:visibility="gone">
+        android:focusable="false">
 
+        <!--
+            Kang from:
+            https://lottiefiles.com/24773-swipe-up-white-text
+        -->
         <com.airbnb.lottie.LottieAnimationView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
