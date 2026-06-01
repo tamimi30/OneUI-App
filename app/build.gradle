@@ -76,7 +76,7 @@ configurations.all {
 }
 
 dependencies {
-    rewrite platform('org.openrewrite:rewrite-bom:8.83.4')
+    rewrite platform('org.openrewrite:rewrite-bom:8.83.5')
     rewrite 'org.openrewrite:rewrite-java'
     rewrite 'org.openrewrite:rewrite-xml'
     rewrite 'org.openrewrite:rewrite-gradle'
