@@ -4,6 +4,7 @@
     android:id="@+id/toolbar_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:expanded="false"
     app:navigationIcon="@drawable/ic_oui_back"
     app:title="@string/title_settings">
 
