@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Font Viewer Plus Plus plus"
+                    android:text="Font Viewer plus OneUI Design 5 Library Samsung One"
                     android:textSize="30sp"
                     app:fontFamily="@font/samsungsharpsans_bold"
                     android:textColor="@color/oui_primary_text_color"/>
