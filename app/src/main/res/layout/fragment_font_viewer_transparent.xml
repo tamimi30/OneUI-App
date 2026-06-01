@@ -58,12 +58,10 @@
                 android:visibility="gone" />
 
             <!-- معاينة النص -->
-            <TextView
+            <<com.example.oneuiapp.widget.FontPreviewTextView
                 android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:clipToPadding="false"
                 android:lineSpacingExtra="7dp"
                 android:clickable="true"
                 android:focusable="true"
