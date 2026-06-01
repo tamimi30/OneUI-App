@@ -127,7 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="25dp"
+                android:paddingTop="34dp"
                 android:paddingHorizontal="18dp">
 
                 <TextView
@@ -138,7 +138,7 @@
                     android:textColor="?android:attr/textColorPrimary"
                     app:fontFamily="@font/samsung_one"
                     android:textStyle="bold"
-                    android:layout_marginBottom="3dp" />
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -147,7 +147,7 @@
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="9dp" />
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -156,7 +156,7 @@
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="9dp" />
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -165,7 +165,7 @@
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="9dp" />
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -174,7 +174,7 @@
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="29dp" />
+                    android:layout_marginBottom="34dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -184,7 +184,7 @@
                     android:textColor="?android:attr/textColorPrimary"
                     app:fontFamily="@font/product_sans"
                     android:textStyle="bold"
-                    android:layout_marginBottom="9dp" />
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:layout_width="match_parent"
