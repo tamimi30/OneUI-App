@@ -81,7 +81,7 @@ dependencies {
     rewrite 'org.openrewrite:rewrite-xml'
     rewrite 'org.openrewrite:rewrite-gradle'
     rewrite 'org.openrewrite.recipe:rewrite-static-analysis:2.34.1'
-    rewrite 'org.openrewrite.recipe:rewrite-java-dependencies:1.54.5'
+    rewrite 'org.openrewrite.recipe:rewrite-java-dependencies:1.55.2'
 
     implementation 'io.github.oneuiproject.sesl:appcompat:1.4.0'
     implementation 'io.github.oneuiproject.sesl:material:1.5.0'
