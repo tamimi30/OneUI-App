@@ -277,7 +277,12 @@ public class FontViewerFragment extends Fragment {
             loadLastUsedFont();
         }
 
+
         updatePreviewTexts();
+        
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).updateFabFontSizeText(currentFontSize);
+        }
     }
 
     @Override
@@ -307,11 +312,13 @@ public class FontViewerFragment extends Fragment {
         super.onDestroy();
         bgExecutor.shutdownNow();
     }
-
     private void onFontSizeChanged(float newSize) {
         currentFontSize = newSize;
         applyFontSize();
         preferenceManager.saveFontSize(newSize);
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).updateFabFontSizeText(newSize);
+        }
     }
 
     /**
