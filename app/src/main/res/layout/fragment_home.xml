@@ -136,9 +136,8 @@
                     android:text="@string/title_features"
                     android:textSize="21sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:fontFamily="sans-serif-light"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="10dp" />
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginBottom="6dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -146,7 +145,7 @@
                     android:text="@string/feature1"
                     android:textSize="14sp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginBottom="9dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -154,7 +153,7 @@
                     android:text="@string/feature2"
                     android:textSize="14sp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginBottom="9dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -162,7 +161,7 @@
                     android:text="@string/feature3"
                     android:textSize="14sp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginBottom="9dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -170,7 +169,7 @@
                     android:text="@string/feature4"
                     android:textSize="14sp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginBottom="26dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -178,9 +177,8 @@
                     android:text="@string/title_about"
                     android:textSize="21sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:fontFamily="sans-serif-light"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="10dp" />
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginBottom="9dp" />
 
                 <TextView
                     android:layout_width="match_parent"
