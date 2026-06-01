@@ -136,7 +136,7 @@
                     android:text="@string/title_features"
                     android:textSize="20sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="sans-serif-medium"
                     android:textStyle="bold"
                     android:layout_marginBottom="20dp" />
 
@@ -178,7 +178,7 @@
                     android:text="@string/title_about"
                     android:textSize="20sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="sans-serif-medium"
                     android:textStyle="bold"
                     android:layout_marginBottom="20dp" />
 
