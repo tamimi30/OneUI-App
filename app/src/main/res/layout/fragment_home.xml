@@ -127,7 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="29dp"
+                android:paddingTop="25dp"
                 android:paddingHorizontal="18dp">
 
                 <TextView
@@ -136,7 +136,7 @@
                     android:text="@string/title_features"
                     android:textSize="22sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:fontFamily="sans-serif-thin"
+                    app:fontFamily="@font/samsung_one"
                     android:textStyle="bold"
                     android:layout_marginBottom="3dp" />
 
@@ -180,9 +180,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_about"
-                    android:textSize="21sp"
+                    android:textSize="22sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:fontFamily="sans-serif-thin"
+                    app:fontFamily="@font/product_sans"
                     android:textStyle="bold"
                     android:layout_marginBottom="9dp" />
 
