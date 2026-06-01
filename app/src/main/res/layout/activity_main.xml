@@ -30,7 +30,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
         android:includeFontPadding="false"
-        android:padding="36dp"
         android:visibility="gone"
         android:background="@drawable/fab_bg"
         android:elevation="4dp"
