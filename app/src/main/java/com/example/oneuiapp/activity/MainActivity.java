@@ -196,7 +196,8 @@ public class MainActivity extends BaseActivity
     // mLocalFontsMoreMenuItem → انتقل إلى LocalFontListFragment
     // كل فراجمنت يُدير أيقوناته بشكل مستقل عبر setHasOptionsMenu(true)
 
-    private FloatingActionButton fabFontSize;
+    private android.widget.TextView fabFontSize;
+
 
     private SearchCoordinator mSearchCoordinator;
 
@@ -908,11 +909,25 @@ public class MainActivity extends BaseActivity
     public void updateFabVisibility(AppScreen screen) {
         if (fabFontSize == null) return;
 
-        // ★ زر FAB لتغيير حجم الخط متاح فقط في شاشة عارض الخطوط ★
         if (screen == AppScreen.FONT_VIEWER) {
-            fabFontSize.show(); // يظهر مع أنيميشن التكبير التدريجي (Scale Up)
+            if (fabFontSize.getVisibility() != android.view.View.VISIBLE) {
+                fabFontSize.setVisibility(android.view.View.VISIBLE);
+                fabFontSize.setScaleX(0f);
+                fabFontSize.setScaleY(0f);
+                fabFontSize.animate().scaleX(1f).scaleY(1f).setDuration(150).start();
+            }
         } else {
-            fabFontSize.hide(); // يختفي مع أنيميشن التصغير التدريجي (Scale Down)
+            if (fabFontSize.getVisibility() == android.view.View.VISIBLE) {
+                fabFontSize.animate().scaleX(0f).scaleY(0f).setDuration(150).withEndAction(() -> {
+                    fabFontSize.setVisibility(android.view.View.GONE);
+                }).start();
+            }
+        }
+    }
+
+    public void updateFabFontSizeText(float size) {
+        if (fabFontSize != null) {
+            fabFontSize.setText(String.valueOf(Math.round(size)));
         }
     }
 
