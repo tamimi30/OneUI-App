@@ -127,18 +127,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="24dp"
+                android:paddingTop="29dp"
                 android:paddingHorizontal="18dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_features"
-                    android:textSize="21sp"
+                    android:textSize="22sp"
                     android:textColor="?android:attr/textColorPrimary"
                     android:fontFamily="sans-serif-thin"
                     android:textStyle="bold"
-                    android:layout_marginBottom="4dp" />
+                    android:layout_marginBottom="3dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -174,7 +174,7 @@
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:layout_marginBottom="24dp" />
+                    android:layout_marginBottom="29dp" />
 
                 <TextView
                     android:layout_width="match_parent"
