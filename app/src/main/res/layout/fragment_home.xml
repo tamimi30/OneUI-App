@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:text="Version 1.0"
                     android:textAppearance="?android:attr/textAppearanceListItemSecondary"
-                    android:textColor="@color/secondary_text_icon_color_themed" />
+                    android:textColor="@color/primary_text_icon_color_themed" />
 
             </LinearLayout>
 
@@ -136,7 +136,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_features"
                     android:textSize="22sp"
-                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColor="@color/primary_text_icon_color_themed"
                     android:fontFamily="sans-serif"
                     android:textStyle="bold"
                     android:layout_marginTop="16dp"
@@ -187,7 +187,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_about"
                     android:textSize="22sp"
-                    android:textColor="@color/secondary_text_icon_color_themed"
+                    android:textColor="@color/primary_text_icon_color_themed"
                     android:fontFamily="sans-serif"
                     android:textStyle="bold"
                     android:layout_marginTop="24dp"
