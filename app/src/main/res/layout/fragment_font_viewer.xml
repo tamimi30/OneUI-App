@@ -17,7 +17,7 @@
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingVertical="27dp"
+            android:padding="27dp"
             android:clipChildren="false"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
@@ -40,36 +40,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginBottom="16dp"
-                android:visibility="gone" />
+                android:visibility="gone" />             
                 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/preview_sentence"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:clipChildren="false"
-                android:orientation="horizontal">
-                 
-                <Space
-                    android:layout_width="27dp"
-                    android:clipToPadding="false"
-                    android:background="@android:color/transparent" 
-                    android:layout_height="match_parent"/>        
-                
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/preview_sentence"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:lineSpacingExtra="7dp"
-                    android:textSize="18sp"
-                    android:textColor="@color/font_preview_text_color" />
-                    
-                <Space
-                    android:layout_width="27dp"
-                    android:clipToPadding="false"
-                    android:background="@android:color/transparent"
-                    android:layout_height="match_parent"/>
-                    
-            </LinearLayout>
+                android:layout_width="wrap_content"
+                android:lineSpacingExtra="7dp"
+                android:textSize="18sp"
+                android:textColor="@color/font_preview_text_color" />
         
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
         
