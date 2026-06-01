@@ -83,13 +83,16 @@ public class HomeFragment extends Fragment {
 
     private void setupToolbar() {
         if (getActivity() instanceof AppCompatActivity) {
-            ((AppCompatActivity) requireActivity()).setSupportActionBar(mToolbar);
-            if (((AppCompatActivity) requireActivity()).getSupportActionBar() != null) {
-                ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+            AppCompatActivity activity = (AppCompatActivity) requireActivity();
+            activity.setSupportActionBar(mToolbar);
+            if (activity.getSupportActionBar() != null) {
+                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
             }
+            mToolbar.setNavigationOnClickListener(v -> activity.onBackPressed());
         }
     }
+
 
     private void setupAppBar(Configuration config) {
         ToolbarLayoutUtils.hideStatusBarForLandscape(requireActivity(), config.orientation);
