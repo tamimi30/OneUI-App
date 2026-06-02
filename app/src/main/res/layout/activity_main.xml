@@ -23,12 +23,13 @@
         app:layout_location="drawer_panel" />
 
     <FrameLayout
+       android:id="@+id/fab_font_size"
        android:layout_width="56dp"
        android:layout_height="56dp"
        android:background="@drawable/fab_bg"
+       android:visibility="gone"
        android:clickable="true"
        android:focusable="true"
-       android:gravity="center"
        android:layout_gravity="bottom|end"
        android:layout_margin="24dp"
        android:tooltipText="@string/font_size_and_style"
@@ -40,6 +41,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:gravity="center"
+        android:layout_gravity="center"
         android:text="18"
         android:fontFamily="sans-serif"
         android:textColor="?android:attr/textColorPrimary"
