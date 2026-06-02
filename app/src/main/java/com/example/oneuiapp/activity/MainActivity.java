@@ -931,7 +931,7 @@ public class MainActivity extends BaseActivity
 
     public void updateFabFontSizeText(float size) {
         if (fabFontSizeText != null) {
-            fabFontText.setText(String.valueOf(Math.round(size)));
+            fabFontSizeText.setText(String.valueOf(Math.round(size)));
         }
     }
 
