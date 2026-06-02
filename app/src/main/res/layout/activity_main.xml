@@ -44,7 +44,7 @@
         android:includeFontPadding="false"
         android:layout_centerInParent="true"
         android:text="18"
-        android:fontFamily="sans-serif"
+        android:fontFamily="sec-roboto-light"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="24dp" />
 
