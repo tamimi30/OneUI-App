@@ -41,6 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
+        android:includeFontPadding="false"
         android:layout_centerInParent="true"
         android:text="18"
         android:fontFamily="sans-serif"
