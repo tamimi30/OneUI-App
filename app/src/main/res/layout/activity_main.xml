@@ -22,7 +22,7 @@
         android:scrollbars="vertical"
         app:layout_location="drawer_panel" />
 
-    <FrameLayout
+    <LinearLayout
        android:id="@+id/fab_font_size"
        android:layout_width="56dp"
        android:layout_height="56dp"
@@ -48,6 +48,6 @@
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="24dp" />
 
-    </FrameLayout>
+    </LinearLayout>
 
 </dev.oneuiproject.oneui.layout.DrawerLayout>
