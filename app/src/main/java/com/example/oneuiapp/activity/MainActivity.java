@@ -196,7 +196,9 @@ public class MainActivity extends BaseActivity
     // mLocalFontsMoreMenuItem → انتقل إلى LocalFontListFragment
     // كل فراجمنت يُدير أيقوناته بشكل مستقل عبر setHasOptionsMenu(true)
 
-    private android.widget.TextView fabFontSize;
+    private android.widget.FrameLayout fabFontSize;
+    private android.widget.TextView fabFontSizeText;
+
 
 
     private SearchCoordinator mSearchCoordinator;
@@ -370,8 +372,10 @@ public class MainActivity extends BaseActivity
     private void initViews() {
         mDrawerLayout   = findViewById(R.id.drawer_layout);
         mDrawerListView = findViewById(R.id.drawer_list_view);
-        fabFontSize     = findViewById(R.id.fab_font_size);
+        fabFontSize     = findViewById(R.id.fab_font_size); // ربط الحاوية الدائرية
+        fabFontSizeText = findViewById(R.id.fab_font_size_text); // ربط النص الداخلي
     }
+
 
     /**
      * ★ الخطوة الأولى: تهيئة Map الفراغمنتات بدون HomeFragment ★
@@ -926,8 +930,8 @@ public class MainActivity extends BaseActivity
     }
 
     public void updateFabFontSizeText(float size) {
-        if (fabFontSize != null) {
-            fabFontSize.setText(String.valueOf(Math.round(size)));
+        if (fabFontSizeText != null) {
+            fabFontText.setText(String.valueOf(Math.round(size)));
         }
     }
 
