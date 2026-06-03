@@ -61,7 +61,7 @@ public class FontSizeDialog {
 
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Font Adjustment");
+        builder.setTitle(R.strig.font_size_dialog_title);
 
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_font_size, null);
         builder.setView(dialogView);
