@@ -42,6 +42,7 @@ public class FontSizeDialog {
 
     private AlertDialog dialog;
     private float tempSize;
+    private float lastAppliedSize;
 
     public FontSizeDialog(Context context, float currentSize, float minSize, float maxSize) {
         this.context     = context;
@@ -49,6 +50,7 @@ public class FontSizeDialog {
         this.minSize     = minSize;
         this.maxSize     = maxSize;
         this.tempSize    = currentSize;
+        this.lastAppliedSize = currentSize;
     }
 
     public void setOnFontSizeChangedListener(OnFontSizeChangedListener listener) {
@@ -67,18 +69,12 @@ public class FontSizeDialog {
         builder.setView(dialogView);
         fontSizeValue = dialogView.findViewById(R.id.font_size_value);
 
-        // ★ 1. إجبار التظليل دائماً عند النقر المفرد أو المزدوج ★
-        fontSizeValue.setOnTouchListener((v, event) -> {
-            if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
-                fontSizeValue.post(() -> {
-                    if (fontSizeValue.hasFocus()) fontSizeValue.selectAll();
-                });
-            }
-            return false;
-        });
-        fontSizeValue.setLongClickable(false);
+                fontSizeValue.setLongClickable(false);
 
-        // ★ 2. منع قوائم النسخ واللصق مع الحفاظ على التظليل الأزرق ★
+        // 1. الحفاظ على التظليل عند النقر (المفرد أو المزدوج) ويسمح بالكتابة
+        fontSizeValue.setOnClickListener(v -> fontSizeValue.selectAll());
+
+        // 2. منع قوائم النسخ واللصق
         fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
             @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
             @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
@@ -95,23 +91,24 @@ public class FontSizeDialog {
             });
         }
 
-        // ★ 3. معالجة فقدان التركيز (إغلاق الكيبورد وحالة الحقل الفارغ) ★
+        // 3. معالجة التركيز والحقل الفارغ
         fontSizeValue.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 fontSizeValue.post(() -> fontSizeValue.selectAll());
             } else {
                 String text = fontSizeValue.getText().toString();
                 if (text.isEmpty()) {
-                    // الحقل فارغ: العودة لآخر حجم مُطبَّق فعلياً
+                    // إذا كان فارغاً، استرجع آخر حجم مطبق فعلياً
+                    tempSize = lastAppliedSize;
                     updateFontSizeText(tempSize);
                     seekBar.setProgress((int) (tempSize - minSize));
                 } else {
-                    // تطبيق الحجم الجديد
                     try {
                         float enteredSize = Float.parseFloat(text);
                         if (enteredSize > maxSize) enteredSize = maxSize;
                         if (enteredSize < minSize) enteredSize = minSize;
                         tempSize = enteredSize;
+                        lastAppliedSize = tempSize; // حفظ الرقم المطبق الجديد
                         seekBar.setProgress((int) (tempSize - minSize));
                         updateFontSizeText(tempSize);
                         if (sizeListener != null) {
@@ -124,25 +121,24 @@ public class FontSizeDialog {
             }
         });
 
-        // ★ 4. مراقبة حركة الكيبورد لإزالة التركيز والتظليل عند ضغط زر الرجوع ★
+        // 4. مراقبة حركة الكيبورد لإزالة التظليل عند إغلاقه بزر الرجوع
         dialogView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             android.graphics.Rect r = new android.graphics.Rect();
             dialogView.getWindowVisibleDisplayFrame(r);
             int screenHeight = dialogView.getRootView().getHeight();
             int keypadHeight = screenHeight - r.bottom;
 
-            // إذا كان ارتفاع الكيبورد أقل من 15% (مغلق)
             if (keypadHeight < screenHeight * 0.15) {
                 if (fontSizeValue.hasFocus()) {
-                    fontSizeValue.clearFocus(); // يزيل التظليل ويحفز تطبيق الرقم
+                    fontSizeValue.clearFocus();
                 }
             }
         });
 
-        // ★ 5. معالجة زر "تم" (Done) من الكيبورد ★
+        // 5. معالجة زر "تم" من الكيبورد
         fontSizeValue.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                fontSizeValue.clearFocus(); // ننقل التركيز ليقوم OnFocusChangeListener بتطبيق الرقم
+                fontSizeValue.clearFocus();
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
@@ -151,6 +147,7 @@ public class FontSizeDialog {
             }
             return false;
         });
+
         seekBar       = dialogView.findViewById(R.id.font_size_seekbar);
 
         setupSeekBar();
@@ -207,12 +204,16 @@ public class FontSizeDialog {
             @Override
             public void onProgressChanged(SeslSeekBar seekBar, int progress, boolean fromUser) {
                 tempSize = minSize + progress;
+                if (fromUser) {
+                    lastAppliedSize = tempSize; // حفظ الحجم عند تغييره بالشريط
+                }
                 updateFontSizeText(tempSize);
 
                 if (sizeListener != null && fromUser) {
                     sizeListener.onFontSizeChanged(tempSize);
                 }
             }
+
 
             @Override
             public void onStartTrackingTouch(SeslSeekBar seekBar) {}
