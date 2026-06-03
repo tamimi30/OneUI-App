@@ -28,7 +28,7 @@
             android:fontFamily="sec-bold"
             android:layout_marginBottom="12dp" />
 
-        <TextView
+        <EditText
             android:id="@+id/font_size_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +36,13 @@
             android:textSize="34sp"
             android:textColor="?android:attr/textColorPrimary"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:background="@null"
+            android:inputType="number"
+            android:imeOptions="actionDone"
+            android:selectAllOnFocus="true"
+            android:gravity="center" />
+
 
         <androidx.appcompat.widget.SeslSeekBar
             android:id="@+id/font_size_seekbar"
