@@ -24,8 +24,8 @@
 
     <RelativeLayout
        android:id="@+id/fab_font_size"
-       android:layout_width="56dp"
-       android:layout_height="56dp"
+       android:layout_width="56.0dip"
+       android:layout_height="56.0dip"
        android:background="@drawable/fab_bg"
        android:visibility="gone"
        android:clickable="true"
@@ -49,7 +49,7 @@
         android:includeFontPadding="false"
         android:fontFamily="roboto-num3R"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="24dp" />
+        android:textSize="24.0dip" />
 
     </RelativeLayout>
 
