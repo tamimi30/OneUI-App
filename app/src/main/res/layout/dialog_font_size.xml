@@ -32,6 +32,7 @@
             android:id="@+id/font_size_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="80dp"
             android:text="18"
             android:textSize="34sp"
             android:textColor="?android:attr/textColorPrimary"
