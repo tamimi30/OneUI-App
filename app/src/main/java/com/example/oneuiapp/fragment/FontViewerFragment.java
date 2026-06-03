@@ -80,7 +80,7 @@ public class FontViewerFragment extends Fragment {
 
     private static final float DEFAULT_FONT_SIZE   = 18f;
     private static final float MIN_FONT_SIZE       = 11f;
-    private static final float MAX_FONT_SIZE       = 100f;
+    private static final float MAX_FONT_SIZE       = 99f;
     private static final float DEFAULT_FONT_WEIGHT = 400f;
 
     // ★ مراجع واجهة المستخدم ★
@@ -794,6 +794,11 @@ public class FontViewerFragment extends Fragment {
             currentTypeface   = originalTypeface;
             applyFontToPreviewTexts();
             applyFontSize();
+            
+            // تحديث زر الـ FAB ليعود للرقم القديم عند الإلغاء
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).updateFabFontSizeText(originalSize);
+            }
         });
 
         fontSizeDialog.show();
