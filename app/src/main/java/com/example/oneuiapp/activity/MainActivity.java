@@ -374,11 +374,6 @@ public class MainActivity extends BaseActivity
         mDrawerListView = findViewById(R.id.drawer_list_view);
         fabFontSize     = findViewById(R.id.fab_font_size); // ربط الحاوية الدائرية
         fabFontSizeText = findViewById(R.id.fab_font_size_text); // ربط النص الداخلي
-        
-        // إجبار زر الـ FAB على سحب لون الخلفية من ثيم التطبيق الحالي وليس من كاش النظام
-        if (fabFontSize != null) {
-            fabFontSize.setBackgroundResource(R.drawable.fab_bg);
-        }
     }
 
 
@@ -1262,4 +1257,4 @@ public class MainActivity extends BaseActivity
         }
         updateDrawerTitle(screen);
     }
-        }
+                    }
