@@ -103,8 +103,26 @@ public class FontSizeDialog {
         setupSeekBar();
 
         builder.setPositiveButton("OK", (dialog, which) -> {
+            // سحب الرقم المكتوب في الحقل قبل الإغلاق وتطبيقه
+            String inputText = fontSizeValue.getText().toString();
+            if (!inputText.isEmpty()) {
+                try {
+                    float enteredSize = Float.parseFloat(inputText);
+                    if (enteredSize > maxSize) enteredSize = maxSize;
+                    if (enteredSize < minSize) enteredSize = minSize;
+                    tempSize = enteredSize;
+                } catch (NumberFormatException ignored) {}
+            }
+            
             if (sizeListener != null) {
                 sizeListener.onFontSizeChanged(tempSize);
+            }
+            
+            // إغلاق الكيبورد لمنعه من البقاء عالقاً في الشاشة
+            fontSizeValue.clearFocus();
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
             }
         });
 
