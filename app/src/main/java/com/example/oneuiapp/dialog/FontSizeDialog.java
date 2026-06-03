@@ -4,6 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.EditText;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
@@ -34,8 +37,7 @@ public class FontSizeDialog {
     private final float maxSize;
     private OnFontSizeChangedListener sizeListener;
     private OnDialogCancelledListener cancelListener;
-
-    private TextView fontSizeValue;
+    private EditText fontSizeValue;
     private SeslSeekBar seekBar;
 
     private AlertDialog dialog;
@@ -65,6 +67,37 @@ public class FontSizeDialog {
         builder.setView(dialogView);
 
         fontSizeValue = dialogView.findViewById(R.id.font_size_value);
+
+        fontSizeValue.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                String inputText = fontSizeValue.getText().toString();
+                if (!inputText.isEmpty()) {
+                    try {
+                        float enteredSize = Float.parseFloat(inputText);
+                        if (enteredSize > maxSize) enteredSize = maxSize;
+                        if (enteredSize < minSize) enteredSize = minSize;
+
+                        int newProgress = (int) (enteredSize - minSize);
+                        seekBar.setProgress(newProgress);
+                        updateFontSizeText(enteredSize);
+                        tempSize = enteredSize;
+                        
+                        if (sizeListener != null) {
+                            sizeListener.onFontSizeChanged(enteredSize);
+                        }
+                    } catch (NumberFormatException e) {
+                        updateFontSizeText(tempSize);
+                    }
+                }
+                fontSizeValue.clearFocus();
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
+                }
+                return true;
+            }
+            return false;
+        });
         seekBar       = dialogView.findViewById(R.id.font_size_seekbar);
 
         setupSeekBar();
