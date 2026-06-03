@@ -43,6 +43,8 @@
         android:visibility="visible"
         android:gravity="center"
         android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
         android:text="18"
         android:includeFontPadding="false"
         android:fontFamily="roboto-num3R"
