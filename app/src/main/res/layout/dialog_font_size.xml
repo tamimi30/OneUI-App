@@ -19,14 +19,14 @@
         android:paddingTop="16dp"
         android:paddingBottom="8dp">
 
-        <TextView
+      <!--  <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/font_size_dialog_title"
             android:textSize="16sp"
             android:textColor="?android:attr/textColorPrimary"
             android:fontFamily="sec-bold"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp" />-->
 
         <EditText
             android:id="@+id/font_size_value"
