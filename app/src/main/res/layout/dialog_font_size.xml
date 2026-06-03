@@ -42,6 +42,8 @@
             android:inputType="number"
             android:imeOptions="actionDone"
             android:selectAllOnFocus="true"
+            android:maxLength="2"
+            android:textColorHighlight="@color/sesl_number_picker_text_highlight_color"
             android:gravity="center" />
 
 
