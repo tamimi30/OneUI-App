@@ -22,7 +22,7 @@
         android:scrollbars="vertical"
         app:layout_location="drawer_panel" />
 
-    <RelativeLayout
+    <FrameLayout
        android:id="@+id/fab_font_size"
        android:layout_width="56.0dip"
        android:layout_height="56.0dip"
@@ -42,14 +42,13 @@
         android:layout_height="wrap_content"
         android:visibility="visible"
         android:gravity="center"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:text="18"
         android:includeFontPadding="false"
         android:fontFamily="roboto-num3R"
         android:textColor="?android:attr/textColorPrimary"
-        android:outlineProvider="background"
         android:textSize="24.0dip" />
 
-    </RelativeLayout>
+    </FrameLayout>
 
 </dev.oneuiproject.oneui.layout.DrawerLayout>
