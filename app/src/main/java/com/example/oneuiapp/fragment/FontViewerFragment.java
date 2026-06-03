@@ -79,8 +79,8 @@ public class FontViewerFragment extends Fragment {
     private static final String TAG = "FontViewerFragment";
 
     private static final float DEFAULT_FONT_SIZE   = 18f;
-    private static final float MIN_FONT_SIZE       = 12f;
-    private static final float MAX_FONT_SIZE       = 45f;
+    private static final float MIN_FONT_SIZE       = 11f;
+    private static final float MAX_FONT_SIZE       = 100f;
     private static final float DEFAULT_FONT_WEIGHT = 400f;
 
     // ★ مراجع واجهة المستخدم ★
@@ -766,7 +766,7 @@ public class FontViewerFragment extends Fragment {
 
     private void applyFontSize() {
         if (previewSentence != null) {
-            previewSentence.setTextSize(TypedValue.COMPLEX_UNIT_SP, currentFontSize);
+            previewSentence.setTextSize(TypedValue.COMPLEX_UNIT_DIP, currentFontSize);
         }
     }
 
