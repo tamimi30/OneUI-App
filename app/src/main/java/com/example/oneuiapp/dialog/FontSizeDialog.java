@@ -171,7 +171,13 @@ public class FontSizeDialog {
 
     private void updateFontSizeText(float size) {
         if (fontSizeValue != null) {
-            fontSizeValue.setText(String.format("%.0f", size));
+            String newText = String.format("%.0f", size);
+            // تحديث النص فقط إذا كان مختلفاً لمنع إعادة تعيين المؤشر (Cursor)
+            if (!fontSizeValue.getText().toString().equals(newText)) {
+                fontSizeValue.setText(newText);
+                // وضع المؤشر في نهاية الرقم تلقائياً لراحة المستخدم
+                fontSizeValue.setSelection(newText.length());
+            }
         }
     }
 
