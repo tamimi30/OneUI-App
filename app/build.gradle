@@ -65,7 +65,7 @@ configurations.all {
     exclude group: 'androidx.core', module: 'core'
 
     resolutionStrategy {
-        force 'org.jetbrains.kotlin:kotlin-stdlib:2.3.21'
+        force 'org.jetbrains.kotlin:kotlin-stdlib:2.4.0'
         force 'androidx.annotation:annotation:1.10.0'
         force 'com.google.guava:guava:33.6.0-jre'
     }
