@@ -28,8 +28,8 @@
         android:layout_height="56dp"
         app:cardBackgroundColor="@color/background_floating_material"
         app:cardCornerRadius="28dp"
-        app:cardElevation="4dp"
-        android:foreground="?attr/selectableItemBackground"
+        app:cardElevation="5dp"
+        android:foreground="@drawable/font_list_ripple"
         android:visibility="gone"
         android:clickable="true"
         android:focusable="true"
@@ -43,10 +43,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center"
             android:text="18"
             android:includeFontPadding="false"
             android:fontFamily="roboto-num3R"
-            android:textColor="?android:attr/textColorPrimary"
+            android:textColor="@color/oui_primary_text_color"
             android:textSize="24dp" />
 
     </androidx.cardview.widget.CardView>
