@@ -65,8 +65,29 @@ public class FontSizeDialog {
 
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_font_size, null);
         builder.setView(dialogView);
-
         fontSizeValue = dialogView.findViewById(R.id.font_size_value);
+
+        // ★ 1. إلغاء عمل المؤشر بين الأرقام وإجبار التظليل الكامل عند النقر ★
+        fontSizeValue.setOnClickListener(v -> fontSizeValue.selectAll());
+        fontSizeValue.setLongClickable(false); // منع الضغط المطول
+
+        // ★ 2. منع ظهور قائمة (نسخ/لصق) مع الإبقاء على التظليل الأزرق ★
+        fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
+            @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
+            @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
+            @Override public boolean onActionItemClicked(android.view.ActionMode mode, android.view.MenuItem item) { return false; }
+            @Override public void onDestroyActionMode(android.view.ActionMode mode) {}
+        });
+
+        // ★ 3. منع ظهور مؤشر الإدراج (القطرة) في النظام ★
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            fontSizeValue.setCustomInsertionActionModeCallback(new android.view.ActionMode.Callback() {
+                @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
+                @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
+                @Override public boolean onActionItemClicked(android.view.ActionMode mode, android.view.MenuItem item) { return false; }
+                @Override public void onDestroyActionMode(android.view.ActionMode mode) {}
+            });
+        }
 
         fontSizeValue.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
