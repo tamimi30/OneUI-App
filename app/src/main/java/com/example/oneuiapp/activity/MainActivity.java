@@ -196,7 +196,7 @@ public class MainActivity extends BaseActivity
     // mLocalFontsMoreMenuItem → انتقل إلى LocalFontListFragment
     // كل فراجمنت يُدير أيقوناته بشكل مستقل عبر setHasOptionsMenu(true)
 
-    private android.widget.FrameLayout fabFontSize;
+    private View fabFontSize;
     private android.widget.TextView fabFontSizeText;
 
 
@@ -1257,4 +1257,4 @@ public class MainActivity extends BaseActivity
         }
         updateDrawerTitle(screen);
     }
-                    }
+                }
