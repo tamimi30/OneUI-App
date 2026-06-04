@@ -38,7 +38,7 @@
     <item name="hideMotionSpec">@animator/design_fab_hide_motion_spec</item>
   </style>
 
-  <style name="ExtendedFab" parent="Widget.MaterialComponents.FloatingActionButton">
+  <style name="ExtendedFab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
         <item name="backgroundTint">@color/fab_bg_color</item>
         <item name="rippleColor">@color/mtrl_fab_ripple_color</item>
         <item name="elevation">@dimen/design_fab_elevation</item>
