@@ -42,6 +42,8 @@
 
     <color name="font_preview_text_color">@color/sesl_description_text_color_dark</color>
 
+    <color name="fab_bg_color">#252525</color>
+
 
    <!-- <color name="sesl_primary_dark_color">@color/sesl_primary_dark_color_dark</color>
     <color name="sesl_primary_dark_color_dark">#2d2d30</color> -->
