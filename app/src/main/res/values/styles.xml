@@ -47,7 +47,7 @@
     <item name="enforceMaterialTheme">true</item>
     <item name="ensureMinTouchTargetSize">true</item>
     <item name="elevation">@dimen/mtrl_fab_elevation</item>
-    <item name="backgroundTint">@color/fab_bg_color</item>
+    <item name="backgroundTint">@color/mtrl_fab_bg_color_selector</item>
     <item name="tint">@color/mtrl_fab_icon_text_color_selector</item>
     <item name="hoveredFocusedTranslationZ">@dimen/mtrl_fab_translation_z_hovered_focused</item>
     <item name="pressedTranslationZ">@dimen/mtrl_fab_translation_z_pressed</item>
