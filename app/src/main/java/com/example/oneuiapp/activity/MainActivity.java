@@ -196,8 +196,7 @@ public class MainActivity extends BaseActivity
     // mLocalFontsMoreMenuItem → انتقل إلى LocalFontListFragment
     // كل فراجمنت يُدير أيقوناته بشكل مستقل عبر setHasOptionsMenu(true)
 
-    private View fabFontSize;
-    private android.widget.TextView fabFontSizeText;
+    private ExtendedFloatingActionButton fabFontSize;
 
 
 
@@ -372,8 +371,7 @@ public class MainActivity extends BaseActivity
     private void initViews() {
         mDrawerLayout   = findViewById(R.id.drawer_layout);
         mDrawerListView = findViewById(R.id.drawer_list_view);
-        fabFontSize     = findViewById(R.id.fab_font_size); // ربط الحاوية الدائرية
-        fabFontSizeText = findViewById(R.id.fab_font_size_text); // ربط النص الداخلي
+        fabFontSize = findViewById(R.id.fab_font_size);
     }
 
 
