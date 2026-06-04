@@ -37,7 +37,9 @@
 
    <color name="background_floating_material">@color/background_floating_material_light</color>
 
-    <color name="fab_bg_color">#FAFAFA</color>
+    <color name="sesl_background_floating">@color/sesl_background_floating_light</color>
+
+    <color name="fabb_bg_color">#FAFAFA</color>
 
 <!--  <color name="sesl_menu_popup_background">@color/sesl_menu_popup_background_color</color>
 
