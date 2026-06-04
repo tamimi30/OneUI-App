@@ -22,7 +22,7 @@
     </style>
 
   <!-- FAB -->
-  <style name="Widget.Design.FloatingActionButton" parent="android:Widget">
+  <!--  <style name="Widget.Design.FloatingActionButton" parent="android:Widget">
     <item name="android:background">@drawable/design_fab_background</item>
     <item name="android:clickable">true</item>
     <item name="android:focusable">true</item>
@@ -36,7 +36,7 @@
     <item name="maxImageSize">@dimen/design_fab_image_size</item>
     <item name="showMotionSpec">@animator/design_fab_show_motion_spec</item>
     <item name="hideMotionSpec">@animator/design_fab_hide_motion_spec</item>
-  </style>
+  </style>-->
 
  <!-- <style name="ExtendedFab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
         <item name="backgroundTint">@color/fab_bg_color</item>
@@ -48,7 +48,7 @@
   </style> -->
   
   <!-- FAB -->
-  <style name="Widget.MaterialComponents.FloatingActionButton" parent="Widget.Design.FloatingActionButton">
+  <!--<style name="Widget.MaterialComponents.FloatingActionButton" parent="Widget.Design.FloatingActionButton">
     <item name="android:background">@null</item>
     <item name="enforceMaterialTheme">true</item>
     <item name="ensureMinTouchTargetSize">true</item>
@@ -64,7 +64,7 @@
     <item name="shapeAppearanceOverlay">
       @style/ShapeAppearanceOverlay.MaterialComponents.FloatingActionButton
     </item>
-  </style>
+  </style>-->
 
 
 </resources>
