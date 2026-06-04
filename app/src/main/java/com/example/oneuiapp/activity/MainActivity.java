@@ -19,8 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.app.AlertDialog;
 
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -929,8 +930,8 @@ public class MainActivity extends BaseActivity
     }
 
     public void updateFabFontSizeText(float size) {
-        if (fabFontSizeText != null) {
-            fabFontSizeText.setText(String.valueOf(Math.round(size)));
+        if (fabFontSize != null) {
+            fabFontSize.setText(String.valueOf(Math.round(size)));
         }
     }
 
