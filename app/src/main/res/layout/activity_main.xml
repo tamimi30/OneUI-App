@@ -35,7 +35,6 @@
         app:hideMotionSpec="@animator/mtrl_fab_hide_motion_spec"
         android:visibility="gone"
         app:fabSize="normal"
-        app:borderWidth="1dp"
         android:tooltipText="@string/font_size_and_style"
         app:layout_location="root" />
 
