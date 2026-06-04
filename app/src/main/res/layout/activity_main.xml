@@ -26,6 +26,7 @@
         android:id="@+id/fab_font_size"
         android:layout_width="56dp"
         android:layout_height="56dp"
+        app:cardBackgroundColor="@color/background_floating_material"
         app:cardCornerRadius="28dp"
         app:cardElevation="5dp"
         android:foreground="@drawable/font_list_ripple"
