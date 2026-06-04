@@ -40,7 +40,7 @@ import com.example.oneuiapp.R;
 import com.example.oneuiapp.utils.FileUtils;
 import com.example.oneuiapp.utils.TranslationService;
 import com.example.oneuiapp.fontlist.search.SearchCoordinator;
-import com.example.oneuiapp.widget;
+import com.example.oneuiapp.widget.TextDrawable;
 
 /**
  * MainActivity - معدّل لعرض العناوين بشكل صحيح
