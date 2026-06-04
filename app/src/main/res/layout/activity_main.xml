@@ -35,7 +35,6 @@
         android:visibility="gone"
         android:tooltipText="@string/font_size_and_style"
         app:backgroundTint="@color/background_floating_material"
-        app:layout_location="root"
-        android:theme="@style/Theme.MaterialComponents.Light" />
+        app:layout_location="root" />
 
 </dev.oneuiproject.oneui.layout.DrawerLayout>
