@@ -926,7 +926,7 @@ public class MainActivity extends BaseActivity
             // جلب لون النص الخاص بثيم OneUI
             int textColor = getColor(dev.oneuiproject.oneui.design.R.color.oui_primary_text_color);
             // رسم الرقم بحجم 60 ووضعه كصورة داخل الزر العادي
-            fabFontSize.setImageDrawable(new (String.valueOf(Math.round(size)), 24f, textColor));
+            fabFontSize.setImageDrawable(new TextDrawable(String.valueOf(Math.round(size)), 24f, textColor));
         }
     }
 
