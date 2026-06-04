@@ -23,6 +23,9 @@
 
      <color name="background_floating_material">@color/background_floating_material_dark</color>
 
+    <color name="sesl_background_floating">@color/sesl_background_floating_dark</color>
+
+
   <!--  <color name="sesl_menu_popup_background">@color/sesl_menu_popup_background_color_dark</color>
 
     <color name="sesl_dialog_window_background_color_material">@color/sesl_dialog_window_background_color_material_dark</color>-->
@@ -42,7 +45,7 @@
 
     <color name="font_preview_text_color">@color/sesl_description_text_color_dark</color>
 
-    <color name="fab_bg_color">#252525</color>
+    <color name="fabb_bg_color">#252525</color>
 
 
    <!-- <color name="sesl_primary_dark_color">@color/sesl_primary_dark_color_dark</color>
