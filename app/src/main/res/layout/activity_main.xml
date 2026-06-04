@@ -24,6 +24,7 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_font_size"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_gravity="bottom|end"
@@ -34,9 +35,14 @@
         android:fontFamily="roboto-num3R"
         android:visibility="gone"
         android:tooltipText="@string/font_size_and_style"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:padding="0dp"
+        android:gravity="center"
         app:backgroundTint="@color/background_floating_material"
-        app:layout_location="root"
-        android:theme="@style/Theme.MaterialComponents.Light"
-        android:gravity="center" />
+        app:cornerRadius="28dp"
+        app:elevation="@dimen/design_fab_elevation"
+        app:rippleColor="@color/mtrl_fab_ripple_color"
+        app:layout_location="root" />
 
 </dev.oneuiproject.oneui.layout.DrawerLayout>
