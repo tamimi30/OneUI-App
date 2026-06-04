@@ -924,7 +924,7 @@ public class MainActivity extends BaseActivity
     public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
             // جلب لون النص الخاص بثيم OneUI
-            int textColor = getColor(R.color.oui_primary_text_color);
+            int textColor = getColor(dev.oneuiproject.oneui.design.R.color.oui_primary_text_color);
             // رسم الرقم بحجم 60 ووضعه كصورة داخل الزر العادي
             fabFontSize.setImageDrawable(new TextDrawable(String.valueOf(Math.round(size)), 24f, textColor));
         }
