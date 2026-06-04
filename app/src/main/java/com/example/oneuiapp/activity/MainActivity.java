@@ -19,9 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.app.AlertDialog;
 
-//import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -198,7 +196,7 @@ public class MainActivity extends BaseActivity
     // mLocalFontsMoreMenuItem → انتقل إلى LocalFontListFragment
     // كل فراجمنت يُدير أيقوناته بشكل مستقل عبر setHasOptionsMenu(true)
 
-    private ExtendedFloatingActionButton fabFontSize;
+    private FloatingActionButton fabFontSize;
 
 
 
@@ -914,24 +912,20 @@ public class MainActivity extends BaseActivity
         if (fabFontSize == null) return;
 
         if (screen == AppScreen.FONT_VIEWER) {
-            if (fabFontSize.getVisibility() != android.view.View.VISIBLE) {
-                fabFontSize.setVisibility(android.view.View.VISIBLE);
-                fabFontSize.setScaleX(0f);
-                fabFontSize.setScaleY(0f);
-                fabFontSize.animate().scaleX(1f).scaleY(1f).setDuration(150).start();
-            }
+            // هذا الأمر سيقرأ الأنيميشن من الـ XML ويطبقه تلقائياً
+            fabFontSize.show(); 
         } else {
-            if (fabFontSize.getVisibility() == android.view.View.VISIBLE) {
-                fabFontSize.animate().scaleX(0f).scaleY(0f).setDuration(150).withEndAction(() -> {
-                    fabFontSize.setVisibility(android.view.View.GONE);
-                }).start();
-            }
+            // هذا الأمر سيقرأ أنيميشن الاختفاء من الـ XML
+            fabFontSize.hide(); 
         }
     }
 
     public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
-            fabFontSize.setText(String.valueOf(Math.round(size)));
+            // جلب لون النص الخاص بثيم OneUI
+            int textColor = getColor(R.color.oui_primary_text_color);
+            // رسم الرقم بحجم 60 ووضعه كصورة داخل الزر العادي
+            fabFontSize.setImageDrawable(new com.example.oneuiapp.utils.TextDrawable(String.valueOf(Math.round(size)), 24f, textColor));
         }
     }
 
