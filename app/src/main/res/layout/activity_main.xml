@@ -30,6 +30,7 @@
         android:layout_margin="24dp"
         android:backgroundTint="@color/sesl_background_floating"
         android:visibility="gone"
+        android:elevation="4.0dip"
         android:tooltipText="@string/font_size_and_style"
         app:layout_location="root" />
 
