@@ -22,18 +22,15 @@
         android:scrollbars="vertical"
         app:layout_location="drawer_panel" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_font_size"
-        style="@style/ExtendedFab"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
-        android:text="18"
-        android:textColor="@color/oui_primary_text_color"
-        android:textSize="24dp"
-        android:fontFamily="roboto-num3R"
         android:visibility="gone"
         android:tooltipText="@string/font_size_and_style"
-        app:layout_location="root"
-        android:theme="@style/Theme.MaterialComponents.DayNight" />
+        app:layout_location="root" />
 
 </dev.oneuiproject.oneui.layout.DrawerLayout>
