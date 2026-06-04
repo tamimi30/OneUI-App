@@ -21,4 +21,23 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <style name="ExtendedFab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
+        <item name="android:layout_width">56dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="cornerRadius">28dp</item>
+    
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:gravity">center</item>
+    
+        <item name="backgroundTint">@color/background_floating_material</item>
+        <item name="rippleColor">@color/mtrl_fab_ripple_color</item>
+        <item name="elevation">@dimen/design_fab_elevation</item>
+    
+        <item name="showMotionSpec">@animator/mtrl_fab_show_motion_spec</item>
+        <item name="hideMotionSpec">@animator/mtrl_fab_hide_motion_spec</item>
+    </style>
+
+
 </resources>
