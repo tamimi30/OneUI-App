@@ -40,6 +40,7 @@ import com.example.oneuiapp.R;
 import com.example.oneuiapp.utils.FileUtils;
 import com.example.oneuiapp.utils.TranslationService;
 import com.example.oneuiapp.fontlist.search.SearchCoordinator;
+import com.example.oneuiapp.widget;
 
 /**
  * MainActivity - معدّل لعرض العناوين بشكل صحيح
@@ -925,7 +926,7 @@ public class MainActivity extends BaseActivity
             // جلب لون النص الخاص بثيم OneUI
             int textColor = getColor(R.color.oui_primary_text_color);
             // رسم الرقم بحجم 60 ووضعه كصورة داخل الزر العادي
-            fabFontSize.setImageDrawable(new com.example.oneuiapp.utils.TextDrawable(String.valueOf(Math.round(size)), 24f, textColor));
+            fabFontSize.setImageDrawable(new TextDrawable(String.valueOf(Math.round(size)), 24f, textColor));
         }
     }
 
