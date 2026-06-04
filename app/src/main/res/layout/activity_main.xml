@@ -22,34 +22,20 @@
         android:scrollbars="vertical"
         app:layout_location="drawer_panel" />
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_font_size"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        app:cardBackgroundColor="@color/background_floating_material"
-        app:cardCornerRadius="28dp"
-        app:cardElevation="5dp"
-        android:foreground="@drawable/font_list_ripple"
-        android:visibility="gone"
-        android:clickable="true"
-        android:focusable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
+        android:text="18"
+        android:textColor="@color/oui_primary_text_color"
+        android:textSize="24dp"
+        android:fontFamily="roboto-num3R"
+        android:visibility="gone"
         android:tooltipText="@string/font_size_and_style"
-        app:layout_location="root">
-
-        <TextView
-            android:id="@+id/fab_font_size_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="18"
-            android:includeFontPadding="false"
-            android:fontFamily="roboto-num3R"
-            android:textColor="@color/oui_primary_text_color"
-            android:textSize="24dp" />
-
-    </androidx.cardview.widget.CardView>
+        app:backgroundTint="@color/background_floating_material"
+        app:layout_location="root"
+        android:theme="@style/Theme.MaterialComponents.Light" />
 
 </dev.oneuiproject.oneui.layout.DrawerLayout>
