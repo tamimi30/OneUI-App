@@ -18,7 +18,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -197,7 +196,7 @@ public class MainActivity extends BaseActivity
     // mLocalFontsMoreMenuItem → انتقل إلى LocalFontListFragment
     // كل فراجمنت يُدير أيقوناته بشكل مستقل عبر setHasOptionsMenu(true)
 
-    private androidx.cardview.widget.CardView fabFontSize;
+    private View fabFontSize;
     private android.widget.TextView fabFontSizeText;
 
 
@@ -1258,4 +1257,4 @@ public class MainActivity extends BaseActivity
         }
         updateDrawerTitle(screen);
     }
-                }
+                                                          }
