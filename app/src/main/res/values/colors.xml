@@ -37,6 +37,7 @@
 
    <color name="background_floating_material">@color/background_floating_material_light</color>
 
+    <color name="fab_bg_color">#FAFAFA</color>
 
 <!--  <color name="sesl_menu_popup_background">@color/sesl_menu_popup_background_color</color>
 
@@ -60,6 +61,8 @@
     <color name="sesl_description_text_color">@color/sesl_description_text_color_light</color>
 
     <color name="font_preview_text_color">@color/sesl_primary_text_color_light</color>
+
+    
 
 
  <!--   <color name="primary_material_2">@color/primary_color_themed</color>
