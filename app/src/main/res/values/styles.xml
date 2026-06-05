@@ -31,7 +31,7 @@
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="backgroundTint">@color/background_floating_material</item>
-        <item name="android:backgroundTintMode">multiply</item>
+        <item name="backgroundTintMode">screen</item>
         <item name="fabSize">normal</item>
         <item name="elevation">4dp</item>
         <item name="hoveredFocusedTranslationZ">@dimen/design_fab_translation_z_hovered_focused</item>
