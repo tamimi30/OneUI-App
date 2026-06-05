@@ -27,7 +27,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">bottom|end</item>
         <item name="android:layout_margin">24dp</item>
-        <item name="android:background">@drawable/design_fab_background</item>
+       <!-- <item name="android:background">@drawable/design_fab_background</item>-->
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="backgroundTint">@color/mtrl_fab_bg_color_selector</item>
@@ -42,7 +42,7 @@
         <item name="hideMotionSpec">@animator/design_fab_hide_motion_spec</item>
         <item name="ensureMinTouchTargetSize">true</item>
         <item name="tint">@color/mtrl_fab_icon_text_color_selector</item>
-        <item name="shapeAppearance">?attr/shapeAppearanceSmallComponent</item>
+      <!--  <item name="shapeAppearance">?attr/shapeAppearanceSmallComponent</item>-->
     </style>
 
 </resources>
