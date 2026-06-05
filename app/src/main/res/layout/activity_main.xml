@@ -29,7 +29,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
         app:backgroundTint="@color/sesl_menu_popup_bg_color"
-        android:background="?attr/selectableItemBackground"
+        app:rippleColor="?attr/colorControlHighlight"
         app:elevation="@dimen/design_fab_elevation"
         app:showMotionSpec="@animator/mtrl_fab_show_motion_spec"
         app:hideMotionSpec="@animator/mtrl_fab_hide_motion_spec"
