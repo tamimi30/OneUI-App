@@ -27,7 +27,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">bottom|end</item>
         <item name="android:layout_margin">24dp</item>
-        <item name="android:background">@drawable/fab_ripple</item>
+        <item name="android:background">@drawable/design_fab_background</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
        <!-- <item name="backgroundTint">@color/background_floating_material</item>-->
