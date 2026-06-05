@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
-        app:backgroundTint="@color/sesl_background_floating"
+        app:backgroundTint="@color/sesl_menu_popup_bg_color"
         android:background="?attr/selectableItemBackground"
         app:elevation="@dimen/design_fab_elevation"
         app:showMotionSpec="@animator/mtrl_fab_show_motion_spec"
