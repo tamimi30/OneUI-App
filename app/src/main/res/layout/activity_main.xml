@@ -32,8 +32,6 @@
         app:strokeWidth="1dp"
         app:rippleColor="@color/mtrl_fab_ripple_color"
         app:backgroundTint="@color/sesl_menu_popup_bg_color" 
-        style="@style/Widget.MaterialComponents.FloatingActionButton"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
         android:visibility="gone"
         android:tooltipText="@string/font_size_and_style"
         app:layout_location="root" />
