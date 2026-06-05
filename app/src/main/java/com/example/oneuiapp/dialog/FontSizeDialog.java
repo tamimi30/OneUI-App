@@ -239,4 +239,4 @@ public class FontSizeDialog {
             dialog.dismiss();
         }
     }
-                    }
+}
