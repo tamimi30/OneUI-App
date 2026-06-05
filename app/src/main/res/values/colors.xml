@@ -61,6 +61,8 @@
 
     <color name="font_preview_text_color">@color/sesl_primary_text_color_light</color>
 
+    <color name="sesl_btn_background_color">@color/sesl_btn_background_color_light</color>
+
     
 
 
