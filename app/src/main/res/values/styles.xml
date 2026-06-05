@@ -30,9 +30,9 @@
         <item name="android:background">@drawable/design_fab_background</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
-        <item name="backgroundTint">@color/background_floating_material</item>
+        <item name="backgroundTint">@color/mtrl_fab_bg_color_selector</item>
         <item name="fabSize">normal</item>
-        <item name="elevation">@dimen/design_fab_elevation</item>
+        <item name="elevation">4dp</item>
         <item name="hoveredFocusedTranslationZ">@dimen/design_fab_translation_z_hovered_focused</item>
         <item name="pressedTranslationZ">@dimen/design_fab_translation_z_pressed</item>
         <item name="rippleColor">@color/mtrl_fab_ripple_color</item>
