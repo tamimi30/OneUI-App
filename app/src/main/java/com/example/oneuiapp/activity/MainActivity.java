@@ -921,14 +921,19 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    public void updateFabFontSizeText(float size) {
+        public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
-            // جلب لون النص الخاص بثيم OneUI
             int textColor = getColor(dev.oneuiproject.oneui.design.R.color.oui_primary_text_color);
-            // رسم الرقم بحجم 60 ووضعه كصورة داخل الزر العادي
-            fabFontSize.setImageDrawable(new TextDrawable(String.valueOf(Math.round(size)), 60f, textColor));
+            // لاحظ أننا نمرر "this" كـ Context، ثم النص، ثم الحجم بالـ dp (مثلاً 24f)، ثم اللون
+            fabFontSize.setImageDrawable(new TextDrawable(
+                    this, 
+                    String.valueOf(Math.round(size)), 
+                    24f, 
+                    textColor
+            ));
         }
     }
+
 
     /**
      * ★ الإصلاح الجوهري للمشكلتين 1 و 3 — الانتقال إلى AppScreen ★
