@@ -28,9 +28,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
-        android:backgroundTint="@color/sesl_background_floating"
         android:visibility="gone"
-        android:elevation="4.0dip"
+        app:backgroundTint="@color/sesl_background_floating"
+        app:elevation="4dp"
         android:tooltipText="@string/font_size_and_style"
         app:layout_location="root" />
 
