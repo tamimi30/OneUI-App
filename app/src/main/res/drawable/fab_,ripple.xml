@@ -1,11 +1,10 @@
 <!-- res/drawable/rounded_ripple.xml -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="?attr/colorControlHighlight">
+    android:color="@color/mtrl_fab_ripple_color">
 
     <item>
         <shape android:shape="oval">
-            <solid android:color="@android:color/white"/>
-            <corners android:radius="16dp"/>
+            <solid android:color="@color/sesl_menu_popup_bg_color"/>
         </shape>
     </item>
 </ripple>
