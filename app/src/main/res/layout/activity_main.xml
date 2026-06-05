@@ -29,7 +29,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
         app:backgroundTint="@color/sesl_menu_popup_bg_color" 
-        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:theme="@style/Theme.MaterialComponents.DayNight"
         android:visibility="gone"
         android:tooltipText="@string/font_size_and_style"
