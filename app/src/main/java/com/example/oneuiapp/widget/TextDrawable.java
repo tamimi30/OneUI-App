@@ -1,4 +1,4 @@
-package com.example.oneuiapp.utils;
+package com.example.oneuiapp.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
