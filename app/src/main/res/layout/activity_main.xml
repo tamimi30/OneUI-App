@@ -24,17 +24,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_font_size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        app:backgroundTint="@color/sesl_btn_background_color"
-        app:rippleColor="?attr/colorControlHighlight"
-        app:elevation="@dimen/design_fab_elevation"
-        app:showMotionSpec="@animator/mtrl_fab_show_motion_spec"
-        app:hideMotionSpec="@animator/mtrl_fab_hide_motion_spec"
-        app:fabSize="normal"
-        app:borderWidth="1dp"
+        style="@style/FabStyle"
         android:visibility="gone"
         android:tooltipText="@string/font_size_and_style"
         app:layout_location="root" />
