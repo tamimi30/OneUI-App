@@ -47,6 +47,8 @@
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
                 android:ellipsize="end"
+                android:textSize="16sp"
+                android:textColor="
                 android:maxLines="1"
                 android:layout_marginBottom="6sp"
                 tools:text="Font Name Example" />
@@ -57,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
                 android:ellipsize="end"
+                android:textSize="13sp"
                 android:maxLines="1"
                 android:textColor="@color/sesl_secondary_text_color"
                 tools:text="Bold, Condensed" />
