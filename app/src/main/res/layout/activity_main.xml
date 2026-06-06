@@ -35,7 +35,7 @@
         app:borderWidth="1dp"
         app:backgroundTint="@color/sesl_menu_popup_bg_color" 
         android:visibility="gone"
-        android:tooltipText="@string/font_size_and_style"
+        android:tooltipText="@string/font_size_dialog_title"
         app:layout_location="root" />
 
 </dev.oneuiproject.oneui.layout.DrawerLayout>
