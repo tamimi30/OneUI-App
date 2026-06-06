@@ -729,9 +729,15 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             if (payloads.contains(PAYLOAD_UPDATE_LAST_OPENED) && holder instanceof LocalFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+                boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
+                
+                // ★ إلغاء تمييز آخر خط تم فتحه مؤقتاً أثناء البحث ★
+                if (isSearchActive) isLastOpened = false;
+                
                 ((LocalFontViewHolder) holder).updateLastOpenedHighlight(isLastOpened);
                 // ★ لا setFavoriteIndicator — لا checkBox — لا وميض ★
             }
+
         } else {
             super.onBindViewHolder(holder, position, payloads);
         }
@@ -801,6 +807,9 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
         boolean isLastOpened   = preferenceManager.isLastOpenedFont(path);
+
+        // ★ إلغاء تمييز آخر خط تم فتحه مؤقتاً أثناء البحث ★
+        if (isSearchActive) isLastOpened = false;
 
         // ★ تمرير weightWidthLabel إلى bind() ذات 9 معاملات ★
         // ★ bind() ذات 9 معاملات تستدعي bindCore() التي لا تلمس setFavoriteIndicator ★
