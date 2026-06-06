@@ -63,6 +63,10 @@
 
     <color name="sesl_btn_background_color">@color/sesl_btn_background_color_light</color>
 
+    <color name="sesl_primary_color">@color/sesl_primary_color_light</color>
+
+    
+
     
 
 
