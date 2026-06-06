@@ -33,4 +33,25 @@
         <item name="borderWidth">1dp</item>
     </style>
 
+    <!-- Defines the base Material card style. -->
+    <style name="Widget.MaterialComponents.CardView" parent="CardView">
+        <item name="enforceMaterialTheme">true</item>
+
+        <item name="android:stateListAnimator" tools:ignore="NewApi">
+          @animator/mtrl_card_state_list_anim
+        </item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="cardForegroundColor">@color/mtrl_card_view_foreground</item>
+        <item name="checkedIcon">@drawable/ic_mtrl_checked_circle</item>
+        <item name="checkedIconTint">?attr/colorPrimary</item>
+        <item name="checkedIconSize">@dimen/mtrl_card_checked_icon_size</item>
+        <item name="checkedIconMargin">@dimen/mtrl_card_checked_icon_margin</item>
+        <item name="rippleColor">@color/mtrl_card_view_ripple</item>
+        <item name="shapeAppearance">?attr/shapeAppearanceMediumComponent</item>
+    </style>
+
+
 </resources>
