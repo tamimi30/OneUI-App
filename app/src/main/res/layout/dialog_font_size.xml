@@ -1,52 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-	
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fillViewport="true">
+    android:orientation="vertical"
+    android:paddingHorizontal="19dp"
+    android:paddingTop="9dp"
+    android:paddingBottom="35dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/font_size_value"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingTop="9dp"
-        android:paddingBottom="70dp">
+        android:minWidth="80dp"
+        android:text="18"
+        android:textSize="30sp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="21dp"
+        android:background="@null"
+        android:inputType="number"
+        android:imeOptions="actionDone"
+        android:selectAllOnFocus="true"
+        android:maxLength="2"
+        android:cursorVisible="false"
+        android:textColorHighlight="@color/sesl_number_picker_text_highlight_color"
+        android:gravity="center" />
 
-      <!--<TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/font_size_dialog_title"
-            android:textSize="16sp"
-            android:textColor="?android:attr/textColorPrimary"
-            android:fontFamily="sec-bold"
-            android:layout_marginBottom="12dp" />-->
+    <androidx.appcompat.widget.SeslSeekBar
+        android:id="@+id/font_size_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-        <EditText
-            android:id="@+id/font_size_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="80dp"
-            android:text="18"
-            android:textSize="30sp"
-            android:textColor="?android:attr/textColorPrimary"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="21dp"
-            android:background="@null"
-            android:inputType="number"
-            android:imeOptions="actionDone"
-            android:selectAllOnFocus="true"
-            android:maxLength="2"
-            android:cursorVisible="false"
-            android:textColorHighlight="@color/sesl_number_picker_text_highlight_color"
-            android:gravity="center" />
-
-        <androidx.appcompat.widget.SeslSeekBar
-            android:id="@+id/font_size_seekbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-</androidx.core.widget.NestedScrollView>
+</LinearLayout>
