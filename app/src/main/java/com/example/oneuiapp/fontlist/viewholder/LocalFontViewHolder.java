@@ -314,7 +314,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
             fontNameTextView.setTextColor(primaryColor);
         } else {
             fontNameTextView.setTextColor(
-                ContextCompat.getColor(context, dev.oneuiproject.oneui.design.R.color.oui_primary_text_color)
+                ContextCompat.getColor(context, R.color.primary_text_color)
             );
         }
         // ★ لا setFavoriteIndicator — لا وميض ★
