@@ -130,7 +130,7 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
             nameView.setTextColor(primaryColor);
         } else {
             nameView.setTextColor(
-                ContextCompat.getColor(nameView.getContext(), R.color.primary_text_color)
+                ContextCompat.getColor(nameView.getContext(), android.R.attr.textColorPrimary)
             );
         }
     }
