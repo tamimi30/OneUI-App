@@ -120,7 +120,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         // ★ تغيير لون النص لتمييز آخر خط تم فتحه ★
         // يستخدم colorPrimary الديناميكي للتكيف مع لوحة الألوان الحالية للنظام،
         // بدلاً من اللون الأزرق الثابت
-        Context context = itemView.getContext();
+        Context context = fontNameTextView.getContext();
 
         if (isLastOpened) {
             int primaryColor = MaterialColors.getColor(
@@ -304,7 +304,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
      * @param isLastOpened true إذا كان هذا الخط هو آخر خط فتحه المستخدم
      */
     public void updateLastOpenedHighlight(boolean isLastOpened) {
-        Context context = itemView.getContext();
+        Context context = fontNameTextView.getContext();
         if (isLastOpened) {
             int primaryColor = MaterialColors.getColor(
                 context,
