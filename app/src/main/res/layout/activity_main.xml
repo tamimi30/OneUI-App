@@ -23,6 +23,7 @@
         app:layout_location="drawer_panel" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_font_size"
         android:theme="@style/Theme.MaterialComponents.DayNight"
         style="@style/FabStyle"
         android:visibility="gone"
