@@ -65,8 +65,6 @@
     limitations under the License.
 -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
-
   <!-- Defines the base Material card style. -->
   <style name="Widget.MaterialComponents.CardView" parent="CardView">
     <item name="enforceMaterialTheme">true</item>
