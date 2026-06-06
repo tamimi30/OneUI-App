@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingHorizontal="19dp"
-    android:paddingTop="9dp"
+    android:paddingHorizontal="17dp"
+    android:paddingTop="15dp"
     android:paddingBottom="35dp">
 
     <EditText
@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:minWidth="80dp"
         android:text="18"
-        android:textSize="30sp"
+        android:textSize="29sp"
         android:textColor="?android:attr/textColorPrimary"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="21dp"
