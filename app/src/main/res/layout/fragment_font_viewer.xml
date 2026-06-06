@@ -42,7 +42,7 @@
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />             
                 
-            <com.example.oneuiapp.widget.UnclippedTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/preview_sentence"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
