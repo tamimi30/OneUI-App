@@ -48,7 +48,7 @@
                 android:includeFontPadding="false"
                 android:ellipsize="end"
                 android:textSize="16sp"
-                android:textColor="
+                android:textColor="?android:attr/textColorPrimary"
                 android:maxLines="1"
                 android:layout_marginBottom="6sp"
                 tools:text="Font Name Example" />
@@ -61,7 +61,7 @@
                 android:ellipsize="end"
                 android:textSize="13sp"
                 android:maxLines="1"
-                android:textColor="@color/sesl_secondary_text_color"
+                android:textColor="?android:attr/textColorSecondary"
                 tools:text="Bold, Condensed" />
 
         </LinearLayout>
