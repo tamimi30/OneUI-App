@@ -10,7 +10,7 @@
     <color name="sesl_list_ripple_color_dark">#29ffffff</color>
     <color name="sesl_list_ripple_color_light">#1a000000</color> -->
     
-    <color name="primary_text_color">#010101</color>
+    <color name="primary_text_color">#ff010101</color>
 
     <color name="primary_text_color_2">#252525</color>
     
