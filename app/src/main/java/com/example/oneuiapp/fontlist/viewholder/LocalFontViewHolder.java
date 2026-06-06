@@ -131,7 +131,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
             fontNameTextView.setTextColor(primaryColor);
         } else {
             fontNameTextView.setTextColor(
-                ContextCompat.getColor(context, R.primary_text_color)
+                ContextCompat.getColor(context, R.color.primary_text_color)
             );
         }
 
