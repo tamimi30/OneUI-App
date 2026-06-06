@@ -61,7 +61,7 @@ public class FontSizeDialog {
 
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Font Adjustment");
+        builder.setTitle(R.string.font_size_dialog_title);
 
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_font_size, null);
         builder.setView(dialogView);
@@ -123,7 +123,7 @@ public class FontSizeDialog {
 
         setupSeekBar();
 
-        builder.setPositiveButton("OK", (dialog, which) -> {
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
             // سحب الرقم المكتوب في الحقل قبل الإغلاق وتطبيقه
             String inputText = fontSizeValue.getText().toString();
             if (!inputText.isEmpty()) {
@@ -147,7 +147,7 @@ public class FontSizeDialog {
             }
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
             if (cancelListener != null) {
                 cancelListener.onDialogCancelled();
             }
