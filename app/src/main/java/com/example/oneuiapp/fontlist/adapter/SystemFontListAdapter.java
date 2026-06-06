@@ -517,6 +517,10 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 FontFileInfo fontInfo      = mSortedList.get(position - 1);
                 String displayName         = FileUtils.removeExtension(fontInfo.getName());
                 boolean isLastOpened       = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+                
+                // ★ إلغاء تمييز آخر خط تم فتحه مؤقتاً أثناء البحث ★
+                if (isSearchActive) isLastOpened = false;
+                
                 SystemFontInfo sfi         = getFontInfoForPath(fontInfo.getPath());
                 String weightWidthLabel    = (sfi != null) ? sfi.getWeightWidthLabel() : null;
                 // دالة bind بداخلها تتعامل مع مسح اللون إذا كان isSearchActive = false
@@ -532,6 +536,11 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if (payloads.contains(PAYLOAD_UPDATE_LAST_OPENED) && holder instanceof SystemFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 boolean isLastOpened  = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+                boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
+                
+                // ★ إلغاء تمييز آخر خط تم فتحه مؤقتاً أثناء البحث ★
+                if (isSearchActive) isLastOpened = false;
+                
                 ((SystemFontViewHolder) holder).bindLastOpened(isLastOpened);
             }
         } else {
@@ -604,6 +613,9 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
         boolean isLastOpened   = preferenceManager.isLastOpenedFont(path);
+
+        // ★ إلغاء تمييز آخر خط تم فتحه مؤقتاً أثناء البحث ★
+        if (isSearchActive) isLastOpened = false;
 
         // ★ تمرير weightWidthLabel إلى bind() ★
         holder.bind(displayName, path, isSearchActive, currentSearchQuery,
