@@ -317,6 +317,9 @@
     <string name="feedback_email" translatable="false">feedback@example.com</string> -->
 
     <string name="about_button_licenses">تراخيص مفتوحة المصدر</string>
+    
+    <string name="cancel">إلغاء</string>
+    <string name="ok">حسنًا</string>
 
 
 </resources>
