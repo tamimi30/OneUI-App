@@ -305,7 +305,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
      */
     public void updateLastOpenedHighlight(boolean isLastOpened) {
         Context context = fontNameTextView.getContext();
-        if (isLastOpened && !isSearchActive) {
+        if (isLastOpened) {
             int primaryColor = MaterialColors.getColor(
                 context,
                 androidx.appcompat.R.attr.colorPrimary,
@@ -345,4 +345,4 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     public String getTag() {
         return currentPath;
     }
-                                                                  }
+}
