@@ -322,6 +322,9 @@
     <string name="feedback_email" translatable="false">feedback@example.com</string>
 
     <string name="about_button_licenses">Source licenses</string>
+    
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 
 
 </resources>
