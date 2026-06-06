@@ -47,6 +47,7 @@
 
     <color name="sesl_btn_background_color">@color/sesl_btn_background_color_dark</color>
 
+    <color name="sesl_primary_color">@color/sesl_primary_color_dark</color>
 
    <!-- <color name="sesl_primary_dark_color">@color/sesl_primary_dark_color_dark</color>
     <color name="sesl_primary_dark_color_dark">#2d2d30</color> -->
