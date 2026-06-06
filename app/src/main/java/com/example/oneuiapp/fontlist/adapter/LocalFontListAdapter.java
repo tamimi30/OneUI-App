@@ -676,7 +676,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                         35, // الارتفاع المطلوب بوحدة الـ DP
                         holder.itemView.getContext().getResources().getDisplayMetrics()
                 );
-
                 if (isSearchActive) {
                     android.text.Spannable highlighted = highlighter.highlightText(displayName, currentSearchQuery);
                     // ★ تطبيق ExactLineHeightSpan لقص الهوامش المدمجة في الخط وتوحيد ارتفاع القائمة ★
@@ -691,6 +690,11 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                             android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     ((LocalFontViewHolder) holder).fontNameTextView.setText(spanned);
                 }
+
+                // ★ الإصلاح: تحديث لون آخر خط تم فتحه بالتزامن مع البحث ★
+                boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+                if (isSearchActive) isLastOpened = false; // إلغاء التمييز مؤقتاً
+                ((LocalFontViewHolder) holder).updateLastOpenedHighlight(isLastOpened);
             }
 
             // ★ تحديث أيقونة المفضلة بصمت دون إعادة رسم العنصر كاملاً ★
