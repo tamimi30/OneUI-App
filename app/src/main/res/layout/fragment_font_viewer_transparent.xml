@@ -58,7 +58,7 @@
                 android:visibility="gone" />
 
             <!-- معاينة النص -->
-            <com.example.oneuiapp.widget.FontPreviewTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
