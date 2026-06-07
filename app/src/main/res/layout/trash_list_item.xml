@@ -11,7 +11,6 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="horizontal"
         android:layout_height="?android:listPreferredItemHeightLarge"
         android:paddingStart="?android:listPreferredItemPaddingStart"
         android:paddingEnd="?android:listPreferredItemPaddingEnd"
@@ -32,13 +31,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/trash_item_font_name"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:singleLine="true"
                 android:textAppearance="?android:textAppearanceListItem"
@@ -47,23 +46,21 @@
                 
             <TextView
                 android:id="@+id/trash_item_days_remaining"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:singleLine="true"
                 android:textAppearance="?android:textAppearanceListItemSecondary"
                 tools:text="28 يوماً" />
+                
+            <View
+                android:id="@+id/item_divider"
+                android:layout_height="1dp"
+                android:layout_width="match_parent"
+                android:background="@color/oui_list_divider_color" />
 
         </LinearLayout>
 
     </LinearLayout>
-    
-    <View
-        android:id="@+id/item_divider"
-        android:layout_height="1.0px"
-        android:layout_width="match_parent"
-        android:layout_marginHorizontal="10dp"
-        android:background="@color/oui_list_divider_color" />   
 
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
