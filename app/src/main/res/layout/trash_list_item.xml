@@ -3,7 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="listPreferredItemHeightLarge"
+    android:paddingStart="listPreferredItemPaddingStart"
+    android:paddingEnd="listPreferredItemPaddingEnd"
     android:orientation="vertical"
     android:animateLayoutChanges="true"
     android:background="@color/oui_background_color">
@@ -12,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:gravity="center_vertica"
         android:background="@drawable/font_list_ripple"
         android:animateLayoutChanges="true">
 
@@ -20,7 +22,7 @@
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="17dp"
+            android:layout_marginStart="17dip"
             android:background="@null"
             android:clickable="false"
             android:focusable="false"
@@ -29,43 +31,37 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="18dp"
-            android:paddingHorizontal="25dp"
-            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/trash_item_font_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:ellipsize="marquee"
                 android:singleLine="true"
+                android:textAppearance="textAppearanceListItem"
                 android:layout_marginBottom="3dp"
-                android:textSize="16sp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textStyle="bold"
                 tools:text="Cairo Regular" />
                 
             <TextView
                 android:id="@+id/trash_item_days_remaining"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:ellipsize="marquee"
                 android:singleLine="true"
-                android:textSize="13sp"
-                android:textColor="@color/sesl_secondary_text_color"
+                andoid:textAppearance="textAppearanceListItemSecondary"
                 tools:text="28 يوماً" />
 
-        </LinearLayout>   
+        </LinearLayout>
+
+        <View
+            android:id="@+id/item_divider"
+            android:layout_height="1.0px"
+            android:layout_width="match_parent"
+            android:background="@color/oui_list_divider_color" />   
 
     </LinearLayout>
-    
-    <View
-        android:id="@+id/item_divider"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:background="@drawable/sesl_list_divider" />
 
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
