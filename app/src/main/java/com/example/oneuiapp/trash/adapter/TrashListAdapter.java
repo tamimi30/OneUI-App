@@ -71,8 +71,10 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     // Payload للتحديث الجزئي لـ CheckBox دون إعادة رسم العنصر كاملاً
     private static final String PAYLOAD_UPDATE_SELECTION = "UPDATE_SELECTION";
+    private static final String PAYLOAD_UPDATE_CORNERS   = "UPDATE_CORNERS";
 
     private final Context context;
+    private final boolean isTransparentTheme;
     private List<FontEntity> mItems = new ArrayList<>();
 
     private boolean isSelectionMode = false;
@@ -104,8 +106,23 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public TrashListAdapter(@NonNull Context context) {
         this.context = context;
-        // معرّفات مستقرة لتحسين أداء أنيميشن DiffUtil
         setHasStableIds(true);
+        this.isTransparentTheme = com.example.oneuiapp.utils.SettingsHelper.isTransparentThemeEnabled(context);
+
+        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override public void onItemRangeInserted(int p, int c) { updateListEdges(); }
+            @Override public void onItemRangeRemoved(int p, int c)  { updateListEdges(); }
+            @Override public void onItemRangeMoved(int f, int t, int c) { updateListEdges(); }
+
+            private void updateListEdges() {
+                if (isTransparentTheme || recyclerView == null) return;
+                recyclerView.post(() -> {
+                    if (recyclerView == null || recyclerView.isComputingLayout()) return;
+                    int total = getItemCount();
+                    if (total > 0) notifyItemRangeChanged(0, total, PAYLOAD_UPDATE_CORNERS);
+                });
+            }
+        });
     }
 
     // ─────────────────────────────────────────────────────────
@@ -181,6 +198,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return mItems.get(position - 1).getId();                // معرّف قاعدة البيانات
     }
 
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -193,11 +211,12 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 return new SpaceViewHolder(
                         inf.inflate(R.layout.item_bottom_space, parent, false));
             default:
-                return new TrashItemViewHolder(
-                        inf.inflate(R.layout.trash_list_item, parent, false));
+                int itemLayout = isTransparentTheme
+                        ? R.layout.trash_list_item_transparent
+                        : R.layout.trash_list_item;
+                return new TrashItemViewHolder(inf.inflate(itemLayout, parent, false));
         }
     }
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof TrashHeaderViewHolder) {
@@ -205,22 +224,54 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         } else if (holder instanceof TrashItemViewHolder) {
             bindItem((TrashItemViewHolder) holder, mItems.get(position - 1), position);
         }
-        // SpaceViewHolder لا يحتاج إلى ربط بيانات
+        updateItemAppearance(holder, position);
     }
 
     /**
      * الربط الجزئي عبر Payload — يُحدّث CheckBox فقط دون إعادة رسم العنصر كاملاً.
      * يحفظ هذا السلاسة البصرية ويمنع أي وميض أثناء تفعيل/تعطيل وضع التحديد.
-     */
-    @Override
+     */    @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position,
                                  @NonNull List<Object> payloads) {
-        if (!payloads.isEmpty() && payloads.contains(PAYLOAD_UPDATE_SELECTION)) {
-            if (holder instanceof TrashItemViewHolder) {
+        if (!payloads.isEmpty()) {
+            if (payloads.contains(PAYLOAD_UPDATE_CORNERS)) {
+                updateItemAppearance(holder, position);
+            }
+            if (payloads.contains(PAYLOAD_UPDATE_SELECTION) && holder instanceof TrashItemViewHolder) {
                 updateCheckBoxState((TrashItemViewHolder) holder, position);
             }
         } else {
             super.onBindViewHolder(holder, position, payloads);
+        }
+    }
+
+    private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
+        if (isTransparentTheme) return;
+        if (holder instanceof TrashHeaderViewHolder || holder instanceof SpaceViewHolder) return;
+
+        if (holder instanceof TrashItemViewHolder) {
+            TrashItemViewHolder th = (TrashItemViewHolder) holder;
+            dev.oneuiproject.oneui.widget.RoundLinearLayout root = (dev.oneuiproject.oneui.widget.RoundLinearLayout) th.itemView;
+            
+            int totalFonts = mItems.size();
+            boolean isFirst = (position == 1);
+            boolean isLast  = (position == getItemCount() - 2);
+
+            if (totalFonts == 1) {
+                root.setRoundedCorners(androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_ALL);
+                if (th.dividerView != null) th.dividerView.setVisibility(View.GONE);
+            } else if (isFirst) {
+                root.setRoundedCorners(androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
+                                     | androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
+                if (th.dividerView != null) th.dividerView.setVisibility(View.VISIBLE);
+            } else if (isLast) {
+                root.setRoundedCorners(androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
+                                     | androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
+                if (th.dividerView != null) th.dividerView.setVisibility(View.INVISIBLE);
+            } else {
+                root.setRoundedCorners(androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_NONE);
+                if (th.dividerView != null) th.dividerView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -503,12 +554,14 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final CheckBox checkBox;
         final TextView fontNameTextView;
         final TextView daysRemainingTextView;
+        final View dividerView;
 
         TrashItemViewHolder(@NonNull View itemView) {
             super(itemView);
             checkBox              = itemView.findViewById(R.id.checkbox);
             fontNameTextView      = itemView.findViewById(R.id.trash_item_font_name);
             daysRemainingTextView = itemView.findViewById(R.id.trash_item_days_remaining);
+            dividerView           = itemView.findViewById(R.id.item_divider);
         }
     }
 
