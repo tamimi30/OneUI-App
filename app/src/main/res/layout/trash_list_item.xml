@@ -3,14 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="?android:listPreferredItemHeightLarge"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:gravity="center_vertical"
     android:animateLayoutChanges="true"
     android:background="@color/oui_background_color">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="?android:listPreferredItemHeightLarge"
         android:paddingStart="?android:listPreferredItemPaddingStart"
         android:paddingEnd="?android:listPreferredItemPaddingEnd"
         android:gravity="center_vertical"
@@ -21,7 +24,7 @@
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="17dip"
+            android:layout_marginEnd="?android:listPreferredItemPaddingEnd"
             android:background="@null"
             android:clickable="false"
             android:focusable="false"
@@ -64,4 +67,4 @@
         android:layout_marginHorizontal="10dp"
         android:background="@color/oui_list_divider_color" />   
 
-</dev.oneuiproject.oneui.widget.RoundLinearLayout>?android:
+</dev.oneuiproject.oneui.widget.RoundLinearLayout>
