@@ -14,6 +14,9 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.util.SeslRoundedCorner;
+
+import dev.oneuiproject.oneui.widget.RoundLinearLayout;
 
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.data.entity.FontEntity;
@@ -251,25 +254,25 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         if (holder instanceof TrashItemViewHolder) {
             TrashItemViewHolder th = (TrashItemViewHolder) holder;
-            dev.oneuiproject.oneui.widget.RoundLinearLayout root = (dev.oneuiproject.oneui.widget.RoundLinearLayout) th.itemView;
+            RoundLinearLayout root = (RoundLinearLayout) th.itemView;
             
             int totalFonts = mItems.size();
             boolean isFirst = (position == 1);
             boolean isLast  = (position == getItemCount() - 2);
 
             if (totalFonts == 1) {
-                root.setRoundedCorners(androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_ALL);
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_ALL);
                 if (th.dividerView != null) th.dividerView.setVisibility(View.GONE);
             } else if (isFirst) {
-                root.setRoundedCorners(androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
-                                     | androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
+                                     | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
                 if (th.dividerView != null) th.dividerView.setVisibility(View.VISIBLE);
             } else if (isLast) {
-                root.setRoundedCorners(androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
-                                     | androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
+                                     | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
                 if (th.dividerView != null) th.dividerView.setVisibility(View.INVISIBLE);
             } else {
-                root.setRoundedCorners(androidx.appcompat.util.SeslRoundedCorner.ROUNDED_CORNER_NONE);
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_NONE);
                 if (th.dividerView != null) th.dividerView.setVisibility(View.VISIBLE);
             }
         }
