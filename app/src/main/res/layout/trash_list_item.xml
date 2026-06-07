@@ -32,6 +32,7 @@
             android:layout_height="?android:listPreferredItemHeightLarge"
             android:paddingStart="?android:listPreferredItemPaddingStart"
             android:paddingEnd="?android:listPreferredItemPaddingEnd"
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
