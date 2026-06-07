@@ -51,7 +51,7 @@
                 android:layout_weight="1"
                 android:ellipsize="marquee"
                 android:singleLine="true"
-                andoid:textAppearance="textAppearanceListItemSecondary"
+                android:textAppearance="textAppearanceListItemSecondary"
                 tools:text="28 يوماً" />
 
         </LinearLayout>
