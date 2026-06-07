@@ -31,6 +31,7 @@
         <item name="fabSize">normal</item>
         <item name="elevation">4dp</item>
         <item name="borderWidth">1dp</item>
+        <item name="rippleColor">@color/mtrl_fab_ripple_color</item>
     </style>
 
     <!-- Defines the base Material card style. -->
