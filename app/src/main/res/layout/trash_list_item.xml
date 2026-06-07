@@ -43,30 +43,23 @@
                 android:textAppearance="?android:textAppearanceListItem"
                 android:layout_marginBottom="3dp"
                 tools:text="Cairo Regular" />
-              
-            <LinearLayout
-                android:layout_width="match_parent"
+                
+            <TextView
+                android:id="@+id/trash_item_days_remaining"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                
-                <TextView
-                    android:id="@+id/trash_item_days_remaining"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
-                    android:singleLine="true"
-                    android:textAppearance="?android:textAppearanceListItemSecondary"
-                    tools:text="28 يوماً" />
-                
-            </LinearLayout>
-                
-            <View
-                android:id="@+id/item_divider"
-                android:layout_height="1dp"
-                android:layout_width="match_parent"
-                android:background="@color/oui_list_divider_color" />
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:textAppearance="?android:textAppearanceListItemSecondary"
+                tools:text="28 يوماً" />
 
         </LinearLayout>
+        
+        <View
+            android:id="@+id/item_divider"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:background="@color/oui_list_divider_color" />
 
     </LinearLayout>
 
