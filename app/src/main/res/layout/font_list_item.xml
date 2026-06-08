@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <dev.oneuiproject.oneui.widget.RoundLinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,22 +8,10 @@
     android:orientation="vertical"
     android:background="@color/oui_background_color">
 
-    <LinearLayout
+    <com.example.oneuiapp.widget.SelectableLinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
         android:background="@drawable/font_list_ripple">
-
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="17.0dip"
-            android:background="@null"
-            android:clickable="false"
-            android:focusable="false"
-            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,16 +65,16 @@
                     android:visibility="gone"
                     tools:visibility="visible" />
                     
-                </LinearLayout>
+            </LinearLayout>
 
-                <View
-                    android:id="@+id/item_divider"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:background="@drawable/sesl_list_divider" />
+            <View
+                android:id="@+id/item_divider"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:background="@drawable/sesl_list_divider" />
 
         </LinearLayout>   
 
-    </LinearLayout>
+    </com.example.oneuiapp.widget.SelectableLinearLayout>
 
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
