@@ -241,6 +241,8 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 updateItemAppearance(holder, position);
             }
             if (payloads.contains(PAYLOAD_UPDATE_SELECTION) && holder instanceof TrashItemViewHolder) {
+                // ★ استخدام TransitionManager لأنيميشن سلس وتفادي مشاكل RTL ★
+                android.transition.TransitionManager.beginDelayedTransition((android.view.ViewGroup) holder.itemView);
                 updateCheckBoxState((TrashItemViewHolder) holder, position);
             }
         } else {
