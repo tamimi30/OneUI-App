@@ -74,17 +74,6 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         checkBox            = itemView.findViewById(R.id.checkbox);
         dividerView         = itemView.findViewById(R.id.item_divider);           // ★ ربط الخط الفاصل ★
         favoriteIconView    = itemView.findViewById(R.id.font_item_favorite_icon); // ★ جديد: أيقونة المفضلة ★
-
-        // ★ إصلاح أنيميشن الـ RTL للغة العربية ★
-        if (itemView instanceof android.view.ViewGroup) {
-            android.view.ViewGroup root = (android.view.ViewGroup) itemView;
-            if (root.getChildCount() > 0 && root.getChildAt(0) instanceof android.widget.LinearLayout) {
-                android.widget.LinearLayout container = (android.widget.LinearLayout) root.getChildAt(0);
-                if (container.getLayoutTransition() != null) {
-                    container.getLayoutTransition().enableTransitionType(android.animation.LayoutTransition.CHANGING);
-                }
-            }
-        }
     }
 
     // ════════════════════════════════════════════════════════════
