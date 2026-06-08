@@ -62,8 +62,8 @@
         android:id="@+id/item_divider"
         android:layout_height="1dp"
         android:layout_width="match_parent"
-        android:paddingEnd="?android:listPreferredItemPaddingEnd"
-        android:paddingStart="?android:listPreferredItemPaddingStart"
+        android:layout_marginEnd="?android:listPreferredItemPaddingEnd"
+        android:layout_marginStart="?android:listPreferredItemPaddingStart"
         android:background="@color/oui_list_divider_color" />
 
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
