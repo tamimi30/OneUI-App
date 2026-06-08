@@ -53,23 +53,17 @@
                 android:singleLine="true"
                 android:textAppearance="?android:textAppearanceListItemSecondary"
                 tools:text="28 يوماً" />
-                
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:gravity="bottom"
-                android:layout_weight="1">
                 	
-                <View
-                    android:id="@+id/item_divider"
-                    android:layout_height="1dp"
-                    android:layout_width="match_parent"
-                    android:background="@color/oui_list_divider_color" />
-                    
-            </LinearLayout>
-  
         </LinearLayout>
 
     </LinearLayout>
+    
+    <View
+        android:id="@+id/item_divider"
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:paddingEnd="?android:listPreferredItemPaddingEnd"
+        android:paddingStart="?android:listPreferredItemPaddingStart"
+        android:background="@color/oui_list_divider_color" />
 
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
