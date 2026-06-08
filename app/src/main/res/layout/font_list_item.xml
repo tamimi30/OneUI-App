@@ -6,8 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layoutDirection="locale"
     android:orientation="vertical"
-    android:animateLayoutChanges="true"
     android:background="@color/oui_background_color">
 
     <LinearLayout
@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:layoutDirection="locale"
         android:background="@drawable/font_list_ripple"
         android:animateLayoutChanges="true">
 
@@ -24,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="17.0dip"
             android:background="@null"
+            android:layoutDirection="locale"
             android:clickable="false"
             android:focusable="false"
             android:visibility="gone" />
@@ -33,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_vertical"
+            android:layoutDirection="locale"
             android:paddingTop="22.0dip"
             android:animateLayoutChanges="true"
             android:orientation="vertical">
@@ -44,6 +47,7 @@
                 android:layout_marginStart="25.0dip" 
                 android:layout_marginEnd="25.0dip"
                 android:ellipsize="marquee"
+                android:textDirection="locale"
                 android:singleLine="true"
                 android:includeFontPadding="false"
                 android:textSize="16sp"
@@ -58,8 +62,8 @@
                 android:paddingStart="25.0dip"
                 android:paddingEnd="25.0dip"
                 android:paddingTop="5.0dip"
+                android:layoutDirection="locale"
                 android:paddingBottom="13.0dip"
-                android:animateLayoutChanges="true"
                 android:orientation="horizontal">
                 
                 <TextView
@@ -68,6 +72,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="marquee"
                     android:singleLine="true"
+                    android:textDirection="locale"
                     android:includeFontPadding="false"
                     android:layout_marginEnd="12dp"
                     android:textSize="13sp"
@@ -78,6 +83,7 @@
                     android:id="@+id/font_item_favorite_icon"
                     android:layout_width="17dp"
                     android:layout_height="17dp"
+                    android:layoutDirection="locale"
                     android:src="@drawable/ic_favorite"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -88,6 +94,7 @@
                     android:id="@+id/item_divider"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
+                    android:layoutDirection="locale"
                     android:background="@drawable/sesl_list_divider" />
 
         </LinearLayout>   
