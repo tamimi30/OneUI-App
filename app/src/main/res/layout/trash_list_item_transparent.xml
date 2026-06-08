@@ -8,7 +8,6 @@
     style="@style/CardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -17,7 +16,6 @@
         android:theme="@style/AppTheme"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:animateLayoutChanges="true"
         android:paddingVertical="14dp"
         android:paddingHorizontal="20dp">
 
