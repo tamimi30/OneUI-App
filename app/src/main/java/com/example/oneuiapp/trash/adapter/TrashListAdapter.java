@@ -565,6 +565,17 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             fontNameTextView      = itemView.findViewById(R.id.trash_item_font_name);
             daysRemainingTextView = itemView.findViewById(R.id.trash_item_days_remaining);
             dividerView           = itemView.findViewById(R.id.item_divider);
+
+            // ★ إصلاح أنيميشن الـ RTL للغة العربية ★
+            if (itemView instanceof android.view.ViewGroup) {
+                android.view.ViewGroup root = (android.view.ViewGroup) itemView;
+                if (root.getChildCount() > 0 && root.getChildAt(0) instanceof android.widget.LinearLayout) {
+                    android.widget.LinearLayout container = (android.widget.LinearLayout) root.getChildAt(0);
+                    if (container.getLayoutTransition() != null) {
+                        container.getLayoutTransition().enableTransitionType(android.animation.LayoutTransition.CHANGING);
+                    }
+                }
+            }
         }
     }
 
