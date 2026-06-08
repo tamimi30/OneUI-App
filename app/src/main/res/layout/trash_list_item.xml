@@ -6,12 +6,26 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_vertical"
+    android:animateLayoutChanges="true"
     android:background="@color/oui_background_color">
 
-    <com.example.oneuiapp.widget.SelectableLinearLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/font_list_ripple">
+        android:background="@drawable/font_list_ripple"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true">
+        
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:background="@null"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
             
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,7 +59,7 @@
                     android:singleLine="true"
                     android:textAppearance="?android:textAppearanceListItemSecondary"
                     tools:text="28 يوماً" />
-                    
+                 	
             </LinearLayout>
             
             <View
@@ -55,9 +69,9 @@
                 android:layout_marginEnd="?android:listPreferredItemPaddingEnd"
                 android:layout_marginStart="?android:listPreferredItemPaddingStart"
                 android:background="@color/oui_list_divider_color" />
-                  
+                 
         </LinearLayout>
 
-    </com.example.oneuiapp.widget.SelectableLinearLayout>
+    </LinearLayout>
 
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
