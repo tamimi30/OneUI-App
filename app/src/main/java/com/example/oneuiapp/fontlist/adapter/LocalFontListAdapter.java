@@ -703,6 +703,10 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 boolean isFavorited = favoriteStatusProvider != null
                         && favoriteStatusProvider.isFavorited(fontInfo.getPath());
+                
+                // ★ استخدام TransitionManager لأنيميشن سلس وتفادي مشاكل RTL ★
+                android.transition.TransitionManager.beginDelayedTransition((android.view.ViewGroup) holder.itemView);
+                
                 ((LocalFontViewHolder) holder).setFavoriteIndicator(isFavorited);
             }
 
@@ -713,6 +717,10 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             if (payloads.contains(PAYLOAD_UPDATE_SELECTION)) {
                 if (holder instanceof LocalFontViewHolder) {
                     LocalFontViewHolder vh = (LocalFontViewHolder) holder;
+                    
+                    // ★ استخدام TransitionManager لأنيميشن سلس وتفادي مشاكل RTL ★
+                    android.transition.TransitionManager.beginDelayedTransition((android.view.ViewGroup) vh.itemView);
+                    
                     if (isSelectionMode) {
                         vh.checkBox.setVisibility(View.VISIBLE);
                         vh.checkBox.setChecked(isItemSelected(position));
