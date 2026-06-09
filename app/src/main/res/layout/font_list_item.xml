@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:animateLayoutChanges="true"
-        android:background="font_list_ripple"
+        android:background="@drawable/font_list_ripple"
         android:gravity="center_vertical">
        
         <CheckBox
