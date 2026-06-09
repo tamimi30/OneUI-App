@@ -86,10 +86,10 @@
             
             <View
                 android:id="@+id/item_divider"
-                android:layout_height="1dp"
+                android:layout_height="wrap_content"
                 android:layoutDirection="locale"
                 android:layout_width="wrap_content"
-                android:background="@color/oui_list_divider_color" />
+                android:background="@drawable/sesl_list_divider" />
 
         </LinearLayout>  
         
