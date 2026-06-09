@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
+    android:layoutDirection="locale"
     android:orientation="vertical"
     android:background="@color/oui_background_color">
     
@@ -15,6 +16,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:animateLayoutChanges="true"
+        android:layoutDirection="locale"
         android:background="@drawable/font_list_ripple"
         android:gravity="center_vertical">
        
@@ -25,6 +27,7 @@
             android:layout_marginStart="19.0dip"
             android:background="@null"  
             android:clickable="false"
+            android:layoutDirection="locale"
             android:focusable="false"
             android:visibility="gone" />
 
@@ -34,6 +37,7 @@
             android:minHeight="?attr/listPreferredItemHeightSmall"
             android:gravity="center_vertical"
             android:paddingTop="14.0dip"
+            android:layoutDirection="locale"
             android:paddingStart="?android:attr/listPreferredItemPaddingStart"
             android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
             android:orientation="vertical">
@@ -44,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:singleLine="true" 
+                android:textDirection="locale"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Font Name Example" />
                 
@@ -52,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingBottom="14.0dip"
+                android:layoutDirection="locale"
                 android:animateLayoutChanges="true"
                 android:orientation="horizontal">
                 
@@ -61,6 +67,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="marquee"
                     android:singleLine="true" 
+                    android:textDirection="locale"
                     android:layout_marginEnd="17dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     tools:text="Bold, Condensed" />
@@ -69,6 +76,7 @@
                     android:id="@+id/font_item_favorite_icon"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
+                    android:layoutDirection="locale"
                     android:src="@drawable/ic_favorite"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -78,6 +86,7 @@
             <View
                 android:id="@+id/item_divider"
                 android:layout_height="1dp"
+                android:layoutDirection="locale"
                 android:layout_width="wrap_content"
                 android:background="@color/oui_list_divider_color" />
 
