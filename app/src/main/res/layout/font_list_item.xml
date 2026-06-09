@@ -36,7 +36,6 @@
             android:paddingBottom="14.0dip"
             android:paddingStart="?android:listPreferredItemPaddingStart"
             android:paddingEnd="?android:listPreferredItemPaddingEnd"
-            android:gravity="center_vertical"
             android:animateLayoutChanges="true"
             android:orientation="vertical">
 
