@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:animateLayoutChanges="true"
         android:background="@drawable/font_list_ripple"
         android:gravity="center_vertical">
        
@@ -51,7 +50,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingBottom="14.0dip"
-                android:animateLayoutChanges="true"
                 android:orientation="horizontal">
                 
                 <TextView
