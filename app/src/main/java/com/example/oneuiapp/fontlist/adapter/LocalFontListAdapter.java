@@ -716,7 +716,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     
                     // بداية الحل: أنيميشن انزلاق مخصص يحل مشكلة اللغة العربية ويمنع الوميض
                     android.transition.ChangeBounds transition = new android.transition.ChangeBounds();
-                    transition.setDuration(200);
+                    transition.setDuration(300);
                     android.transition.TransitionManager.beginDelayedTransition((android.view.ViewGroup) vh.itemView, transition);
                     // نهاية الحل
                     
