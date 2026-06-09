@@ -24,7 +24,7 @@
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="6dip"
+            android:layout_marginStart="19.0dip"
             android:background="@null"  
             android:clickable="false"
             android:layoutDirection="locale"
@@ -39,8 +39,8 @@
             android:paddingTop="14.0dip"
             android:animateLayoutChanges="true"
             android:layoutDirection="locale"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:paddingStart="25.0dip"
+            android:paddingEnd="25.0dip"
             android:orientation="vertical">
 
             <TextView
