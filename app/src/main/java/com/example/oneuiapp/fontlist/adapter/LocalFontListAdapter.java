@@ -713,13 +713,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             if (payloads.contains(PAYLOAD_UPDATE_SELECTION)) {
                 if (holder instanceof LocalFontViewHolder) {
                     LocalFontViewHolder vh = (LocalFontViewHolder) holder;
-                    
-                    // بداية الحل: أنيميشن انزلاق مخصص يحل مشكلة اللغة العربية ويمنع الوميض
-                    android.transition.ChangeBounds transition = new android.transition.ChangeBounds();
-                    transition.setDuration(300);
-                    android.transition.TransitionManager.beginDelayedTransition((android.view.ViewGroup) vh.itemView, transition);
-                    // نهاية الحل
-                    
                     if (isSelectionMode) {
                         vh.checkBox.setVisibility(View.VISIBLE);
                         vh.checkBox.setChecked(isItemSelected(position));
@@ -920,4 +913,4 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (adj < 0 || adj >= positionSections.size()) return 0;
         return positionSections.get(adj);
     }
-            }
+                }
