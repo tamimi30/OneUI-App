@@ -8,6 +8,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:layoutDirection="locale"
+    android:animateLayoutChanges="true"
     android:orientation="vertical"
     android:background="@color/oui_background_color">
     
