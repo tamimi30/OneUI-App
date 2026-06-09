@@ -7,72 +7,80 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:animateLayoutChanges="true"
-    android:orientation="horizontal"
-    android:background="@color/oui_background_color">
-
-    <CheckBox
-        android:id="@+id/checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="19.0dip"
-        android:background="@null"  
-        android:clickable="false"
-        android:focusable="false"
-        android:visibility="gone" />
-
+    android:orientation="vertical"
+    android:background="@drawable/list_ripple">
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/listPreferredItemHeightSmall"
-        android:gravity="center_vertical"
-        android:paddingTop="14.0dip"
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/font_item_name"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true"
+        android:gravity="center_vertical">
+       
+        <CheckBox
+            android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="?attr/textAppearanceListItem"
-            tools:text="Font Name Example" />
-                
+            android:layout_marginStart="19.0dip"
+            android:background="@null"  
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="?attr/listPreferredItemHeightSmall"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
-                
+            android:paddingTop="14.0dip"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:orientation="vertical">
+
             <TextView
-                android:id="@+id/font_item_weight_width"
+                android:id="@+id/font_item_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:layout_marginEnd="17dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                tools:text="Bold, Condensed" />
+                android:textAppearance="?attr/textAppearanceListItem"
+                tools:text="Font Name Example" />
+                
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="14.0dip"
+                android:orientation="horizontal">
+                
+                <TextView
+                    android:id="@+id/font_item_weight_width"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:layout_marginEnd="17dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    tools:text="Bold, Condensed" />
                     
-            <ImageView
-                android:id="@+id/font_item_favorite_icon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_favorite"
-                android:visibility="gone"
-                tools:visibility="visible" />
+                <ImageView
+                    android:id="@+id/font_item_favorite_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_favorite"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
                     
-        </LinearLayout>
+            </LinearLayout>
             
-        <View
-            android:id="@+id/item_divider"
-            android:layout_height="1dp"
-            android:layout_width="match_parent"
-            android:layout_marginTop="14.0dip"
-            android:background="@color/oui_list_divider_color" />
+            <View
+                android:id="@+id/item_divider"
+                android:layout_height="1dp"
+                android:layout_width="match_parent"
+                android:background="@color/oui_list_divider_color" />
 
-    </LinearLayout>  
+        </LinearLayout>  
+        
+    </LinearLayout>
     
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
