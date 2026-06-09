@@ -9,7 +9,7 @@
     android:gravity="center_vertical"
     android:animateLayoutChanges="true"
     android:orientation="horizontal"
-    android:background="@drawable/list_ripple">
+    android:background="@color/oui_background_color">
 
     <CheckBox
         android:id="@+id/checkbox"
