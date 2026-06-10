@@ -8,34 +8,32 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:background="@drawable/list_ripple">
+    android:background="@color/oui_background_color">
     
-    <com.example.oneuiapp.widget.SelectableLinearLayout
-        android:id="@+id/selectable_layout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        app:checkMode="checkBox"
-        android:animateLayoutChanges="true"
-        app:selectedHighlightColor="?attr/colorControlHighlight">
-
-        <ImageView
-            android:id="@+id/font_icon"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_oui_text_style_default"
-            android:scaleType="fitXY" />
+        android:background="@drawable/font_list_ripple"
+        android:gravity="center_vertical">
+       
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="19.0dip"
+            android:background="@null"  
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:paddingTop="14.0dip"
             android:gravity="center_vertical"
+            android:paddingTop="14.0dip"
+            android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
+            android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
             android:orientation="vertical">
 
             <TextView
@@ -82,6 +80,6 @@
 
         </LinearLayout>  
         
-    </com.example.oneuiapp.widget.SelectableLinearLayout>
+    </LinearLayout>
     
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
