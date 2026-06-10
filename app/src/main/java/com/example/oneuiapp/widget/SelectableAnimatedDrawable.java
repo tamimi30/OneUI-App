@@ -12,6 +12,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Xml;
 import android.widget.ImageView;
+import android.util.TypedValue;
+import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.graphics.drawable.AnimatedStateListDrawableCompat;
 import androidx.core.content.ContextCompat;
