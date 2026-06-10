@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:background="@color/oui_background_color">
+    android:background="@drawable/list_ripple>
     
     <com.example.oneuiapp.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
@@ -19,7 +19,8 @@
         android:background="@drawable/font_list_ripple"
         android:gravity="center_vertical"
         android:animateLayoutChanges="true"
-        app:checkMode="checkBox">
+        app:selectedHighlightColor="?colorControlHighlight"
+        app:checkMode="overlayCircle">
 
         <LinearLayout
             android:layout_width="match_parent"
