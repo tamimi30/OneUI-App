@@ -18,6 +18,7 @@
         android:layoutDirection="locale"
         android:orientation="horizontal"
         android:paddingStart="?android:listPreferredItemPaddingStart"
+        android:paddingEnd="?android:listPreferredItemPaddingEnd"
         android:gravity="center_vertical"
         android:animateLayoutChanges="true"
         app:checkMode="checkBox">
@@ -28,7 +29,6 @@
             android:gravity="center_vertical"
             android:paddingTop="14.0dip"
             android:layoutDirection="locale"
-            android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
             android:orientation="vertical">
 
             <TextView
