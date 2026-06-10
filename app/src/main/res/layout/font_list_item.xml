@@ -12,7 +12,7 @@
     
     <com.example.oneuiapp.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="?android:listPreferredItemPaddingStart"
@@ -22,7 +22,7 @@
         app:checkMode="checkBox">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical">
@@ -61,6 +61,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_favorite"
+                    android:paddingBottom="14.0dip"
                     android:visibility="gone"
                     tools:visibility="visible" />
                     
@@ -69,7 +70,7 @@
             <View
                 android:id="@+id/item_divider"
                 android:layout_height="1dp"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:background="@color/oui_list_divider_color" />
 
         </LinearLayout>  
