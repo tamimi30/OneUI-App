@@ -17,7 +17,6 @@
         android:orientation="horizontal"
         android:paddingStart="?android:listPreferredItemPaddingStart"
         android:gravity="center_vertical"
-        android:animateLayoutChanges="true"
         app:selectedHighlightColor="?colorControlHighlight"
         app:checkMode="overlayCircle">
 
