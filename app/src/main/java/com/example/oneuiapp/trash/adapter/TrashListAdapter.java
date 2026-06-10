@@ -325,16 +325,16 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     /**
      * تحديث حالة CheckBox للعنصر — مُستخدَم في الربط الكامل والجزئي على حدٍّ سواء.
      */
-
     private void updateCheckBoxState(@NonNull TrashItemViewHolder holder, int position) {
         if (isSelectionMode) {
             holder.checkBox.setVisibility(View.VISIBLE);
-            holder.checkBox.setCheckedSilent(isItemSelected(position));
+            holder.checkBox.setChecked(isItemSelected(position));
         } else {
             holder.checkBox.setVisibility(View.GONE);
-            holder.checkBox.setCheckedSilent(false);
+            holder.checkBox.setChecked(false);
         }
     }
+
     // ─────────────────────────────────────────────────────────
     // ★ (9): حساب نص الأيام المتبقية
     // ─────────────────────────────────────────────────────────
@@ -554,7 +554,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     static class TrashItemViewHolder extends RecyclerView.ViewHolder {
 
-        final com.example.oneuiapp.widget.SmoothCheckBox checkBox;
+        final CheckBox checkBox;
         final TextView fontNameTextView;
         final TextView daysRemainingTextView;
         final View dividerView;

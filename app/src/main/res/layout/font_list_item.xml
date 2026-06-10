@@ -17,7 +17,7 @@
         android:background="@drawable/font_list_ripple"
         android:gravity="center_vertical">
        
-        <com.example.oneuiapp.widget.SmoothCheckBox
+        <CheckBox
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
