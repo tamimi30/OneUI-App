@@ -8,14 +8,12 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:layoutDirection="locale"
     android:background="@drawable/list_ripple">
     
     <com.example.oneuiapp.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layoutDirection="locale"
         android:orientation="horizontal"
         android:paddingStart="?android:listPreferredItemPaddingStart"
         android:paddingEnd="?android:listPreferredItemPaddingEnd"
@@ -27,8 +25,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:paddingTop="14.0dip"
-            android:layoutDirection="locale"
             android:orientation="vertical">
 
             <TextView
@@ -36,7 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:textDirection="locale"
+                android:paddingHorizontal="10.0dip"
+                android:paddingTop="14.0dip"
                 android:maxLines="1"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Font Name Example" />
@@ -45,8 +42,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:layoutDirection="locale"
-                android:paddingBottom="14.0dip"
                 android:orientation="horizontal">
                 
                 <TextView
@@ -54,7 +49,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:textDirection="locale"
+                    android:paddingHorizontal="10.0dip"
+                    android:paddingBottom="14.0dip"
                     android:maxLines="1"
                     android:layout_marginEnd="17dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
@@ -64,7 +60,6 @@
                     android:id="@+id/font_item_favorite_icon"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:layoutDirection="locale"
                     android:src="@drawable/ic_favorite"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -74,7 +69,6 @@
             <View
                 android:id="@+id/item_divider"
                 android:layout_height="1dp"
-                android:layoutDirection="locale"
                 android:layout_width="match_parent"
                 android:background="@color/oui_list_divider_color" />
 
