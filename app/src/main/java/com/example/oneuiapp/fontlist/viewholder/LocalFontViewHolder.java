@@ -61,7 +61,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     public final TextView fontNameTextView;
     // ★ المرجع الجديد لعرض وصف الوزن والعرض ★
     public final TextView weightWidthTextView;
-    public final CheckBox checkBox;
+    public final com.example.oneuiapp.widget.SmoothCheckBox checkBox;
     public final View dividerView; // ★ مرجع الخط الفاصل ★
     // ★ أيقونة المفضلة الصفراء (ic_favorite)، تظهر فقط للعناصر المفضلة ★
     public final ImageView favoriteIconView;
@@ -111,10 +111,10 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         // ★ إظهار/إخفاء CheckBox حسب وضع التحديد ★
         if (isSelectionMode) {
             checkBox.setVisibility(View.VISIBLE);
-            checkBox.setChecked(isSelected);
+            checkBox.setCheckedSilent(isSelected);
         } else {
             checkBox.setVisibility(View.GONE);
-            checkBox.setChecked(false);
+            checkBox.setCheckedSilent(false);
         }
 
         // ★ تغيير لون النص لتمييز آخر خط تم فتحه ★
