@@ -15,11 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:paddingStart="?android:listPreferredItemPaddingStart"
         android:background="@drawable/font_list_ripple"
         android:gravity="center_vertical"
         android:animateLayoutChanges="true"
-        app:checkMode="checkBox"
-        app:checkableButtonSpacing="14dp">
+        app:checkMode="checkBox">
 
         <LinearLayout
             android:layout_width="match_parent"
