@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CheckBox;
@@ -19,7 +18,6 @@ import com.example.oneuiapp.R;
 
 public class SelectableLinearLayout extends LinearLayout {
 
-    private static final String TAG = "SelectableLinearLayout";
     private static final int CHECK_MODE_CHECKBOX = 0;
     private static final int CHECK_MODE_OVERLAY = 1;
 
@@ -56,13 +54,12 @@ public class SelectableLinearLayout extends LinearLayout {
             checkMode = a.getInt(R.styleable.SelectableLinearLayout_checkMode, CHECK_MODE_CHECKBOX);
 
             if (checkMode == CHECK_MODE_CHECKBOX) {
-                int spacing = a.getDimensionPixelSize(R.styleable.SelectableLinearLayout_checkableButtonSpacing, 14);
+                int spacing = a.getDimensionPixelSize(R.styleable.SelectableLinearLayout_checkableButtonSpacing, dpToPx(context, 14));
                 checkBox = new AppCompatCheckBox(context);
                 LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 params.gravity = Gravity.CENTER_VERTICAL;
                 params.setMarginEnd(spacing);
-                // تعويض مسافة الـ padding الافتراضية
-                params.setMarginStart(-dpToPx(context, 4)); 
+                params.setMarginStart(dpToPx(context, -4)); 
                 checkBox.setLayoutParams(params);
                 checkBox.setClickable(false);
                 checkBox.setLongClickable(false);
@@ -70,7 +67,14 @@ public class SelectableLinearLayout extends LinearLayout {
                 checkBox.setBackground(null);
                 addView(checkBox, 0);
             } else if (checkMode == CHECK_MODE_OVERLAY) {
-                // الكود الخاص بتأثير الصورة (لا يُستخدم في حالتك لكننا نحتفظ به للتوافق مع المكتبة)
+                // ★ تم إصلاح الخطأ: الآن نقوم بإنشاء رسمة "علامة الصح" الأنيميشن ★
+                checkDrawable = SelectableAnimatedDrawable.create(context, R.drawable.oui_des_list_item_selection_anim_selector, context.getTheme());
+                
+                if (a.hasValue(R.styleable.SelectableLinearLayout_cornerRadius)) {
+                    if (checkDrawable != null) {
+                        checkDrawable.setCornerRadius(a.getDimension(R.styleable.SelectableLinearLayout_cornerRadius, 0f));
+                    }
+                }
                 imageTargetId = a.getResourceId(R.styleable.SelectableLinearLayout_targetImage, 0);
             }
             a.recycle();
@@ -82,7 +86,7 @@ public class SelectableLinearLayout extends LinearLayout {
         super.onFinishInflate();
         if (checkMode == CHECK_MODE_OVERLAY && imageTargetId != 0) {
             imageTarget = findViewById(imageTargetId);
-            if (imageTarget != null) {
+            if (imageTarget != null && checkDrawable != null) {
                 if (Build.VERSION.SDK_INT >= 23) {
                     imageTarget.setForeground(checkDrawable);
                 } else {
