@@ -12,21 +12,29 @@
     
     <com.example.oneuiapp.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingStart="?android:listPreferredItemPaddingStart"
-        android:paddingEnd="?android:listPreferredItemPaddingEnd"
         android:gravity="center_vertical"
-        android:animateLayoutChanges="true"
-        app:checkMode="checkBox">
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        app:checkMode="overlayCircle"
+        app:targetImage="@+id/font_icon"
+        app:selectedHighlightColor="?attr/colorControlHighlight">
+
+        <ImageView
+            android:id="@+id/font_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_oui_text_style_default"
+            android:scaleType="fitXY" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
             android:paddingTop="14.0dip"
-            android:paddingHorizontal="10.0dip"
-            android:animateLayoutChanges="true"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -44,7 +52,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingBottom="14.0dip"
-                android:animateLayoutChanges="true"
                 android:orientation="horizontal">
                 
                 <TextView
@@ -70,11 +77,9 @@
             <View
                 android:id="@+id/item_divider"
                 android:layout_height="1dp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:background="@color/oui_list_divider_color" />
 
         </LinearLayout>  
         
     </com.example.oneuiapp.widget.SelectableLinearLayout>
-    
-</dev.oneuiproject.oneui.widget.RoundLinearLayout>
