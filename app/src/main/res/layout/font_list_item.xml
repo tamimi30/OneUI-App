@@ -17,8 +17,8 @@
         android:orientation="horizontal"
         android:paddingStart="?android:listPreferredItemPaddingStart"
         android:gravity="center_vertical"
-        app:selectedHighlightColor="?colorControlHighlight"
-        app:checkMode="overlayCircle">
+        android:animateLayoutChanges="true"
+        app:checkMode="checkBox">
 
         <LinearLayout
             android:layout_width="match_parent"
