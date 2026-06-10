@@ -325,13 +325,11 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     /**
      * تحديث حالة CheckBox للعنصر — مُستخدَم في الربط الكامل والجزئي على حدٍّ سواء.
      */
+
     private void updateCheckBoxState(@NonNull TrashItemViewHolder holder, int position) {
-        if (isSelectionMode) {
-            holder.checkBox.setVisibility(View.VISIBLE);
-            holder.checkBox.setChecked(isItemSelected(position));
-        } else {
-            holder.checkBox.setVisibility(View.GONE);
-            holder.checkBox.setChecked(false);
+        if (holder.selectableLayout != null) {
+            holder.selectableLayout.setSelectionMode(isSelectionMode);
+            holder.selectableLayout.setSelectedAnimate(isItemSelected(position));
         }
     }
 
