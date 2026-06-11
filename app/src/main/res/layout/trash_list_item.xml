@@ -62,12 +62,12 @@
             
     </LinearLayout>
 
-</dev.oneuiproject.oneui.widget.RoundLinearLayout>
-
-<View
+    <View
     android:id="@+id/item_divider"
-    android:layout_height="1dp"
+    android:layout_height="0dp"
     android:layout_width="wrap_content"
     android:layout_marginEnd="22dp"
     android:layout_marginStart="22dp"
     android:background="@color/oui_list_divider_color" />
+
+</dev.oneuiproject.oneui.widget.RoundLinearLayout>
