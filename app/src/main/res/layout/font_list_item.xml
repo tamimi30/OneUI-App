@@ -7,7 +7,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:animateLayoutChanges="true"
     android:background="@color/oui_background_color">
 
     <LinearLayout
@@ -15,6 +14,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:paddingVertical="14dp"
+        android:paddingHorizontal="22dp"
         android:background="@drawable/font_list_ripple"
         android:animateLayoutChanges="true">
 
@@ -22,54 +23,43 @@
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="17.0dip"
+            android:paddingEnd="18.0dip"
             android:background="@null"
             android:clickable="false"
             android:focusable="false"
             android:visibility="gone" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="center_vertical"
-            android:paddingTop="22.0dip"
-            android:animateLayoutChanges="true"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/font_item_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="25.0dip" 
-                android:layout_marginEnd="25.0dip"
-                android:ellipsize="marquee"
-                android:singleLine="true"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:includeFontPadding="false"
                 android:textSize="16sp"
                 android:textColor="?android:attr/textColorPrimary"
-                android:fontFamily="sec-bold"
+                android:textStyle="bold"
                 tools:text="Font Name Example" />
                 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:paddingStart="25.0dip"
-                android:paddingEnd="25.0dip"
-                android:paddingTop="5.0dip"
-                android:paddingBottom="13.0dip"
-                android:animateLayoutChanges="true"
                 android:orientation="horizontal">
                 
                 <TextView
                     android:id="@+id/font_item_weight_width"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
-                    android:singleLine="true"
-                    android:includeFontPadding="false"
-                    android:layout_marginEnd="12dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:layout_marginEnd="7dp"
                     android:textSize="13sp"
                     android:textColor="@color/sesl_secondary_text_color"
                     tools:text="Bold, Condensed" />
@@ -83,15 +73,15 @@
                     tools:visibility="visible" />
                     
                 </LinearLayout>
-
-                <View
-                    android:id="@+id/item_divider"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:background="@drawable/sesl_list_divider" />
-
-        </LinearLayout>   
+                
+        </LinearLayout>  
 
     </LinearLayout>
 
+    <View
+        android:id="@+id/item_divider"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:background="@color/oui_list_divider_color" />
+        
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
