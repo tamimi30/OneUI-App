@@ -713,12 +713,9 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             if (payloads.contains(PAYLOAD_UPDATE_SELECTION)) {
                 if (holder instanceof LocalFontViewHolder) {
                     LocalFontViewHolder vh = (LocalFontViewHolder) holder;
-                    if (isSelectionMode) {
-                        vh.checkBox.setVisibility(View.VISIBLE);
-                        vh.checkBox.setChecked(isItemSelected(position));
-                    } else {
-                        vh.checkBox.setVisibility(View.GONE);
-                        vh.checkBox.setChecked(false);
+                    if (vh.selectableLayout != null) {
+                        vh.selectableLayout.setSelectionMode(isSelectionMode);
+                        vh.selectableLayout.setSelectedAnimate(isItemSelected(position));
                     }
                 } else if (holder instanceof SortHeaderViewHolder) {
                     // ★ تعطيل/تفعيل شريط الفرز حسب وضع التحديد ★
@@ -913,4 +910,4 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (adj < 0 || adj >= positionSections.size()) return 0;
         return positionSections.get(adj);
     }
-            }
+                }

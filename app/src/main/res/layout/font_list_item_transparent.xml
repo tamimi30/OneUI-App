@@ -11,7 +11,8 @@
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.example.oneuiapp.widget.SelectableLinearLayout
+        android:id="@+id/selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme"
@@ -21,17 +22,9 @@
         android:paddingTop="14dp"
         android:paddingBottom="14dp"
         android:paddingStart="20dp"
-        android:paddingEnd="20dp">
-
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="?android:listPreferredItemPaddingStart"
-            android:background="@null"
-            android:clickable="false"
-            android:focusable="false"
-            android:visibility="gone" />
+        android:paddingEnd="20dp"
+        app:checkMode="checkBox"
+        app:checkableButtonSpacing="14dp">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -73,6 +66,6 @@
             android:visibility="gone"
             tools:visibility="visible" />
 
-    </LinearLayout>
+    </com.example.oneuiapp.widget.SelectableLinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

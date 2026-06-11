@@ -8,30 +8,22 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:background="@color/oui_background_color">
-
-    <LinearLayout
+    android:background="@drawable/list_ripple">
+    
+    <com.example.oneuiapp.widget.SelectableLinearLayout
+        android:id="@+id/selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="@drawable/font_list_ripple"
-        android:animateLayoutChanges="true">
-
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="19.0dip"
-            android:background="@null"
-            android:clickable="false"
-            android:focusable="false"
-            android:visibility="gone" />
+        android:animateLayoutChanges="true"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        app:checkMode="checkBox">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="25.0dip"
             android:paddingTop="14.0dip"
             android:gravity="center_vertical"
             android:orientation="vertical">
@@ -42,9 +34,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="16sp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Font Name Example" />
                 
             <LinearLayout
@@ -60,9 +50,8 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:layout_marginEnd="12.0dip"
-                    android:textSize="13sp"
-                    android:textColor="@color/sesl_secondary_text_color"
+                    android:layout_marginEnd="17dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
                     tools:text="Bold, Condensed" />
                     
                 <ImageView
@@ -78,11 +67,11 @@
             <View
                 android:id="@+id/item_divider"
                 android:layout_height="1dp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:background="@color/oui_list_divider_color" />
-                
+
         </LinearLayout>  
         
-    </LinearLayout>
-
+    </com.example.oneuiapp.widget.SelectableLinearLayout>
+    
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>

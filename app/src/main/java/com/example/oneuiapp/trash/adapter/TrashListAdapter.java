@@ -325,13 +325,11 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     /**
      * تحديث حالة CheckBox للعنصر — مُستخدَم في الربط الكامل والجزئي على حدٍّ سواء.
      */
+
     private void updateCheckBoxState(@NonNull TrashItemViewHolder holder, int position) {
-        if (isSelectionMode) {
-            holder.checkBox.setVisibility(View.VISIBLE);
-            holder.checkBox.setChecked(isItemSelected(position));
-        } else {
-            holder.checkBox.setVisibility(View.GONE);
-            holder.checkBox.setChecked(false);
+        if (holder.selectableLayout != null) {
+            holder.selectableLayout.setSelectionMode(isSelectionMode);
+            holder.selectableLayout.setSelectedAnimate(isItemSelected(position));
         }
     }
 
@@ -554,14 +552,14 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     static class TrashItemViewHolder extends RecyclerView.ViewHolder {
 
-        final CheckBox checkBox;
+        final com.example.oneuiapp.widget.SelectableLinearLayout selectableLayout;
         final TextView fontNameTextView;
         final TextView daysRemainingTextView;
         final View dividerView;
 
         TrashItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            checkBox              = itemView.findViewById(R.id.checkbox);
+            selectableLayout      = itemView.findViewById(R.id.selectable_layout);
             fontNameTextView      = itemView.findViewById(R.id.trash_item_font_name);
             daysRemainingTextView = itemView.findViewById(R.id.trash_item_days_remaining);
             dividerView           = itemView.findViewById(R.id.item_divider);

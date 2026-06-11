@@ -61,7 +61,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     public final TextView fontNameTextView;
     // ★ المرجع الجديد لعرض وصف الوزن والعرض ★
     public final TextView weightWidthTextView;
-    public final CheckBox checkBox;
+    public final com.example.oneuiapp.widget.SelectableLinearLayout selectableLayout;
     public final View dividerView; // ★ مرجع الخط الفاصل ★
     // ★ أيقونة المفضلة الصفراء (ic_favorite)، تظهر فقط للعناصر المفضلة ★
     public final ImageView favoriteIconView;
@@ -71,7 +71,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         fontNameTextView    = itemView.findViewById(R.id.font_item_name);
         weightWidthTextView = itemView.findViewById(R.id.font_item_weight_width); // ★ جديد ★
-        checkBox            = itemView.findViewById(R.id.checkbox);
+        selectableLayout = itemView.findViewById(R.id.selectable_layout);
         dividerView         = itemView.findViewById(R.id.item_divider);           // ★ ربط الخط الفاصل ★
         favoriteIconView    = itemView.findViewById(R.id.font_item_favorite_icon); // ★ جديد: أيقونة المفضلة ★
     }
@@ -108,15 +108,11 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         this.currentPath = path;
         itemView.setTag(path);
 
-        // ★ إظهار/إخفاء CheckBox حسب وضع التحديد ★
-        if (isSelectionMode) {
-            checkBox.setVisibility(View.VISIBLE);
-            checkBox.setChecked(isSelected);
-        } else {
-            checkBox.setVisibility(View.GONE);
-            checkBox.setChecked(false);
+        // ★ إدارة وضع التحديد بـ SelectableLinearLayout ★
+        if (selectableLayout != null) {
+            selectableLayout.setSelectionMode(isSelectionMode);
+            selectableLayout.setSelectedAnimate(isSelected);
         }
-
         // ★ تغيير لون النص لتمييز آخر خط تم فتحه ★
         // يستخدم colorPrimary الديناميكي للتكيف مع لوحة الألوان الحالية للنظام،
         // بدلاً من اللون الأزرق الثابت
