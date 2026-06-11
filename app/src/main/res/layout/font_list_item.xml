@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center_vertical"
     android:orientation="vertical"
     android:background="@color/oui_background_color">
 
@@ -14,8 +15,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingVertical="14dp"
-        android:paddingHorizontal="22dp"
         android:background="@drawable/font_list_ripple"
         android:animateLayoutChanges="true">
 
@@ -23,7 +22,8 @@
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="22.0dip"
+            android:paddingEnd="25.0dip"
+            android:paddingStart="18.0dip"
             android:background="@null"
             android:clickable="false"
             android:focusable="false"
@@ -41,6 +41,8 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:paddingTop="14.0dip"
+                android:paddingHorizontal="25.0dip"
                 android:includeFontPadding="false"
                 android:textSize="16sp"
                 android:textColor="?android:attr/textColorPrimary"
@@ -51,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:paddingBottom="14.0dip"
                 android:orientation="horizontal">
                 
                 <TextView
@@ -59,30 +62,32 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:layout_marginEnd="7dp"
+                    android:paddingStart="25.0dip"
+                    android:paddingEnd="7.0dip"
                     android:textSize="13sp"
                     android:textColor="@color/sesl_secondary_text_color"
                     tools:text="Bold, Condensed" />
                     
                 <ImageView
                     android:id="@+id/font_item_favorite_icon"
-                    android:layout_width="17dp"
-                    android:layout_height="17dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="25.0dip"
                     android:src="@drawable/ic_favorite"
                     android:visibility="gone"
                     tools:visibility="visible" />
                     
-                </LinearLayout>
+            </LinearLayout>
+            
+            <View
+                android:id="@+id/item_divider"
+                android:layout_height="1dp"
+                android:layout_width="wrap_content"
+                android:layout_marginHorizontal="22dp"
+                android:background="@color/oui_list_divider_color" />
                 
         </LinearLayout>  
-
+        
     </LinearLayout>
 
-    <View
-        android:id="@+id/item_divider"
-        android:layout_height="1dp"
-        android:layout_width="wrap_content"
-        android:layout_marginHorizontal="22dp"
-        android:background="@color/oui_list_divider_color" />
-        
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
