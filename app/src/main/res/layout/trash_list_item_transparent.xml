@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme"
         android:orientation="horizontal"
+        android:animateLayoutChanges="true"
         android:gravity="center_vertical"
         android:paddingVertical="14dp"
         android:paddingHorizontal="20dp">
