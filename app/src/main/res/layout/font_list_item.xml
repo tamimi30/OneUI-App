@@ -82,6 +82,7 @@
         android:id="@+id/item_divider"
         android:layout_height="1dp"
         android:layout_width="wrap_content"
+        android:paddingHorizontal="22dp"
         android:background="@color/oui_list_divider_color" />
         
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
