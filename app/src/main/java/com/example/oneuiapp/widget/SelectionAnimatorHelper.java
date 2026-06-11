@@ -1,5 +1,7 @@
 package com.example.oneuiapp.widget;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.view.View;
 import android.view.animation.PathInterpolator;
@@ -9,47 +11,50 @@ public class SelectionAnimatorHelper {
     public static void animateSelection(final View checkBox, final View mainContent, boolean isSelectionMode) {
         if (checkBox == null || mainContent == null) return;
 
-        // إيقاف أي أنيميشن سابق لمنع التداخل
-        if (checkBox.getTag() instanceof ValueAnimator) {
-            ((ValueAnimator) checkBox.getTag()).cancel();
+        // إيقاف أي أنيميشن جاري لمنع التداخل
+        if (mainContent.getTag() instanceof ValueAnimator) {
+            ((ValueAnimator) mainContent.getTag()).cancel();
         }
 
-        // 1. حساب مسافة الانزلاق المطلوبة (تُعادل حجم الـ Checkbox تقريباً)
-        final float offsetDistance = 40f * checkBox.getResources().getDisplayMetrics().density;
+        // 1. حل مشكلة المسافة الضخمة: تقليل الرقم إلى 32 ليكون مناسباً لحجم علامة الصح
+        final float distance = 32f * checkBox.getResources().getDisplayMetrics().density;
 
-        // 2. فحص لغة الجهاز لتحديد اتجاه الانزلاق
+        // 2. فحص لغة الجهاز
         boolean isRtl = mainContent.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
 
-        // إذا عربي: النصوص تنزلق لليسار (سالب) | إذا إنجليزي: النصوص تنزلق لليمين (موجب)
-        final float translationTarget = isRtl ? -offsetDistance : offsetDistance;
+        // تحديد مسار الإزاحة: النصوص تتحرك لليسار في العربي (سالب) ولليمين في الإنجليزي (موجب)
+        final float targetTranslation = isRtl ? -distance : distance;
+
+        // قراءة الموقع الحالي للنص لمنع أي قفزات مفاجئة إذا تم الضغط بسرعة
+        float startTranslation = mainContent.getTranslationX();
+        float endTranslation = isSelectionMode ? targetTranslation : 0f;
 
         if (isSelectionMode) {
+            // إظهار الـ CheckBox ونترك للنظام تطبيق أنيميشن الظهور الافتراضي الخاص به دون تدخل منا
             checkBox.setVisibility(View.VISIBLE);
         }
 
-        float startFraction = isSelectionMode ? 0f : 1f;
-        float endFraction = isSelectionMode ? 1f : 0f;
-
-        ValueAnimator animator = ValueAnimator.ofFloat(startFraction, endFraction);
+        ValueAnimator animator = ValueAnimator.ofFloat(startTranslation, endTranslation);
         animator.setDuration(250);
         animator.setInterpolator(new PathInterpolator(0.22f, 0.25f, 0f, 1f));
 
         animator.addUpdateListener(animation -> {
-            float fraction = (float) animation.getAnimatedValue();
+            // 3. حل مشكلة اللاق: استخدام translationX ناعم جداً وسلس على المعالج
+            mainContent.setTranslationX((float) animation.getAnimatedValue());
+        });
 
-            // ★ 1. الـ CheckBox يظهر ويختفي فقط في مكانه (لا يتحرك) ★
-            checkBox.setAlpha(fraction);
-
-            // ★ 2. المحتوى (النصوص) هو الذي ينزلق للجانب ★
-            mainContent.setTranslationX(translationTarget * fraction);
-
-            // 3. إخفاء الـ CheckBox تماماً عند الإلغاء
-            if (fraction == 0f && !isSelectionMode) {
-                checkBox.setVisibility(View.GONE);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (!isSelectionMode) {
+                    // عند الخروج من وضع التحديد، نخفي الـ CheckBox بالوضع الافتراضي ونصفر المكان
+                    checkBox.setVisibility(View.GONE);
+                    mainContent.setTranslationX(0f);
+                }
             }
         });
 
-        checkBox.setTag(animator);
+        mainContent.setTag(animator);
         animator.start();
     }
 }
