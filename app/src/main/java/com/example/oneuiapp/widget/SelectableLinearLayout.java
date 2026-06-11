@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
 
