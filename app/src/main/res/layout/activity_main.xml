@@ -26,6 +26,7 @@
         android:id="@+id/fab_font_size"
         android:theme="@style/Theme.MaterialComponents.DayNight"
         style="@style/FabStyle"
+        android:transitionName="fabTransition"
         android:visibility="gone"
         android:tooltipText="@string/font_size_dialog_title"
         app:layout_location="root" />
