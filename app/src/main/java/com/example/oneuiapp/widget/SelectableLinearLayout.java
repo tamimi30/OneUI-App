@@ -100,10 +100,13 @@ public class SelectableLinearLayout extends LinearLayout {
     public void setSelectionMode(boolean mode) {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
-        
+
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            // استخدام الكلاس المساعد الذي قمنا بإنشائه لعمل أنيميشن سلس يدعم اللغتين
-            SelectionAnimatorHelper.animateSelection(checkBox, mode);
+            // بما أن الـ CheckBox تمت إضافته في الخانة 0، فإن المحتوى (النصوص) موجود دائماً في الخانة 1
+            View mainContent = getChildCount() > 1 ? getChildAt(1) : null;
+            
+            // نمرر الـ Checkbox ليظهر ويختفي، ونمرر المحتوى لينزلق للجانب
+            SelectionAnimatorHelper.animateSelection(checkBox, mainContent, mode);
         }
     }
 
