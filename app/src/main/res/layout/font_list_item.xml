@@ -23,7 +23,7 @@
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="18.0dip"
+            android:paddingEnd="22.0dip"
             android:background="@null"
             android:clickable="false"
             android:focusable="false"
