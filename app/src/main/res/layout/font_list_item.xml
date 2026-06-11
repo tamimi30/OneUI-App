@@ -18,22 +18,11 @@
         android:gravity="center_vertical"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        app:checkMode="overlayCircle"
-        app:targetImage="@+id/font_icon"
-        app:selectedHighlightColor="?attr/colorControlHighlight">
-
-        <ImageView
-            android:id="@+id/font_icon"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_oui_text_style_default"
-            android:scaleType="fitXY" />
+        app:checkMode="checkBox">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:paddingTop="14.0dip"
             android:gravity="center_vertical"
             android:orientation="vertical">
