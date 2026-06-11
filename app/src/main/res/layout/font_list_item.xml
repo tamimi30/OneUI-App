@@ -31,6 +31,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="25.0dip"
+            android:paddingTop="14.0dip"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -40,9 +42,6 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:paddingTop="14.0dip"
-                android:paddingHorizontal="28.0dip"
-                android:includeFontPadding="false"
                 android:textSize="16sp"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"
@@ -61,8 +60,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:paddingStart="28.0dip"
-                    android:paddingEnd="7.0dip"
+                    android:layout_marginEnd="12.0dip"
                     android:textSize="13sp"
                     android:textColor="@color/sesl_secondary_text_color"
                     tools:text="Bold, Condensed" />
@@ -81,7 +79,6 @@
                 android:id="@+id/item_divider"
                 android:layout_height="1dp"
                 android:layout_width="wrap_content"
-                android:layout_marginHorizontal="22dp"
                 android:background="@color/oui_list_divider_color" />
                 
         </LinearLayout>  
