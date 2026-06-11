@@ -11,21 +11,26 @@
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-    <com.example.oneuiapp.widget.SelectableLinearLayout
-        android:id="@+id/selectable_layout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme"
-        android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:animateLayoutChanges="true"
-        android:paddingTop="14dp"
-        android:paddingBottom="14dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        app:checkMode="checkBox"
-        app:checkableButtonSpacing="14dp">
+        android:paddingVertical="14dp"
+        android:paddingHorizontal="20dp">
 
+        <!-- CheckBox للتحديد المتعدد — مخفي افتراضياً، يظهر في وضع الاختيار -->
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="?android:listPreferredItemPaddingStart"
+            android:background="@null"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -58,6 +63,6 @@
 
         </LinearLayout>
 
-    </com.example.oneuiapp.widget.SelectableLinearLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
