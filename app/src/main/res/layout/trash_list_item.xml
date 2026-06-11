@@ -15,8 +15,7 @@
         android:background="@drawable/font_list_ripple"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingVertical="14dp"
-        android:paddingHorizontal="22dp"
+        
         android:animateLayoutChanges="true">
         
         <CheckBox
@@ -32,6 +31,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingVertical="14dp"
+            android:paddingHorizontal="22dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
