@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    
+    android:paddingVertical="14dp"
+    android:paddingHorizontal="22dp"
     android:gravity="center_vertical"
     android:background="@color/oui_background_color">
 
@@ -31,8 +32,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingVertical="14dp"
-            android:paddingHorizontal="22dp"
+            
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -61,13 +61,13 @@
         </LinearLayout>
             
     </LinearLayout>
-    
-    <View
-        android:id="@+id/item_divider"
-        android:layout_height="1dp"
-        android:layout_width="wrap_content"
-        android:layout_marginEnd="22dp"
-        android:layout_marginStart="22dp"
-        android:background="@color/oui_list_divider_color" />
 
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+
+<View
+    android:id="@+id/item_divider"
+    android:layout_height="1dp"
+    android:layout_width="wrap_content"
+    android:layout_marginEnd="22dp"
+    android:layout_marginStart="22dp"
+    android:background="@color/oui_list_divider_color" />
