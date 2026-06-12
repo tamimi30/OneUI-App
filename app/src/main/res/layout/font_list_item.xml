@@ -21,11 +21,11 @@
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
         app:checkMode="checkBox">
         	
-        <ImageView
+     <!--   <ImageView
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:src="@drawable/ic_favorite"
-            tools:visibility="visible" />
+            tools:visibility="visible" />-->
 
         <LinearLayout
             android:layout_width="match_parent"
