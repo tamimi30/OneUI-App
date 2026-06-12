@@ -48,6 +48,12 @@ public class SelectableLinearLayout extends LinearLayout {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        
+        // بداية الحل: نمنع الجدران الوهمية من قص النص أثناء تحركه للجانب
+        setClipChildren(false);
+        setClipToPadding(false);
+        // نهاية الحل
+        
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SelectableLinearLayout, defStyleAttr, defStyleRes);
             int color = a.getColor(R.styleable.SelectableLinearLayout_selectedHighlightColor, Color.parseColor("#08000000"));
