@@ -148,8 +148,20 @@ public class SelectableLinearLayout extends ConstraintLayout {
     public void setSelectionMode(boolean mode) {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
+
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            // بتغيير حالة الظهور فقط، سيتكفل ConstraintLayout بالانزلاق السلس في العربية والإنجليزية!
+            // 1. إيقاف أي حركة عشوائية معلقة لمنع التداخل
+            android.transition.TransitionManager.endTransitions(this);
+
+            // 2. إنشاء أنيميشن انزلاق سلس ومستقل (طريقة سامسونج)
+            android.transition.ChangeBounds transition = new android.transition.ChangeBounds();
+            transition.setDuration(250);
+            transition.setInterpolator(new android.view.animation.DecelerateInterpolator());
+            
+            // 3. تطبيق الأنيميشن داخل هذا العنصر فقط (بمعزل عن القائمة)
+            android.transition.TransitionManager.beginDelayedTransition(this, transition);
+
+            // 4. إظهار أو إخفاء الـ CheckBox
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
     }
