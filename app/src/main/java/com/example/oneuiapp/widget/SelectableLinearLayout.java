@@ -6,20 +6,18 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.example.oneuiapp.R;
 
-// ★ الحل الجذري: الوراثة من ConstraintLayout بدلاً من LinearLayout لحل مشكلة أنيميشن الـ RTL ★
-public class SelectableLinearLayout extends ConstraintLayout {
+public class SelectableLinearLayout extends LinearLayout {
 
     private static final int CHECK_MODE_CHECKBOX = 0;
     private static final int CHECK_MODE_OVERLAY = 1;
@@ -33,7 +31,6 @@ public class SelectableLinearLayout extends ConstraintLayout {
     private int imageTargetId = 0;
 
     private boolean isSelectionMode = false;
-    private int spacing;
 
     public SelectableLinearLayout(Context context) {
         super(context);
@@ -58,25 +55,22 @@ public class SelectableLinearLayout extends ConstraintLayout {
             checkMode = a.getInt(R.styleable.SelectableLinearLayout_checkMode, CHECK_MODE_CHECKBOX);
 
             if (checkMode == CHECK_MODE_CHECKBOX) {
-                spacing = a.getDimensionPixelSize(R.styleable.SelectableLinearLayout_checkableButtonSpacing, dpToPx(context, 14));
-                
-                // 1. بناء الـ CheckBox
+                int spacing = a.getDimensionPixelSize(R.styleable.SelectableLinearLayout_checkableButtonSpacing, dpToPx(context, 14));
                 checkBox = new AppCompatCheckBox(context);
-                checkBox.setId(View.generateViewId());
+                LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                params.gravity = Gravity.CENTER_VERTICAL;
+                params.setMarginEnd(spacing);
+                params.setMarginStart(dpToPx(context, -4)); 
+                checkBox.setLayoutParams(params);
                 checkBox.setClickable(false);
-                checkBox.setFocusable(false);
                 checkBox.setLongClickable(false);
                 checkBox.setVisibility(View.GONE);
                 checkBox.setBackground(null);
-                
-                // إضافته إلى التنسيق
-                addView(checkBox, new ConstraintLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                ));
-                
+                addView(checkBox, 0);
             } else if (checkMode == CHECK_MODE_OVERLAY) {
+                // ★ تم إصلاح الخطأ: الآن نقوم بإنشاء رسمة "علامة الصح" الأنيميشن ★
                 checkDrawable = SelectableAnimatedDrawable.create(context, R.drawable.oui_des_list_item_selection_anim_selector, context.getTheme());
+                
                 if (a.hasValue(R.styleable.SelectableLinearLayout_cornerRadius)) {
                     if (checkDrawable != null) {
                         checkDrawable.setCornerRadius(a.getDimension(R.styleable.SelectableLinearLayout_cornerRadius, 0f));
@@ -91,49 +85,7 @@ public class SelectableLinearLayout extends ConstraintLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        
-        if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            // 2. البحث عن المحتوى الفعلي (العنصر الآخر غير الـ CheckBox والموجود في ملف XML)
-            View content = null;
-            for (int i = 0; i < getChildCount(); i++) {
-                View child = getChildAt(i);
-                if (child != checkBox) {
-                    content = child;
-                    break;
-                }
-            }
-
-            if (content != null) {
-                if (content.getId() == View.NO_ID) {
-                    content.setId(View.generateViewId());
-                }
-
-                // 3. ★ السر هنا: إنشاء قيود (Constraints) مثل تصميم تطبيق سامسونج تماماً ★
-                ConstraintSet set = new ConstraintSet();
-                set.clone(this);
-
-                // أ. ربط الـ CheckBox ببداية العنصر (Start) والوسط عمودياً
-                set.connect(checkBox.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
-                set.connect(checkBox.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-                set.connect(checkBox.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-                
-                // إضافة الهوامش للـ Checkbox
-                set.setMargin(checkBox.getId(), ConstraintSet.START, dpToPx(getContext(), -4));
-                set.setMargin(checkBox.getId(), ConstraintSet.END, spacing);
-
-                // ب. ربط المحتوى بنهاية الـ CheckBox (End) ليتفاعل مع ظهوره واختفائه
-                set.connect(content.getId(), ConstraintSet.START, checkBox.getId(), ConstraintSet.END);
-                set.connect(content.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END);
-                set.connect(content.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-                set.connect(content.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-
-                // ج. السماح للمحتوى بالتمدد للمساحة المتبقية والالتزام بالارتفاع الأصلي
-                set.constrainWidth(content.getId(), ConstraintSet.MATCH_CONSTRAINT);
-                set.constrainHeight(content.getId(), ConstraintSet.WRAP_CONTENT);
-
-                set.applyTo(this);
-            }
-        } else if (checkMode == CHECK_MODE_OVERLAY && imageTargetId != 0) {
+        if (checkMode == CHECK_MODE_OVERLAY && imageTargetId != 0) {
             imageTarget = findViewById(imageTargetId);
             if (imageTarget != null && checkDrawable != null) {
                 if (Build.VERSION.SDK_INT >= 23) {
@@ -148,20 +100,7 @@ public class SelectableLinearLayout extends ConstraintLayout {
     public void setSelectionMode(boolean mode) {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
-
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            // 1. إيقاف أي حركة عشوائية معلقة لمنع التداخل
-            android.transition.TransitionManager.endTransitions(this);
-
-            // 2. إنشاء أنيميشن انزلاق سلس ومستقل (طريقة سامسونج)
-            android.transition.ChangeBounds transition = new android.transition.ChangeBounds();
-            transition.setDuration(250);
-            transition.setInterpolator(new android.view.animation.DecelerateInterpolator());
-            
-            // 3. تطبيق الأنيميشن داخل هذا العنصر فقط (بمعزل عن القائمة)
-            android.transition.TransitionManager.beginDelayedTransition(this, transition);
-
-            // 4. إظهار أو إخفاء الـ CheckBox
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
     }
