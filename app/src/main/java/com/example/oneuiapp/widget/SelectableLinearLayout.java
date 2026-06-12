@@ -117,7 +117,7 @@ public class SelectableLinearLayout extends LinearLayout {
                 transition.addTransition(new android.transition.Fade());
                 
                 // 3. الفتح يأخذ 200ms، أما الإغلاق (الرجوع) فيكون فورياً (0ms)
-                transition.setDuration(mode ? 200 : 0); 
+                transition.setDuration(mode ? 300 : 0); 
                 
                 android.transition.TransitionManager.beginDelayedTransition(this, transition);
             }
