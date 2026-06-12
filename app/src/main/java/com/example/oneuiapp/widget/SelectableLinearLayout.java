@@ -97,16 +97,25 @@ public class SelectableLinearLayout extends LinearLayout {
         }
     }
 
-    public void setSelectionMode(boolean mode) {
+        public void setSelectionMode(boolean mode) {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
             
-            // بداية الحل: نستخدم ChangeBounds فقط لإصلاح حركة الانزلاق للغة العربية 
-            // هذا الكود لن يتدخل في أنيميشن الظهور والاختفاء، ولن يسبب وميض لأنه داخل العنصر نفسه
-            android.transition.ChangeBounds slideTransition = new android.transition.ChangeBounds();
-            slideTransition.setDuration(300); // يمكنك تعديل السرعة لتطابق سرعة الظهور والاختفاء إذا أردت
-            android.transition.TransitionManager.beginDelayedTransition(this, slideTransition);
+            // بداية الحل: دمج أنيميشن الانزلاق مع أنيميشن الظهور/الاختفاء ليعملا معاً بتزامن تام
+            android.transition.TransitionSet transitionSet = new android.transition.TransitionSet();
+            transitionSet.setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER); // أمر التزامن
+            transitionSet.setDuration(300);
+
+            // 1. أنيميشن الانزلاق للنصوص والأيقونات
+            transitionSet.addTransition(new android.transition.ChangeBounds());
+            
+            // 2. أنيميشن الظهور والاختفاء التدريجي مخصص فقط للـ CheckBox لمنعه من قص النص
+            android.transition.Fade fadeTransition = new android.transition.Fade();
+            fadeTransition.addTarget(checkBox);
+            transitionSet.addTransition(fadeTransition);
+
+            android.transition.TransitionManager.beginDelayedTransition(this, transitionSet);
             // نهاية الحل.
 
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
