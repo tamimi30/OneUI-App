@@ -97,20 +97,22 @@ public class SelectableLinearLayout extends LinearLayout {
         }
     }
 
-        public void setSelectionMode(boolean mode) {
+    public void setSelectionMode(boolean mode) {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
             
-            // بداية الحل: دمج أنيميشن الانزلاق مع أنيميشن الظهور/الاختفاء ليعملا معاً بتزامن تام
+            // بداية الحل: إضافة استثناء للـ CheckBox لمنع مشكلة التطاير بعد تدوير الشاشة
             android.transition.TransitionSet transitionSet = new android.transition.TransitionSet();
-            transitionSet.setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER); // أمر التزامن
-            transitionSet.setDuration(200);
+            transitionSet.setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER);
+            transitionSet.setDuration(1000);
 
             // 1. أنيميشن الانزلاق للنصوص والأيقونات
-            transitionSet.addTransition(new android.transition.ChangeBounds());
+            android.transition.ChangeBounds slideTransition = new android.transition.ChangeBounds();
+            slideTransition.excludeTarget(checkBox, true); // ★ هذا السطر هو مفتاح الحل، يمنع تطاير الـ CheckBox ★
+            transitionSet.addTransition(slideTransition);
             
-            // 2. أنيميشن الظهور والاختفاء التدريجي مخصص فقط للـ CheckBox لمنعه من قص النص
+            // 2. أنيميشن الظهور والاختفاء التدريجي مخصص فقط للـ CheckBox
             android.transition.Fade fadeTransition = new android.transition.Fade();
             fadeTransition.addTarget(checkBox);
             transitionSet.addTransition(fadeTransition);
@@ -121,6 +123,7 @@ public class SelectableLinearLayout extends LinearLayout {
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
     }
+
 
     public boolean isSelectionMode() {
         return isSelectionMode;
