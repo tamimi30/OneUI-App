@@ -102,24 +102,30 @@ public class SelectableLinearLayout extends LinearLayout {
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
             
-            // --- بداية الحل الجراحي الدقيق للغة العربية ---
             boolean isRtl = getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             if (isRtl) {
-                // 1. إيقاف الأنيميشن الافتراضي (المعطوب في العربي) لمنع التداخل والوميض
+                // 1. إيقاف أنيميشن النظام المكسور في العربية لمنع الوميض
                 if (getLayoutTransition() != null) {
                     setLayoutTransition(null);
                 }
                 
-                // 2. تفعيل أنيميشن متزامن (ظهور/اختفاء + انزلاق) مخصص للغة العربية
-                android.transition.AutoTransition transition = new android.transition.AutoTransition();
-                transition.setDuration(200); // نفس السرعة الافتراضية المريحة للعين
+                // 2. بناء أنيميشن مخصص يطابق الإنجليزي تماماً
+                android.transition.TransitionSet transition = new android.transition.TransitionSet();
+                // الأمر السحري: جعل الانزلاق وظهور الـ CheckBox يحدثان معاً في نفس الوقت
+                transition.setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER); 
+                transition.addTransition(new android.transition.ChangeBounds());
+                transition.addTransition(new android.transition.Fade());
+                
+                // 3. الفتح يأخذ 200ms، أما الإغلاق (الرجوع) فيكون فورياً (0ms)
+                transition.setDuration(mode ? 200 : 0); 
+                
                 android.transition.TransitionManager.beginDelayedTransition(this, transition);
             }
-            // --- نهاية الحل الجراحي ---
 
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
     }
+
 
     public boolean isSelectionMode() {
         return isSelectionMode;
