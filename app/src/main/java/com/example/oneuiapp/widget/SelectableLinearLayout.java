@@ -105,7 +105,7 @@ public class SelectableLinearLayout extends LinearLayout {
             // بداية الحل: دمج أنيميشن الانزلاق مع أنيميشن الظهور/الاختفاء ليعملا معاً بتزامن تام
             android.transition.TransitionSet transitionSet = new android.transition.TransitionSet();
             transitionSet.setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER); // أمر التزامن
-            transitionSet.setDuration(300);
+            transitionSet.setDuration(200);
 
             // 1. أنيميشن الانزلاق للنصوص والأيقونات
             transitionSet.addTransition(new android.transition.ChangeBounds());
