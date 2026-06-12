@@ -105,7 +105,7 @@ public class SelectableLinearLayout extends LinearLayout {
             // بداية الحل: نستخدم ChangeBounds فقط لإصلاح حركة الانزلاق للغة العربية 
             // هذا الكود لن يتدخل في أنيميشن الظهور والاختفاء، ولن يسبب وميض لأنه داخل العنصر نفسه
             android.transition.ChangeBounds slideTransition = new android.transition.ChangeBounds();
-            slideTransition.setDuration(200); // يمكنك تعديل السرعة لتطابق سرعة الظهور والاختفاء إذا أردت
+            slideTransition.setDuration(300); // يمكنك تعديل السرعة لتطابق سرعة الظهور والاختفاء إذا أردت
             android.transition.TransitionManager.beginDelayedTransition(this, slideTransition);
             // نهاية الحل.
 
