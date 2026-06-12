@@ -101,6 +101,22 @@ public class SelectableLinearLayout extends LinearLayout {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
+            
+            // --- بداية الحل الجراحي الدقيق للغة العربية ---
+            boolean isRtl = getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+            if (isRtl) {
+                // 1. إيقاف الأنيميشن الافتراضي (المعطوب في العربي) لمنع التداخل والوميض
+                if (getLayoutTransition() != null) {
+                    setLayoutTransition(null);
+                }
+                
+                // 2. تفعيل أنيميشن متزامن (ظهور/اختفاء + انزلاق) مخصص للغة العربية
+                android.transition.AutoTransition transition = new android.transition.AutoTransition();
+                transition.setDuration(200); // نفس السرعة الافتراضية المريحة للعين
+                android.transition.TransitionManager.beginDelayedTransition(this, transition);
+            }
+            // --- نهاية الحل الجراحي ---
+
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
     }
