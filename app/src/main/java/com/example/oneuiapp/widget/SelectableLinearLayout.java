@@ -1,21 +1,17 @@
 package com.example.oneuiapp.widget;
 
-import android.animation.LayoutTransition;
-import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
 
@@ -63,8 +59,14 @@ public class SelectableLinearLayout extends LinearLayout {
                 checkBox = new AppCompatCheckBox(context);
                 LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 params.gravity = Gravity.CENTER_VERTICAL;
-                params.setMarginEnd(spacing);
-                params.setMarginStart(dpToPx(context, -4)); 
+                boolean isRtl = getResources().getConfiguration().getLayoutDirection() == android.view.View.LAYOUT_DIRECTION_RTL;
+                if (isRtl) {
+                    params.leftMargin = spacing;
+                    params.rightMargin = dpToPx(context, -4);
+                } else {
+                    params.leftMargin = dpToPx(context, -4);
+                    params.rightMargin = spacing;
+                }
                 checkBox.setLayoutParams(params);
                 checkBox.setClickable(false);
                 checkBox.setLongClickable(false);
@@ -105,71 +107,8 @@ public class SelectableLinearLayout extends LinearLayout {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            // ★ إصلاح جراحي خاص بـ RTL فقط: نعكس اتجاه انزلاق العناصر المجاورة ★
-            // لا نلمس أنيميشن ظهور/اختفاء CheckBox (السطر التالي مباشرة) ولا سلوك LTR إطلاقًا.
-            if (getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
-                prepareRtlSlideFix(mode);
-            }
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
-    }
-
-    /**
-     * يُصلح فقط اتجاه أنيميشن انزلاق العناصر المجاورة لـ CheckBox في RTL.
-     *
-     * في LTR، يقوم LayoutTransition الافتراضي (CHANGE_APPEARING / CHANGE_DISAPPEARING)
-     * بتحريك هذه العناصر بسلاسة عند ظهور/اختفاء CheckBox. في RTL هذا التحريك لا يُفعَّل
-     * (العناصر تنتقل فجأة بدون أنيميشن)، بينما أنيميشن ظهور/اختفاء CheckBox نفسه
-     * (APPEARING/DISAPPEARING) يبقى يعمل بشكل صحيح ولا نلمسه هنا.
-     *
-     * هنا نسجّل الموضع الحالي لكل عنصر مجاور (قبل تغيير الـ visibility)، ثم بعد أن
-     * يعيد LinearLayout ترتيب العناصر (في OnPreDrawListener، أي بعد التخطيط ومباشرة
-     * قبل الرسم) نحسب الفرق الحقيقي ونُشغّل translationX من هذا الفرق إلى صفر —
-     * بنفس فكرة الانزلاق الافتراضي تمامًا، لكن بقيم حقيقية بعد التخطيط، فيكون
-     * الاتجاه صحيحًا تلقائيًا في RTL دون أي ثابت اتجاه يدوي.
-     */
-    private void prepareRtlSlideFix(final boolean mode) {
-        final int childCount = getChildCount();
-        if (childCount <= 1) return;
-
-        final float[] startLefts = new float[childCount];
-        for (int i = 1; i < childCount; i++) {
-            startLefts[i] = getChildAt(i).getLeft();
-        }
-
-        getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                getViewTreeObserver().removeOnPreDrawListener(this);
-
-                // نحاول مطابقة مدة وتسارع أنيميشن CheckBox نفسه لتبقى الحركتان متزامنتين
-                long duration = 300L; // قيمة LayoutTransition الافتراضية
-                TimeInterpolator interpolator = new AccelerateDecelerateInterpolator();
-                LayoutTransition lt = getLayoutTransition();
-                if (lt != null) {
-                    int type = mode ? LayoutTransition.APPEARING : LayoutTransition.DISAPPEARING;
-                    duration = lt.getDuration(type);
-                    TimeInterpolator custom = lt.getInterpolator(type);
-                    if (custom != null) {
-                        interpolator = custom;
-                    }
-                }
-
-                for (int i = 1; i < childCount; i++) {
-                    View child = getChildAt(i);
-                    float delta = startLefts[i] - child.getLeft();
-                    if (Math.abs(delta) >= 1f) {
-                        child.setTranslationX(delta);
-                        child.animate()
-                                .translationX(0f)
-                                .setDuration(duration)
-                                .setInterpolator(interpolator)
-                                .start();
-                    }
-                }
-                return true;
-            }
-        });
     }
 
     public boolean isSelectionMode() {
