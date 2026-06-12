@@ -10,80 +10,68 @@
     android:orientation="vertical"
     android:background="@drawable/list_ripple">
     
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.example.oneuiapp.widget.SelectableLinearLayout
+        android:id="@+id/selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-    
-        <com.example.oneuiapp.widget.SelectableLinearLayout
-            android:id="@+id/selectable_layout"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:animateLayoutChanges="true"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        app:checkMode="checkBox">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:paddingTop="14.0dip"
             android:gravity="center_vertical"
-            android:animateLayoutChanges="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-            app:checkMode="checkBox">
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/font_item_name"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="14.0dip"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceListItem"
+                tools:text="Font Name Example" />
+                
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:orientation="vertical">
-
+                android:paddingBottom="14.0dip"
+                android:orientation="horizontal">
+                
                 <TextView
-                    android:id="@+id/font_item_name"
+                    android:id="@+id/font_item_weight_width"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textAppearance="?attr/textAppearanceListItem"
-                    tools:text="Font Name Example" />
-                
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:paddingBottom="14.0dip"
-                    android:orientation="horizontal">
-                
-                    <TextView
-                        android:id="@+id/font_item_weight_width"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:layout_marginEnd="17dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        tools:text="Bold, Condensed" />
+                    android:layout_marginEnd="17dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    tools:text="Bold, Condensed" />
                     
-                    <ImageView
-                        android:id="@+id/font_item_favorite_icon"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_favorite"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
+                <ImageView
+                    android:id="@+id/font_item_favorite_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_favorite"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
                     
-                </LinearLayout>
+            </LinearLayout>
             
-                <View
-                    android:id="@+id/item_divider"
-                    android:layout_height="1dp"
-                    android:layout_width="match_parent"
-                    android:background="@color/oui_list_divider_color" />
+            <View
+                android:id="@+id/item_divider"
+                android:layout_height="1dp"
+                android:layout_width="match_parent"
+                android:background="@color/oui_list_divider_color" />
 
-            </LinearLayout>  
+        </LinearLayout>  
         
-        </com.example.oneuiapp.widget.SelectableLinearLayout>
-    
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.example.oneuiapp.widget.SelectableLinearLayout>
     
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
