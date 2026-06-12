@@ -59,14 +59,8 @@ public class SelectableLinearLayout extends LinearLayout {
                 checkBox = new AppCompatCheckBox(context);
                 LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 params.gravity = Gravity.CENTER_VERTICAL;
-                boolean isRtl = getResources().getConfiguration().getLayoutDirection() == android.view.View.LAYOUT_DIRECTION_RTL;
-                if (isRtl) {
-                    params.leftMargin = spacing;
-                    params.rightMargin = dpToPx(context, -4);
-                } else {
-                    params.leftMargin = dpToPx(context, -4);
-                    params.rightMargin = spacing;
-                }
+                params.setMarginEnd(spacing);
+                params.setMarginStart(dpToPx(context, -4)); 
                 checkBox.setLayoutParams(params);
                 checkBox.setClickable(false);
                 checkBox.setLongClickable(false);
@@ -107,6 +101,14 @@ public class SelectableLinearLayout extends LinearLayout {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
+            
+            // بداية الحل: نستخدم ChangeBounds فقط لإصلاح حركة الانزلاق للغة العربية 
+            // هذا الكود لن يتدخل في أنيميشن الظهور والاختفاء، ولن يسبب وميض لأنه داخل العنصر نفسه
+            android.transition.ChangeBounds slideTransition = new android.transition.ChangeBounds();
+            slideTransition.setDuration(200); // يمكنك تعديل السرعة لتطابق سرعة الظهور والاختفاء إذا أردت
+            android.transition.TransitionManager.beginDelayedTransition(this, slideTransition);
+            // نهاية الحل.
+
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
     }
