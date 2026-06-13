@@ -97,16 +97,6 @@ public class SearchCoordinator {
     // ويُستهلك في bindSearchMenuItem() حين تُصبح الأيقونة حقيقية وجاهزة.
     private boolean mPendingSearchRestore = false;
 
-    // ★ متغير الحماية الجديد لمنع مسح البحث ★
-    private boolean mIsPreservingSearchState = false;
-
-    public void setPreservingSearchState(boolean preserve) {
-        this.mIsPreservingSearchState = preserve;
-    }
-    
-    // ★ الإضافة: متغير لمنع طي العنوان بشكل إجباري عند استعادة البحث ★
-    private boolean mIsRestoringSearch = false;
-
     // ════════════════════════════════════════════════════════
     //  الواجهات العامة
     // ════════════════════════════════════════════════════════
@@ -181,48 +171,28 @@ public class SearchCoordinator {
      * @param searchMenuItem عنصر قائمة البحث من الـ Toolbar
      */
     public void bindSearchMenuItem(@NonNull MenuItem searchMenuItem) {
-        // ★ 1. حفظ النص قبل التهيئة لمنع مسحه التلقائي ★
-        final String queryToRestore = savedSearchQuery;
-
         this.searchMenuItem = searchMenuItem;
         setupSearchView();
 
-        // ★ 2. استعادة البحث ونتائجه بأمان ★
-        if (mPendingSearchRestore || isSearchExpanded) {
+        // ★ الإصلاح: تنفيذ الاستعادة المعلقة الآن بعد أن أصبحت الأيقونة حقيقية وجاهزة ★
+        if (mPendingSearchRestore) {
             mPendingSearchRestore = false;
-
             if (drawerLayout != null) {
                 drawerLayout.post(() -> {
-                    // التأكد من أننا في شاشة تدعم البحث لمنع الوميض في عارض الخطوط
-                    if (screenProvider == null) return;
-                    AppScreen currentScreen = screenProvider.getCurrentScreen();
-                    boolean isSearchableScreen = (currentScreen == AppScreen.LOCAL_FONTS
-                            || currentScreen == AppScreen.SYSTEM_FONTS
-                            || currentScreen == AppScreen.FAVORITES);
-
-                    if (isSearchableScreen && this.searchMenuItem != null) {
-                        mIsRestoringSearch = true; // منع طي العناوين الإجباري
-
-                        // نفتح البحث إذا لم يكن مفتوحاً بالفعل
-                        if (!this.searchMenuItem.isActionViewExpanded()) {
-                            this.searchMenuItem.expandActionView();
-                        }
-                        
-                        mIsRestoringSearch = false;
-
-                        // استعادة النص المبحوث عنه والنتائج، وإخفاء الكيبورد لمنع القفز
-                        if (searchView != null && queryToRestore != null && !queryToRestore.isEmpty()) {
-                            searchView.setQuery(queryToRestore, false);
-                            searchView.clearFocus(); 
+                    if (this.searchMenuItem != null) {
+                        // 1. فتح مربع البحث بصرياً
+                        this.searchMenuItem.expandActionView();
+                        // 2. إعادة كتابة النص المبحوث عنه
+                        if (searchView != null && !savedSearchQuery.isEmpty()) {
+                            searchView.setQuery(savedSearchQuery, false);
+                            // إزالة التركيز لمنع لوحة المفاتيح من الانبثاق فجأة في وجه المستخدم
+                           // searchView.clearFocus();
                         }
                     }
                 });
             }
         }
     }
-
-
-
 
     public void setSearchStateListener(@Nullable SearchStateListener listener) {
         this.stateListener = listener;
@@ -256,7 +226,6 @@ public class SearchCoordinator {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                savedSearchQuery = query; // حفظ النص للتمكن من استعادته لاحقاً
                 performSearch(query);
                 if (stateListener != null) stateListener.onSearchQueryChanged(query);
                 return true;
@@ -264,13 +233,11 @@ public class SearchCoordinator {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                savedSearchQuery = newText; // حفظ النص للتمكن من استعادته لاحقاً
                 performSearch(newText);
                 if (stateListener != null) stateListener.onSearchQueryChanged(newText);
                 return true;
             }
         });
-
 
         searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
@@ -316,11 +283,11 @@ public class SearchCoordinator {
             drawerLayout.setTitle(activity.getString(R.string.search_font));
             drawerLayout.setExpandedSubtitle(null);
 
-            // ★ طي العناوين عند الفتح اليدوي لأول مرة فقط، وليس عند استعادة البحث التلقائية ★
-            if (drawerLayout.getAppBarLayout() != null && !mIsRestoringSearch) {
+            // ★ الميزة الجديدة: طي الـ AppBar بتأثير حركي عند فتح البحث
+            // يمنح المستخدم مساحة أكبر لعرض النتائج ولوحة المفاتيح ★
+            if (drawerLayout.getAppBarLayout() != null) {
                 drawerLayout.getAppBarLayout().setExpanded(false, true);
             }
-
         }
 
         if (stateListener != null) {
@@ -371,12 +338,6 @@ public class SearchCoordinator {
             }
         }
         // ====================================================================
-
-        // ★ الإصلاح: منع مسح حالة البحث عند إغلاق وضع التحديد ★
-        if (mIsPreservingSearchState) {
-            Log.d(TAG, "Search collapse intercepted: Preserving search state.");
-            return true; // نسمح بالإغلاق البصري المؤقت، لكن لا نمسح البيانات!
-        }
 
         isSearchExpanded = false;
         savedSearchQuery = "";
