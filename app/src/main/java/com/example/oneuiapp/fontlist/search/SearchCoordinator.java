@@ -96,6 +96,8 @@ public class SearchCoordinator {
     // يُفعَّل في restoreState() عندما تكون الأيقونة غير جاهزة بعد،
     // ويُستهلك في bindSearchMenuItem() حين تُصبح الأيقونة حقيقية وجاهزة.
     private boolean mPendingSearchRestore = false;
+    // ★ الإضافة: متغير لمنع طي العنوان بشكل إجباري عند استعادة البحث ★
+    private boolean mIsRestoringSearch = false;
 
     // ════════════════════════════════════════════════════════
     //  الواجهات العامة
@@ -171,28 +173,42 @@ public class SearchCoordinator {
      * @param searchMenuItem عنصر قائمة البحث من الـ Toolbar
      */
     public void bindSearchMenuItem(@NonNull MenuItem searchMenuItem) {
+        // ★ حفظ حالة البحث الحالية قبل ربط الأيقونة الجديدة (مهم جداً بعد التحديد) ★
+        boolean wasExpanded = isSearchExpanded;
+        String currentQuery = savedSearchQuery;
+        if (searchView != null && searchView.getQuery() != null) {
+            currentQuery = searchView.getQuery().toString();
+        }
+
         this.searchMenuItem = searchMenuItem;
         setupSearchView();
 
-        // ★ الإصلاح: تنفيذ الاستعادة المعلقة الآن بعد أن أصبحت الأيقونة حقيقية وجاهزة ★
-        if (mPendingSearchRestore) {
+        // ★ الإصلاح السحري: استعادة البحث ونتائجه فوراً وبصمت بعد التحديد/الحذف ★
+        if (mPendingSearchRestore || wasExpanded) {
             mPendingSearchRestore = false;
+            mIsRestoringSearch = true; // تفعيل وضع الاستعادة لمنع طي العناوين بشكل إجباري
+            
+            final String queryToRestore = currentQuery;
+            
             if (drawerLayout != null) {
                 drawerLayout.post(() -> {
                     if (this.searchMenuItem != null) {
                         // 1. فتح مربع البحث بصرياً
                         this.searchMenuItem.expandActionView();
+ 
                         // 2. إعادة كتابة النص المبحوث عنه
-                        if (searchView != null && !savedSearchQuery.isEmpty()) {
-                            searchView.setQuery(savedSearchQuery, false);
-                            // إزالة التركيز لمنع لوحة المفاتيح من الانبثاق فجأة في وجه المستخدم
-                           // searchView.clearFocus();
+                        if (searchView != null && queryToRestore != null && !queryToRestore.isEmpty()) {
+                            searchView.setQuery(queryToRestore, false);
+                            searchView.clearFocus(); // إخفاء الكيبورد لمنع القفز والوميض
                         }
                     }
+                    // إيقاف وضع الاستعادة بعد الانتهاء
+                    drawerLayout.postDelayed(() -> mIsRestoringSearch = false, 300);
                 });
             }
         }
     }
+
 
     public void setSearchStateListener(@Nullable SearchStateListener listener) {
         this.stateListener = listener;
@@ -226,6 +242,7 @@ public class SearchCoordinator {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                savedSearchQuery = query; // ★ إجبار النظام على حفظ النص ★
                 performSearch(query);
                 if (stateListener != null) stateListener.onSearchQueryChanged(query);
                 return true;
@@ -233,6 +250,7 @@ public class SearchCoordinator {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                savedSearchQuery = newText; // ★ إجبار النظام على حفظ النص ★
                 performSearch(newText);
                 if (stateListener != null) stateListener.onSearchQueryChanged(newText);
                 return true;
@@ -284,8 +302,8 @@ public class SearchCoordinator {
             drawerLayout.setExpandedSubtitle(null);
 
             // ★ الميزة الجديدة: طي الـ AppBar بتأثير حركي عند فتح البحث
-            // يمنح المستخدم مساحة أكبر لعرض النتائج ولوحة المفاتيح ★
-            if (drawerLayout.getAppBarLayout() != null) {
+            // ★ التعديل: لا تقم بالطي الإجباري إذا كنا نستعيد البحث بعد عملية التحديد ★
+            if (drawerLayout.getAppBarLayout() != null && !mIsRestoringSearch) {
                 drawerLayout.getAppBarLayout().setExpanded(false, true);
             }
         }
