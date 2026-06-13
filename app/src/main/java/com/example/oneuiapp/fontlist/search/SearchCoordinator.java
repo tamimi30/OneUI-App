@@ -96,6 +96,7 @@ public class SearchCoordinator {
     // يُفعَّل في restoreState() عندما تكون الأيقونة غير جاهزة بعد،
     // ويُستهلك في bindSearchMenuItem() حين تُصبح الأيقونة حقيقية وجاهزة.
     private boolean mPendingSearchRestore = false;
+    private boolean mIsRestoringSearch = false;
     // ★ الإضافة: متغير لمنع طي العنوان بشكل إجباري عند استعادة البحث ★
     private boolean mIsRestoringSearch = false;
 
@@ -173,41 +174,38 @@ public class SearchCoordinator {
      * @param searchMenuItem عنصر قائمة البحث من الـ Toolbar
      */
     public void bindSearchMenuItem(@NonNull MenuItem searchMenuItem) {
-        // ★ حفظ حالة البحث الحالية قبل ربط الأيقونة الجديدة (مهم جداً بعد التحديد) ★
-        boolean wasExpanded = isSearchExpanded;
-        String currentQuery = savedSearchQuery;
-        if (searchView != null && searchView.getQuery() != null) {
-            currentQuery = searchView.getQuery().toString();
-        }
-
         this.searchMenuItem = searchMenuItem;
         setupSearchView();
 
-        // ★ الإصلاح السحري: استعادة البحث ونتائجه فوراً وبصمت بعد التحديد/الحذف ★
-        if (mPendingSearchRestore || wasExpanded) {
+        // ★ إصلاح: استعادة البحث إذا كان معلقاً (تدوير الشاشة) أو إذا كان مفتوحاً مسبقاً (بعد انتهاء التحديد) ★
+        if (mPendingSearchRestore || isSearchExpanded) {
             mPendingSearchRestore = false;
-            mIsRestoringSearch = true; // تفعيل وضع الاستعادة لمنع طي العناوين بشكل إجباري
-            
-            final String queryToRestore = currentQuery;
-            
+            final String queryToRestore = savedSearchQuery;
+
             if (drawerLayout != null) {
                 drawerLayout.post(() -> {
-                    if (this.searchMenuItem != null) {
-                        // 1. فتح مربع البحث بصرياً
-                        this.searchMenuItem.expandActionView();
- 
-                        // 2. إعادة كتابة النص المبحوث عنه
+                    // التأكد من أننا ما زلنا في شاشة تحتوي على بحث لتجنب تدمير شاشة العارض
+                    if (screenProvider == null) return;
+                    AppScreen currentScreen = screenProvider.getCurrentScreen();
+                    boolean isSearchableScreen = (currentScreen == AppScreen.LOCAL_FONTS
+                            || currentScreen == AppScreen.SYSTEM_FONTS
+                            || currentScreen == AppScreen.FAVORITES);
+
+                    if (isSearchableScreen && this.searchMenuItem != null && !this.searchMenuItem.isActionViewExpanded()) {
+                        mIsRestoringSearch = true; // منع طي العناوين بشكل إجباري
+                        this.searchMenuItem.expandActionView(); // فتح البحث بصمت
+                        mIsRestoringSearch = false;
+                        
                         if (searchView != null && queryToRestore != null && !queryToRestore.isEmpty()) {
                             searchView.setQuery(queryToRestore, false);
-                            searchView.clearFocus(); // إخفاء الكيبورد لمنع القفز والوميض
+                            searchView.clearFocus(); // إخفاء الكيبورد لمنع القفز
                         }
                     }
-                    // إيقاف وضع الاستعادة بعد الانتهاء
-                    drawerLayout.postDelayed(() -> mIsRestoringSearch = false, 300);
                 });
             }
         }
     }
+
 
 
     public void setSearchStateListener(@Nullable SearchStateListener listener) {
@@ -242,7 +240,7 @@ public class SearchCoordinator {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                savedSearchQuery = query; // ★ إجبار النظام على حفظ النص ★
+                savedSearchQuery = query; // حفظ النص للتمكن من استعادته لاحقاً
                 performSearch(query);
                 if (stateListener != null) stateListener.onSearchQueryChanged(query);
                 return true;
@@ -250,12 +248,13 @@ public class SearchCoordinator {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                savedSearchQuery = newText; // ★ إجبار النظام على حفظ النص ★
+                savedSearchQuery = newText; // حفظ النص للتمكن من استعادته لاحقاً
                 performSearch(newText);
                 if (stateListener != null) stateListener.onSearchQueryChanged(newText);
                 return true;
             }
         });
+
 
         searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
@@ -301,11 +300,11 @@ public class SearchCoordinator {
             drawerLayout.setTitle(activity.getString(R.string.search_font));
             drawerLayout.setExpandedSubtitle(null);
 
-            // ★ الميزة الجديدة: طي الـ AppBar بتأثير حركي عند فتح البحث
-            // ★ التعديل: لا تقم بالطي الإجباري إذا كنا نستعيد البحث بعد عملية التحديد ★
+            // ★ طي العناوين عند الفتح اليدوي لأول مرة فقط، وليس عند استعادة البحث التلقائية ★
             if (drawerLayout.getAppBarLayout() != null && !mIsRestoringSearch) {
                 drawerLayout.getAppBarLayout().setExpanded(false, true);
             }
+
         }
 
         if (stateListener != null) {
