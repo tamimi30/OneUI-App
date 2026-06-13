@@ -174,34 +174,19 @@ public class SearchCoordinator {
         this.searchMenuItem = searchMenuItem;
         setupSearchView();
 
-        // ★ الإصلاح الشامل: استعادة النص بدقة ومنع وميض العنوان ★
-        Fragment currentFrag = getCurrentFragment();
-        if (currentFrag != null) {
-            try {
-                com.example.oneuiapp.viewmodel.SearchViewModel svm =
-                    new androidx.lifecycle.ViewModelProvider(currentFrag).get(com.example.oneuiapp.viewmodel.SearchViewModel.class);
-                if (svm.isSearchActive()) {
-                    isSearchExpanded = true;
-                    savedSearchQuery = svm.getCurrentSearchQuery();
-                }
-            } catch (Exception e) {}
-        }
-
-        if (mPendingSearchRestore || isSearchExpanded) {
+        // ★ الإصلاح: تنفيذ الاستعادة المعلقة الآن بعد أن أصبحت الأيقونة حقيقية وجاهزة ★
+        if (mPendingSearchRestore) {
             mPendingSearchRestore = false;
-            isSearchExpanded = true; // مهم ليعرف النظام أنها استعادة فلا يطوي العنوان
-
             if (drawerLayout != null) {
-                // تعيين العنوان فوراً لمنع الوميض والتغيير العشوائي السريع
-                drawerLayout.setTitle(activity.getString(R.string.search_font));
-                drawerLayout.setExpandedSubtitle(null);
-
                 drawerLayout.post(() -> {
                     if (this.searchMenuItem != null) {
+                        // 1. فتح مربع البحث بصرياً
                         this.searchMenuItem.expandActionView();
-                        if (searchView != null && savedSearchQuery != null && !savedSearchQuery.isEmpty()) {
+                        // 2. إعادة كتابة النص المبحوث عنه
+                        if (searchView != null && !savedSearchQuery.isEmpty()) {
                             searchView.setQuery(savedSearchQuery, false);
-                            searchView.clearFocus(); // إزالة التركيز لمنع الكيبورد
+                            // إزالة التركيز لمنع لوحة المفاتيح من الانبثاق فجأة في وجه المستخدم
+                           // searchView.clearFocus();
                         }
                     }
                 });
@@ -241,7 +226,6 @@ public class SearchCoordinator {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                savedSearchQuery = query != null ? query : ""; // ★ حفظ النص ★
                 performSearch(query);
                 if (stateListener != null) stateListener.onSearchQueryChanged(query);
                 return true;
@@ -249,7 +233,6 @@ public class SearchCoordinator {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                savedSearchQuery = newText != null ? newText : ""; // ★ حفظ النص ★
                 performSearch(newText);
                 if (stateListener != null) stateListener.onSearchQueryChanged(newText);
                 return true;
@@ -276,15 +259,20 @@ public class SearchCoordinator {
     // ════════════════════════════════════════════════════════
 
     private boolean handleSearchExpand() {
-        // ★ ذكي: التحقق مما إذا كنا نقوم باستعادة البحث أم فتحه للمرة الأولى ★
-        boolean isRestoring = isSearchExpanded;
-
         isSearchExpanded = true;
 
+        // ★ الإصلاح: تعطيل عنصر القائمة فور توسيع البحث ★
+        // هذا يُلغي منطقة اللمس الشبحية للأيقونة الأصلية التي كانت تستجيب
+        // خلف أزرار SearchView (زر الصوت وزر X وغيرهما) رغم إخفائها بصرياً.
+        // تعطيل MenuItem لا يؤثر على SearchView لأنه action view مستقل.
         if (searchMenuItem != null) {
             searchMenuItem.setEnabled(false);
         }
 
+        // ★ الإضافة الجوهرية: تعطيل اللمس الشبحي للثلاث نقاط ★
+        // نستخدم post() لضمان تنفيذ التعطيل بعد انتهاء إطار Android من
+        // معالجة توسيع الـ SearchView بالكامل، لأن الإطار يُعيد ضبط حالات
+        // setEnabled/setClickable على عناصر القائمة أثناء عملية التوسيع.
         if (drawerLayout != null) {
             drawerLayout.post(() -> toggleToolbarGhostTouches(true));
         } else {
@@ -295,9 +283,9 @@ public class SearchCoordinator {
             drawerLayout.setTitle(activity.getString(R.string.search_font));
             drawerLayout.setExpandedSubtitle(null);
 
-            // ★ طي العنوان تلقائياً فقط عند فتح البحث للمرة الأولى ★
-            // إذا كانت عملية استعادة سيحافظ على حالته السابقة تماماً
-            if (!isRestoring && drawerLayout.getAppBarLayout() != null) {
+            // ★ الميزة الجديدة: طي الـ AppBar بتأثير حركي عند فتح البحث
+            // يمنح المستخدم مساحة أكبر لعرض النتائج ولوحة المفاتيح ★
+            if (drawerLayout.getAppBarLayout() != null) {
                 drawerLayout.getAppBarLayout().setExpanded(false, true);
             }
         }
@@ -352,7 +340,7 @@ public class SearchCoordinator {
         // ====================================================================
 
         isSearchExpanded = false;
-        // ★ الإصلاح: تم إزالة مسح النص من هنا للحفاظ على الكلمة المبحوث عنها ★
+        savedSearchQuery = "";
 
         // ★ الإصلاح: إعادة تفعيل عنصر القائمة عند طي البحث ★
         // يُعيد منطقة اللمس للأيقونة الأصلية حتى يتمكن المستخدم من فتح البحث مجدداً.

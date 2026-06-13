@@ -1257,4 +1257,4 @@ public class MainActivity extends BaseActivity
         }
         updateDrawerTitle(screen);
     }
-                                              }
+                                                          }
