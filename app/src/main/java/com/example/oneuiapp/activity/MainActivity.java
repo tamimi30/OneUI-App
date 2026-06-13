@@ -513,6 +513,31 @@ public class MainActivity extends BaseActivity
         return super.onOptionsItemSelected(item);
     }
 
+    // ════════════════════════════════════════════════════════════════
+    // ★ إصلاح مشكلة اختفاء البحث بعد عمليات الحذف وإعادة التسمية ★
+    // ════════════════════════════════════════════════════════════════
+    @Override
+    public void onSupportActionModeFinished(@NonNull androidx.appcompat.view.ActionMode mode) {
+        super.onSupportActionModeFinished(mode);
+        restoreSearchVisualState();
+    }
+
+    @Override
+    public void onActionModeFinished(android.view.ActionMode mode) {
+        super.onActionModeFinished(mode);
+        restoreSearchVisualState();
+    }
+
+    private void restoreSearchVisualState() {
+        if (mSearchCoordinator != null && mSearchCoordinator.isSearchExpanded()) {
+            // ننتظر جزءاً من الثانية حتى يكتمل رسم الشريط العلوي الجديد
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                // نجبر البحث على إنعاش نفسه والظهور مرة أخرى مع نتائجه
+                mSearchCoordinator.onFragmentChanged(mCurrentScreen);
+            }, 100);
+        }
+    }
+
     /**
      * ★ دالة مساعدة: البحث عن فراغمنت بنوعه في Map الفراغمنتات ★
      *
