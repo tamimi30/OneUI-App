@@ -513,38 +513,6 @@ public class MainActivity extends BaseActivity
         return super.onOptionsItemSelected(item);
     }
 
-    // ════════════════════════════════════════════════════════════════
-    // ★ إصلاح مشكلة اختفاء البحث بعد عمليات الحذف وإعادة التسمية ★
-    // ════════════════════════════════════════════════════════════════
-    @Override
-    public void onSupportActionModeFinished(@NonNull androidx.appcompat.view.ActionMode mode) {
-        super.onSupportActionModeFinished(mode);
-        restoreSearchVisualState();
-    }
-
-    @Override
-    public void onActionModeFinished(android.view.ActionMode mode) {
-        super.onActionModeFinished(mode);
-        restoreSearchVisualState();
-    }
-
-    private void restoreSearchVisualState() {
-        if (mSearchCoordinator != null && mSearchCoordinator.isSearchExpanded()) {
-            
-            // ★ السطر السحري: إجبار النظام على إعادة رسم القائمة العلوية لتظهر أيقونة البحث مجدداً ★
-            invalidateOptionsMenu();
-
-            // ★ نزيد وقت الانتظار قليلاً إلى 250 جزء من الثانية لضمان اكتمال رسم الأيقونة ★
-            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                // الآن وبعد أن رُسمت الأيقونة، نجبر البحث على إنعاش نفسه والظهور بنتائجه
-                mSearchCoordinator.onFragmentChanged(mCurrentScreen);
-                
-                // تحديث العنوان احتياطياً لضمان عدم بقاء كلمة "البحث" معلقة
-                updateDrawerTitle(mCurrentScreen);
-            }, 250);
-        }
-    }
-
     /**
      * ★ دالة مساعدة: البحث عن فراغمنت بنوعه في Map الفراغمنتات ★
      *
@@ -1289,4 +1257,4 @@ public class MainActivity extends BaseActivity
         }
         updateDrawerTitle(screen);
     }
-                }
+                                              }
