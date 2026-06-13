@@ -138,9 +138,25 @@ public class LocalFontSelectionManager {
 
     public void setSelecting(boolean enabled) {
         if (isSelecting == enabled) return;
+
+        // ★ الإصلاح: تفعيل حماية البحث قبل إغلاق وضع التحديد المتعدد ★
+        com.example.oneuiapp.fontlist.search.SearchCoordinator searchCoordinator = null;
+        if (!enabled && activity instanceof com.example.oneuiapp.activity.MainActivity) {
+            searchCoordinator = ((com.example.oneuiapp.activity.MainActivity) activity).getSearchCoordinator();
+            if (searchCoordinator != null) {
+                searchCoordinator.setPreservingSearchState(true);
+            }
+        }
+
         isSelecting = enabled;
         if (enabled) activateSelectionMode();
         else deactivateSelectionMode();
+
+        // ★ إيقاف الحماية بعد اكتمال دورة الرسم وإعادة بناء القوائم ★
+        if (!enabled && searchCoordinator != null) {
+            final com.example.oneuiapp.fontlist.search.SearchCoordinator finalCoordinator = searchCoordinator;
+            drawerLayout.post(() -> finalCoordinator.setPreservingSearchState(false));
+        }
     }
 
     private void activateSelectionMode() {
