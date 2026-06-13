@@ -96,7 +96,7 @@ public class SearchCoordinator {
     // يُفعَّل في restoreState() عندما تكون الأيقونة غير جاهزة بعد،
     // ويُستهلك في bindSearchMenuItem() حين تُصبح الأيقونة حقيقية وجاهزة.
     private boolean mPendingSearchRestore = false;
-    private boolean mIsRestoringSearch = false;
+    
     // ★ الإضافة: متغير لمنع طي العنوان بشكل إجباري عند استعادة البحث ★
     private boolean mIsRestoringSearch = false;
 
