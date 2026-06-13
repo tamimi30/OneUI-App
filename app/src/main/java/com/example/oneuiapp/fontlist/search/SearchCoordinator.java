@@ -96,6 +96,13 @@ public class SearchCoordinator {
     // يُفعَّل في restoreState() عندما تكون الأيقونة غير جاهزة بعد،
     // ويُستهلك في bindSearchMenuItem() حين تُصبح الأيقونة حقيقية وجاهزة.
     private boolean mPendingSearchRestore = false;
+
+    // ★ متغير الحماية الجديد لمنع مسح البحث ★
+    private boolean mIsPreservingSearchState = false;
+
+    public void setPreservingSearchState(boolean preserve) {
+        this.mIsPreservingSearchState = preserve;
+    }
     
     // ★ الإضافة: متغير لمنع طي العنوان بشكل إجباري عند استعادة البحث ★
     private boolean mIsRestoringSearch = false;
@@ -364,6 +371,12 @@ public class SearchCoordinator {
             }
         }
         // ====================================================================
+
+        // ★ الإصلاح: منع مسح حالة البحث عند إغلاق وضع التحديد ★
+        if (mIsPreservingSearchState) {
+            Log.d(TAG, "Search collapse intercepted: Preserving search state.");
+            return true; // نسمح بالإغلاق البصري المؤقت، لكن لا نمسح البيانات!
+        }
 
         isSearchExpanded = false;
         savedSearchQuery = "";
