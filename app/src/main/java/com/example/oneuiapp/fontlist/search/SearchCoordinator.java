@@ -174,37 +174,46 @@ public class SearchCoordinator {
      * @param searchMenuItem عنصر قائمة البحث من الـ Toolbar
      */
     public void bindSearchMenuItem(@NonNull MenuItem searchMenuItem) {
+        // ★ 1. حفظ النص قبل التهيئة لمنع مسحه التلقائي ★
+        final String queryToRestore = savedSearchQuery;
+
         this.searchMenuItem = searchMenuItem;
         setupSearchView();
 
-        // ★ إصلاح: استعادة البحث إذا كان معلقاً (تدوير الشاشة) أو إذا كان مفتوحاً مسبقاً (بعد انتهاء التحديد) ★
+        // ★ 2. استعادة البحث ونتائجه بأمان ★
         if (mPendingSearchRestore || isSearchExpanded) {
             mPendingSearchRestore = false;
-            final String queryToRestore = savedSearchQuery;
 
             if (drawerLayout != null) {
                 drawerLayout.post(() -> {
-                    // التأكد من أننا ما زلنا في شاشة تحتوي على بحث لتجنب تدمير شاشة العارض
+                    // التأكد من أننا في شاشة تدعم البحث لمنع الوميض في عارض الخطوط
                     if (screenProvider == null) return;
                     AppScreen currentScreen = screenProvider.getCurrentScreen();
                     boolean isSearchableScreen = (currentScreen == AppScreen.LOCAL_FONTS
                             || currentScreen == AppScreen.SYSTEM_FONTS
                             || currentScreen == AppScreen.FAVORITES);
 
-                    if (isSearchableScreen && this.searchMenuItem != null && !this.searchMenuItem.isActionViewExpanded()) {
-                        mIsRestoringSearch = true; // منع طي العناوين بشكل إجباري
-                        this.searchMenuItem.expandActionView(); // فتح البحث بصمت
-                        mIsRestoringSearch = false;
+                    if (isSearchableScreen && this.searchMenuItem != null) {
+                        mIsRestoringSearch = true; // منع طي العناوين الإجباري
+
+                        // نفتح البحث إذا لم يكن مفتوحاً بالفعل
+                        if (!this.searchMenuItem.isActionViewExpanded()) {
+                            this.searchMenuItem.expandActionView();
+                        }
                         
+                        mIsRestoringSearch = false;
+
+                        // استعادة النص المبحوث عنه والنتائج، وإخفاء الكيبورد لمنع القفز
                         if (searchView != null && queryToRestore != null && !queryToRestore.isEmpty()) {
                             searchView.setQuery(queryToRestore, false);
-                            searchView.clearFocus(); // إخفاء الكيبورد لمنع القفز
+                            searchView.clearFocus(); 
                         }
                     }
                 });
             }
         }
     }
+
 
 
 
