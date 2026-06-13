@@ -174,8 +174,8 @@ public class SearchCoordinator {
         this.searchMenuItem = searchMenuItem;
         setupSearchView();
 
-        // ★ الإصلاح: تنفيذ الاستعادة المعلقة الآن بعد أن أصبحت الأيقونة حقيقية وجاهزة ★
-        if (mPendingSearchRestore) {
+        // ★ الإصلاح: إبقاء البحث مفتوحاً بعد انتهاء العمليات واستعادة النص ★
+        if (mPendingSearchRestore || isSearchExpanded) {
             mPendingSearchRestore = false;
             if (drawerLayout != null) {
                 drawerLayout.post(() -> {
@@ -183,10 +183,10 @@ public class SearchCoordinator {
                         // 1. فتح مربع البحث بصرياً
                         this.searchMenuItem.expandActionView();
                         // 2. إعادة كتابة النص المبحوث عنه
-                        if (searchView != null && !savedSearchQuery.isEmpty()) {
+                        if (searchView != null && savedSearchQuery != null && !savedSearchQuery.isEmpty()) {
                             searchView.setQuery(savedSearchQuery, false);
-                            // إزالة التركيز لمنع لوحة المفاتيح من الانبثاق فجأة في وجه المستخدم
-                           // searchView.clearFocus();
+                            // إزالة التركيز حتى لا تنبثق لوحة المفاتيح وتزعج المستخدم
+                            searchView.clearFocus();
                         }
                     }
                 });
@@ -226,6 +226,7 @@ public class SearchCoordinator {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                savedSearchQuery = query != null ? query : ""; // ★ حفظ النص ★
                 performSearch(query);
                 if (stateListener != null) stateListener.onSearchQueryChanged(query);
                 return true;
@@ -233,6 +234,7 @@ public class SearchCoordinator {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                savedSearchQuery = newText != null ? newText : ""; // ★ حفظ النص ★
                 performSearch(newText);
                 if (stateListener != null) stateListener.onSearchQueryChanged(newText);
                 return true;
