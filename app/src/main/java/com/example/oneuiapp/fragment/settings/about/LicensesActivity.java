@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.example.oneuiapp.R;
+import com.example.oneuiapp.activity.BaseActivity;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
