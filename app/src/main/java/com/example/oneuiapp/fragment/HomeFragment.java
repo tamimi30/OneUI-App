@@ -22,7 +22,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import dev.oneuiproject.oneui.utils.internal.ToolbarLayoutUtils;
 
 import com.example.oneuiapp.R;
-import com.example.oneuiapp.utils.FontHelper;
+import com.example.oneuiapp.fragment.settings.utils.FontHelper;
 
 public class HomeFragment extends Fragment {
 
