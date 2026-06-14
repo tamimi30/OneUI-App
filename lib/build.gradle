@@ -37,5 +37,5 @@ dependencies {
     implementation "io.github.oneuiproject.sesl:picker-color:1.1.0"
     implementation "io.github.oneuiproject.sesl:picker-basic:1.2.0"
 
-    implementation "com.google.zxing:core:3.4.1"
+    implementation "com.google.zxing:core:3.5.4"
 }
