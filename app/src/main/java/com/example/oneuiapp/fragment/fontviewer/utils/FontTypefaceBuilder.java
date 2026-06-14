@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontviewer.fontviewer.utils;
+package com.example.oneuiapp.fragment.fontviewer.utils;
 
 import android.graphics.Typeface;
 import android.os.Build;
