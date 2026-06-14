@@ -111,7 +111,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public TrashListAdapter(@NonNull Context context) {
         this.context = context;
         setHasStableIds(true);
-        this.isTransparentTheme = com.example.oneuiapp.utils.SettingsHelper.isTransparentThemeEnabled(context);
+        this.isTransparentTheme = SettingsHelper.isTransparentThemeEnabled(context);
 
         registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override public void onItemRangeInserted(int p, int c) { updateListEdges(); }
