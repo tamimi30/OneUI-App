@@ -6,8 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.oneuiapp.utils.SettingsHelper;
-import com.example.oneuiapp.utils.FontHelper;
+import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
+import com.example.oneuiapp.fragment.settings.utils.FontHelper;
 
 /**
  * BaseActivity - الأساس لجميع الأنشطة في التطبيق
