@@ -172,22 +172,23 @@ public class SearchCoordinator {
      */
     public void bindSearchMenuItem(@NonNull MenuItem searchMenuItem) {
         this.searchMenuItem = searchMenuItem;
+        
+        // ★ إيقاف بحث أندرويد العادي واستخدام بحث مكتبة One UI بدلاً منه
+        this.searchMenuItem.setActionView(null);
+        this.searchMenuItem.setOnMenuItemClickListener(item -> {
+            expandSearch();
+            return true;
+        });
+
         setupSearchView();
 
-        // ★ الإصلاح: تنفيذ الاستعادة المعلقة الآن بعد أن أصبحت الأيقونة حقيقية وجاهزة ★
         if (mPendingSearchRestore) {
             mPendingSearchRestore = false;
             if (drawerLayout != null) {
                 drawerLayout.post(() -> {
-                    if (this.searchMenuItem != null) {
-                        // 1. فتح مربع البحث بصرياً
-                        this.searchMenuItem.expandActionView();
-                        // 2. إعادة كتابة النص المبحوث عنه
-                        if (searchView != null && !savedSearchQuery.isEmpty()) {
-                            searchView.setQuery(savedSearchQuery, false);
-                            // إزالة التركيز لمنع لوحة المفاتيح من الانبثاق فجأة في وجه المستخدم
-                           // searchView.clearFocus();
-                        }
+                    expandSearch();
+                    if (searchView != null && !savedSearchQuery.isEmpty()) {
+                        searchView.setQuery(savedSearchQuery, false);
                     }
                 });
             }
@@ -203,27 +204,21 @@ public class SearchCoordinator {
     // ════════════════════════════════════════════════════════
 
     private void setupSearchView() {
-        if (searchMenuItem == null) {
-            return;
-        }
+        if (drawerLayout == null) return;
 
-        searchView = (SearchView) searchMenuItem.getActionView();
-        if (searchView == null) {
-            Log.e(TAG, "SearchView is null");
-            return;
-        }
+        // ★ جلب SearchView الخاص بمكتبة One UI
+        searchView = drawerLayout.getSearchView();
 
         searchView.setQueryHint(activity.getString(R.string.search_font));
         searchView.setMaxWidth(Integer.MAX_VALUE);
 
-        SearchManager searchManager =
-                (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         if (searchManager != null) {
-            searchView.setSearchableInfo(
-                    searchManager.getSearchableInfo(activity.getComponentName()));
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
         }
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        // ★ ربط مستمع مكتبة One UI
+        drawerLayout.setSearchModeListener(new dev.oneuiproject.oneui.layout.ToolbarLayout.SearchModeListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 performSearch(query);
@@ -237,17 +232,14 @@ public class SearchCoordinator {
                 if (stateListener != null) stateListener.onSearchQueryChanged(newText);
                 return true;
             }
-        });
-
-        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return handleSearchExpand();
-            }
 
             @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                return handleSearchCollapse();
+            public void onSearchModeToggle(SearchView view, boolean visible) {
+                if (visible) {
+                    handleSearchExpand();
+                } else {
+                    handleSearchCollapse();
+                }
             }
         });
 
@@ -260,36 +252,7 @@ public class SearchCoordinator {
 
     private boolean handleSearchExpand() {
         isSearchExpanded = true;
-
-        // ★ الإصلاح: تعطيل عنصر القائمة فور توسيع البحث ★
-        // هذا يُلغي منطقة اللمس الشبحية للأيقونة الأصلية التي كانت تستجيب
-        // خلف أزرار SearchView (زر الصوت وزر X وغيرهما) رغم إخفائها بصرياً.
-        // تعطيل MenuItem لا يؤثر على SearchView لأنه action view مستقل.
-        if (searchMenuItem != null) {
-            searchMenuItem.setEnabled(false);
-        }
-
-        // ★ الإضافة الجوهرية: تعطيل اللمس الشبحي للثلاث نقاط ★
-        // نستخدم post() لضمان تنفيذ التعطيل بعد انتهاء إطار Android من
-        // معالجة توسيع الـ SearchView بالكامل، لأن الإطار يُعيد ضبط حالات
-        // setEnabled/setClickable على عناصر القائمة أثناء عملية التوسيع.
-        if (drawerLayout != null) {
-            drawerLayout.post(() -> toggleToolbarGhostTouches(true));
-        } else {
-            toggleToolbarGhostTouches(true);
-        }
-
-        if (drawerLayout != null) {
-            drawerLayout.setTitle(activity.getString(R.string.search_font));
-            drawerLayout.setExpandedSubtitle(null);
-
-            // ★ الميزة الجديدة: طي الـ AppBar بتأثير حركي عند فتح البحث
-            // يمنح المستخدم مساحة أكبر لعرض النتائج ولوحة المفاتيح ★
-            if (drawerLayout.getAppBarLayout() != null) {
-                drawerLayout.getAppBarLayout().setExpanded(false, true);
-            }
-        }
-
+        
         if (stateListener != null) {
             stateListener.onSearchExpanded();
         }
@@ -298,46 +261,35 @@ public class SearchCoordinator {
         return true;
     }
 
-    // ════════════════════════════════════════════════════════
-    // ★ الإصلاح (خطة الإصلاح الشاملة — الخطوة الأولى):
-    //   handleSearchCollapse() أصبحت تُصفّر فلاتر جميع القوائم الثلاث مباشرةً
-    //   بدلاً من الفراغمنت الحالي فقط. هذا يضمن نظافة الفلاتر عند العودة لأي
-    //   شاشة حتى لو كان البحث قد انتقل لشاشة عارض الخطوط قبل الإغلاق.
-    //
-    // ★ الإصلاح (اعتراض إغلاق البحث عند وجود وضع التحديد المتعدد النشط):
-    //   عند ضغط زر الرجوع وهو البحث مفتوحاً، يعترض SearchView الحدث ليُغلق
-    //   نفسه مباشرةً قبل أن يصل إلى NavManager أو OnBackPressedDispatcher.
-    //   لذلك نتحقق في بداية هذه الدالة من وجود وضع تحديد نشط في الفراغمنت
-    //   الحالي؛ إذا كان نشطاً نغلقه ونُعيد false لمنع إغلاق البحث، فيبقى
-    //   المستخدم في نتائج البحث. هذا مطابق لسلوك تطبيقات One UI الرسمية.
-    // ════════════════════════════════════════════════════════
-
     private boolean handleSearchCollapse() {
-        // ====================================================================
-        // ★ الإصلاح الجوهري: منع إغلاق البحث إذا كان وضع التحديد المتعدد نشطاً ★
-        // ====================================================================
-        // عندما يكون البحث متمدداً، يعترض SearchView زر الرجوع قبل أن يصل إلى
-        // NavManager. لذلك، قبل أن نسمح للبحث بالإغلاق، نتحقق مما إذا كان
-        // وضع التحديد المتعدد نشطاً في الشاشة الحالية. إذا كان نشطاً، نغلقه
-        // ونُعيد false لمنع البحث من الإغلاق، ليبقى المستخدم في نتائج البحث.
-        Fragment currentFragment = getCurrentFragment();
-        if (currentFragment != null) {
-            boolean selectionHandled = false;
-            if (currentFragment instanceof LocalFontListFragment) {
-                selectionHandled = ((LocalFontListFragment) currentFragment).handleBackPressed();
-            } else if (currentFragment instanceof FavoriteFontListFragment) {
-                selectionHandled = ((FavoriteFontListFragment) currentFragment).handleBackPressed();
-            } else if (currentFragment instanceof TrashFragment) {
-                // سلة المحذوفات لا تحتوي بحثاً بالأساس، لكن وضعناها لتوحيد المنطق دفاعياً
-                selectionHandled = ((TrashFragment) currentFragment).handleBackPressed();
-            }
+        isSearchExpanded = false;
+        savedSearchQuery = "";
 
-            if (selectionHandled) {
-                Log.d(TAG, "Search collapse intercepted: Selection mode closed instead.");
-                return false; // نُعيد false لنخبر MenuItem برفض عملية الإغلاق
-            }
+        if (searchView != null) {
+            searchView.setQuery("", false);
         }
-        // ====================================================================
+
+        // ★ تصفير فلاتر جميع القوائم مباشرة من هنا لضمان نظافتها عند العودة ★
+        if (fragmentProvider != null) {
+            Fragment localFrag = fragmentProvider.getFragment(AppScreen.LOCAL_FONTS);
+            if (localFrag instanceof LocalFontListFragment) ((LocalFontListFragment) localFrag).resetFilter();
+
+            Fragment sysFrag = fragmentProvider.getFragment(AppScreen.SYSTEM_FONTS);
+            if (sysFrag instanceof SystemFontListFragment) ((SystemFontListFragment) sysFrag).resetFilter();
+
+            Fragment favFrag = fragmentProvider.getFragment(AppScreen.FAVORITES);
+            if (favFrag instanceof FavoriteFontListFragment) ((FavoriteFontListFragment) favFrag).resetFilter();
+        }
+
+        // ★ تنبيه MainActivity لتحديث العناوين وحالة الفراغمنتات ★
+        if (stateListener != null) {
+            stateListener.onSearchCollapsed();
+        }
+
+        Log.d(TAG, "Search collapsed");
+        return true;
+    }
+
 
         isSearchExpanded = false;
         savedSearchQuery = "";
@@ -562,22 +514,17 @@ public class SearchCoordinator {
      */
     public void collapseSearch() {
         if (!isSearchExpanded) return;
-
-        if (searchMenuItem != null && searchMenuItem.isActionViewExpanded()) {
-            searchMenuItem.collapseActionView();
-            Log.d(TAG, "Search collapsed programmatically");
-        } else {
-            // ★ الإصلاح الجوهري: إجبار إعادة ضبط الحالة إذا كان العنصر مخفياً أو غير متاح ★
-            handleSearchCollapse();
+        if (drawerLayout != null) {
+            drawerLayout.dismissSearchMode(); // إغلاق بحث المكتبة برمجياً
         }
     }
 
     public void expandSearch() {
-        if (searchMenuItem != null && !searchMenuItem.isActionViewExpanded()) {
-            searchMenuItem.expandActionView();
-            Log.d(TAG, "Search expanded programmatically");
+        if (drawerLayout != null && !drawerLayout.isSearchMode()) {
+            drawerLayout.showSearchMode(); // فتح بحث المكتبة برمجياً
         }
     }
+
 
     public void setSearchQuery(@NonNull String query) {
         if (searchView != null) {
