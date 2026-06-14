@@ -34,9 +34,9 @@ import dev.oneuiproject.oneui.widget.Toast;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.MyApplication;
 import com.example.oneuiapp.activity.AboutActivity;
-import com.example.oneuiapp.utils.LanguageHelper;
-import com.example.oneuiapp.utils.SettingsHelper;
-import com.example.oneuiapp.viewmodel.SettingsViewModel;
+import com.example.oneuiapp.fragment.settings.utils.LanguageHelper;
+import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
+import com.example.oneuiapp.fragment.settings.SettingsViewModel;
 
 /**
  * SettingsFragment - نسخة محدّثة تعتمد بالكامل على DataStore
