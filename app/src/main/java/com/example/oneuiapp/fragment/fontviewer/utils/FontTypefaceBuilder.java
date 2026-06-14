@@ -5,8 +5,6 @@ import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import com.example.oneuiapp.fragment.fontviewer.utils.VariableFontHelper;
-
 import java.io.File;
 import java.io.RandomAccessFile;
 
