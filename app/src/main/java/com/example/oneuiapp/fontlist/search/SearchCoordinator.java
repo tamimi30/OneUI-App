@@ -358,7 +358,8 @@ public class SearchCoordinator {
             return false;
         }
 
-        if (searchMenuItem == null || !searchMenuItem.isActionViewExpanded()) {
+        // ★ الإصلاح: استخدام isSearchExpanded لأننا نستخدم بحث المكتبة الآن
+        if (searchMenuItem == null || !isSearchExpanded) {
             intent.removeExtra(SearchManager.QUERY);
             return false;
         }
