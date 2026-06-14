@@ -63,6 +63,11 @@ android {
 configurations.all {
     exclude group: 'androidx.appcompat', module: 'appcompat'
     exclude group: 'androidx.core', module: 'core'
+    exclude group: 'androidx.coordinatorlayout', module: 'coordinatorlayout'
+    exclude group: 'androidx.drawerlayout', module: 'drawerlayout'
+    exclude group: 'androidx.recyclerview', module: 'recyclerview'
+    exclude group: 'androidx.fragment', module: 'fragment'
+    exclude group: 'androidx.preference', module: 'preference'
 
     resolutionStrategy {
         force 'org.jetbrains.kotlin:kotlin-stdlib:2.4.0'
