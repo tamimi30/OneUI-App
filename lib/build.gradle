@@ -33,7 +33,7 @@ dependencies {
     implementation "io.github.oneuiproject.sesl:preference:1.1.0"
 
     // باقي مكتبات SESL الأساسية التي تعتمد عليها OneUI Design
-    implementation "io.github.oneuiproject.sesl:indexscroll:1.1.0" 
+    implementation "io.github.oneuiproject.sesl:indexscroll:1.0.3" 
     implementation "io.github.oneuiproject.sesl:picker-color:1.1.0"
     implementation "io.github.oneuiproject.sesl:picker-basic:1.2.0"
 
