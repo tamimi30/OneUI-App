@@ -41,7 +41,7 @@ import com.example.oneuiapp.R;
 import com.example.oneuiapp.ui.widget.SortByItemLayout;
 import com.example.oneuiapp.viewmodel.SystemFontListViewModel;
 import com.example.oneuiapp.viewmodel.SearchViewModel;
-import com.example.oneuiapp.viewmodel.SettingsViewModel;
+import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
 
 /**
  * SystemFontListFragment — محدث ليفوّض الفرز بالكامل إلى SortedList داخل SystemFontListAdapter.
