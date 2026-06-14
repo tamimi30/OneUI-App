@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.oneuiapp.data.database.AppDatabase;
-import com.example.oneuiapp.data.datastore.SettingsDataStore;
+import com.example.oneuiapp.fragment.settings.datastore.SettingsDataStore;
 import com.example.oneuiapp.data.repository.LocalFontRepository;
 import com.example.oneuiapp.data.repository.SystemFontRepository;
 import com.example.oneuiapp.fontlist.localfont.LocalFontCache;
