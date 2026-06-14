@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.example.oneuiapp.data.datastore.SettingsDataStore;
+import com.example.oneuiapp.fragment.settings.datastore.SettingsDataStore;
 import com.example.oneuiapp.ui.widget.SortByItemLayout;
 
 import io.reactivex.rxjava3.schedulers.Schedulers;
