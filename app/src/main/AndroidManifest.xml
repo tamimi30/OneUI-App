@@ -103,10 +103,10 @@
 
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
         <activity
-            android:name=".activity.AboutActivity" />
+            android:name=".fragment.settings.about.AboutActivity" />
 
         <activity
-            android:name=".activity.LicensesActivity"
+            android:name=".fragment.settings.about.LicensesActivity"
             android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- ★ locale|layoutDirection موجود هنا فقط ★
@@ -115,7 +115,7 @@
              التحديث يتم يدوياً في onConfigurationChanged عبر LanguageHelper.
              ملاحظة: لم نضف uiMode عمداً لأنه يُسبّب خللاً في الثيم. -->
         <activity
-            android:name=".activity.SettingsActivity"
+            android:name=".fragment.settings.SettingsActivity"
             android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection" />
 
         <!-- ════════════════════════════════════════════════════════════════
