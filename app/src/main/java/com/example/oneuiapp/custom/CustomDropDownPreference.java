@@ -17,7 +17,7 @@ import androidx.preference.PreferenceViewHolder;
 
 import java.lang.reflect.Field;
 
-import com.example.oneuiapp.utils.SettingsHelper;
+import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 
 /**
  * CustomDropDownPreference - DropDownPreference مع دعم كامل للخطوط المخصصة
