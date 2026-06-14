@@ -89,6 +89,7 @@ dependencies {
     
     implementation("com.oneuiproject:design:1.2.6") {
     exclude group: "dev.oneuiproject.oneui.layout", module: "ToolbarLayout"
+    }
     
     implementation 'io.github.oneuiproject:icons:1.1.0'
     implementation 'com.airbnb.android:lottie:6.7.1'
