@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fragment.settings;
+package com.example.oneuiapp.fragment.settings.about;
 
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
