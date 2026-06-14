@@ -26,7 +26,7 @@ import com.example.oneuiapp.fontlist.viewholder.SortHeaderViewHolder;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
 import com.example.oneuiapp.utils.ExactLineHeightSpan;
 import com.example.oneuiapp.utils.FileUtils;
-import com.example.oneuiapp.utils.SettingsHelper;
+import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 import com.example.oneuiapp.viewmodel.LocalFontListViewModel;
 import com.example.oneuiapp.ui.widget.SortByItemLayout;
 
