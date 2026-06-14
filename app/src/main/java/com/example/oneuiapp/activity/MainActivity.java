@@ -41,7 +41,7 @@ import com.example.oneuiapp.utils.FileUtils;
 import com.example.oneuiapp.utils.TranslationService;
 import com.example.oneuiapp.fontlist.search.SearchCoordinator;
 import com.example.oneuiapp.widget.TextDrawable;
-import com.example.oneuiapp.fragment.settings.settingsactivity;
+import com.example.oneuiapp.fragment.settings.SettingsActivity;
 
 /**
  * MainActivity - معدّل لعرض العناوين بشكل صحيح
