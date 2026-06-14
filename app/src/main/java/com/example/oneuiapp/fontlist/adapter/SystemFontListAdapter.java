@@ -24,7 +24,7 @@ import com.example.oneuiapp.fontlist.systemfont.SystemFontInfo;
 import com.example.oneuiapp.fontlist.systemfont.SystemFontPreferenceManager;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
 import com.example.oneuiapp.utils.FileUtils;
-import com.example.oneuiapp.utils.SettingsHelper;
+import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 import com.example.oneuiapp.ui.widget.SortByItemLayout;
 
 import dev.oneuiproject.oneui.widget.RoundLinearLayout;
