@@ -80,11 +80,8 @@ public class ToolbarLayout extends LinearLayout {
             = new OnBackPressedCallback(false) {
         @Override
         public void handleOnBackPressed() {
-            if (mIsActionMode) {
-                dismissActionMode();
-            } else if (mIsSearchMode) {
-                dismissSearchMode();
-            }
+            if (mIsSearchMode) dismissSearchMode();
+            if (mIsActionMode) dismissActionMode();
         }
     };
     private AppBarOffsetListener mActionModeTitleFadeListener = new AppBarOffsetListener();
@@ -782,9 +779,7 @@ public class ToolbarLayout extends LinearLayout {
      */
     public void showActionMode() {
         mIsActionMode = true;
-        if (mIsSearchMode) {
-            animatedVisibility(mSearchToolbar, GONE);
-        }
+        if (mIsSearchMode) dismissSearchMode();
         mOnBackPressedCallback.setEnabled(true);
         animatedVisibility(mMainToolbar, GONE);
         animatedVisibility(mActionModeToolbar, VISIBLE);
@@ -830,26 +825,15 @@ public class ToolbarLayout extends LinearLayout {
      */
     public void dismissActionMode() {
         mIsActionMode = false;
+        mOnBackPressedCallback.setEnabled(false);
         animatedVisibility(mActionModeToolbar, GONE);
+        animatedVisibility(mMainToolbar, VISIBLE);
+        mFooterContainer.setVisibility(VISIBLE);
         mBottomActionModeBar.setVisibility(GONE);
-        
-        if (mIsSearchMode) {
-            mOnBackPressedCallback.setEnabled(true);
-            animatedVisibility(mSearchToolbar, VISIBLE);
-            mFooterContainer.setVisibility(GONE);
-            mCollapsingToolbarLayout.setTitle(getResources().getString(R.string.sesl_searchview_description_search));
-            mCollapsingToolbarLayout.seslSetSubtitle(null);
-            mSearchView.setIconified(false);
-        } else {
-            mOnBackPressedCallback.setEnabled(false);
-            animatedVisibility(mMainToolbar, VISIBLE);
-            mFooterContainer.setVisibility(VISIBLE);
-            setTitle(mTitleExpanded, mTitleCollapsed);
-            mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
-            mMainToolbar.setSubtitle(mSubtitleCollapsed);
-        }
-        
+        setTitle(mTitleExpanded, mTitleCollapsed);
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
+        mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
+        mMainToolbar.setSubtitle(mSubtitleCollapsed);
         setActionModeAllSelector(0,  true,  false);
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
