@@ -288,6 +288,8 @@ public class SearchCoordinator {
 
         Log.d(TAG, "Search collapsed");
         return true;
+
+        }
     }
 
 
