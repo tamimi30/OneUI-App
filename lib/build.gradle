@@ -4,7 +4,7 @@ plugins {
 
 android {
     // تحديد مسار الحزمة بدقة لضمان عمل استيرادات الموارد مثل: dev.oneuiproject.oneui.R.drawable
-    namespace 'dev.oneuiproject.oneui' 
+    namespace 'dev.oneuiproject.oneui.design' 
     
     compileSdk 36 // تم التحديث ليتطابق مع التطبيق
 
