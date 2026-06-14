@@ -1,4 +1,4 @@
-package com.example.oneuiapp.data.datastore;
+package com.example.oneuiapp.fragment.settings.datastore;
 
 import android.content.Context;
 
