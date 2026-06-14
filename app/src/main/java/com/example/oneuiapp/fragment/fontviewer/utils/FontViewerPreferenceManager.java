@@ -3,7 +3,7 @@ package com.example.oneuiapp.fragment.fontviewer.utils;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.oneuiapp.data.datastore.SettingsDataStore;
+import com.example.oneuiapp.fragment.settings.datastore.SettingsDataStore;
 
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
