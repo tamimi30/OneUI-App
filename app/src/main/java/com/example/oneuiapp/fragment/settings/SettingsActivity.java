@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.fragment.settings.SettingsFragment;
 import com.example.oneuiapp.fragment.settings.utils.LanguageHelper;
+import com.example.oneuiapp.activity.BaseActivity;
 
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
 
