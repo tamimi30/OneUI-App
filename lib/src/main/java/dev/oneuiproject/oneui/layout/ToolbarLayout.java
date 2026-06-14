@@ -839,7 +839,10 @@ public class ToolbarLayout extends LinearLayout {
             mFooterContainer.setVisibility(GONE);
             mCollapsingToolbarLayout.setTitle(getResources().getString(R.string.sesl_searchview_description_search));
             mCollapsingToolbarLayout.seslSetSubtitle(null);
-            mSearchView.setIconified(false);
+            // ★ الإصلاح: إزالة setIconified واستخدام clearFocus لمنع الكيبورد من القفز
+            if (mSearchView != null) {
+                mSearchView.clearFocus();
+            }
         } else {
             mOnBackPressedCallback.setEnabled(false);
             animatedVisibility(mMainToolbar, VISIBLE);
