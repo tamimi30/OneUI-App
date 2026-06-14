@@ -291,45 +291,6 @@ public class SearchCoordinator {
     }
 
 
-        isSearchExpanded = false;
-        savedSearchQuery = "";
-
-        // ★ الإصلاح: إعادة تفعيل عنصر القائمة عند طي البحث ★
-        // يُعيد منطقة اللمس للأيقونة الأصلية حتى يتمكن المستخدم من فتح البحث مجدداً.
-        if (searchMenuItem != null) {
-            searchMenuItem.setEnabled(true);
-        }
-
-        // ★ الإضافة الجوهرية: إعادة تفعيل اللمس لأزرار الـ Toolbar ★
-        toggleToolbarGhostTouches(false);
-
-        if (searchView != null) {
-            searchView.setQuery("", false);
-        }
-
-        // ★ الإصلاح: تصفير فلاتر جميع القوائم مباشرة من هنا لضمان نظافتها عند العودة ★
-        // يُعالج حالة الانتقال لشاشة عارض الخطوط أثناء البحث: حتى لو اختفى searchMenuItem
-        // من الشاشة، تبقى الفلاتر نظيفة في جميع القوائم عند العودة إليها.
-        if (fragmentProvider != null) {
-            Fragment localFrag = fragmentProvider.getFragment(AppScreen.LOCAL_FONTS);
-            if (localFrag instanceof LocalFontListFragment) ((LocalFontListFragment) localFrag).resetFilter();
-
-            Fragment sysFrag = fragmentProvider.getFragment(AppScreen.SYSTEM_FONTS);
-            if (sysFrag instanceof SystemFontListFragment) ((SystemFontListFragment) sysFrag).resetFilter();
-
-            Fragment favFrag = fragmentProvider.getFragment(AppScreen.FAVORITES);
-            if (favFrag instanceof FavoriteFontListFragment) ((FavoriteFontListFragment) favFrag).resetFilter();
-        }
-
-        // ★ تنبيه MainActivity لتحديث العناوين وحالة الفراغمنتات ★
-        if (stateListener != null) {
-            stateListener.onSearchCollapsed();
-        }
-
-        Log.d(TAG, "Search collapsed");
-        return true;
-    }
-
     // ════════════════════════════════════════════════════════
     //  تنفيذ البحث والحصول على الـ Fragment الحالي
     // ════════════════════════════════════════════════════════
