@@ -1,4 +1,4 @@
-package com.example.oneuiapp.activity;
+package com.example.oneuiapp.fragment.settings;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
