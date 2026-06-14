@@ -288,8 +288,6 @@ public class SearchCoordinator {
 
         Log.d(TAG, "Search collapsed");
         return true;
-
-        }
     }
 
 
@@ -663,4 +661,4 @@ public class SearchCoordinator {
 
         Log.d(TAG, "SearchCoordinator cleaned up");
     }
-                    }
+            }
