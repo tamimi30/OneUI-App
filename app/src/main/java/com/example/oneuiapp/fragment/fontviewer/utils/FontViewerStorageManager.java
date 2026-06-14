@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontviewer;
+package com.example.oneuiapp.fragment.fontviewer.utils;
 
 import android.content.Context;
 import android.database.Cursor;
