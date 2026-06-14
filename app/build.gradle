@@ -87,7 +87,9 @@ dependencies {
     implementation 'io.github.oneuiproject.sesl:preference:1.1.0'
     implementation 'io.github.oneuiproject.sesl:fragment:1.0.0'
     
-    implementation 'io.github.oneuiproject:design:1.2.6'
+    //implementation 'io.github.oneuiproject:design:1.2.6'
+
+    implementation project(':lib')
     
     implementation 'io.github.oneuiproject:icons:1.1.0'
     implementation 'com.airbnb.android:lottie:6.7.1'
