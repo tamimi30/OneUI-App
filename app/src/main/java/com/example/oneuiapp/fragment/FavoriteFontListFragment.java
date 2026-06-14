@@ -50,7 +50,7 @@ import com.example.oneuiapp.fontlist.search.FontSearchManager;
 import com.example.oneuiapp.ui.widget.SortByItemLayout;
 import com.example.oneuiapp.viewmodel.LocalFontListViewModel;
 import com.example.oneuiapp.viewmodel.SearchViewModel;
-import com.example.oneuiapp.viewmodel.SettingsViewModel;
+import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
 
 /**
  * FavoriteFontListFragment — قائمة الخطوط المفضلة
