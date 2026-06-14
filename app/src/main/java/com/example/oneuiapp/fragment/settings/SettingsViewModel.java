@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fragment.settings.viewmodel;
+package com.example.oneuiapp.fragment.settings;
 
 import android.app.Application;
 import android.os.Build;
