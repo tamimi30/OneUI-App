@@ -192,16 +192,6 @@ public class LocalFontSelectionManager {
         adapter.setSelectionMode(false);
 
         drawerLayout.setActionModeAllSelector(0, true, false);
-
-        // ★ الحل السحري: إخبار منسق البحث بتجاهل أمر الإغلاق التلقائي قبل إغلاق وضع التحديد ★
-        if (activity instanceof com.example.oneuiapp.activity.MainActivity) {
-            com.example.oneuiapp.fontlist.search.SearchCoordinator sc = 
-                ((com.example.oneuiapp.activity.MainActivity) activity).getSearchCoordinator();
-            if (sc != null) {
-                sc.ignoreNextCollapse = true;
-            }
-        }
-
         drawerLayout.dismissActionMode();
 
         enableSortBar();
