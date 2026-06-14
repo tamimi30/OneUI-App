@@ -3,7 +3,7 @@ package com.example.oneuiapp.utils;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.oneuiapp.data.datastore.SettingsDataStore;
+import com.example.oneuiapp.fragment.settings.datastore.SettingsDataStore;
 import com.example.oneuiapp.data.datastore.TranslationDataStore;
 
 import org.json.JSONArray;
