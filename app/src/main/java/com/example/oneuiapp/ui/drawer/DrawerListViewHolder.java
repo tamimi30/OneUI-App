@@ -11,7 +11,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oneuiapp.R;
-import com.example.oneuiapp.utils.FontHelper;
+import com.example.oneuiapp.fragment.settings.utils.FontHelper;
 
 /**
  * DrawerListViewHolder - حامل عرض عنصر الدرج
