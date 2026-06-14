@@ -38,10 +38,10 @@ import java.util.concurrent.Executors;
 import com.example.oneuiapp.activity.MainActivity;       // ★ المرحلة الأولى: استيراد MainActivity ★
 import com.example.oneuiapp.dialog.FontSizeDialog;
 import com.example.oneuiapp.R;
-import com.example.oneuiapp.utils.VariableFontHelper;
+import com.example.oneuiapp.fragment.fontviewer.utils.VariableFontHelper;
 import com.example.oneuiapp.utils.SettingsHelper;
-import com.example.oneuiapp.fontviewer.FontViewerStorageManager;
-import com.example.oneuiapp.fontviewer.FontViewerPreferenceManager;
+import com.example.oneuiapp.fragment.fontviewer.utils.FontViewerStorageManager;
+import com.example.oneuiapp.fragment.fontviewer.utils.FontViewerPreferenceManager;
 import com.example.oneuiapp.fontlist.systemfont.SystemFontCache;
 import com.example.oneuiapp.metadata.FontMetadataExtractor;
 import com.example.oneuiapp.viewmodel.SettingsViewModel;
