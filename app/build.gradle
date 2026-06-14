@@ -87,7 +87,7 @@ dependencies {
     implementation 'io.github.oneuiproject.sesl:preference:1.1.0'
     implementation 'io.github.oneuiproject.sesl:fragment:1.0.0'
     
-    implementation("com.oneuiproject:design:1.2.6") {
+    implementation("io.github.oneuiproject:design:1.2.6") {
     exclude group: "dev.oneuiproject.oneui.layout", module: "ToolbarLayout"
     }
     
