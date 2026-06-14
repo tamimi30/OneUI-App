@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fragment.settings.activity;
+package com.example.oneuiapp.fragment.settings;
 
 import android.content.Context;
 import android.content.res.Configuration;
