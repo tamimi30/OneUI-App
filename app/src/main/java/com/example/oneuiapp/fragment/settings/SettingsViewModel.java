@@ -9,7 +9,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.oneuiapp.data.datastore.SettingsDataStore;
+import com.example.oneuiapp.fragment.settings.SettingsDataStore;
 import com.example.oneuiapp.fragment.settings.utils.LanguageHelper;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 
