@@ -13,10 +13,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.example.oneuiapp.data.entity.FontEntity;
-import com.example.oneuiapp.fragment.localfont.repository.LocalFontRepository;
+import com.example.oneuiapp.fragment.localfont.data.LocalFontRepository;
 import com.example.oneuiapp.data.repository.TrashRepository;   // ★ جديد ★
 import com.example.oneuiapp.dialog.TrashActionDialogs;          // ★ إصلاح (1)(3): إدارة الإشعارات والخدمة ★
-import com.example.oneuiapp.fontlist.localfont.LocalFontPreferenceManager;
+import com.example.oneuiapp.fragment.localfont.manager.LocalFontPreferenceManager;
 import com.example.oneuiapp.utils.BatchOperationState;
 import com.example.oneuiapp.utils.OperationForegroundService;   // ★ إصلاح (1)(3): الدرع الواقي ★
 
