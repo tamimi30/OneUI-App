@@ -51,6 +51,7 @@ import com.example.oneuiapp.ui.widget.SortByItemLayout;
 import com.example.oneuiapp.fragment.localfont.viewmodel.LocalFontListViewModel;
 import com.example.oneuiapp.viewmodel.SearchViewModel;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
+import com.example.oneuiapp.notification.BatchOperationState;
 
 /**
  * FavoriteFontListFragment — قائمة الخطوط المفضلة
@@ -401,7 +402,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         // أثناء عملية جارية: كان Fragment جديد يُنشأ بـ mIsBatchOperationRunning=false
         // فيستقبل مئات التحديثات متتاليةً مما يُجمّد المعالج. الآن يرصد الإشارة العامة
         // ويحجز البيانات بصمت حتى تنتهي العملية ثم يطبّقها دفعةً واحدة.
-        com.example.oneuiapp.utils.BatchOperationState.getIsProcessing().observe(this, isProcessing -> {
+        BatchOperationState.getIsProcessing().observe(this, isProcessing -> {
             mIsBatchOperationRunning = isProcessing;
 
             // ★ إغلاق الديالوج فور انتهاء العملية (يحل المشكلة 3) ★
@@ -425,7 +426,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         // ★ مراقب التقدم لتحديث الديالوج المُعاد فتحه (يحل المشكلة 2) ★
         // يُستدعى عند كل تحديث تقدم من showMoveToTrashProgressDialog → progressListener
         // فيحدّث mCurrentProgressDialog إذا كان مفتوحاً — سواء الديالوج الأصلي أو المُعاد فتحه.
-        com.example.oneuiapp.utils.BatchOperationState.getProgress().observe(this, progressData -> {
+        BatchOperationState.getProgress().observe(this, progressData -> {
             if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing() && progressData != null) {
                 mCurrentProgressDialog.setMax(progressData.total);
                 mCurrentProgressDialog.setProgress(progressData.current);
@@ -752,7 +753,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         // ★ الإصلاح الجوهري: setSourceScreen(AppScreen.FAVORITES) بدلاً من setSourceFragmentIndex(4) ★
         // يضمن صحة التوجيه من الإشعار إلى الشاشة الصحيحة حتى لو تغيّر ترتيب الشاشات.
         // يجب أن يسبق showMoveToTrashNotification() لأن PendingIntent يُبنى أثناءها.
-        com.example.oneuiapp.utils.BatchOperationState.setSourceScreen(AppScreen.FAVORITES);
+        BatchOperationState.setSourceScreen(AppScreen.FAVORITES);
 
         // ★ زر إلغاء — يوقف العملية الجارية ويُغلق الديالوج ★
         mCurrentProgressDialog.setButton(
@@ -816,16 +817,16 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     public void checkAndReopenProgressDialogPublic() {
         if (isHidden() || !isAdded() || mContext == null) return;
 
-        Boolean isProcessing = com.example.oneuiapp.utils.BatchOperationState.getIsProcessing().getValue();
+        Boolean isProcessing = BatchOperationState.getIsProcessing().getValue();
         if (!Boolean.TRUE.equals(isProcessing)) return;
 
         // ★ الإصلاح الجوهري: مقارنة بـ AppScreen.FAVORITES بدلاً من getSourceFragmentIndex() != 4 ★
         // يضمن صحة الفحص حتى لو حُذف HomeFragment أو تغيّر ترتيب الشاشات،
         // لأن AppScreen.FAVORITES ثابت لا يتأثر بموضع الـ Fragment في مصفوفة mFragments.
-        if (com.example.oneuiapp.utils.BatchOperationState.getSourceScreen() != AppScreen.FAVORITES) return;
+        if (BatchOperationState.getSourceScreen() != AppScreen.FAVORITES) return;
 
         // ★ شرط الفتح عبر الإشعار ★
-        if (!com.example.oneuiapp.utils.BatchOperationState.consumeShouldReopenDialog()) return;
+        if (!BatchOperationState.consumeShouldReopenDialog()) return;
 
         if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) return;
 
@@ -851,8 +852,8 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         mCurrentProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mCurrentProgressDialog.setCancelable(false);
 
-        com.example.oneuiapp.utils.BatchOperationState.ProgressData lastProgress =
-                com.example.oneuiapp.utils.BatchOperationState.getProgress().getValue();
+        BatchOperationState.ProgressData lastProgress =
+                BatchOperationState.getProgress().getValue();
 
         if (lastProgress != null) {
             // ★ إصلاح (4): تجاهل lastProgress.title واستخدم getResources() لجلب النص باللغة الصحيحة ★
@@ -868,7 +869,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         mCurrentProgressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE,
                 getString(R.string.action_cancel), (dialog, which) -> {
-                    com.example.oneuiapp.utils.BatchOperationState.requestCancel();
+                    BatchOperationState.requestCancel();
                     mViewModel.cancelTrashOperation();
                     dialog.dismiss();
                 });
