@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fragment;
+package com.example.oneuiapp.fragment.systemfont;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -32,14 +32,14 @@ import dev.oneuiproject.oneui.layout.DrawerLayout;
 import com.example.oneuiapp.activity.AppScreen;           // ★ الإصلاح الجوهري: استيراد AppScreen ★
 import com.example.oneuiapp.activity.MainActivity;
 import com.example.oneuiapp.data.entity.FontEntity;
-import com.example.oneuiapp.fontlist.FontFileInfo;
+import com.example.oneuiapp.fragment.systemfont.data.FontFileInfo;
 import com.example.oneuiapp.fontlist.search.FontSearchManager;
 import com.example.oneuiapp.fontlist.FontSortManager;
 import com.example.oneuiapp.fontlist.FontUIStateManager;
-import com.example.oneuiapp.fontlist.adapter.SystemFontListAdapter;
+import com.example.oneuiapp.fragment.systemfont.adapter.SystemFontListAdapter;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.ui.widget.SortByItemLayout;
-import com.example.oneuiapp.viewmodel.SystemFontListViewModel;
+import com.example.oneuiapp.fragment.systemfont.viewmodel.SystemFontListViewModel;
 import com.example.oneuiapp.viewmodel.SearchViewModel;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
 
