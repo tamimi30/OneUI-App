@@ -32,7 +32,7 @@ import dev.oneuiproject.oneui.dialog.ProgressDialog;
 import com.example.oneuiapp.dialog.FontInfoDialog;
 import com.example.oneuiapp.fragment.fontviewer.FontViewerFragment;
 import com.example.oneuiapp.fragment.localfont.LocalFontListFragment;
-import com.example.oneuiapp.fragment.SystemFontListFragment;
+import com.example.oneuiapp.fragment.systemfont.SystemFontListFragment;
 import com.example.oneuiapp.fragment.favorite.FavoriteFontListFragment;
 import com.example.oneuiapp.fragment.TrashFragment;
 import com.example.oneuiapp.ui.drawer.DrawerListAdapter;
