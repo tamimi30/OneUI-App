@@ -73,7 +73,7 @@
              ملاحظة: لم نضف uiMode عمداً لأنه يُسبّب خللاً في الثيم. -->
         <activity
             android:name=".activity.MainActivity"
-            android:configChanges="orientation|screenLayout|screenSize"
+            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Starting">
@@ -91,6 +91,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
 
                 <action android:name="android.intent.action.SEARCH" />
+                <action android:name="com.example.oneuiapp.WIDGETACTION" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -99,7 +100,7 @@
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
         <activity
             android:name=".fragment.home.HomeActivity"
-            android:configChanges="orientation|screenSize|screenLayout" />
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
         <activity
@@ -107,7 +108,7 @@
 
         <activity
             android:name=".fragment.settings.about.LicensesActivity"
-            android:configChanges="orientation|screenSize|screenLayout" />
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
         <!-- ★ locale|layoutDirection موجود هنا فقط ★
              SettingsActivity هي الشاشة التي يرى فيها المستخدم تغيير اللغة
@@ -116,7 +117,7 @@
              ملاحظة: لم نضف uiMode عمداً لأنه يُسبّب خللاً في الثيم. -->
         <activity
             android:name=".fragment.settings.SettingsActivity"
-            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection" />
+            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection|smallestScreenSize" />
 
         <!-- ════════════════════════════════════════════════════════════════
              ★ إصلاح المشكلة (1): تسجيل OperationForegroundService ★
