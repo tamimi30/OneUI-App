@@ -1,4 +1,4 @@
-package com.example.oneuiapp.utils;
+package com.example.oneuiapp.notification;
 
 import android.util.Log;
 
