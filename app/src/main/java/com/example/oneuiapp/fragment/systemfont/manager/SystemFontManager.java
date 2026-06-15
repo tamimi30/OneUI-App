@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.example.oneuiapp.fragment.systemfont.data.SystemFontInfo;
+
 /**
  * SystemFontManager - مدير خطوط النظام
  * يتعامل مع SystemFonts API للحصول على قائمة خطوط النظام المتاحة
