@@ -11,7 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.oneuiapp.R;
-import com.example.oneuiapp.fragment.LocalFontListFragment;
+import com.example.oneuiapp.fragment.localfont.LocalFontListFragment;
 import com.example.oneuiapp.fragment.fontviewer.FontViewerFragment;
 import com.example.oneuiapp.fragment.SystemFontListFragment;
 import com.example.oneuiapp.fragment.FavoriteFontListFragment;
