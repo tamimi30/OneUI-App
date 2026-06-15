@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist.systemfont;
+package com.example.oneuiapp.fragment.systemfont.data;
 
 import android.content.Context;
 import android.graphics.Typeface;
