@@ -1,10 +1,12 @@
-package com.example.oneuiapp.activity;
+package com.example.oneuiapp.fragment.home;
 
 import android.os.Build;
 import android.os.Bundle;
 
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.fragment.HomeFragment;
+import com.example.oneuiapp.fragment.home;
+import com.example.oneuiapp.activity.BaseActivity;
 
 public class HomeActivity extends BaseActivity {
 
