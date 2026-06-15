@@ -32,7 +32,7 @@ import dev.oneuiproject.oneui.layout.DrawerLayout;
 import com.example.oneuiapp.activity.AppScreen;           // ★ الإصلاح الجوهري: استيراد AppScreen ★
 import com.example.oneuiapp.activity.MainActivity;
 import com.example.oneuiapp.data.entity.FontEntity;
-import com.example.oneuiapp.fragment.systemfont.data.FontFileInfo;
+import com.example.oneuiapp.fontlist.FontFileInfo;
 import com.example.oneuiapp.fontlist.search.FontSearchManager;
 import com.example.oneuiapp.fontlist.FontSortManager;
 import com.example.oneuiapp.fontlist.FontUIStateManager;
