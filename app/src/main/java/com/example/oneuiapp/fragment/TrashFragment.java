@@ -38,6 +38,7 @@ import com.example.oneuiapp.fontlist.FontUIStateManager;  // ★ إضافة
 import com.example.oneuiapp.trash.TrashSelectionManager;
 import com.example.oneuiapp.trash.adapter.TrashListAdapter;
 import com.example.oneuiapp.viewmodel.TrashViewModel;
+import com.example.oneuiapp.notification.BatchOperationState;
 
 /**
  * TrashFragment — شاشة سلة المحذوفات
@@ -585,7 +586,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         // أثناء عملية جارية: كان Fragment جديد يُنشأ بـ mIsBatchOperationRunning=false
         // فيستقبل مئات التحديثات متتاليةً مما يُجمّد المعالج. الآن يرصد الإشارة العامة
         // ويحجز البيانات بصمت حتى تنتهي العملية ثم يطبّقها دفعةً واحدة.
-        com.example.oneuiapp.utils.BatchOperationState.getIsProcessing().observe(
+        BatchOperationState.getIsProcessing().observe(
                 getViewLifecycleOwner(), isProcessing -> {
             mIsBatchOperationRunning = isProcessing;
 
@@ -619,7 +620,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         // ★ الإضافة الجوهرية لحل مشكلة تجمد شريط التقدم عند العودة من الإشعار ★
         // مراقبة التقدم من الملف العالمي المستقل الذي ينجو من قتل التطبيق وإعادة بنائه.
         // هذا يضمن أن الديالوج المُعاد فتحه يستلم التحديثات الحية من عملية الخلفية.
-        com.example.oneuiapp.utils.BatchOperationState.getProgress().observe(
+        BatchOperationState.getProgress().observe(
                 getViewLifecycleOwner(), progressData -> {
             if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing() && progressData != null) {
                 mCurrentProgressDialog.setMax(progressData.total);
@@ -906,15 +907,15 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         // ★ الشرط 1: الـ Fragment مرئي فعلاً — لا نفتح الديالوج في الخلفية ★
         if (isHidden() || !isAdded() || mContext == null || mViewModel == null) return;
 
-        Boolean isProcessing = com.example.oneuiapp.utils.BatchOperationState.getIsProcessing().getValue();
+        Boolean isProcessing = BatchOperationState.getIsProcessing().getValue();
         if (!Boolean.TRUE.equals(isProcessing)) return;
 
         // ★ الإصلاح الجوهري: مقارنة بـ AppScreen.TRASH بدلاً من getSourceFragmentIndex() != 5 ★
         // يضمن صحة الفحص حتى لو حُذف HomeFragment أو تغيّر ترتيب الشاشات،
         // لأن AppScreen.TRASH ثابت لا يتأثر بموضع الـ Fragment في مصفوفة mFragments.
-        if (com.example.oneuiapp.utils.BatchOperationState.getSourceScreen() != AppScreen.TRASH) return;
+        if (BatchOperationState.getSourceScreen() != AppScreen.TRASH) return;
 
-        if (!com.example.oneuiapp.utils.BatchOperationState.consumeShouldReopenDialog()) return;
+        if (!BatchOperationState.consumeShouldReopenDialog()) return;
 
         if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) return;
 
@@ -942,8 +943,8 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mIsDialogHidden = false;
 
         // ★ الاعتماد على الحالة العالمية المحفوظة بدلاً من ViewModel المحلي الذي يُدمَّر بعد قتل التطبيق ★
-        com.example.oneuiapp.utils.BatchOperationState.ProgressData lastProgress =
-                com.example.oneuiapp.utils.BatchOperationState.getProgress().getValue();
+        BatchOperationState.ProgressData lastProgress =
+                BatchOperationState.getProgress().getValue();
 
         if (lastProgress == null) return;
 
@@ -971,7 +972,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         // زر إلغاء
         mCurrentProgressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE,
                 getString(R.string.action_cancel), (dialog, which) -> {
-                    com.example.oneuiapp.utils.BatchOperationState.requestCancel();
+                    BatchOperationState.requestCancel();
                     mViewModel.cancelCurrentOperation();
                     dialog.dismiss();
                 });
