@@ -56,6 +56,7 @@ import com.example.oneuiapp.ui.widget.SortByItemLayout;
 import com.example.oneuiapp.fragment.localfont.viewmodel.LocalFontListViewModel;
 import com.example.oneuiapp.viewmodel.SearchViewModel;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
+import com.example.oneuiapp.notification.BatchOperationState;
 
 /**
  * LocalFontListFragment — محدث ليفوّض الفرز بالكامل إلى SortedList داخل LocalFontListAdapter.
@@ -562,7 +563,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         //
         // ★ إصلاح (3): إذا كانت العملية جاريةً وعاد المستخدم لهذه الشاشة (عبر الإشعار)،
         //   يُعاد عرض الديالوج تلقائياً بشرط أن يكون هذا الـ Fragment هو المصدر. ★
-        com.example.oneuiapp.utils.BatchOperationState.getIsProcessing().observe(this, isProcessing -> {
+        BatchOperationState.getIsProcessing().observe(this, isProcessing -> {
             mIsBatchOperationRunning = isProcessing;
 
             // ★ إصلاح (3): إغلاق الديالوج فور انتهاء العملية (التعديل الثالث من خطة الإصلاح) ★
@@ -579,7 +580,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             // يضمن صحة الفحص حتى لو تغيّر ترتيب الشاشات في مصفوفة mFragments
             if (isProcessing
                     && !isHidden()
-                    && com.example.oneuiapp.utils.BatchOperationState.getSourceScreen() == AppScreen.LOCAL_FONTS
+                    && BatchOperationState.getSourceScreen() == AppScreen.LOCAL_FONTS
                     && (mCurrentProgressDialog == null || !mCurrentProgressDialog.isShowing())) {
                 reconnectToProgressDialog();
             }
@@ -604,7 +605,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         // ★ إصلاح (3): مراقبة آخر تقدم لتحديث الديالوج المُعاد فتحه ★
         // يُستدعى عند كل تحديث تقدم (من showMoveToTrashProgressDialog → progressListener)
         // فيحدّث mCurrentProgressDialog إذا كان مفتوحاً — سواء الديالوج الأصلي أو المُعاد فتحه.
-        com.example.oneuiapp.utils.BatchOperationState.getProgress().observe(this, progressData -> {
+        BatchOperationState.getProgress().observe(this, progressData -> {
             if (mCurrentProgressDialog != null
                     && mCurrentProgressDialog.isShowing()
                     && progressData != null) {
@@ -1021,7 +1022,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         //   setSourceScreen(AppScreen.LOCAL_FONTS) بدلاً من setSourceFragmentIndex(2) ★
         // يضمن صحة التوجيه من الإشعار إلى الشاشة الصحيحة حتى لو تغيّر ترتيب الشاشات.
         // يجب أن يسبق showMoveToTrashNotification() لأن PendingIntent يُبنى أثناءها.
-        com.example.oneuiapp.utils.BatchOperationState.setSourceScreen(AppScreen.LOCAL_FONTS);
+        BatchOperationState.setSourceScreen(AppScreen.LOCAL_FONTS);
 
         // ★ إغلاق وضع التحديد قبل عرض الديالوج لتجنب تعارض الواجهات ★
         mSelectionManager.setSelecting(false);
@@ -1046,7 +1047,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 (dialog, which) -> {
                     mViewModel.cancelTrashOperation();
                     // إشعار الإلغاء عبر BatchOperationState أيضاً (طريق مزدوج آمن)
-                    com.example.oneuiapp.utils.BatchOperationState.requestCancel();
+                    BatchOperationState.requestCancel();
                     // الإشعار والخدمة تُوقَفان بواسطة callback اكتمال العملية في ViewModel
                     dialog.dismiss();
                 });
@@ -1079,7 +1080,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             // ★ (3): تحديث الحالة المشتركة لإتاحة إعادة عرض الديالوج بقيمة محدَّثة ★
             String progressTitle = getResources().getQuantityString(
                     R.plurals.progress_moving_to_trash, total);
-            com.example.oneuiapp.utils.BatchOperationState.updateProgress(
+            BatchOperationState.updateProgress(
                     current, total, progressTitle);
 
             // ★ (5): تحديث الإشعار مباشرةً من خيط الخلفية — مستقل عن حالة الديالوج ★
@@ -1140,16 +1141,16 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         if (isHidden() || !isAdded() || mContext == null) return;
 
         // ★ الشرط 2: عملية جارية ★
-        Boolean isProcessing = com.example.oneuiapp.utils.BatchOperationState
+        Boolean isProcessing = BatchOperationState
                 .getIsProcessing().getValue();
         if (!Boolean.TRUE.equals(isProcessing)) return;
 
         // ★ الشرط 3 (الإصلاح الجوهري): العملية من AppScreen.LOCAL_FONTS بدلاً من getSourceFragmentIndex() != 2 ★
         // يمنع عرض ديالوج هنا إذا كانت العملية استعادة/حذف من سلة المحذوفات (AppScreen.TRASH)
-        if (com.example.oneuiapp.utils.BatchOperationState.getSourceScreen() != AppScreen.LOCAL_FONTS) return;
+        if (BatchOperationState.getSourceScreen() != AppScreen.LOCAL_FONTS) return;
 
         // ★ حل المشكلة (3): لا تفتح الديالوج إلا إذا تم استهلاك علامة الإشعار
-        if (!com.example.oneuiapp.utils.BatchOperationState.consumeShouldReopenDialog()) return;
+        if (!BatchOperationState.consumeShouldReopenDialog()) return;
 
         // ★ الشرط 4: لا يوجد ديالوج مرئي حالياً ★
         if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) return;
@@ -1183,8 +1184,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         mCurrentProgressDialog.setCancelable(false);
 
         // ★ استرداد آخر تقدم معروف لتعيين العنوان والقيمة بدلاً من البدء من الصفر ★
-        com.example.oneuiapp.utils.BatchOperationState.ProgressData lastProgress =
-                com.example.oneuiapp.utils.BatchOperationState.getProgress().getValue();
+        BatchOperationState.ProgressData lastProgress =
+                BatchOperationState.getProgress().getValue();
 
         if (lastProgress != null) {
             // ★ إصلاح (4): تجاهل lastProgress.title واستخدام getResources() المحلي ★
@@ -1209,7 +1210,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 ProgressDialog.BUTTON_NEGATIVE,
                 getString(R.string.action_cancel),
                 (dialog, which) -> {
-                    com.example.oneuiapp.utils.BatchOperationState.requestCancel();
+                    BatchOperationState.requestCancel();
                     mViewModel.cancelTrashOperation();
                     dialog.dismiss();
                 });
