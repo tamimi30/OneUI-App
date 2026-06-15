@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist.adapter;
+package com.example.oneuiapp.utils;
 
 import android.content.Context;
 import android.graphics.Canvas;
