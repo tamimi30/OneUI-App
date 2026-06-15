@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist.viewholder;
+package com.example.oneuiapp.fragment.systemfont.adapter;
 
 import android.graphics.Typeface;
 import android.text.SpannableString;
