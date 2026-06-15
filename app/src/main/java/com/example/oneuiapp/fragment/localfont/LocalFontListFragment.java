@@ -43,7 +43,7 @@ import com.example.oneuiapp.dialog.TrashActionDialogs; // ★ إضافة: لإظ
 import com.example.oneuiapp.fontlist.FontFileInfo;
 import com.example.oneuiapp.fragment.localfont.manager.LocalFontSelectionManager;
 import com.example.oneuiapp.fragment.localfont.manager.LocalFontPermissionManager;
-import com.example.oneuiapp.fragment.localfont.fontdirectory.LocalFontDirectoryPickerManager;
+import com.example.oneuiapp.fragment.localfont.fontdirectory.LocalFontDirectoryPicker;
 import com.example.oneuiapp.fontlist.FontUIStateManager;
 import com.example.oneuiapp.fontlist.search.FontTextHighlighter;
 import com.example.oneuiapp.fontlist.FontSortManager;
