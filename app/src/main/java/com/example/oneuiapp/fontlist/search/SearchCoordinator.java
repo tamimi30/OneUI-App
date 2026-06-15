@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.activity.AppScreen;
-import com.example.oneuiapp.fragment.FavoriteFontListFragment; // ★ دعم قائمة المفضلة ★
+import com.example.oneuiapp.fragment.favorite.FavoriteFontListFragment; // ★ دعم قائمة المفضلة ★
 import com.example.oneuiapp.fragment.localfont.LocalFontListFragment;
 import com.example.oneuiapp.fragment.SystemFontListFragment;
 import com.example.oneuiapp.fragment.TrashFragment; // ★ الإصلاح: دعم سلة المحذوفات في اعتراض إغلاق البحث ★
