@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fragment;
+package com.example.oneuiapp.fragment.favorite;
 
 import android.content.Context;
 import android.content.res.Configuration;
