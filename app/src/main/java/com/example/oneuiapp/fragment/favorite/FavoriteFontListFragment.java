@@ -42,7 +42,7 @@ import com.example.oneuiapp.dialog.FontActionDialogs;
 import com.example.oneuiapp.fontlist.FontFileInfo;
 import com.example.oneuiapp.fontlist.FontSortManager;
 import com.example.oneuiapp.fontlist.FontUIStateManager;
-import com.example.oneuiapp.fontlist.adapter.FontItemDecoration;
+import com.example.oneuiapp.utils.FontItemDecoration;
 import com.example.oneuiapp.fragment.localfont.adapter.LocalFontListAdapter;
 import com.example.oneuiapp.fragment.localfont.data.LocalFontCache;
 import com.example.oneuiapp.fragment.localfont.manager.LocalFontSelectionManager;
