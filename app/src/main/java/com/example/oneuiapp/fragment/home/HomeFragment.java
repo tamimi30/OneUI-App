@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fragment.homefragment;
+package com.example.oneuiapp.fragment.home;
 
 import android.content.res.Configuration;
 import android.os.Build;
