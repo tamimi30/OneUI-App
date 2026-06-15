@@ -159,7 +159,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private SortByItemLayout mSortBar;
 
     private LocalFontPermissionManager mLocalFontPermissionManager;
-    private LocalFontDirectoryPickerManager mLocalFontDirectoryPickerManager;
+    private LocalFontDirectoryPicker mLocalFontDirectoryPicker;
     private FontSearchManager mSearchManager;
     private FontSortManager mSortManager;
     private FontUIStateManager mUIManager;
@@ -280,7 +280,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         }
 
         mLocalFontPermissionManager      = new LocalFontPermissionManager(this);
-        mLocalFontDirectoryPickerManager = new LocalFontDirectoryPickerManager(this);
+        mLocalFontDirectoryPicker = new LocalFontDirectoryPicker(this);
         mSearchManager          = new FontSearchManager();
 
         // ★ false = خطوط المجلد المحلي → يقرأ/يكتب KEY_SORT_TYPE و KEY_SORT_ASCENDING ★
@@ -296,7 +296,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     }
 
     private void setupDirectoryPickerListener() {
-        mLocalFontDirectoryPickerManager.setDirectorySelectionListener(new LocalFontDirectoryPickerManager.DirectorySelectionListener() {
+        mLocalFontDirectoryPicker.setDirectorySelectionListener(new LocalFontDirectoryPicker.DirectorySelectionListener() {
             public void onDirectorySelected(String directoryPath) {
                 if (mViewModel != null) {
                     // ❌ تم حذف التفريغ اليدوي للقائمة من هنا (إصلاح مشكلة الشاشة الفارغة)
@@ -341,7 +341,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private void setupPermissionListener() {
         mLocalFontPermissionManager.setPermissionResultListener(new LocalFontPermissionManager.PermissionResultListener() {
             public void onPermissionGranted() {
-                mLocalFontDirectoryPickerManager.openDirectoryPicker();
+                mLocalFontDirectoryPicker.openDirectoryPicker();
             }
 
             public void onPermissionDenied() {
@@ -733,7 +733,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         if (folderBtn != null) {
             folderBtn.setOnClickListener(v -> {
                 if (mLocalFontPermissionManager.hasRequiredPermissions()) {
-                    mLocalFontDirectoryPickerManager.openDirectoryPicker();
+                    mLocalFontDirectoryPicker.openDirectoryPicker();
                 } else {
                     mLocalFontPermissionManager.requestPermissions();
                 }
@@ -1365,9 +1365,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (!mLocalFontDirectoryPickerManager.handleActivityResult(requestCode, resultCode, data)) {
+        if (!mLocalFontDirectoryPicker.handleActivityResult(requestCode, resultCode, data)) {
             if (mLocalFontPermissionManager.handleActivityResult(requestCode)) {
-                mLocalFontDirectoryPickerManager.openDirectoryPicker();
+                mLocalFontDirectoryPicker.openDirectoryPicker();
             }
         }
     }
@@ -1398,7 +1398,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
      */
     public void openFolderPickerPublic() {
         if (mLocalFontPermissionManager.hasRequiredPermissions()) {
-            mLocalFontDirectoryPickerManager.openDirectoryPicker();
+            mLocalFontDirectoryPicker.openDirectoryPicker();
         } else {
             mLocalFontPermissionManager.requestPermissions();
         }
