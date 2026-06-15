@@ -68,6 +68,9 @@ configurations.all {
     exclude group: 'androidx.recyclerview', module: 'recyclerview'
     exclude group: 'androidx.fragment', module: 'fragment'
     exclude group: 'androidx.preference', module: 'preference'
+    exclude group: 'androidx.viewpager', module: 'viewpager'
+    exclude group: 'androidx.viewpager2', module: 'viewpager2'
+
 
     resolutionStrategy {
         force 'org.jetbrains.kotlin:kotlin-stdlib:2.4.0'
