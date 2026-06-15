@@ -98,7 +98,7 @@
 
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
         <activity
-            android:name=".activity.HomeActivity"
+            android:name=".fragment.home.HomeActivity"
             android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
