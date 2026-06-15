@@ -16,8 +16,8 @@ import androidx.core.content.ContextCompat;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.activity.AppScreen;
 import com.example.oneuiapp.activity.MainActivity;
-import com.example.oneuiapp.utils.BatchOperationState;
-import com.example.oneuiapp.utils.NotificationActionReceiver;
+import com.example.oneuiapp.notification.BatchOperationState;
+import com.example.oneuiapp.notification.NotificationActionReceiver;
 
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
 
