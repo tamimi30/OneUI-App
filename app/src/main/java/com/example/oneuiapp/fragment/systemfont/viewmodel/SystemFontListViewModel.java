@@ -1,4 +1,4 @@
-package com.example.oneuiapp.viewmodel;
+package com.example.oneuiapp.fragment.systemfont.viewmodel;
 
 import android.app.Application;
 import android.os.Build;
@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.oneuiapp.data.entity.FontEntity;
-import com.example.oneuiapp.data.repository.SystemFontRepository;
+import com.example.oneuiapp.fragment.systemfont.data.SystemFontRepository;
 
 import java.util.List;
 
