@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * LocalFontDirectoryManager - مدير قراءة الخطوط من المجلدات المحلية
+ * LocalFontDirectory - مدير قراءة الخطوط من المجلدات المحلية
  * محدّث لدعم ملفات TTC بالكامل
  *
  * ملاحظة معمارية:
@@ -17,9 +17,9 @@ import java.util.List;
  * ليكون قابلاً للاستخدام من قِبَل قائمة النظام وقائمة المجلد المحلي دون
  * الحاجة لاستيراد منطق قراءة المجلدات.
  */
-public class LocalFontDirectoryManager {
+public class LocalFontDirectory {
 
-    private static final String TAG = "LocalFontDirectoryMgr";
+    private static final String TAG = "LocalFontDirectory";
 
     /**
      * الحصول على قائمة الخطوط من مجلد محلي مباشر
