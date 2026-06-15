@@ -42,6 +42,7 @@ import com.example.oneuiapp.ui.widget.SortByItemLayout;
 import com.example.oneuiapp.fragment.systemfont.viewmodel.SystemFontListViewModel;
 import com.example.oneuiapp.viewmodel.SearchViewModel;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
+import com.example.oneuiapp.fragment.systemfont.data.SystemFontInfo;
 
 /**
  * SystemFontListFragment — محدث ليفوّض الفرز بالكامل إلى SortedList داخل SystemFontListAdapter.
@@ -530,12 +531,12 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
      *   بدون هذا السطر يصل weightWidthLabel كـ null دائماً بغض النظر عن
      *   القيم المحفوظة في قاعدة البيانات.
      */
-    private List<com.example.oneuiapp.fontlist.systemfont.SystemFontInfo> convertEntitiesToSystemFontInfo(
+    private List<SystemFontInfo> convertEntitiesToSystemFontInfo(
             List<FontEntity> entities) {
-        List<com.example.oneuiapp.fontlist.systemfont.SystemFontInfo> result = new ArrayList<>();
+        List<SystemFontInfo> result = new ArrayList<>();
         for (FontEntity entity : entities) {
-            com.example.oneuiapp.fontlist.systemfont.SystemFontInfo info =
-                new com.example.oneuiapp.fontlist.systemfont.SystemFontInfo(
+            SystemFontInfo info =
+                new SystemFontInfo(
                     entity.getFileName(),
                     entity.getPath(),
                     entity.getSize(),
