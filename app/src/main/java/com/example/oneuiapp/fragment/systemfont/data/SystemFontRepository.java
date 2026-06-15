@@ -1,4 +1,4 @@
-package com.example.oneuiapp.data.repository;
+package com.example.oneuiapp.fragment.systemfont.data.repository;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,7 +9,7 @@ import com.example.oneuiapp.data.dao.FontDao;
 import com.example.oneuiapp.data.database.AppDatabase;
 import com.example.oneuiapp.data.entity.FontEntity;
 import com.example.oneuiapp.fontlist.systemfont.SystemFontInfo;
-import com.example.oneuiapp.fontlist.systemfont.SystemFontManager;
+import com.example.oneuiapp.fragment.systemfont.manager.SystemFontManager;
 import com.example.oneuiapp.metadata.FontMetadataExtractor;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor; // ★ جديد ★
 
