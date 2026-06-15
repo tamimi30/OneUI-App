@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fragment;
+package com.example.oneuiapp.fragment.localfont;
 
 import android.content.Context;
 import android.content.Intent;
