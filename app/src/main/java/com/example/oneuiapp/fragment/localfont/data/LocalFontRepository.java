@@ -423,9 +423,9 @@ public class LocalFontRepository {
     public void loadAndSyncLocalFonts(String folderPath, OnSyncCompleteListener listener) {
         executorService.execute(() -> {
             try {
-                // ★ استخدام LocalFontDirectoryManager بدلاً من FontDirectoryManager ★
+                // ★ استخدام LocalFontDirectory بدلاً من FontDirectoryManager ★
                 List<FontFileInfo> filesInFolder =
-                    LocalFontDirectoryManager.getFontsInDirectory(folderPath);
+                    LocalFontDirectory.getFontsInDirectory(folderPath);
 
                 if (filesInFolder == null || filesInFolder.isEmpty()) {
                     // ★ الإصلاح: حذف الخطوط القديمة من قاعدة البيانات إذا كان المجلد الجديد فارغاً ★
