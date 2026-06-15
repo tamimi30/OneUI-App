@@ -31,6 +31,7 @@
                 android:lineSpacingExtra="4dp"
                 android:textAlignment="viewStart"
                 android:autoLink="web"
+                android:fadingEdge="horizontal"
                 android:textColorLink="@color/sesl_design_snackbar_action_text_color"
                 android:linksClickable="true"/>
 
