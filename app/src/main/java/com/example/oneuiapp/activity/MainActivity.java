@@ -43,6 +43,7 @@ import com.example.oneuiapp.fontlist.search.SearchCoordinator;
 import com.example.oneuiapp.widget.TextDrawable;
 import com.example.oneuiapp.fragment.settings.SettingsActivity;
 import com.example.oneuiapp.fragment.home.HomeActivity;
+import com.example.oneuiapp.notification.BatchOperationState;
 /**
  * MainActivity - معدّل لعرض العناوين بشكل صحيح
  * العنوان الرئيسي: الاسم الحقيقي للخط
@@ -304,7 +305,7 @@ public class MainActivity extends BaseActivity
             // ★ التحقق مما إذا كان الدخول عبر الإشعار
             boolean fromNotif = intent.getBooleanExtra("from_notification", false);
             if (fromNotif) {
-                com.example.oneuiapp.utils.BatchOperationState.setShouldReopenDialog(true);
+                BatchOperationState.setShouldReopenDialog(true);
                 intent.removeExtra("from_notification");
             }
 
