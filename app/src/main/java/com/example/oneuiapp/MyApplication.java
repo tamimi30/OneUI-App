@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.oneuiapp.data.database.AppDatabase;
 import com.example.oneuiapp.fragment.settings.datastore.SettingsDataStore;
-import com.example.oneuiapp.data.repository.LocalFontRepository;
+import com.example.oneuiapp.fragment.localfont.data.LocalFontRepository;
 import com.example.oneuiapp.data.repository.SystemFontRepository;
-import com.example.oneuiapp.fontlist.localfont.LocalFontCache;
+import com.example.oneuiapp.fragment.localfont.data.LocalFontCache;
 import com.example.oneuiapp.fontlist.systemfont.SystemFontCache;
 import com.example.oneuiapp.utils.CrashHandler;
 
