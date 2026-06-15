@@ -1,4 +1,4 @@
-package com.example.oneuiapp.viewmodel;
+package com.example.oneuiapp.fragment.localfont.viewmodel;
 
 import android.app.Application;
 import android.os.Handler;
@@ -13,7 +13,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.example.oneuiapp.data.entity.FontEntity;
-import com.example.oneuiapp.data.repository.LocalFontRepository;
+import com.example.oneuiapp.fragment.localfont.repository.LocalFontRepository;
 import com.example.oneuiapp.data.repository.TrashRepository;   // ★ جديد ★
 import com.example.oneuiapp.dialog.TrashActionDialogs;          // ★ إصلاح (1)(3): إدارة الإشعارات والخدمة ★
 import com.example.oneuiapp.fontlist.localfont.LocalFontPreferenceManager;
