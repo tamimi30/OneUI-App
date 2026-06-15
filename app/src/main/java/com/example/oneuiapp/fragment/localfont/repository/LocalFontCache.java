@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist.localfont;
+package com.example.oneuiapp.fragment.localfont.repository;
 
 import android.content.Context;
 import android.graphics.Typeface;
