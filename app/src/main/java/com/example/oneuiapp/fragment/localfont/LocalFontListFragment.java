@@ -49,7 +49,7 @@ import com.example.oneuiapp.fontlist.search.FontTextHighlighter;
 import com.example.oneuiapp.fontlist.FontSortManager;
 import com.example.oneuiapp.fontlist.search.FontSearchManager;
 import com.example.oneuiapp.fontlist.localfont.LocalFontCache;
-import com.example.oneuiapp.fontlist.adapter.LocalFontListAdapter;
+import com.example.oneuiapp.fragment.localfont.adapter.LocalFontListAdapter;
 import com.example.oneuiapp.fontlist.adapter.FontItemDecoration;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.ui.widget.SortByItemLayout;
