@@ -42,7 +42,7 @@ import com.example.oneuiapp.fragment.fontviewer.utils.VariableFontHelper;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 import com.example.oneuiapp.fragment.fontviewer.utils.FontViewerStorageManager;
 import com.example.oneuiapp.fragment.fontviewer.utils.FontViewerPreferenceManager;
-import com.example.oneuiapp.fontlist.systemfont.SystemFontCache;
+import com.example.oneuiapp.fragment.systemfont.data.SystemFontCache;
 import com.example.oneuiapp.metadata.FontMetadataExtractor;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
 
