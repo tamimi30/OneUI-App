@@ -41,19 +41,19 @@ import com.example.oneuiapp.data.repository.TrashRepository;
 import com.example.oneuiapp.dialog.FontActionDialogs;
 import com.example.oneuiapp.dialog.TrashActionDialogs; // ★ إضافة: لإظهار وتحديث وإخفاء إشعار النقل ★
 import com.example.oneuiapp.fontlist.FontFileInfo;
-import com.example.oneuiapp.fontlist.localfont.LocalFontSelectionManager;
+import com.example.oneuiapp.fragment.localfont.manager.LocalFontSelectionManager;
 import com.example.oneuiapp.fontlist.localfont.LocalFontPermissionManager;
-import com.example.oneuiapp.fontlist.localfont.LocalFontDirectoryPickerManager;
+import com.example.oneuiapp.fragment.localfont.manager.LocalFontDirectoryPickerManager;
 import com.example.oneuiapp.fontlist.FontUIStateManager;
 import com.example.oneuiapp.fontlist.search.FontTextHighlighter;
 import com.example.oneuiapp.fontlist.FontSortManager;
 import com.example.oneuiapp.fontlist.search.FontSearchManager;
-import com.example.oneuiapp.fontlist.localfont.LocalFontCache;
+import com.example.oneuiapp.fragment.localfont.repository.LocalFontCache;
 import com.example.oneuiapp.fragment.localfont.adapter.LocalFontListAdapter;
 import com.example.oneuiapp.fontlist.adapter.FontItemDecoration;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.ui.widget.SortByItemLayout;
-import com.example.oneuiapp.viewmodel.LocalFontListViewModel;
+import com.example.oneuiapp.fragment.localfont.viewmodel.LocalFontListViewModel;
 import com.example.oneuiapp.viewmodel.SearchViewModel;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
 
