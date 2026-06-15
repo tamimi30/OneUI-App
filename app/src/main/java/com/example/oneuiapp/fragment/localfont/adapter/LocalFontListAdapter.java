@@ -18,16 +18,16 @@ import androidx.recyclerview.widget.SortedList;
 
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.fontlist.FontFileInfo;
-import com.example.oneuiapp.fontlist.localfont.LocalFontCache;
-import com.example.oneuiapp.fontlist.localfont.LocalFontPreferenceManager;
+import com.example.oneuiapp.fragment.localfont.data.LocalFontCache;
+import com.example.oneuiapp.fragment.localfont.manager.LocalFontPreferenceManager;
 import com.example.oneuiapp.fontlist.search.FontTextHighlighter;
-import com.example.oneuiapp.fontlist.viewholder.LocalFontViewHolder;
+import com.example.oneuiapp.fragment.localfont.adapter.LocalFontViewHolder;
 import com.example.oneuiapp.fontlist.viewholder.SortHeaderViewHolder;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
 import com.example.oneuiapp.utils.ExactLineHeightSpan;
 import com.example.oneuiapp.utils.FileUtils;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
-import com.example.oneuiapp.viewmodel.LocalFontListViewModel;
+import com.example.oneuiapp.fragment.localfont.viewmodel.LocalFontListViewModel;
 import com.example.oneuiapp.ui.widget.SortByItemLayout;
 
 import dev.oneuiproject.oneui.widget.RoundLinearLayout;
