@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist.adapter;
+package com.example.oneuiapp.fragment.systemfont.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -17,11 +17,11 @@ import androidx.recyclerview.widget.SortedList;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.fontlist.FontFileInfo;
 import com.example.oneuiapp.fontlist.search.FontTextHighlighter;
-import com.example.oneuiapp.fontlist.viewholder.SystemFontViewHolder;
+import com.example.oneuiapp.fragment.systemfont.adapter.SystemFontViewHolder;
 import com.example.oneuiapp.fontlist.viewholder.SortHeaderViewHolder;
-import com.example.oneuiapp.fontlist.systemfont.SystemFontCache;
-import com.example.oneuiapp.fontlist.systemfont.SystemFontInfo;
-import com.example.oneuiapp.fontlist.systemfont.SystemFontPreferenceManager;
+import com.example.oneuiapp.fragment.systemfont.data.SystemFontCache;
+import com.example.oneuiapp.fragment.systemfont.data.SystemFontInfo;
+import com.example.oneuiapp.fragment.systemfont.manager.SystemFontPreferenceManager;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
 import com.example.oneuiapp.utils.FileUtils;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
