@@ -9,12 +9,12 @@ import androidx.fragment.app.Fragment;
 import java.io.File;
 
 /**
- * LocalFontDirectoryPickerManager - مدير اختيار المجلدات بالوصول المباشر
+ * LocalFontDirectoryPicker - مدير اختيار المجلدات بالوصول المباشر
  * يستخدم Intent بسيط لاختيار المجلد من التخزين المباشر
  */
-public class LocalFontDirectoryPickerManager {
+public class LocalFontDirectoryPicker {
     
-    private static final String TAG = "LocalFontDirectoryPickerManager";
+    private static final String TAG = "LocalFontDirectoryPicker";
     public static final int FOLDER_PICKER_REQUEST_CODE = 200;
     
     private final Context context;
@@ -27,7 +27,7 @@ public class LocalFontDirectoryPickerManager {
         void onDirectorySelectionError(Exception error);
     }
     
-    public LocalFontDirectoryPickerManager(Fragment fragment) {
+    public LocalFontDirectoryPicker(Fragment fragment) {
         this.fragment = fragment;
         this.context = fragment.requireContext();
     }
