@@ -42,7 +42,7 @@ import com.example.oneuiapp.utils.TranslationService;
 import com.example.oneuiapp.fontlist.search.SearchCoordinator;
 import com.example.oneuiapp.widget.TextDrawable;
 import com.example.oneuiapp.fragment.settings.SettingsActivity;
-
+import com.example.oneuiapp.fragment.home.HomeActivity;
 /**
  * MainActivity - معدّل لعرض العناوين بشكل صحيح
  * العنوان الرئيسي: الاسم الحقيقي للخط
