@@ -2,7 +2,7 @@ package com.example.oneuiapp.fragment.localfont.fontdirectory;
 
 import android.util.Log;
 
-import com.example.oneuiapp.fontlist.FontFileInfo;
+import com.example.oneuiapp.data.entity.FontFileInfo;
 
 import java.io.File;
 import java.util.ArrayList;
