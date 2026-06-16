@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.example.oneuiapp.fragment.settings.datastore.SettingsDataStore;
-import com.example.oneuiapp.fontlist.FontFileInfo;
+import com.example.oneuiapp.data.entity.FontFileInfo;
 
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
