@@ -1,10 +1,9 @@
-package com.example.oneuiapp.utils;
+package com.example.oneuiapp.translation;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.example.oneuiapp.fragment.settings.datastore.SettingsDataStore;
-import com.example.oneuiapp.data.datastore.TranslationDataStore;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 
 import org.json.JSONArray;
