@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist;
+package com.example.oneuiapp.data.entity;
 
 /**
  * FontFileInfo - نموذج بيانات مشترك يمثّل ملف خط واحد
