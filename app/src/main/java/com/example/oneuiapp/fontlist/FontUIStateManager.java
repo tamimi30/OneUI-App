@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.AppBarLayout;
 
 import com.example.oneuiapp.R;
-import com.example.oneuiapp.ui.widget.SortByItemLayout;
+import com.example.oneuiapp.sort.SortByItemLayout;
 
 /**
  * FontUIStateManager - فئة لإدارة حالات واجهة المستخدم المختلفة
