@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist.viewholder;
+package com.example.oneuiapp.sort;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.oneuiapp.ui.widget.SortByItemLayout;
+import com.example.oneuiapp.ui.wSortByItemLayout;
 import com.example.oneuiapp.R;
 
 /**
