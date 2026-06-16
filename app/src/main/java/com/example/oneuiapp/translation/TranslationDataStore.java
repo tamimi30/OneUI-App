@@ -1,4 +1,4 @@
-package com.example.oneuiapp.data.datastore;
+package com.example.oneuiapp.translation;
 
 import android.content.Context;
 import android.util.Log;
