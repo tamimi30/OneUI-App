@@ -1,4 +1,4 @@
-package com.example.oneuiapp.data.entity;
+package com.example.oneuiapp.utils;
 
 import android.content.Context;
 import android.os.Parcelable;
