@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist;
+package com.example.oneuiapp.sort;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.example.oneuiapp.fragment.settings.datastore.SettingsDataStore;
-import com.example.oneuiapp.ui.widget.SortByItemLayout;
 
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
