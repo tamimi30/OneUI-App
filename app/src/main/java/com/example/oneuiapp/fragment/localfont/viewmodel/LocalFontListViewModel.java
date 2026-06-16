@@ -14,7 +14,7 @@ import androidx.lifecycle.Transformations;
 
 import com.example.oneuiapp.data.entity.FontEntity;
 import com.example.oneuiapp.fragment.localfont.data.LocalFontRepository;
-import com.example.oneuiapp.data.repository.TrashRepository;   // ★ جديد ★
+import com.example.oneuiapp.fragment.trash.data.TrashRepository;   // ★ جديد ★
 import com.example.oneuiapp.dialog.TrashActionDialogs;          // ★ إصلاح (1)(3): إدارة الإشعارات والخدمة ★
 import com.example.oneuiapp.fragment.localfont.manager.LocalFontPreferenceManager;
 import com.example.oneuiapp.notification.BatchOperationState;
