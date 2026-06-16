@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist.search;
+package com.example.oneuiapp.search;
 
 import java.util.ArrayList;
 import java.util.List;
