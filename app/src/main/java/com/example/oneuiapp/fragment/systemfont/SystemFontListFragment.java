@@ -40,7 +40,7 @@ import com.example.oneuiapp.fragment.systemfont.adapter.SystemFontListAdapter;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.sort.SortByItemLayout;
 import com.example.oneuiapp.fragment.systemfont.viewmodel.SystemFontListViewModel;
-import com.example.oneuiapp.viewmodel.SearchViewModel;
+import com.example.oneuiapp.search.SearchViewModel;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
 import com.example.oneuiapp.fragment.systemfont.data.SystemFontInfo;
 
