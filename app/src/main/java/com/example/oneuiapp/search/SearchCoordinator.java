@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist.search;
+package com.example.oneuiapp.search;
 
 import android.app.Activity;
 import android.app.SearchManager;
