@@ -13,7 +13,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.oneuiapp.data.entity.FontEntity;
-import com.example.oneuiapp.data.repository.TrashRepository;
+import com.example.oneuiapp.fragment.trash.data.TrashRepository;
 import com.example.oneuiapp.dialog.TrashActionDialogs; // ★ إدارة الإشعارات من الـ ViewModel ★
 import com.example.oneuiapp.notification.BatchOperationState;
 import com.example.oneuiapp.notification.OperationForegroundService; // ★ الخدمة الأمامية لمنع تجمد الإشعار ★
