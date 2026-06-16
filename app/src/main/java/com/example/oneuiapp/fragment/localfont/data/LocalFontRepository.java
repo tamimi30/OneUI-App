@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import com.example.oneuiapp.data.dao.FontDao;
 import com.example.oneuiapp.data.database.AppDatabase;
 import com.example.oneuiapp.data.entity.FontEntity;
-import com.example.oneuiapp.fontlist.FontFileInfo;
+import com.example.oneuiapp.data.entity.FontFileInfo;
 import com.example.oneuiapp.fragment.localfont.fontdirectory.LocalFontDirectory;
 import com.example.oneuiapp.metadata.FontMetadataExtractor;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor; // ★ جديد ★
