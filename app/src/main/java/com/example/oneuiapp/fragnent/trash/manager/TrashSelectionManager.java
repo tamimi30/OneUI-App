@@ -1,4 +1,4 @@
-package com.example.oneuiapp.trash;
+package com.example.oneuiapp.fragment.trash.manager;
 
 import android.os.Build;
 import android.util.SparseBooleanArray;
