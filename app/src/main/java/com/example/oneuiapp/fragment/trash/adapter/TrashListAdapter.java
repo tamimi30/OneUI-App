@@ -1,4 +1,4 @@
-package com.example.oneuiapp.trash.adapter;
+package com.example.oneuiapp.fragment.trash.adapter;
 
 import android.content.Context;
 import android.util.SparseBooleanArray;
