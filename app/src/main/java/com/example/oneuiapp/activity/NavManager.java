@@ -16,7 +16,7 @@ import com.example.oneuiapp.fragment.fontviewer.FontViewerFragment;
 import com.example.oneuiapp.fragment.systemfont.SystemFontListFragment;
 import com.example.oneuiapp.fragment.favorite.FavoriteFontListFragment;
 import com.example.oneuiapp.fragment.trash.TrashFragment;
-import com.example.oneuiapp.ui.drawer.DrawerListAdapter;
+import com.example.oneuiapp.drawer.DrawerListAdapter;
 import com.example.oneuiapp.search.SearchCoordinator;
 
 import java.util.ArrayDeque;
