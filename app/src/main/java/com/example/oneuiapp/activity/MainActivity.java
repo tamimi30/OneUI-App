@@ -35,7 +35,7 @@ import com.example.oneuiapp.fragment.localfont.LocalFontListFragment;
 import com.example.oneuiapp.fragment.systemfont.SystemFontListFragment;
 import com.example.oneuiapp.fragment.favorite.FavoriteFontListFragment;
 import com.example.oneuiapp.fragment.trash.TrashFragment;
-import com.example.oneuiapp.ui.drawer.DrawerListAdapter;
+import com.example.oneuiapp.drawer.DrawerListAdapter;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.utils.FileUtils;
 import com.example.oneuiapp.translation.TranslationService;
