@@ -37,7 +37,7 @@ import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.example.oneuiapp.activity.AppScreen;           // ★ الإصلاح الجوهري: استيراد AppScreen ★
 import com.example.oneuiapp.activity.MainActivity;
-import com.example.oneuiapp.data.repository.TrashRepository;
+import com.example.oneuiapp.fragment.trash.data.TrashRepository;
 import com.example.oneuiapp.dialog.FontActionDialogs;
 import com.example.oneuiapp.dialog.TrashActionDialogs; // ★ إضافة: لإظهار وتحديث وإخفاء إشعار النقل ★
 import com.example.oneuiapp.fontlist.FontFileInfo;
