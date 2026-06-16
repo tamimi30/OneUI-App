@@ -22,13 +22,13 @@ import com.example.oneuiapp.fragment.localfont.data.LocalFontCache;
 import com.example.oneuiapp.fragment.localfont.manager.LocalFontPreferenceManager;
 import com.example.oneuiapp.fontlist.search.FontTextHighlighter;
 import com.example.oneuiapp.fragment.localfont.adapter.LocalFontViewHolder;
-import com.example.oneuiapp.fontlist.viewholder.SortHeaderViewHolder;
+import com.example.oneuiapp.sort.SortHeaderViewHolder;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
 import com.example.oneuiapp.utils.ExactLineHeightSpan;
 import com.example.oneuiapp.utils.FileUtils;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 import com.example.oneuiapp.fragment.localfont.viewmodel.LocalFontListViewModel;
-import com.example.oneuiapp.ui.widget.SortByItemLayout;
+import com.example.oneuiapp.sort.SortByItemLayout;
 
 import dev.oneuiproject.oneui.widget.RoundLinearLayout;
 
