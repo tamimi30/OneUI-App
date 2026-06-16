@@ -1,4 +1,4 @@
-package com.example.oneuiapp.viewmodel;
+package com.example.oneuiapp.search;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
