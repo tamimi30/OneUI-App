@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fragment;
+package com.example.oneuiapp.fragment.trash;
 
 import android.content.Context;
 import android.content.res.Configuration;
