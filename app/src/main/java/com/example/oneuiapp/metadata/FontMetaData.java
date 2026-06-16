@@ -13,12 +13,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * FontMetaDataFallback - Enhanced version
+ * FontMetaData - Enhanced version
  * ★ تحسينات: استخراج أفضل للأسماء الحقيقية من الخطوط ★
  */
-public class FontMetaDataFallback {
+public class FontMetaData {
     
-    private static final String TAG = "FontMetaDataFallback";
+    private static final String TAG = "FontMetaData";
     
     public static Map<String, String> extractMetaDataWithTtcIndex(File fontFile, int ttcIndex) {
         Map<String, String> out = new HashMap<>();
