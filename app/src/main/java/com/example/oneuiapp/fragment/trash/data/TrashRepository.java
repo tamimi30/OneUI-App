@@ -1,4 +1,4 @@
-package com.example.oneuiapp.data.repository;
+package com.example.oneuiapp.fragment.trash.data.repository;
 
 import android.content.Context;
 import android.util.Log;
