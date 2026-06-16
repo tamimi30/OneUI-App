@@ -18,7 +18,7 @@ import java.io.RandomAccessFile;
  *   "VF · Bold, Semi Condensed"  ← خط متغير بعرض غير Normal
  *   "غير معروف"                  ← الخط تالف أو لا يحتوي على OS/2 table
  *
- * ملاحظة: يعتمد هذا الملف على نفس منطق قراءة TTC المستخدم في FontMetaDataFallback
+ * ملاحظة: يعتمد هذا الملف على نفس منطق قراءة TTC المستخدم في FontMetaData
  * لضمان الاتساق في التعامل مع الملفات المختلطة.
  */
 public class FontWeightWidthExtractor {
