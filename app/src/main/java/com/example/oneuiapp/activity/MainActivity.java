@@ -38,7 +38,7 @@ import com.example.oneuiapp.fragment.trash.TrashFragment;
 import com.example.oneuiapp.ui.drawer.DrawerListAdapter;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.utils.FileUtils;
-import com.example.oneuiapp.utils.TranslationService;
+import com.example.oneuiapp.translation.TranslationService;
 import com.example.oneuiapp.search.SearchCoordinator;
 import com.example.oneuiapp.widget.TextDrawable;
 import com.example.oneuiapp.fragment.settings.SettingsActivity;
