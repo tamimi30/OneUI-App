@@ -40,11 +40,11 @@ import com.example.oneuiapp.activity.MainActivity;
 import com.example.oneuiapp.fragment.trash.data.TrashRepository;
 import com.example.oneuiapp.dialog.FontActionDialogs;
 import com.example.oneuiapp.dialog.TrashActionDialogs; // ★ إضافة: لإظهار وتحديث وإخفاء إشعار النقل ★
-import com.example.oneuiapp.fontlist.FontFileInfo;
+import com.example.oneuiapp.data.entity.FontFileInfo;
 import com.example.oneuiapp.fragment.localfont.manager.LocalFontSelectionManager;
 import com.example.oneuiapp.fragment.localfont.manager.LocalFontPermissionManager;
 import com.example.oneuiapp.fragment.localfont.fontdirectory.LocalFontDirectoryPicker;
-import com.example.oneuiapp.fontlist.FontUIStateManager;
+import com.example.oneuiapp.utils.FontUIStateManager;
 import com.example.oneuiapp.search.FontTextHighlighter;
 import com.example.oneuiapp.sort.FontSortManager;
 import com.example.oneuiapp.search.FontSearchManager;
