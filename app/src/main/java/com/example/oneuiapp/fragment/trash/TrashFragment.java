@@ -34,7 +34,7 @@ import com.example.oneuiapp.activity.AppScreen;           // ★ الإصلاح 
 import com.example.oneuiapp.activity.MainActivity;
 import com.example.oneuiapp.data.entity.FontEntity;
 import com.example.oneuiapp.dialog.TrashActionDialogs;
-import com.example.oneuiapp.fontlist.FontUIStateManager;  // ★ إضافة
+import com.example.oneuiapp.utils.FontUIStateManager;  // ★ إضافة
 import com.example.oneuiapp.fragment.trash.manager.TrashSelectionManager;
 import com.example.oneuiapp.fragment.trash.adapter.TrashListAdapter;
 import com.example.oneuiapp.fragment.trash.viewmodel.TrashViewModel;
