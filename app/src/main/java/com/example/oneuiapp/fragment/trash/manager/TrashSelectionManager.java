@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.data.entity.FontEntity;
-import com.example.oneuiapp.trash.adapter.TrashListAdapter;
+import com.example.oneuiapp.fragment.trash.adapter.TrashListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
