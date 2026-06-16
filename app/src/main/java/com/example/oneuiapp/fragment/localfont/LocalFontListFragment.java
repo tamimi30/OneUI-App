@@ -47,7 +47,7 @@ import com.example.oneuiapp.fragment.localfont.fontdirectory.LocalFontDirectoryP
 import com.example.oneuiapp.fontlist.FontUIStateManager;
 import com.example.oneuiapp.search.FontTextHighlighter;
 import com.example.oneuiapp.sort.FontSortManager;
-import com.example.oneuiapp.fontlist.search.FontSearchManager;
+import com.example.oneuiapp.search.FontSearchManager;
 import com.example.oneuiapp.fragment.localfont.data.LocalFontCache;
 import com.example.oneuiapp.fragment.localfont.adapter.LocalFontListAdapter;
 import com.example.oneuiapp.utils.FontItemDecoration;
