@@ -1,4 +1,4 @@
-package com.example.oneuiapp.fontlist.search;
+package com.example.oneuiapp.search;
 
 import android.content.Context;
 import android.text.Spannable;
