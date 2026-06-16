@@ -24,14 +24,14 @@ public class FontMetadataExtractor {
         }
         
         try {
-            String fontName = FontMetaDataFallback.extractFontName(fontFile, ttcIndex);
+            String fontName = FontMetaData.extractFontName(fontFile, ttcIndex);
             
             if (fontName != null && !fontName.isEmpty() && !fontName.equals("Unknown Font")) {
                 Log.d(TAG, "Successfully extracted font name: " + fontName);
                 return fontName;
             }
         } catch (Exception e) {
-            Log.w(TAG, "FontMetaDataFallback.extractFontName failed: " + e.getMessage());
+            Log.w(TAG, "FontMetaData.extractFontName failed: " + e.getMessage());
         }
         
         Log.d(TAG, "Could not extract real name, returning Unknown Font");
@@ -55,7 +55,7 @@ public class FontMetadataExtractor {
         }
         
         try {
-            Map<String, String> metadata = FontMetaDataFallback.extractMetaDataWithTtcIndex(fontFile, ttcIndex);
+            Map<String, String> metadata = FontMetaData.extractMetaDataWithTtcIndex(fontFile, ttcIndex);
             
             if (metadata != null && !metadata.isEmpty() && 
                 (metadata.containsKey("FullName") || metadata.containsKey("Family"))) {
@@ -68,7 +68,7 @@ public class FontMetadataExtractor {
         
         // Fallback: محاولة بدون TTC Index
         try {
-            Map<String, String> metadata = FontMetaDataFallback.extractMetaData(fontFile);
+            Map<String, String> metadata = FontMetaData.extractMetaData(fontFile);
             
             if (metadata != null && !metadata.isEmpty() && 
                 (metadata.containsKey("FullName") || metadata.containsKey("Family"))) {
@@ -76,7 +76,7 @@ public class FontMetadataExtractor {
                 return metadata;
             }
         } catch (Exception e) {
-            Log.w(TAG, "FontMetaDataFallback.extractMetaData failed: " + e.getMessage());
+            Log.w(TAG, "FontMetaData.extractMetaData failed: " + e.getMessage());
         }
         
         Log.w(TAG, "Failed to extract metadata, returning empty map");
@@ -99,7 +99,7 @@ public class FontMetadataExtractor {
         }
         
         try {
-            String fontName = FontMetaDataFallback.extractFontName(fontFile);
+            String fontName = FontMetaData.extractFontName(fontFile);
             return fontName != null && !fontName.isEmpty() && !fontName.equals("Unknown Font");
         } catch (Exception e) {
             return false;
