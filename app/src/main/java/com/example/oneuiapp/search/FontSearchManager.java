@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.oneuiapp.fontlist.FontFileInfo;
+import com.example.oneuiapp.data.entity.FontFileInfo;
 import com.example.oneuiapp.utils.FileUtils;
 
 /**
