@@ -1,4 +1,4 @@
-package com.example.oneuiapp.ui.drawer;
+package com.example.oneuiapp.drawer;
 
 import android.content.Context;
 import android.view.LayoutInflater;
