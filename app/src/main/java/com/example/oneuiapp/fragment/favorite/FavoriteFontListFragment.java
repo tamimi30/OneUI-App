@@ -39,9 +39,9 @@ import com.example.oneuiapp.activity.AppScreen;           // ★ الإصلاح 
 import com.example.oneuiapp.activity.MainActivity;
 import com.example.oneuiapp.fragment.trash.data.TrashRepository;
 import com.example.oneuiapp.dialog.FontActionDialogs;
-import com.example.oneuiapp.fontlist.FontFileInfo;
+import com.example.oneuiapp.data.entity.FontFileInfo;
 import com.example.oneuiapp.sort.FontSortManager;
-import com.example.oneuiapp.fontlist.FontUIStateManager;
+import com.example.oneuiapp.utils.FontUIStateManager;
 import com.example.oneuiapp.utils.FontItemDecoration;
 import com.example.oneuiapp.fragment.localfont.adapter.LocalFontListAdapter;
 import com.example.oneuiapp.fragment.localfont.data.LocalFontCache;
