@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import com.example.oneuiapp.data.dao.FontDao;
 import com.example.oneuiapp.data.database.AppDatabase;
 import com.example.oneuiapp.data.entity.FontEntity;
-import com.example.oneuiapp.trash.TrashFileManager;
+import com.example.oneuiapp.fragment.trash.manager.TrashFileManager;
 
 import java.io.File;
 import java.util.List;
