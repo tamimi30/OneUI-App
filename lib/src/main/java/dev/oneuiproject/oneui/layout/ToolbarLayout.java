@@ -118,7 +118,6 @@ public class ToolbarLayout extends LinearLayout {
 
     private boolean mIsSearchMode = false;
     private boolean mIsActionMode = false;
-    private Runnable mUpdateTitleRunnable;
 
     /**
      * Callback for the Toolbar's SearchMode.
@@ -831,11 +830,6 @@ public class ToolbarLayout extends LinearLayout {
      */
     public void dismissActionMode() {
         mIsActionMode = false;
-        
-        // إيقاف وتدمير أي عملية معلقة لتغيير النص بمجرد إغلاق وضع التحديد
-        if (mUpdateTitleRunnable != null) {
-            removeCallbacks(mUpdateTitleRunnable);
-        }
 
         animatedVisibility(mActionModeToolbar, GONE);
         mBottomActionModeBar.setVisibility(GONE);
@@ -860,12 +854,17 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
-        setActionModeAllSelector(0,  true,  false);
+        
+        // محاكاة One UI 6: نقوم بإعادة تعيين المتغيرات داخلياً فقط دون استدعاء دالة تحديث الواجهة
+        mSelectedItemsCount = 0;
+        if (mActionModeCheckBox != null) {
+            mActionModeCheckBox.setChecked(false);
+        }
+        
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
     }
-
     /**
      * Checks if the ActionMode is enabled.
      */
@@ -985,31 +984,23 @@ public class ToolbarLayout extends LinearLayout {
      */
 
     public void setActionModeAllSelector(int count, Boolean enabled, @Nullable Boolean checked) {
+        // الحل المأخوذ من One UI 6: تجاهل تحديث الواجهة إذا كان وضع التحديد مغلقاً لتجنب الوميض المزعج
+        if (!mIsActionMode) {
+            mSelectedItemsCount = count;
+            if (checked != null && mActionModeCheckBox != null) {
+                mActionModeCheckBox.setChecked(checked);
+            }
+            return;
+        }
+
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
-
-            // إلغاء أي تحديث معلق للنص إذا كان موجوداً
-            if (mUpdateTitleRunnable != null) {
-                removeCallbacks(mUpdateTitleRunnable);
-            }
-
-            // جدولة تحديث النص 
-            mUpdateTitleRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    // التحقق الأهم: إذا تم إغلاق وضع التحديد، يتم تجاهل تحديث النص لمنع الوميض المزعج
-                    if (!mIsActionMode) return; 
-
-                    String title = count > 0
-                            ? getResources().getString(R.string.oui_action_mode_n_selected, count)
-                            : getResources().getString(R.string.oui_action_mode_select_items);
-                    mCollapsingToolbarLayout.setTitle(title);
-                    mActionModeTitleTextView.setText(title);
-                    updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
-                }
-            };
-            // استخدام post لتأخير التنفيذ لنهاية الدورة الحالية للـ UI
-            post(mUpdateTitleRunnable);
+            String title = count > 0
+                    ? getResources().getString(R.string.oui_action_mode_n_selected, count)
+                    : getResources().getString(R.string.oui_action_mode_select_items);
+            mCollapsingToolbarLayout.setTitle(title);
+            mActionModeTitleTextView.setText(title);
+            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         }
         if (checked != null && checked != mActionModeCheckBox.isChecked()) {
             mActionModeCheckBox.setChecked(checked);
@@ -1018,7 +1009,6 @@ public class ToolbarLayout extends LinearLayout {
             mActionModeSelectAll.setEnabled(enabled);
         }
     }
-
 
     /**
      * Set the ActionMode's count. This will change the count in the Toolbar's title
