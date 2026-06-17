@@ -828,20 +828,10 @@ public class ToolbarLayout extends LinearLayout {
      *
      * @see #showActionMode()
      */
-        /**
-     * Dismiss the ActionMode.
-     *
-     * @see #showActionMode()
-     */
     public void dismissActionMode() {
         mIsActionMode = false;
         animatedVisibility(mActionModeToolbar, GONE);
         mBottomActionModeBar.setVisibility(GONE);
-        
-        // تفريغ فوري لنصوص وضع التحديد لمنع ظهور وميض "تحديد عناصر"
-        mCollapsingToolbarLayout.setTitle("");
-        mActionModeTitleTextView.setText("");
-        mSelectedItemsCount = 0; // تصفير العداد فوراً في الخلفية
         
         if (mIsSearchMode) {
             mOnBackPressedCallback.setEnabled(true);
@@ -849,6 +839,7 @@ public class ToolbarLayout extends LinearLayout {
             mFooterContainer.setVisibility(GONE);
             mCollapsingToolbarLayout.setTitle(getResources().getString(R.string.sesl_searchview_description_search));
             mCollapsingToolbarLayout.seslSetSubtitle(null);
+            // ★ الإصلاح: إزالة setIconified واستخدام clearFocus لمنع الكيبورد من القفز
             if (mSearchView != null) {
                 mSearchView.clearFocus();
             }
@@ -863,14 +854,17 @@ public class ToolbarLayout extends LinearLayout {
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
         
-        // استخدام الدالة بعد التأكد من أننا أفرغنا النصوص، ولن تقوم بالتغيير بفضل درع الحماية
-        setActionModeAllSelector(0,  true,  false);
+        // ★ الإصلاح المقتبس من One UI 8: 
+        // تصفير العداد والخيارات بصمت لمنع الكتابة فوق العنوان الأصلي المخبأ
+        mSelectedItemsCount = 0;
+        mActionModeCheckBox.setChecked(false);
+        mActionModeSelectAll.setEnabled(true);
+        mActionModeTitleTextView.setText(""); // تفريغ النص الخاص بالتحديد لتجنب ظهوره أثناء تلاشي الحركة
         
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
     }
-
 
     /**
      * Checks if the ActionMode is enabled.
@@ -1018,13 +1012,6 @@ public class ToolbarLayout extends LinearLayout {
      */
     @Deprecated
     public void setActionModeCount(int count, int total) {
-        // درع الحماية لمنع الوميض: إذا كان وضع التحديد يغلق الآن، قم بتحديث العدادات في الخلفية فقط
-        if (!mIsActionMode) {
-            mSelectedItemsCount = count;
-            mActionModeCheckBox.setChecked(count == total);
-            return;
-        }
-
         mSelectedItemsCount = count;
         String title = count > 0
                 ? getResources().getString(R.string.oui_action_mode_n_selected, count)
