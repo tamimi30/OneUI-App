@@ -791,7 +791,7 @@ public class ToolbarLayout extends LinearLayout {
         mFooterContainer.setVisibility(GONE);
         mBottomActionModeBar.setVisibility(VISIBLE);
 
-        setActionModeAllSelector(0, true, false);
+        setActionModeCount(0, -1);
         mAppBarLayout.addOnOffsetChangedListener(mActionModeTitleFadeListener);
         mCollapsingToolbarLayout.seslSetSubtitle(null);
         mMainToolbar.setSubtitle(null);
@@ -853,6 +853,7 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
+       // setActionModeAllSelector(0,  true,  false);
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
