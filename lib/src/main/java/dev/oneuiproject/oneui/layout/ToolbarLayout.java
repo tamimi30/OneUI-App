@@ -791,7 +791,7 @@ public class ToolbarLayout extends LinearLayout {
         mFooterContainer.setVisibility(GONE);
         mBottomActionModeBar.setVisibility(VISIBLE);
 
-        setActionModeAllSelector(0, true, false);
+        // setActionModeCount(0, -1);
         mAppBarLayout.addOnOffsetChangedListener(mActionModeTitleFadeListener);
         mCollapsingToolbarLayout.seslSetSubtitle(null);
         mMainToolbar.setSubtitle(null);
@@ -853,6 +853,7 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
+        setActionModeAllSelector(0,  true,  false);
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
@@ -981,7 +982,11 @@ public class ToolbarLayout extends LinearLayout {
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
-            mCollapsingToolbarLayout.setTitle(title);
+            
+            // شرط الحماية: لا تقم بتغيير العنوان الرئيسي إذا كان وضع التحديد مغلقاً
+            if (mIsActionMode) {
+                mCollapsingToolbarLayout.setTitle(title);
+            }
             mActionModeTitleTextView.setText(title);
             updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         }
@@ -1009,7 +1014,10 @@ public class ToolbarLayout extends LinearLayout {
                 ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                 : getResources().getString(R.string.oui_action_mode_select_items);
 
-        mCollapsingToolbarLayout.setTitle(title);
+        // شرط الحماية: لا تقم بتغيير العنوان الرئيسي إذا كان وضع التحديد مغلقاً
+        if (mIsActionMode) {
+            mCollapsingToolbarLayout.setTitle(title);
+        }
         mActionModeTitleTextView.setText(title);
         updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         mActionModeCheckBox.setChecked(count == total);
