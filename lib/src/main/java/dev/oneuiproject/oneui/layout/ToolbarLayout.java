@@ -853,12 +853,7 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
-        
-        // تطبيق حل مكتبة One UI 8: تصفير المتغيرات في الخلفية فقط لمنع وميض النص
-        mSelectedItemsCount = 0;
-        mActionModeCheckBox.setChecked(false);
-        mActionModeSelectAll.setEnabled(true);
-        
+        setActionModeAllSelector(0,  true,  false);
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
@@ -982,6 +977,15 @@ public class ToolbarLayout extends LinearLayout {
      * @param checked
      */
     public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
+        // درع الحماية: إذا كان وضع التحديد مغلقاً، قم بتحديث المتغيرات في الخلفية فقط ولا تغير النصوص على الشاشة
+        if (!mIsActionMode) {
+            mSelectedItemsCount = count;
+            if (checked != null) mActionModeCheckBox.setChecked(checked);
+            mActionModeSelectAll.setEnabled(enabled);
+            return;
+        }
+
+        // الكود الأصلي الذي يعمل فقط إذا كان وضع التحديد مفعلاً
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
             String title = count > 0
