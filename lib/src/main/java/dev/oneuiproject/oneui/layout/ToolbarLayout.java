@@ -830,7 +830,6 @@ public class ToolbarLayout extends LinearLayout {
      */
     public void dismissActionMode() {
         mIsActionMode = false;
-        mActionModeTitleTextView.setText("");
         animatedVisibility(mActionModeToolbar, GONE);
         mBottomActionModeBar.setVisibility(GONE);
         
@@ -854,7 +853,12 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
-        setActionModeAllSelector(0,  true,  false);
+        
+        // تطبيق حل مكتبة One UI 8: تصفير المتغيرات في الخلفية فقط لمنع وميض النص
+        mSelectedItemsCount = 0;
+        mActionModeCheckBox.setChecked(false);
+        mActionModeSelectAll.setEnabled(true);
+        
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
@@ -983,10 +987,8 @@ public class ToolbarLayout extends LinearLayout {
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
-            
-            if (mIsActionMode) {
-                mActionModeTitleTextView.setText(title);
-            }
+            mCollapsingToolbarLayout.setTitle(title);
+            mActionModeTitleTextView.setText(title);
             updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         }
         if (checked != null && checked != mActionModeCheckBox.isChecked()) {
@@ -1013,9 +1015,8 @@ public class ToolbarLayout extends LinearLayout {
                 ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                 : getResources().getString(R.string.oui_action_mode_select_items);
 
-        if (mIsActionMode) {
-            mActionModeTitleTextView.setText(title);
-        }
+        mCollapsingToolbarLayout.setTitle(title);
+        mActionModeTitleTextView.setText(title);
         updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         mActionModeCheckBox.setChecked(count == total);
     }
