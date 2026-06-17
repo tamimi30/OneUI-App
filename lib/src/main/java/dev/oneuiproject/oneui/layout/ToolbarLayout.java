@@ -853,14 +853,7 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
-        
-        // ★ الإصلاح المقتبس من One UI 8: 
-        // تصفير العداد والخيارات بصمت لمنع الكتابة فوق العنوان الأصلي المخبأ
-        mSelectedItemsCount = 0;
-        mActionModeCheckBox.setChecked(false);
-        mActionModeSelectAll.setEnabled(true);
-        mActionModeTitleTextView.setText(""); // تفريغ النص الخاص بالتحديد لتجنب ظهوره أثناء تلاشي الحركة
-        
+        setActionModeAllSelector(0,  true,  false);
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
@@ -989,7 +982,9 @@ public class ToolbarLayout extends LinearLayout {
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
-            mCollapsingToolbarLayout.setTitle(title);
+            if (mIsActionMode) {
+                mCollapsingToolbarLayout.setTitle(title);
+            }
             mActionModeTitleTextView.setText(title);
             updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         }
