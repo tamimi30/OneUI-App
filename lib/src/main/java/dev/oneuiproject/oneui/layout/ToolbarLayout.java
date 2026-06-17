@@ -118,6 +118,7 @@ public class ToolbarLayout extends LinearLayout {
 
     private boolean mIsSearchMode = false;
     private boolean mIsActionMode = false;
+    private Runnable mUpdateTitleRunnable;
 
     /**
      * Callback for the Toolbar's SearchMode.
@@ -830,6 +831,12 @@ public class ToolbarLayout extends LinearLayout {
      */
     public void dismissActionMode() {
         mIsActionMode = false;
+        
+        // إيقاف وتدمير أي عملية معلقة لتغيير النص بمجرد إغلاق وضع التحديد
+        if (mUpdateTitleRunnable != null) {
+            removeCallbacks(mUpdateTitleRunnable);
+        }
+
         animatedVisibility(mActionModeToolbar, GONE);
         mBottomActionModeBar.setVisibility(GONE);
         
@@ -853,17 +860,7 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
-        
-        // ★ الإصلاح النهائي المقتبس من One UI 6: 
-        // فصل المستمع مؤقتاً لمنع التطبيق من تغيير العنوان إلى "تحديد عناصر" أثناء الإغلاق
-        mSelectedItemsCount = -1; 
-        mActionModeCheckBox.setOnCheckedChangeListener(null);
-        mActionModeCheckBox.setChecked(false);
-        if (mAppCheckboxListener != null) {
-            mActionModeCheckBox.setOnCheckedChangeListener(mAppCheckboxListener);
-        }
-        mActionModeSelectAll.setEnabled(true);
-        
+        setActionModeAllSelector(0,  true,  false);
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
@@ -986,25 +983,33 @@ public class ToolbarLayout extends LinearLayout {
      * @param enabled enable or disable click
      * @param checked
      */
-    public void setActionModeAllSelector(final int count, final Boolean enabled, @Nullable final Boolean checked) {
-        if (!mIsActionMode) {
-            mSelectedItemsCount = count;
-            if (checked != null) mActionModeCheckBox.setChecked(checked);
-            mActionModeSelectAll.setEnabled(enabled);
-            return;
-        }
 
+    public void setActionModeAllSelector(int count, Boolean enabled, @Nullable Boolean checked) {
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
-            post(() -> {
-                if (!mIsActionMode || mSelectedItemsCount != count) return;
-                String title = count > 0
-                        ? getResources().getString(R.string.oui_action_mode_n_selected, count)
-                        : getResources().getString(R.string.oui_action_mode_select_items);
-                mCollapsingToolbarLayout.setTitle(title);
-                mActionModeTitleTextView.setText(title);
-                updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
-            });
+
+            // إلغاء أي تحديث معلق للنص إذا كان موجوداً
+            if (mUpdateTitleRunnable != null) {
+                removeCallbacks(mUpdateTitleRunnable);
+            }
+
+            // جدولة تحديث النص 
+            mUpdateTitleRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    // التحقق الأهم: إذا تم إغلاق وضع التحديد، يتم تجاهل تحديث النص لمنع الوميض المزعج
+                    if (!mIsActionMode) return; 
+
+                    String title = count > 0
+                            ? getResources().getString(R.string.oui_action_mode_n_selected, count)
+                            : getResources().getString(R.string.oui_action_mode_select_items);
+                    mCollapsingToolbarLayout.setTitle(title);
+                    mActionModeTitleTextView.setText(title);
+                    updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+                }
+            };
+            // استخدام post لتأخير التنفيذ لنهاية الدورة الحالية للـ UI
+            post(mUpdateTitleRunnable);
         }
         if (checked != null && checked != mActionModeCheckBox.isChecked()) {
             mActionModeCheckBox.setChecked(checked);
@@ -1024,34 +1029,22 @@ public class ToolbarLayout extends LinearLayout {
      * @deprecated use {@link #setActionModeAllSelector(int, Boolean, Boolean)}
      */
     @Deprecated
-    public void setActionModeCount(final int count, final int total) {
-        if (!mIsActionMode) {
-            mSelectedItemsCount = count;
-            mActionModeCheckBox.setChecked(count == total);
-            return;
-        }
-
+    public void setActionModeCount(int count, int total) {
         mSelectedItemsCount = count;
-        mActionModeCheckBox.setChecked(count == total);
+        String title = count > 0
+                ? getResources().getString(R.string.oui_action_mode_n_selected, count)
+                : getResources().getString(R.string.oui_action_mode_select_items);
 
-        post(() -> {
-            if (!mIsActionMode || mSelectedItemsCount != count) return;
-            String title = count > 0
-                    ? getResources().getString(R.string.oui_action_mode_n_selected, count)
-                    : getResources().getString(R.string.oui_action_mode_select_items);
-            mCollapsingToolbarLayout.setTitle(title);
-            mActionModeTitleTextView.setText(title);
-            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
-        });
+        mCollapsingToolbarLayout.setTitle(title);
+        mActionModeTitleTextView.setText(title);
+        updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+        mActionModeCheckBox.setChecked(count == total);
     }
 
     /**
      * Set the listener for the 'All' Checkbox of the ActionMode.
      */
-    private CompoundButton.OnCheckedChangeListener mAppCheckboxListener;
-    
     public void setActionModeCheckboxListener(CompoundButton.OnCheckedChangeListener listener) {
-        mAppCheckboxListener = listener;
         mActionModeCheckBox.setOnCheckedChangeListener(listener);
     }
 
