@@ -986,9 +986,7 @@ public class ToolbarLayout extends LinearLayout {
      * @param enabled enable or disable click
      * @param checked
      */
-    public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
-        // ★ الإصلاح المقتبس من One UI 8:
-        // منع الدالة من تدمير العنوان الأصلي وكتابة "تحديد عناصر" إذا كان وضع التحديد مغلقاً بالفعل
+    public void setActionModeAllSelector(final int count, final Boolean enabled, @Nullable final Boolean checked) {
         if (!mIsActionMode) {
             mSelectedItemsCount = count;
             if (checked != null) mActionModeCheckBox.setChecked(checked);
@@ -998,12 +996,15 @@ public class ToolbarLayout extends LinearLayout {
 
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
-            String title = count > 0
-                    ? getResources().getString(R.string.oui_action_mode_n_selected, count)
-                    : getResources().getString(R.string.oui_action_mode_select_items);
-            mCollapsingToolbarLayout.setTitle(title);
-            mActionModeTitleTextView.setText(title);
-            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+            post(() -> {
+                if (!mIsActionMode || mSelectedItemsCount != count) return;
+                String title = count > 0
+                        ? getResources().getString(R.string.oui_action_mode_n_selected, count)
+                        : getResources().getString(R.string.oui_action_mode_select_items);
+                mCollapsingToolbarLayout.setTitle(title);
+                mActionModeTitleTextView.setText(title);
+                updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+            });
         }
         if (checked != null && checked != mActionModeCheckBox.isChecked()) {
             mActionModeCheckBox.setChecked(checked);
@@ -1023,8 +1024,7 @@ public class ToolbarLayout extends LinearLayout {
      * @deprecated use {@link #setActionModeAllSelector(int, Boolean, Boolean)}
      */
     @Deprecated
-    public void setActionModeCount(int count, int total) {
-        // حماية تمنع تخريب العنوان الأصلي وكتابة "تحديد عناصر" بعد إغلاق وضع التحديد
+    public void setActionModeCount(final int count, final int total) {
         if (!mIsActionMode) {
             mSelectedItemsCount = count;
             mActionModeCheckBox.setChecked(count == total);
@@ -1032,14 +1032,17 @@ public class ToolbarLayout extends LinearLayout {
         }
 
         mSelectedItemsCount = count;
-        String title = count > 0
-                ? getResources().getString(R.string.oui_action_mode_n_selected, count)
-                : getResources().getString(R.string.oui_action_mode_select_items);
-
-        mCollapsingToolbarLayout.setTitle(title);
-        mActionModeTitleTextView.setText(title);
-        updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         mActionModeCheckBox.setChecked(count == total);
+
+        post(() -> {
+            if (!mIsActionMode || mSelectedItemsCount != count) return;
+            String title = count > 0
+                    ? getResources().getString(R.string.oui_action_mode_n_selected, count)
+                    : getResources().getString(R.string.oui_action_mode_select_items);
+            mCollapsingToolbarLayout.setTitle(title);
+            mActionModeTitleTextView.setText(title);
+            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+        });
     }
 
     /**
