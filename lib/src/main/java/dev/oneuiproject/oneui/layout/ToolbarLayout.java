@@ -979,15 +979,15 @@ public class ToolbarLayout extends LinearLayout {
     public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
-            String title = count > 0
-                    ? getResources().getString(R.string.oui_action_mode_n_selected, count)
-                    : getResources().getString(R.string.oui_action_mode_select_items);
-            
-            // شرط الحماية: لا تقم بتغيير العنوان الرئيسي إذا كان وضع التحديد مغلقاً
-            if (mIsActionMode) {
+            if (count > 0) {
+                String title = getResources().getString(R.string.oui_action_mode_n_selected, count);
                 mCollapsingToolbarLayout.setTitle(title);
+                mActionModeTitleTextView.setText(title);
+            } else if (mIsActionMode) {
+                String title = getResources().getString(R.string.oui_action_mode_select_items);
+                mCollapsingToolbarLayout.setTitle(title);
+                mActionModeTitleTextView.setText(title);
             }
-            mActionModeTitleTextView.setText(title);
             updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         }
         if (checked != null && checked != mActionModeCheckBox.isChecked()) {
@@ -1010,15 +1010,15 @@ public class ToolbarLayout extends LinearLayout {
     @Deprecated
     public void setActionModeCount(int count, int total) {
         mSelectedItemsCount = count;
-        String title = count > 0
-                ? getResources().getString(R.string.oui_action_mode_n_selected, count)
-                : getResources().getString(R.string.oui_action_mode_select_items);
-
-        // شرط الحماية: لا تقم بتغيير العنوان الرئيسي إذا كان وضع التحديد مغلقاً
-        if (mIsActionMode) {
+        if (count > 0) {
+            String title = getResources().getString(R.string.oui_action_mode_n_selected, count);
             mCollapsingToolbarLayout.setTitle(title);
+            mActionModeTitleTextView.setText(title);
+        } else if (mIsActionMode) {
+            String title = getResources().getString(R.string.oui_action_mode_select_items);
+            mCollapsingToolbarLayout.setTitle(title);
+            mActionModeTitleTextView.setText(title);
         }
-        mActionModeTitleTextView.setText(title);
         updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         mActionModeCheckBox.setChecked(count == total);
     }
