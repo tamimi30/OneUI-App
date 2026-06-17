@@ -239,7 +239,9 @@ public class DrawerLayout extends ToolbarLayout {
     @Override
     public void dismissActionMode() {
         super.dismissActionMode();
-        lockDrawerIfAvailable(false);
+        if (!isSearchMode()) {
+            lockDrawerIfAvailable(false);
+        }
     }
 
     @Override
@@ -251,7 +253,9 @@ public class DrawerLayout extends ToolbarLayout {
     @Override
     public void dismissSearchMode() {
         super.dismissSearchMode();
-        lockDrawerIfAvailable(false);
+        if (!isActionMode()) {
+            lockDrawerIfAvailable(false);
+        }
     }
 
     //
