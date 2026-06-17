@@ -983,6 +983,15 @@ public class ToolbarLayout extends LinearLayout {
      * @param checked
      */
     public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
+        // ★ الإصلاح المقتبس من One UI 8:
+        // منع الدالة من تدمير العنوان الأصلي وكتابة "تحديد عناصر" إذا كان وضع التحديد مغلقاً بالفعل
+        if (!mIsActionMode) {
+            mSelectedItemsCount = count;
+            if (checked != null) mActionModeCheckBox.setChecked(checked);
+            mActionModeSelectAll.setEnabled(enabled);
+            return;
+        }
+
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
             String title = count > 0
