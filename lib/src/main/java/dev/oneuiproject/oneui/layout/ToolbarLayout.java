@@ -853,7 +853,13 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
-        setActionModeAllSelector(0,  true,  false);
+        
+        // ★ الإصلاح النهائي المقتبس من One UI 8: 
+        // تصفير الخيارات بصمت، مع ترك النص كما هو ليتلاشى بشكل طبيعي دون ترك فراغ أسود
+        mSelectedItemsCount = 0;
+        mActionModeCheckBox.setChecked(false);
+        mActionModeSelectAll.setEnabled(true);
+        
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
@@ -982,9 +988,7 @@ public class ToolbarLayout extends LinearLayout {
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
-            if (mIsActionMode) {
-                mCollapsingToolbarLayout.setTitle(title);
-            }
+            mCollapsingToolbarLayout.setTitle(title);
             mActionModeTitleTextView.setText(title);
             updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         }
