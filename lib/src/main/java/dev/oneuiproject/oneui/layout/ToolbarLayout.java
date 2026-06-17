@@ -791,7 +791,7 @@ public class ToolbarLayout extends LinearLayout {
         mFooterContainer.setVisibility(GONE);
         mBottomActionModeBar.setVisibility(VISIBLE);
 
-        // setActionModeCount(0, -1);
+        setActionModeAllSelector(0, true, false);
         mAppBarLayout.addOnOffsetChangedListener(mActionModeTitleFadeListener);
         mCollapsingToolbarLayout.seslSetSubtitle(null);
         mMainToolbar.setSubtitle(null);
@@ -853,7 +853,6 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
-        setActionModeAllSelector(0,  true,  false);
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
@@ -982,17 +981,7 @@ public class ToolbarLayout extends LinearLayout {
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
-            
-            // ★ الحل السحري: تأخير تحديث العنوان لجزء من الثانية لتجنب الوميض ★
-            if (mIsActionMode) {
-                mCollapsingToolbarLayout.post(() -> {
-                    // إذا كنا لا نزال في وضع التحديد بعد انقضاء التأخير، قم بتحديث العنوان
-                    if (mIsActionMode) {
-                        mCollapsingToolbarLayout.setTitle(title);
-                    }
-                });
-            }
-            
+            mCollapsingToolbarLayout.setTitle(title);
             mActionModeTitleTextView.setText(title);
             updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         }
