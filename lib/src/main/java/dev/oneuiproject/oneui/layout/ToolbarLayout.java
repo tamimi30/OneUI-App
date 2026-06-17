@@ -830,6 +830,7 @@ public class ToolbarLayout extends LinearLayout {
      */
     public void dismissActionMode() {
         mIsActionMode = false;
+        mActionModeTitleTextView.setText("");
         animatedVisibility(mActionModeToolbar, GONE);
         mBottomActionModeBar.setVisibility(GONE);
         
@@ -979,13 +980,11 @@ public class ToolbarLayout extends LinearLayout {
     public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
-            if (count > 0) {
-                String title = getResources().getString(R.string.oui_action_mode_n_selected, count);
-                mCollapsingToolbarLayout.setTitle(title);
-                mActionModeTitleTextView.setText(title);
-            } else if (mIsActionMode) {
-                String title = getResources().getString(R.string.oui_action_mode_select_items);
-                mCollapsingToolbarLayout.setTitle(title);
+            String title = count > 0
+                    ? getResources().getString(R.string.oui_action_mode_n_selected, count)
+                    : getResources().getString(R.string.oui_action_mode_select_items);
+            
+            if (mIsActionMode) {
                 mActionModeTitleTextView.setText(title);
             }
             updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
@@ -1010,13 +1009,11 @@ public class ToolbarLayout extends LinearLayout {
     @Deprecated
     public void setActionModeCount(int count, int total) {
         mSelectedItemsCount = count;
-        if (count > 0) {
-            String title = getResources().getString(R.string.oui_action_mode_n_selected, count);
-            mCollapsingToolbarLayout.setTitle(title);
-            mActionModeTitleTextView.setText(title);
-        } else if (mIsActionMode) {
-            String title = getResources().getString(R.string.oui_action_mode_select_items);
-            mCollapsingToolbarLayout.setTitle(title);
+        String title = count > 0
+                ? getResources().getString(R.string.oui_action_mode_n_selected, count)
+                : getResources().getString(R.string.oui_action_mode_select_items);
+
+        if (mIsActionMode) {
             mActionModeTitleTextView.setText(title);
         }
         updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
