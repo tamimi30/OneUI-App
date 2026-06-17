@@ -1020,6 +1020,13 @@ public class ToolbarLayout extends LinearLayout {
      */
     @Deprecated
     public void setActionModeCount(int count, int total) {
+        // حماية تمنع تخريب العنوان الأصلي وكتابة "تحديد عناصر" بعد إغلاق وضع التحديد
+        if (!mIsActionMode) {
+            mSelectedItemsCount = count;
+            mActionModeCheckBox.setChecked(count == total);
+            return;
+        }
+
         mSelectedItemsCount = count;
         String title = count > 0
                 ? getResources().getString(R.string.oui_action_mode_n_selected, count)
