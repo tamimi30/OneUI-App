@@ -854,10 +854,14 @@ public class ToolbarLayout extends LinearLayout {
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
         
-        // ★ الإصلاح النهائي المقتبس من One UI 8: 
-        // تصفير الخيارات بصمت، مع ترك النص كما هو ليتلاشى بشكل طبيعي دون ترك فراغ أسود
-        mSelectedItemsCount = 0;
+        // ★ الإصلاح النهائي المقتبس من One UI 6: 
+        // فصل المستمع مؤقتاً لمنع التطبيق من تغيير العنوان إلى "تحديد عناصر" أثناء الإغلاق
+        mSelectedItemsCount = -1; 
+        mActionModeCheckBox.setOnCheckedChangeListener(null);
         mActionModeCheckBox.setChecked(false);
+        if (mAppCheckboxListener != null) {
+            mActionModeCheckBox.setOnCheckedChangeListener(mAppCheckboxListener);
+        }
         mActionModeSelectAll.setEnabled(true);
         
         if (mActionModeCallback != null) {
@@ -1041,7 +1045,10 @@ public class ToolbarLayout extends LinearLayout {
     /**
      * Set the listener for the 'All' Checkbox of the ActionMode.
      */
+    private CompoundButton.OnCheckedChangeListener mAppCheckboxListener;
+    
     public void setActionModeCheckboxListener(CompoundButton.OnCheckedChangeListener listener) {
+        mAppCheckboxListener = listener;
         mActionModeCheckBox.setOnCheckedChangeListener(listener);
     }
 
