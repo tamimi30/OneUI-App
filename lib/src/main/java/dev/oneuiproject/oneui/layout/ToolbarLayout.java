@@ -977,15 +977,6 @@ public class ToolbarLayout extends LinearLayout {
      * @param checked
      */
     public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
-        // درع الحماية: إذا كان وضع التحديد مغلقاً، قم بتحديث المتغيرات في الخلفية فقط ولا تغير النصوص على الشاشة
-        if (!mIsActionMode) {
-            mSelectedItemsCount = count;
-            if (checked != null) mActionModeCheckBox.setChecked(checked);
-            mActionModeSelectAll.setEnabled(enabled);
-            return;
-        }
-
-        // الكود الأصلي الذي يعمل فقط إذا كان وضع التحديد مفعلاً
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
             String title = count > 0
@@ -1014,6 +1005,13 @@ public class ToolbarLayout extends LinearLayout {
      */
     @Deprecated
     public void setActionModeCount(int count, int total) {
+        // درع الحماية لمنع الوميض: إذا كان وضع التحديد يغلق الآن، قم بتحديث العدادات في الخلفية فقط
+        if (!mIsActionMode) {
+            mSelectedItemsCount = count;
+            mActionModeCheckBox.setChecked(count == total);
+            return;
+        }
+
         mSelectedItemsCount = count;
         String title = count > 0
                 ? getResources().getString(R.string.oui_action_mode_n_selected, count)
