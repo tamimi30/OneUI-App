@@ -982,9 +982,17 @@ public class ToolbarLayout extends LinearLayout {
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
+            
+            // ★ الحل السحري: تأخير تحديث العنوان لجزء من الثانية لتجنب الوميض ★
             if (mIsActionMode) {
-                mCollapsingToolbarLayout.setTitle(title);
+                mCollapsingToolbarLayout.post(() -> {
+                    // إذا كنا لا نزال في وضع التحديد بعد انقضاء التأخير، قم بتحديث العنوان
+                    if (mIsActionMode) {
+                        mCollapsingToolbarLayout.setTitle(title);
+                    }
+                });
             }
+            
             mActionModeTitleTextView.setText(title);
             updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         }
