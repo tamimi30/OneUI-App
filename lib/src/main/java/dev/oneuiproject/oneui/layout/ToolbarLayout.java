@@ -853,7 +853,14 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
+        
+        // التعديل السحري: إيقاف المستمع مؤقتاً لتصفير التحديد بصمت تام، ثم إعادته
+        mActionModeCheckBox.setOnCheckedChangeListener(null);
         setActionModeAllSelector(0,  true,  false);
+        if (mCheckboxListener != null) {
+            mActionModeCheckBox.setOnCheckedChangeListener(mCheckboxListener);
+        }
+
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
@@ -1032,10 +1039,13 @@ public class ToolbarLayout extends LinearLayout {
         updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
     }
 
+    private CompoundButton.OnCheckedChangeListener mCheckboxListener;
+
     /**
      * Set the listener for the 'All' Checkbox of the ActionMode.
      */
     public void setActionModeCheckboxListener(CompoundButton.OnCheckedChangeListener listener) {
+        mCheckboxListener = listener;
         mActionModeCheckBox.setOnCheckedChangeListener(listener);
     }
 
