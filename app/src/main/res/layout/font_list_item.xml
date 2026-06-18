@@ -33,6 +33,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:layout_marginBottom="3dp"
                 android:fadingEdge="horizontal"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Font Name Example" />
@@ -42,6 +43,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingBottom="14.0dip"
+                android:animateLayoutChanges="true"
                 android:orientation="horizontal">
                 
                 <TextView
