@@ -858,7 +858,7 @@ public class ToolbarLayout extends LinearLayout {
         if (mSelectedItemsCount > 0) {
             postDelayed(() -> {
                 setActionModeAllSelector(0, true, false);
-            }, 150);
+            }, 5000);
         } else {
             setActionModeAllSelector(0, true, false);
         }
