@@ -853,16 +853,7 @@ public class ToolbarLayout extends LinearLayout {
         }
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
-        
-        // تأخير تصفير العدد 150 جزء من الثانية لتجنب وميض كلمة "تحديد عناصر"
-        if (mSelectedItemsCount > 0) {
-            postDelayed(() -> {
-                setActionModeAllSelector(0, true, false);
-            }, 5000);
-        } else {
-            setActionModeAllSelector(0, true, false);
-        }
-
+        setActionModeAllSelector(0,  true,  false);
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
@@ -986,8 +977,30 @@ public class ToolbarLayout extends LinearLayout {
      * @param checked
      */
     public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
+        // حماية One UI 6: تحديث القيم داخلياً فقط ومنع تغيير العنوان إذا كان وضع التحديد مغلقاً
+        if (!mIsActionMode) {
+            mSelectedItemsCount = count;
+            if (checked != null) mActionModeCheckBox.setChecked(checked);
+            mActionModeSelectAll.setEnabled(enabled);
+            return;
+        }
+
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
+            String title = count > 0
+                    ? getResources().getString(R.string.oui_action_mode_n_selected, count)
+                    : getResources().getString(R.string.oui_action_mode_select_items);
+            mCollapsingToolbarLayout.setTitle(title);
+            mActionModeTitleTextView.setText(title);
+            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+        }
+        if (checked != null && checked != mActionModeCheckBox.isChecked()) {
+            mActionModeCheckBox.setChecked(checked);
+        }
+        if (enabled != mActionModeSelectAll.isEnabled()) {
+            mActionModeSelectAll.setEnabled(enabled);
+        }
+    }
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
@@ -1015,7 +1028,19 @@ public class ToolbarLayout extends LinearLayout {
     @Deprecated
     public void setActionModeCount(int count, int total) {
         mSelectedItemsCount = count;
+        mActionModeCheckBox.setChecked(count == total);
+        
+        // حماية One UI 6: منع تغيير العنوان إذا كان وضع التحديد مغلقاً
+        if (!mIsActionMode) return;
+
         String title = count > 0
+                ? getResources().getString(R.string.oui_action_mode_n_selected, count)
+                : getResources().getString(R.string.oui_action_mode_select_items);
+
+        mCollapsingToolbarLayout.setTitle(title);
+        mActionModeTitleTextView.setText(title);
+        updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+    }
                 ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                 : getResources().getString(R.string.oui_action_mode_select_items);
 
