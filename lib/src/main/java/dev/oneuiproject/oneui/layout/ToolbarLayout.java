@@ -118,7 +118,7 @@ public class ToolbarLayout extends LinearLayout {
 
     private boolean mIsSearchMode = false;
     private boolean mIsActionMode = false;
-
+    private boolean mIsDismissing = false; // متغير جديد لمنع التحديث أثناء الرجوع
     /**
      * Callback for the Toolbar's SearchMode.
      * Notification that the {@link SearchView}'s text has been edited or it's visibility changed.
@@ -829,8 +829,8 @@ public class ToolbarLayout extends LinearLayout {
      * @see #showActionMode()
      */
     public void dismissActionMode() {
+        mIsDismissing = true; // تفعيل المنع فوراً عند الضغط على رجوع
         mIsActionMode = false;
-
         animatedVisibility(mActionModeToolbar, GONE);
         mBottomActionModeBar.setVisibility(GONE);
         
@@ -855,7 +855,7 @@ public class ToolbarLayout extends LinearLayout {
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
         
-        // محاكاة One UI 6: نقوم بإعادة تعيين المتغيرات داخلياً فقط دون استدعاء دالة تحديث الواجهة
+        // تصفير القيم في الخلفية فقط لمنع الوميض
         mSelectedItemsCount = 0;
         if (mActionModeCheckBox != null) {
             mActionModeCheckBox.setChecked(false);
@@ -864,7 +864,16 @@ public class ToolbarLayout extends LinearLayout {
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
+
+        // رفع درع المنع بعد 400 مللي ثانية (بعد انتهاء حركة إغلاق الشريط)
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mIsDismissing = false;
+            }
+        }, 400);
     }
+
     /**
      * Checks if the ActionMode is enabled.
      */
@@ -982,10 +991,9 @@ public class ToolbarLayout extends LinearLayout {
      * @param enabled enable or disable click
      * @param checked
      */
-
     public void setActionModeAllSelector(int count, Boolean enabled, @Nullable Boolean checked) {
-        // الحل المأخوذ من One UI 6: تجاهل تحديث الواجهة إذا كان وضع التحديد مغلقاً لتجنب الوميض المزعج
-        if (!mIsActionMode) {
+        // منع تغيير النص تماماً إذا كنا في مرحلة إغلاق التحديد
+        if (mIsDismissing) {
             mSelectedItemsCount = count;
             if (checked != null && mActionModeCheckBox != null) {
                 mActionModeCheckBox.setChecked(checked);
@@ -1009,6 +1017,7 @@ public class ToolbarLayout extends LinearLayout {
             mActionModeSelectAll.setEnabled(enabled);
         }
     }
+
 
     /**
      * Set the ActionMode's count. This will change the count in the Toolbar's title
