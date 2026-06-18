@@ -1001,21 +1001,6 @@ public class ToolbarLayout extends LinearLayout {
             mActionModeSelectAll.setEnabled(enabled);
         }
     }
-            String title = count > 0
-                    ? getResources().getString(R.string.oui_action_mode_n_selected, count)
-                    : getResources().getString(R.string.oui_action_mode_select_items);
-            mCollapsingToolbarLayout.setTitle(title);
-            mActionModeTitleTextView.setText(title);
-            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
-        }
-        if (checked != null && checked != mActionModeCheckBox.isChecked()) {
-            mActionModeCheckBox.setChecked(checked);
-        }
-        if (enabled != mActionModeSelectAll.isEnabled()) {
-            mActionModeSelectAll.setEnabled(enabled);
-        }
-    }
-
 
     /**
      * Set the ActionMode's count. This will change the count in the Toolbar's title
@@ -1040,14 +1025,6 @@ public class ToolbarLayout extends LinearLayout {
         mCollapsingToolbarLayout.setTitle(title);
         mActionModeTitleTextView.setText(title);
         updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
-    }
-                ? getResources().getString(R.string.oui_action_mode_n_selected, count)
-                : getResources().getString(R.string.oui_action_mode_select_items);
-
-        mCollapsingToolbarLayout.setTitle(title);
-        mActionModeTitleTextView.setText(title);
-        updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
-        mActionModeCheckBox.setChecked(count == total);
     }
 
     /**
@@ -1122,5 +1099,3 @@ public class ToolbarLayout extends LinearLayout {
             }
         }
     }
-
-}
