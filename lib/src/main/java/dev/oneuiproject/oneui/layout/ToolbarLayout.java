@@ -118,7 +118,7 @@ public class ToolbarLayout extends LinearLayout {
 
     private boolean mIsSearchMode = false;
     private boolean mIsActionMode = false;
-    private boolean mIsDismissing = false; // متغير جديد لمنع التحديث أثناء الرجوع
+
     /**
      * Callback for the Toolbar's SearchMode.
      * Notification that the {@link SearchView}'s text has been edited or it's visibility changed.
@@ -829,7 +829,6 @@ public class ToolbarLayout extends LinearLayout {
      * @see #showActionMode()
      */
     public void dismissActionMode() {
-        mIsDismissing = true; // تفعيل المنع فوراً عند الضغط على رجوع
         mIsActionMode = false;
         animatedVisibility(mActionModeToolbar, GONE);
         mBottomActionModeBar.setVisibility(GONE);
@@ -855,23 +854,18 @@ public class ToolbarLayout extends LinearLayout {
         
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
         
-        // تصفير القيم في الخلفية فقط لمنع الوميض
-        mSelectedItemsCount = 0;
-        if (mActionModeCheckBox != null) {
-            mActionModeCheckBox.setChecked(false);
+        // تأخير تصفير العدد 150 جزء من الثانية لتجنب وميض كلمة "تحديد عناصر"
+        if (mSelectedItemsCount > 0) {
+            postDelayed(() -> {
+                setActionModeAllSelector(0, true, false);
+            }, 150);
+        } else {
+            setActionModeAllSelector(0, true, false);
         }
-        
+
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
         }
-
-        // رفع درع المنع بعد 400 مللي ثانية (بعد انتهاء حركة إغلاق الشريط)
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mIsDismissing = false;
-            }
-        }, 400);
     }
 
     /**
@@ -991,16 +985,7 @@ public class ToolbarLayout extends LinearLayout {
      * @param enabled enable or disable click
      * @param checked
      */
-    public void setActionModeAllSelector(int count, Boolean enabled, @Nullable Boolean checked) {
-        // منع تغيير النص تماماً إذا كنا في مرحلة إغلاق التحديد
-        if (mIsDismissing) {
-            mSelectedItemsCount = count;
-            if (checked != null && mActionModeCheckBox != null) {
-                mActionModeCheckBox.setChecked(checked);
-            }
-            return;
-        }
-
+    public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
             String title = count > 0
