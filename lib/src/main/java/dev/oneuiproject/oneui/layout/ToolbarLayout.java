@@ -983,16 +983,13 @@ public class ToolbarLayout extends LinearLayout {
      * @param enabled enable or disable click
      * @param checked
      */
+    private Runnable mTitleUpdateRunnable = null;
+
     public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
-        // حماية One UI 6: تحديث القيم داخلياً فقط ومنع تغيير العنوان إذا كان وضع التحديد مغلقاً
         if (!mIsActionMode) {
             mSelectedItemsCount = count;
-            if (checked != null && checked != mActionModeCheckBox.isChecked()) {
-                mActionModeCheckBox.setChecked(checked);
-            }
-            if (enabled != mActionModeSelectAll.isEnabled()) {
-                mActionModeSelectAll.setEnabled(enabled);
-            }
+            if (checked != null && checked != mActionModeCheckBox.isChecked()) mActionModeCheckBox.setChecked(checked);
+            if (enabled != mActionModeSelectAll.isEnabled()) mActionModeSelectAll.setEnabled(enabled);
             return;
         }
 
@@ -1001,9 +998,24 @@ public class ToolbarLayout extends LinearLayout {
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
-            mCollapsingToolbarLayout.setTitle(title);
-            mActionModeTitleTextView.setText(title);
-            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+
+            if (mTitleUpdateRunnable != null) removeCallbacks(mTitleUpdateRunnable);
+
+            if (count == 0) {
+                // الفكرة العبقرية: تأخير ظهور "تحديد عناصر" قليلاً. إذا تم الإغلاق فوراً، لن تظهر أبداً!
+                mTitleUpdateRunnable = () -> {
+                    if (mIsActionMode) {
+                        mCollapsingToolbarLayout.setTitle(title);
+                        mActionModeTitleTextView.setText(title);
+                        updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+                    }
+                };
+                postDelayed(mTitleUpdateRunnable, 150);
+            } else {
+                mCollapsingToolbarLayout.setTitle(title);
+                mActionModeTitleTextView.setText(title);
+                updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+            }
         }
         if (checked != null && checked != mActionModeCheckBox.isChecked()) {
             mActionModeCheckBox.setChecked(checked);
@@ -1027,16 +1039,28 @@ public class ToolbarLayout extends LinearLayout {
         mSelectedItemsCount = count;
         mActionModeCheckBox.setChecked(count == total);
         
-        // حماية One UI 6: منع تغيير العنوان إذا كان وضع التحديد مغلقاً
         if (!mIsActionMode) return;
 
         String title = count > 0
                 ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                 : getResources().getString(R.string.oui_action_mode_select_items);
 
-        mCollapsingToolbarLayout.setTitle(title);
-        mActionModeTitleTextView.setText(title);
-        updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+        if (mTitleUpdateRunnable != null) removeCallbacks(mTitleUpdateRunnable);
+
+        if (count == 0) {
+            mTitleUpdateRunnable = () -> {
+                if (mIsActionMode) {
+                    mCollapsingToolbarLayout.setTitle(title);
+                    mActionModeTitleTextView.setText(title);
+                    updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+                }
+            };
+            postDelayed(mTitleUpdateRunnable, 150);
+        } else {
+            mCollapsingToolbarLayout.setTitle(title);
+            mActionModeTitleTextView.setText(title);
+            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+        }
     }
 
     private CompoundButton.OnCheckedChangeListener mCheckboxListener;
