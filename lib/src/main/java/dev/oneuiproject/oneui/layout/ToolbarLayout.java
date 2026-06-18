@@ -980,8 +980,12 @@ public class ToolbarLayout extends LinearLayout {
         // حماية One UI 6: تحديث القيم داخلياً فقط ومنع تغيير العنوان إذا كان وضع التحديد مغلقاً
         if (!mIsActionMode) {
             mSelectedItemsCount = count;
-            if (checked != null) mActionModeCheckBox.setChecked(checked);
-            mActionModeSelectAll.setEnabled(enabled);
+            if (checked != null && checked != mActionModeCheckBox.isChecked()) {
+                mActionModeCheckBox.setChecked(checked);
+            }
+            if (enabled != mActionModeSelectAll.isEnabled()) {
+                mActionModeSelectAll.setEnabled(enabled);
+            }
             return;
         }
 
@@ -1001,6 +1005,7 @@ public class ToolbarLayout extends LinearLayout {
             mActionModeSelectAll.setEnabled(enabled);
         }
     }
+
 
     /**
      * Set the ActionMode's count. This will change the count in the Toolbar's title
@@ -1099,3 +1104,5 @@ public class ToolbarLayout extends LinearLayout {
             }
         }
     }
+
+}
