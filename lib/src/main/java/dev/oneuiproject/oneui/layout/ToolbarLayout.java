@@ -704,16 +704,13 @@ public class ToolbarLayout extends LinearLayout {
      *
      * @see #showSearchMode()
      */
-    private Runnable mSearchClearRunnable = null;
+    private Runnable mSearchDismissRunnable = null;
 
     public void dismissSearchMode() {
-        // 1. إشعار التطبيق بالإغلاق فوراً وبدون تأخير
-        if (mSearchModeListener != null)
-            mSearchModeListener.onSearchModeToggle(mSearchView, false);
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
         
-        // 2. بدء حركة الإغلاق والتلاشي فوراً
+        // 1. نبدأ حركة التلاشي وإغلاق شريط البحث فوراً (يستغرق 200ms)
         animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
@@ -721,14 +718,18 @@ public class ToolbarLayout extends LinearLayout {
         setTitle(mTitleExpanded, mTitleCollapsed);
         mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
 
-        // 3. تطبيق التأخير السحري على دالة مسح النص فقط (كما فعلنا في التحديد المتعدد)
-        if (mSearchClearRunnable != null) {
-            removeCallbacks(mSearchClearRunnable);
+        // 2. تطبيق فكرتك: تأخير أوامر مسح النص وإشعار التطبيق حتى ينتهي الأنيميشن بالكامل
+        if (mSearchDismissRunnable != null) {
+            mSearchView.removeCallbacks(mSearchDismissRunnable);
         }
-        mSearchClearRunnable = () -> {
+        
+        mSearchDismissRunnable = () -> {
+            if (mSearchModeListener != null) {
+                mSearchModeListener.onSearchModeToggle(mSearchView, false);
+            }
             mSearchView.setQuery("", false);
         };
-        postDelayed(mSearchClearRunnable, 150);
+        mSearchView.postDelayed(mSearchDismissRunnable, 200);
     }
 
     /**
