@@ -80,8 +80,11 @@ public class ToolbarLayout extends LinearLayout {
             = new OnBackPressedCallback(false) {
         @Override
         public void handleOnBackPressed() {
-            if (mIsSearchMode) dismissSearchMode();
-            if (mIsActionMode) dismissActionMode();
+            if (mIsActionMode) {
+                dismissActionMode();
+            } else if (mIsSearchMode) {
+                dismissSearchMode();
+            }
         }
     };
     private AppBarOffsetListener mActionModeTitleFadeListener = new AppBarOffsetListener();
@@ -779,7 +782,9 @@ public class ToolbarLayout extends LinearLayout {
      */
     public void showActionMode() {
         mIsActionMode = true;
-        if (mIsSearchMode) dismissSearchMode();
+        if (mIsSearchMode) {
+            animatedVisibility(mSearchToolbar, GONE);
+        }
         mOnBackPressedCallback.setEnabled(true);
         animatedVisibility(mMainToolbar, GONE);
         animatedVisibility(mActionModeToolbar, VISIBLE);
@@ -825,15 +830,29 @@ public class ToolbarLayout extends LinearLayout {
      */
     public void dismissActionMode() {
         mIsActionMode = false;
-        mOnBackPressedCallback.setEnabled(false);
         animatedVisibility(mActionModeToolbar, GONE);
-        animatedVisibility(mMainToolbar, VISIBLE);
-        mFooterContainer.setVisibility(VISIBLE);
         mBottomActionModeBar.setVisibility(GONE);
-        setTitle(mTitleExpanded, mTitleCollapsed);
+        
+        if (mIsSearchMode) {
+            mOnBackPressedCallback.setEnabled(true);
+            animatedVisibility(mSearchToolbar, VISIBLE);
+            mFooterContainer.setVisibility(GONE);
+            mCollapsingToolbarLayout.setTitle(getResources().getString(R.string.sesl_searchview_description_search));
+            mCollapsingToolbarLayout.seslSetSubtitle(null);
+            // ★ الإصلاح: إزالة setIconified واستخدام clearFocus لمنع الكيبورد من القفز
+            if (mSearchView != null) {
+                mSearchView.clearFocus();
+            }
+        } else {
+            mOnBackPressedCallback.setEnabled(false);
+            animatedVisibility(mMainToolbar, VISIBLE);
+            mFooterContainer.setVisibility(VISIBLE);
+            setTitle(mTitleExpanded, mTitleCollapsed);
+            mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
+            mMainToolbar.setSubtitle(mSubtitleCollapsed);
+        }
+        
         mAppBarLayout.removeOnOffsetChangedListener(mActionModeTitleFadeListener);
-        mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
-        mMainToolbar.setSubtitle(mSubtitleCollapsed);
         setActionModeAllSelector(0,  true,  false);
         if (mActionModeCallback != null) {
             mActionModeCallback.onDismiss(this);
@@ -957,15 +976,44 @@ public class ToolbarLayout extends LinearLayout {
      * @param enabled enable or disable click
      * @param checked
      */
+    private Runnable mTitleUpdateRunnable = null;
+
     public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
+        if (!mIsActionMode) {
+            mSelectedItemsCount = count;
+            if (checked != null && checked != mActionModeCheckBox.isChecked()) {
+                mActionModeCheckBox.setChecked(checked);
+            }
+            if (enabled != mActionModeSelectAll.isEnabled()) {
+                mActionModeSelectAll.setEnabled(enabled);
+            }
+            return;
+        }
+
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
-            mCollapsingToolbarLayout.setTitle(title);
-            mActionModeTitleTextView.setText(title);
-            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+
+            if (mTitleUpdateRunnable != null) {
+                removeCallbacks(mTitleUpdateRunnable);
+            }
+
+            if (count == 0) {
+                mTitleUpdateRunnable = () -> {
+                    if (mIsActionMode) {
+                        mCollapsingToolbarLayout.setTitle(title);
+                        mActionModeTitleTextView.setText(title);
+                        updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+                    }
+                };
+                postDelayed(mTitleUpdateRunnable, 100);
+            } else {
+                mCollapsingToolbarLayout.setTitle(title);
+                mActionModeTitleTextView.setText(title);
+                updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+            }
         }
         if (checked != null && checked != mActionModeCheckBox.isChecked()) {
             mActionModeCheckBox.setChecked(checked);
@@ -987,14 +1035,32 @@ public class ToolbarLayout extends LinearLayout {
     @Deprecated
     public void setActionModeCount(int count, int total) {
         mSelectedItemsCount = count;
+        mActionModeCheckBox.setChecked(count == total);
+        
+        if (!mIsActionMode) return;
+
         String title = count > 0
                 ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                 : getResources().getString(R.string.oui_action_mode_select_items);
 
-        mCollapsingToolbarLayout.setTitle(title);
-        mActionModeTitleTextView.setText(title);
-        updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
-        mActionModeCheckBox.setChecked(count == total);
+        if (mTitleUpdateRunnable != null) {
+            removeCallbacks(mTitleUpdateRunnable);
+        }
+
+        if (count == 0) {
+            mTitleUpdateRunnable = () -> {
+                if (mIsActionMode) {
+                    mCollapsingToolbarLayout.setTitle(title);
+                    mActionModeTitleTextView.setText(title);
+                    updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+                }
+            };
+            postDelayed(mTitleUpdateRunnable, 100);
+        } else {
+            mCollapsingToolbarLayout.setTitle(title);
+            mActionModeTitleTextView.setText(title);
+            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+        }
     }
 
     /**
