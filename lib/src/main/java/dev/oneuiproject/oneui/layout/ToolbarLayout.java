@@ -705,12 +705,15 @@ public class ToolbarLayout extends LinearLayout {
      * @see #showSearchMode()
      */
     public void dismissSearchMode() {
+        // الخدعة السحرية: نحتفظ بكلمة "بحث" الأصلية، ثم نستبدلها بمسافة فارغة مؤقتاً
+        CharSequence oldHint = mSearchView.getQueryHint();
+        mSearchView.setQueryHint(" ");
+
         if (mSearchModeListener != null)
             mSearchModeListener.onSearchModeToggle(mSearchView, false);
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
         
-        // نبدأ حركة إغلاق شريط البحث أولاً
         animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
@@ -718,11 +721,12 @@ public class ToolbarLayout extends LinearLayout {
         setTitle(mTitleExpanded, mTitleCollapsed);
         mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
 
-        // نؤخر مسح النص المكتوب بمقدار 200ms حتى ينتهي شريط البحث من الاختفاء تماماً
-        mSearchView.postDelayed(() -> {
+        // نؤجل مسح النص وإرجاع كلمة "بحث" حتى يختفي الشريط تماماً (250 جزء من الثانية)
+        mSearchToolbar.postDelayed(() -> {
             mSearchView.setQuery("", false);
             mSearchView.clearFocus();
-        }, 200);
+            mSearchView.setQueryHint(oldHint);
+        }, 250);
     }
 
     /**
