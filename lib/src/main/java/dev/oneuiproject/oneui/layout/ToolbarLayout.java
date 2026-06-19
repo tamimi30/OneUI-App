@@ -709,13 +709,20 @@ public class ToolbarLayout extends LinearLayout {
             mSearchModeListener.onSearchModeToggle(mSearchView, false);
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
-        mSearchView.setQuery("", false);
+        
+        // نبدأ حركة إغلاق شريط البحث أولاً
         animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
 
         setTitle(mTitleExpanded, mTitleCollapsed);
         mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
+
+        // نؤخر مسح النص المكتوب بمقدار 200ms حتى ينتهي شريط البحث من الاختفاء تماماً
+        mSearchView.postDelayed(() -> {
+            mSearchView.setQuery("", false);
+            mSearchView.clearFocus();
+        }, 200);
     }
 
     /**
