@@ -704,13 +704,14 @@ public class ToolbarLayout extends LinearLayout {
      *
      * @see #showSearchMode()
      */
-    private Runnable mSearchDismissRunnable = null;
+    private Runnable mSearchClearRunnable = null;
 
     public void dismissSearchMode() {
+        if (mSearchModeListener != null)
+            mSearchModeListener.onSearchModeToggle(mSearchView, false);
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
         
-        // 1. نبدأ حركة التلاشي وإغلاق شريط البحث فوراً (يستغرق 200ms)
         animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
@@ -718,18 +719,14 @@ public class ToolbarLayout extends LinearLayout {
         setTitle(mTitleExpanded, mTitleCollapsed);
         mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
 
-        // 2. تطبيق فكرتك: تأخير أوامر مسح النص وإشعار التطبيق حتى ينتهي الأنيميشن بالكامل
-        if (mSearchDismissRunnable != null) {
-            mSearchView.removeCallbacks(mSearchDismissRunnable);
+        // تطبيق فكرتك: نؤخر مسح النص (200ms) حتى يختفي شريط البحث تماماً
+        if (mSearchClearRunnable != null) {
+            mSearchView.removeCallbacks(mSearchClearRunnable);
         }
-        
-        mSearchDismissRunnable = () -> {
-            if (mSearchModeListener != null) {
-                mSearchModeListener.onSearchModeToggle(mSearchView, false);
-            }
+        mSearchClearRunnable = () -> {
             mSearchView.setQuery("", false);
         };
-        mSearchView.postDelayed(mSearchDismissRunnable, 200);
+        mSearchView.postDelayed(mSearchClearRunnable, 200);
     }
 
     /**
