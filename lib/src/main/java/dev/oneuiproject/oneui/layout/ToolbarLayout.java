@@ -705,15 +705,13 @@ public class ToolbarLayout extends LinearLayout {
      * @see #showSearchMode()
      */
     public void dismissSearchMode() {
-        // الخدعة السحرية: نحتفظ بكلمة "بحث" الأصلية، ثم نستبدلها بمسافة فارغة مؤقتاً
-        CharSequence oldHint = mSearchView.getQueryHint();
-        mSearchView.setQueryHint(" ");
-
-        if (mSearchModeListener != null)
-            mSearchModeListener.onSearchModeToggle(mSearchView, false);
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
-        
+
+        // إزالة المستمع مؤقتاً لفك ارتباط التطبيق بشريط البحث أثناء الأنيميشن
+        mSearchView.setOnQueryTextListener(null);
+
+        // بدء حركة التلاشي الناعمة (الشريط سيختفي ببطء حاملاً النص الذي كتبته)
         animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
@@ -721,12 +719,15 @@ public class ToolbarLayout extends LinearLayout {
         setTitle(mTitleExpanded, mTitleCollapsed);
         mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
 
-        // نؤجل مسح النص وإرجاع كلمة "بحث" حتى يختفي الشريط تماماً (250 جزء من الثانية)
+        // وضع التأخير (220ms) على دالة مسح النص وإشعار التطبيق معاً
+        // هكذا لن يتدخل التطبيق، ولن تظهر كلمة "بحث" تومض أبداً!
         mSearchToolbar.postDelayed(() -> {
             mSearchView.setQuery("", false);
             mSearchView.clearFocus();
-            mSearchView.setQueryHint(oldHint);
-        }, 250);
+            if (mSearchModeListener != null) {
+                mSearchModeListener.onSearchModeToggle(mSearchView, false);
+            }
+        }, 220);
     }
 
     /**
