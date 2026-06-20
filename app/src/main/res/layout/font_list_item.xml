@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:paddingBottom="2sp"
+                android:paddingBottom="4sp"
                 android:includeFontPadding="false"
                 android:fadingEdge="horizontal"
                 android:textAppearance="?attr/textAppearanceListItem"
