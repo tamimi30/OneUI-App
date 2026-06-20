@@ -205,20 +205,21 @@ public class SearchCoordinator {
 
     private void setupSearchView() {
         if (drawerLayout == null) return;
+
         // ★ جلب SearchView الخاص بمكتبة One UI
         searchView = drawerLayout.getSearchView();
 
         searchView.setQueryHint(activity.getString(R.string.search_font));
         searchView.setMaxWidth(Integer.MAX_VALUE);
 
-        // ★ منع الكيبورد من تغطية الشاشة (الشاشة البيضاء) في الوضع الأفقي ★
-        searchView.setImeOptions(searchView.getImeOptions() | android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-
         SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         if (searchManager != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
         }
 
+        // ★ وضعنا هذا الكود هنا (بعد setSearchableInfo) لكي لا يقوم النظام بمسحه.
+        // هذا السطر يمنع الكيبورد من تغطية الشاشة باللون الأبيض في الوضع الأفقي.
+        searchView.setImeOptions(searchView.getImeOptions() | android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI);
 
         // ★ ربط مستمع مكتبة One UI
         drawerLayout.setSearchModeListener(new dev.oneuiproject.oneui.layout.ToolbarLayout.SearchModeListener() {
