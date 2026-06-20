@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layoutDirection="locale"
     android:orientation="vertical"
     android:background="@drawable/list_ripple">
     
@@ -15,6 +16,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:layoutDirection="locale"
         app:checkableButtonSpacing="30dp"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
@@ -24,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="14.0dip"
+            android:layoutDirection="locale"
             android:animateLayoutChanges="true"
             android:orientation="vertical">
 
@@ -33,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="6dp"
                 android:includeFontPadding="false"
                 android:fadingEdge="horizontal"
                 android:textAppearance="?attr/textAppearanceListItem"
