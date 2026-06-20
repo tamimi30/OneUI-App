@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="always"
+        android:fadingEdge="horizontal"
         android:scrollbars="vertical"
         app:layout_location="drawer_panel" />
 
