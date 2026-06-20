@@ -265,7 +265,9 @@ public class SearchCoordinator {
         isSearchExpanded = false;
         savedSearchQuery = "";
 
-        // ★ تم إزالة أمر مسح النص من هنا لكي لا يُفسد تأخير الأنيميشن في المكتبة ★
+        if (searchView != null) {
+            searchView.setQuery("", false);
+        }
 
         // ★ تصفير فلاتر جميع القوائم مباشرة من هنا لضمان نظافتها عند العودة ★
         if (fragmentProvider != null) {
