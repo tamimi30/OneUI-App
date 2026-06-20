@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:overScrollMode="always"
     android:scrollbars="vertical"
+    android:fadingEdge="horizontal"
     android:fillViewport="true">
        
     <LinearLayout
@@ -17,7 +18,7 @@
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="27dp"
+            
             android:clipChildren="false"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
@@ -28,6 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:layout_marginStart="27dp"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="17sp"
                 android:layout_marginBottom="16dp"
@@ -38,6 +40,7 @@
                 android:id="@+id/weight_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="23dp"
                 android:layout_gravity="left"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />             
@@ -46,6 +49,8 @@
                 android:id="@+id/preview_sentence"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:paddingHorizontal="27dp"
+                android:clipToPadding="false"
                 android:lineSpacingExtra="7dp"
                 android:textSize="18sp"
                 android:textColor="@color/font_preview_text_color" />
