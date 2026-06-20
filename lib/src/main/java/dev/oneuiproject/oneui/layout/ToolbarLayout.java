@@ -1017,7 +1017,7 @@ public class ToolbarLayout extends LinearLayout {
                         updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
                     }
                 };
-                postDelayed(mTitleUpdateRunnable, 100);
+                postDelayed(mTitleUpdateRunnable, 0);
             } else {
                 mCollapsingToolbarLayout.setTitle(title);
                 mActionModeTitleTextView.setText(title);
