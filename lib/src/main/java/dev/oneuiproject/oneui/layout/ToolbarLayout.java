@@ -705,33 +705,18 @@ public class ToolbarLayout extends LinearLayout {
      * @see #showSearchMode()
      */
     public void dismissSearchMode() {
+        if (mSearchModeListener != null)
+            mSearchModeListener.onSearchModeToggle(mSearchView, false);
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
-
-        // 1. نبدأ أنيميشن الإغلاق فوراً (النص سيبقى موجوداً ولن تومض كلمة "بحث" أبداً)
+        // ★ حل المشكلة 2: تأخير تصفير النص حتى ينتهي أنيميشن الإغلاق (200ms) لمنع وميض كلمة "بحث"
+        mSearchView.postDelayed(() -> mSearchView.setQuery("", false), 200);
         animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
 
         setTitle(mTitleExpanded, mTitleCollapsed);
         mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
-
-        // 2. نخبر مشروعك بالإغلاق ليعيد ترتيب القائمة في الخلفية
-        if (mSearchModeListener != null) {
-            mSearchModeListener.onSearchModeToggle(mSearchView, false);
-        }
-
-        // 3. نؤخر مسح النص وإزالة التركيز 200ms حتى يختفي الشريط تماماً من الشاشة
-        if (mSearchView != null) {
-            mSearchView.postDelayed(() -> {
-                mSearchView.setOnQueryTextListener(null);
-                mSearchView.setQuery("", false);
-                mSearchView.clearFocus();
-                if (mActivity != null) {
-                    mActivity.invalidateOptionsMenu();
-                }
-            }, 0);
-        }
     }
 
     /**
@@ -992,44 +977,20 @@ public class ToolbarLayout extends LinearLayout {
      * @param enabled enable or disable click
      * @param checked
      */
-    private Runnable mTitleUpdateRunnable = null;
-
     public void  setActionModeAllSelector(int count,  Boolean enabled,  @Nullable Boolean checked) {
-        if (!mIsActionMode) {
-            mSelectedItemsCount = count;
-            if (checked != null && checked != mActionModeCheckBox.isChecked()) {
-                mActionModeCheckBox.setChecked(checked);
-            }
-            if (enabled != mActionModeSelectAll.isEnabled()) {
-                mActionModeSelectAll.setEnabled(enabled);
-            }
-            return;
-        }
-
         if (mSelectedItemsCount != count) {
             mSelectedItemsCount = count;
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
-
-            if (mTitleUpdateRunnable != null) {
-                removeCallbacks(mTitleUpdateRunnable);
-            }
-
-            if (count == 0) {
-                mTitleUpdateRunnable = () -> {
-                    if (mIsActionMode) {
-                        mCollapsingToolbarLayout.setTitle(title);
-                        mActionModeTitleTextView.setText(title);
-                        updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
-                    }
-                };
-                postDelayed(mTitleUpdateRunnable, 0);
-            } else {
+            
+            // ★ حل المشكلة 3: تحديث النص فقط إذا كان وضع التحديد نشطاً
+            // هذا يمنع وميض كلمة "تحديد عناصر" أثناء إغلاق الوضع
+            if (mIsActionMode) {
                 mCollapsingToolbarLayout.setTitle(title);
                 mActionModeTitleTextView.setText(title);
-                updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
             }
+            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         }
         if (checked != null && checked != mActionModeCheckBox.isChecked()) {
             mActionModeCheckBox.setChecked(checked);
@@ -1051,32 +1012,14 @@ public class ToolbarLayout extends LinearLayout {
     @Deprecated
     public void setActionModeCount(int count, int total) {
         mSelectedItemsCount = count;
-        mActionModeCheckBox.setChecked(count == total);
-        
-        if (!mIsActionMode) return;
-
         String title = count > 0
                 ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                 : getResources().getString(R.string.oui_action_mode_select_items);
 
-        if (mTitleUpdateRunnable != null) {
-            removeCallbacks(mTitleUpdateRunnable);
-        }
-
-        if (count == 0) {
-            mTitleUpdateRunnable = () -> {
-                if (mIsActionMode) {
-                    mCollapsingToolbarLayout.setTitle(title);
-                    mActionModeTitleTextView.setText(title);
-                    updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
-                }
-            };
-            postDelayed(mTitleUpdateRunnable, 0);
-        } else {
-            mCollapsingToolbarLayout.setTitle(title);
-            mActionModeTitleTextView.setText(title);
-            updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
-        }
+        mCollapsingToolbarLayout.setTitle(title);
+        mActionModeTitleTextView.setText(title);
+        updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
+        mActionModeCheckBox.setChecked(count == total);
     }
 
     /**
