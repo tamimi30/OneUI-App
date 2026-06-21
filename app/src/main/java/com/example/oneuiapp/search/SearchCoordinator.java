@@ -268,9 +268,14 @@ public class SearchCoordinator {
         isSearchExpanded = false;
         savedSearchQuery = "";
 
+
+        // ★ حل المشكلة 2: تم حذف التصفير الفوري للنص من هنا لمنع الوميض. 
+        // التصفير سيحدث بتأخير 200ms من داخل ToolbarLayout بشكل آمن
+        /*
         if (searchView != null) {
             searchView.setQuery("", false);
         }
+        */
 
         // ★ تصفير فلاتر جميع القوائم مباشرة من هنا لضمان نظافتها عند العودة ★
         if (fragmentProvider != null) {
@@ -626,4 +631,4 @@ public class SearchCoordinator {
 
         Log.d(TAG, "SearchCoordinator cleaned up");
     }
-            }
+                    }
