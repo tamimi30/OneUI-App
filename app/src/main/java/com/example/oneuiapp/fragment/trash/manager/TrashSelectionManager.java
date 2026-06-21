@@ -1,5 +1,6 @@
-package com.example.oneuiapp.fragment.trash.manager;
+package com.example.oneuiapp.fragment.localfont.manager;
 
+import android.content.res.Configuration;
 import android.os.Build;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -13,8 +14,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oneuiapp.R;
-import com.example.oneuiapp.data.entity.FontEntity;
-import com.example.oneuiapp.fragment.trash.adapter.TrashListAdapter;
+import com.example.oneuiapp.fragment.localfont.adapter.LocalFontListAdapter;
+import com.example.oneuiapp.sort.SortByItemLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,145 +23,104 @@ import java.util.List;
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 /**
- * TrashSelectionManager — إدارة التحديد المتعدد في سلة المحذوفات
+ * LocalFontSelectionManager - إدارة التحديد المتعدد للخطوط
  *
- * ════════════════════════════════════════════════════════════════════
- * المتطلبات المطبَّقة:
+ * ★ التعديل: إضافة دعم المفضلة بمنطق Samsung Notes:
+ *   - إذا كانت كل العناصر المحددة مفضلة  → عرض "إزاله من المفضله" فقط
+ *   - إذا كانت كل العناصر المحددة غير مفضلة → عرض "إضافه إلى المفضله" فقط
+ *   - إذا كانت العناصر مختلطة             → عرض "إضافه إلى المفضله" فقط
  *
- * ★ (13) إجراءان فقط في شريط الـ Action Mode:
- *        استعادة (ic_oui_refresh) وحذف نهائي (ic_oui_delete_outline)
+ * ★ التعديل: يمكن استخدام هذا الملف مع قائمة المفضلة دون إنشاء ملف تحديد جديد،
+ *   فقط يكفي تمرير FavoriteStatusChecker المناسب عبر setFavoriteStatusChecker() ★
  *
- * ★ (14) النصوص تتغيّر ديناميكياً بناءً على حالة التحديد:
- *        • إذا كانت جميع العناصر محددة:
- *             الحذف  → "حذف الكل"      | الاستعادة → "استعادة الكل"
- *        • إذا كان التحديد جزئياً:
- *             الحذف  → "حذف"           | الاستعادة → "استعاده"
- *
- * ★ لا توجد قائمة فرز (SortByItemLayout) في سلة المحذوفات
- * ★ الإجراء الوحيد عند النقر العادي هو Toast — يُعالَج في TrashListAdapter
- * ★ الضغط المطول يبدأ وضع التحديد — يُعالَج عبر
- *   OnSelectionListener المُمرَّر من TrashFragment
- * ════════════════════════════════════════════════════════════════════
- *
- * الملفات المطلوبة:
- *   - res/menu/menu_trash_actions.xml
- *       • R.id.action_restore  (أيقونة: ic_oui_refresh)
- *       • R.id.action_delete   (أيقونة: ic_oui_delete_outline)
- *   - res/values/strings.xml
- *       • action_restore      → "استعاده"
- *       • action_restore_all  → "استعادة الكل"
- *       • action_delete       → "حذف"
- *       • action_delete_all   → "حذف الكل"
- *
- * المسار: app/src/main/java/com/example/oneuiapp/trash/TrashSelectionManager.java
+ * ملاحظة للمطوّر: يجب إضافة R.id.action_favorite إلى R.menu.menu_font_actions
+ * مع الأيقونة الافتراضية ic_oui_favorite_on، ليتمكن هذا المدير من إدارتها ديناميكياً.
  */
-public class TrashSelectionManager {
-
-    // ─────────────────────────────────────────────────────────
-    // الحقول الأساسية
-    // ─────────────────────────────────────────────────────────
+public class LocalFontSelectionManager {
 
     private final FragmentActivity activity;
-    private final DrawerLayout     drawerLayout;
-    private final TrashListAdapter adapter;
-    private final RecyclerView     recyclerView;
-
-    private boolean             isSelecting      = false;
-    private boolean             checkAllListening = true;
-    private SparseBooleanArray  selectedItems    = new SparseBooleanArray();
-
+    private final DrawerLayout drawerLayout;
+    private final LocalFontListAdapter adapter;
+    private final RecyclerView recyclerView;
+    private final SortByItemLayout sortBar;
+    
+    private boolean isSelecting = false;
+    private SparseBooleanArray selectedItems = new SparseBooleanArray();
+    private boolean checkAllListening = true;
+    
     private SelectionActionListener actionListener;
-    private OnBackPressedCallback   onBackPressedCallback;
-    private OnBackInvokedCallback   onBackInvokedCallback;
+    private OnBackPressedCallback onBackPressedCallback;
+    private OnBackInvokedCallback onBackInvokedCallback;
 
-    // ─────────────────────────────────────────────────────────
-    // واجهة الأحداث
-    // ─────────────────────────────────────────────────────────
+    // ★ فاحص حالة المفضلة — يُستدعى لتحديد الإجراء المناسب (إضافة أو إزالة)
+    //   يجب على Fragment تطبيق هذه الواجهة وتمريرها عبر setFavoriteStatusChecker()
+    //   في قائمة المفضلة: كل العناصر مفضلة دائماً، فيُعرض "إزاله من المفضله" دائماً ★
+    private FavoriteStatusChecker favoriteStatusChecker;
 
     /**
-     * يُنفّذها TrashFragment للتعامل مع طلبات الاستعادة والحذف النهائي.
-     * تُمرَّر قائمة FontEntity مباشرةً بدلاً من المواقع لتجنب أي تحوّل
-     * في الـ Index بعد أن تبدأ العمليات الخلفية في TrashViewModel.
+     * ★ واجهة فاحص حالة المفضلة ★
+     * يُنفّذها Fragment لتزويد المدير بحالة المفضلة لكل موضع محدد،
+     * مما يُتيح تطبيق منطق Samsung Notes في تحديد الإجراء المعروض.
      */
-    public interface SelectionActionListener {
-        /**
-         * يُستدعى عند ضغط المستخدم على زر الاستعادة.
-         * @param fonts قائمة الخطوط المراد استعادتها إلى مساراتها الأصلية
-         */
-        void onRestoreRequested(List<FontEntity> fonts);
-
-        /**
-         * يُستدعى عند ضغط المستخدم على زر الحذف النهائي.
-         * يجب على TrashFragment عرض ديالوج التأكيد قبل إرسال الطلب للـ ViewModel.
-         * @param fonts قائمة الخطوط المراد حذفها نهائياً من مجلد .Trash
-         */
-        void onDeletePermanentlyRequested(List<FontEntity> fonts);
+    public interface FavoriteStatusChecker {
+        boolean isFavorited(int position);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // المُنشئ
-    // ─────────────────────────────────────────────────────────
+    public interface SelectionActionListener {
+        void onRenameRequested(int position);
+        void onDeleteRequested(List<Integer> positions);
 
-    public TrashSelectionManager(
-            FragmentActivity activity,
-            DrawerLayout     drawerLayout,
-            TrashListAdapter adapter,
-            RecyclerView     recyclerView) {
+        /**
+         * ★ إجراء المفضلة — يُستدعى عند اختيار المستخدم إضافة أو إزالة العناصر من المفضلة ★
+         * @param positions     مواضع العناصر المحددة
+         * @param addToFavorites true = إضافة إلى المفضلة، false = إزالة من المفضلة
+         */
+        void onFavoriteRequested(List<Integer> positions, boolean addToFavorites);
+    }
 
-        this.activity     = activity;
+    public LocalFontSelectionManager(FragmentActivity activity,
+        DrawerLayout drawerLayout,
+        LocalFontListAdapter adapter,
+        RecyclerView recyclerView,
+        SortByItemLayout sortBar) {
+        this.activity = activity;
         this.drawerLayout = drawerLayout;
-        this.adapter      = adapter;
+        this.adapter = adapter;
         this.recyclerView = recyclerView;
+        this.sortBar = sortBar;
 
         setupRecyclerViewListener();
         setupBackHandling();
     }
 
-    // ─────────────────────────────────────────────────────────
-    // Setters
-    // ─────────────────────────────────────────────────────────
-
     public void setActionListener(SelectionActionListener listener) {
         this.actionListener = listener;
     }
 
-    // ─────────────────────────────────────────────────────────
-    // إعداد Rubber-Band Multi-Selection
-    // ─────────────────────────────────────────────────────────
+    // ★ يُستدعى من Fragment لتزويد المدير بفاحص حالة المفضلة ★
+    public void setFavoriteStatusChecker(FavoriteStatusChecker checker) {
+        this.favoriteStatusChecker = checker;
+    }
 
-    /**
-     * يُفعّل ميزة الـ Rubber-Band Multi-Selection الخاصة بـ OneUI.
-     * تُعيد عناصر VIEW_TYPE_HEADER و VIEW_TYPE_SPACE دون تأثير
-     * بفضل الفحص في onItemSelected().
-     */
     private void setupRecyclerViewListener() {
         recyclerView.seslSetLongPressMultiSelectionListener(
-                new RecyclerView.SeslLongPressMultiSelectionListener() {
-                    @Override
-                    public void onItemSelected(RecyclerView view, View child,
-                                               int position, long id) {
-                        // تجاهل الهيدر والفراغ السفلي — العناصر القابلة للتحديد فقط
-                        if (adapter.getItemViewType(position) == TrashListAdapter.VIEW_TYPE_ITEM) {
-                            toggleSelection(position);
-                        }
+            new RecyclerView.SeslLongPressMultiSelectionListener() {
+                @Override
+                public void onItemSelected(RecyclerView view, View child, int position, long id) {
+                    if (adapter.getItemViewType(position) == LocalFontListAdapter.VIEW_TYPE_FONT) {
+                        toggleSelection(position);
                     }
-
-                    @Override public void onLongPressMultiSelectionStarted(int x, int y) {}
-                    @Override public void onLongPressMultiSelectionEnded(int x, int y)   {}
                 }
+
+                @Override
+                public void onLongPressMultiSelectionStarted(int x, int y) {}
+
+                @Override
+                public void onLongPressMultiSelectionEnded(int x, int y) {}
+            }
         );
     }
 
-    // ─────────────────────────────────────────────────────────
-    // إدارة زر الرجوع
-    // ─────────────────────────────────────────────────────────
-
-    /**
-     * يُهيّئ معالجَي زر الرجوع:
-     *  • API 33+: OnBackInvokedCallback (النظام الجديد)
-     *  • API < 33: OnBackPressedCallback (AndroidX)
-     * كلاهما يستدعي setSelecting(false) عند الضغط أثناء وضع التحديد.
-     */
     private void setupBackHandling() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             onBackInvokedCallback = () -> {
@@ -176,49 +136,46 @@ public class TrashSelectionManager {
         };
     }
 
-    // ─────────────────────────────────────────────────────────
-    // تفعيل / تعطيل وضع التحديد
-    // ─────────────────────────────────────────────────────────
-
     public void setSelecting(boolean enabled) {
         if (isSelecting == enabled) return;
         isSelecting = enabled;
         if (enabled) activateSelectionMode();
-        else          deactivateSelectionMode();
+        else deactivateSelectionMode();
     }
 
     private void activateSelectionMode() {
+        disableSortBar();
         adapter.setSelectionMode(true);
 
-        // تحضير شريط الـ Action Mode بقائمة سلة المحذوفات فقط
         drawerLayout.getActionModeBottomMenu().clear();
-        drawerLayout.setActionModeMenu(R.menu.menu_trash_actions);
+        drawerLayout.setActionModeMenu(R.menu.menu_font_actions);
         drawerLayout.showActionMode();
 
-        // معالجة ضغطات أزرار شريط الـ Action Mode
         drawerLayout.setActionModeMenuListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.action_restore) {
-                handleRestoreAction();
-                return true;
-            } else if (id == R.id.action_delete) {
+            if (id == R.id.action_delete) {
                 handleDeleteAction();
+                return true;
+            } else if (id == R.id.action_rename) {
+                handleRenameAction();
+                return true;
+            } else if (id == R.id.action_favorite) {
+                // ★ معالجة إجراء المفضلة — يُحدّد تلقائياً هل يُضيف أم يُزيل ★
+                handleFavoriteAction();
                 return true;
             }
             return false;
         });
 
-        // معالجة checkbox "تحديد الكل" في شريط الـ Action Mode
         drawerLayout.setActionModeCheckboxListener((menuItem, isChecked) -> {
             if (checkAllListening) toggleSelectAll(isChecked);
             updateActionModeUI();
         });
 
-        // تسجيل معالجَي زر الرجوع
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             activity.getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
-                    OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-                    onBackInvokedCallback
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+                onBackInvokedCallback
             );
         }
         onBackPressedCallback.setEnabled(true);
@@ -226,38 +183,30 @@ public class TrashSelectionManager {
 
     private void deactivateSelectionMode() {
         // ★ التسلسل الحرفي لتطبيق المثال الرسمي:
-        // 1. تحديث الـ Adapter فوراً (يُخفي checkboxes في نفس الـ frame)
+        // 1. تحديث الـ adapter فوراً (يخفي checkboxes في نفس الـ frame)
         // 2. setActionModeAllSelector → يُخفي الشريط السفلي
         // 3. dismissActionMode → يبدأ أنيميشن تلاشي الـ toolbar
-        // الثلاثة تحدث معاً فيُخفق عين المستخدم عن ملاحظة اختفاء الشريط
+        // الثلاثة تحدث معاً فيُخفق عين المستخدم عن ملاحظة اختفاء الشريط ★
         selectedItems.clear();
         adapter.clearSelection();
         adapter.setSelectionMode(false);
 
-        // ★ حل المشكلة 3: تم حذف هذا السطر لمنع التصفير المبكر والوميض
+        // ★ حل المشكلة 3: تم حذف السطر التالي لأنه يسبق dismissActionMode 
+        // ويسبب التصفير والوميض قبل الأوان (المكتبة تقوم بذلك داخلياً في الوقت المناسب)
         // drawerLayout.setActionModeAllSelector(0, true, false);
         
         drawerLayout.dismissActionMode();
 
-        // إلغاء تسجيل معالجَي زر الرجوع
+        enableSortBar();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             activity.getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(
-                    onBackInvokedCallback
+                onBackInvokedCallback
             );
         }
         onBackPressedCallback.setEnabled(false);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // إدارة التحديد الفردي والجماعي
-    // ─────────────────────────────────────────────────────────
-
-    /**
-     * يُبدّل حالة تحديد عنصر واحد.
-     * إذا كان وضع التحديد غير مفعّل، يُفعّله أولاً.
-     *
-     * @param position موقع العنصر في الـ Adapter (يشمل إزاحة الهيدر)
-     */
     public void toggleSelection(int position) {
         if (!isSelecting) setSelecting(true);
 
@@ -268,130 +217,158 @@ public class TrashSelectionManager {
         updateActionModeUI();
     }
 
-    /**
-     * يُحدد أو يُلغي تحديد جميع العناصر دفعةً واحدة.
-     * يبدأ من الموقع 1 لتخطي الهيدر، وينتهي قبل آخر موقع لتخطي الفراغ السفلي.
-     *
-     * @param selectAll true = تحديد الكل | false = إلغاء الكل
-     */
     private void toggleSelectAll(boolean selectAll) {
         selectedItems.clear();
         int itemCount = adapter.getItemCount();
+        // ★ الإصلاح: البدء من 1 لتخطي الـ Header، والانتهاء قبل itemCount - 1 لتخطي الـ Footer ★
+        // هذا يمنع احتساب عناصر الهيدر والفوتر ضمن عدد المحدد ويصحح الإجمالي المعروض
         for (int i = 1; i < itemCount - 1; i++) {
             if (selectAll) selectedItems.put(i, true);
             adapter.setItemSelected(i, selectAll);
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    // تحديث واجهة شريط الـ Action Mode
-    // ─────────────────────────────────────────────────────────
-
-    /**
-     * يُحدّث عدد العناصر المحددة في الشريط، ونصوص أزرار الحذف والاستعادة.
-     *
-     * ★ (14) منطق النصوص:
-     *   • selectedCount == totalCount → "حذف الكل" / "استعادة الكل"
-     *     (يشمل حالة العنصر الواحد: عند تحديد العنصر الوحيد يُعتبر "الكل" محدداً)
-     *   • أي حالة أخرى               → "حذف"     / "استعاده"
-     *
-     * ★ الإصلاح الجوهري: لا نُحدّث الأيقونات/النصوص إذا كان العدد 0
-     *   لتجنب اختفائها الفجائي أثناء أنيميشن انزلاق الشريط للأسفل.
-     */
     private void updateActionModeUI() {
         checkAllListening = false;
 
         int selectedCount = selectedItems.size();
-        // العدد الفعلي للعناصر = الإجمالي ناقص الهيدر والفراغ السفلي
+
+        // ★ الإصلاح: العدد الفعلي للخطوط هو الإجمالي ناقص 2 (الهيدر والفوتر) ★
+        // هذا يضمن أن شريط الـ DrawerLayout يعرض النسبة الصحيحة ويُفعّل "تحديد الكل" بدقة
         int totalCount = adapter.getItemCount() - 2;
 
+        // 1. نُحدّث شريط الـ DrawerLayout بالعدد الجديد (وهذا ما يُشغّل أنيميشن النزول إذا كان العدد 0)
         drawerLayout.setActionModeAllSelector(selectedCount, true, selectedCount == totalCount);
 
+        // 2. ★ الإصلاح الجوهري: نُحدّث الأيقونات والنصوص فقط إذا كان هناك عناصر محددة.
+        // أما إذا كان العدد 0، فنتجاهل التحديث لكي لا تختفي الأيقونات فجأة أثناء نزول الشريط! ★
         if (selectedCount > 0) {
             Menu bottomMenu  = drawerLayout.getActionModeBottomMenu();
             Menu toolbarMenu = drawerLayout.getActionModeToolbarMenu();
 
-            MenuItem deleteItemBottom   = bottomMenu  != null ? bottomMenu.findItem(R.id.action_delete)    : null;
-            MenuItem deleteItemToolbar  = toolbarMenu != null ? toolbarMenu.findItem(R.id.action_delete)   : null;
-            MenuItem restoreItemBottom  = bottomMenu  != null ? bottomMenu.findItem(R.id.action_restore)   : null;
-            MenuItem restoreItemToolbar = toolbarMenu != null ? toolbarMenu.findItem(R.id.action_restore)  : null;
+            MenuItem renameItemBottom  = bottomMenu  != null ? bottomMenu.findItem(R.id.action_rename)   : null;
+            MenuItem renameItemToolbar = toolbarMenu != null ? toolbarMenu.findItem(R.id.action_rename)  : null;
+            MenuItem deleteItemBottom  = bottomMenu  != null ? bottomMenu.findItem(R.id.action_delete)   : null;
+            MenuItem deleteItemToolbar = toolbarMenu != null ? toolbarMenu.findItem(R.id.action_delete)  : null;
+            MenuItem favoriteItemBottom  = bottomMenu  != null ? bottomMenu.findItem(R.id.action_favorite)  : null;
+            MenuItem favoriteItemToolbar = toolbarMenu != null ? toolbarMenu.findItem(R.id.action_favorite) : null;
 
-            // ★ (14) إصلاح: تحديد ما إذا كانت جميع العناصر محددة.
-            // الشرط selectedCount == totalCount يكفي وحده — لا حاجة لـ selectedCount > 1،
-            // لأن تحديد العنصر الوحيد في قائمة أحادية يعني تحديد "الكل" بالفعل.
-            boolean isAllSelected = (selectedCount == totalCount);
+            boolean isSingleSelection = (selectedCount == 1);
 
-            String deleteText = isAllSelected
+            // ★ في الوضع العمودي يظهر Rename في البوتوم بار فقط،
+            // أما في الأفقي فيظهر في الـ toolbar عند التحديد الفردي فقط ★
+            boolean isPortrait = activity.getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_PORTRAIT;
+
+            if (renameItemBottom  != null) renameItemBottom.setVisible(isSingleSelection);
+            if (renameItemToolbar != null) renameItemToolbar.setVisible(!isPortrait && isSingleSelection);
+
+            // ★ إصلاح: الشرط selectedCount == totalCount يكفي وحده لتحديد "الكل".
+            // حذف && selectedCount > 1 يضمن ظهور "حذف الكل" حتى مع عنصر واحد.
+            String deleteText = (selectedCount == totalCount)
                     ? activity.getString(R.string.action_delete_all)
                     : activity.getString(R.string.action_delete);
 
-            String restoreText = isAllSelected
-                    ? activity.getString(R.string.action_restore_all)
-                    : activity.getString(R.string.action_restore);
-
             if (deleteItemBottom  != null) deleteItemBottom.setTitle(deleteText);
             if (deleteItemToolbar != null) deleteItemToolbar.setTitle(deleteText);
-            if (restoreItemBottom  != null) restoreItemBottom.setTitle(restoreText);
-            if (restoreItemToolbar != null) restoreItemToolbar.setTitle(restoreText);
+
+            // ★ منطق المفضلة بأسلوب Samsung Notes ★
+            // - إذا كانت كل العناصر المحددة مفضلة  → عرض "إزاله من المفضله" (ic_oui_favorite_off)
+            // - إذا كانت مختلطة أو كلها غير مفضلة  → عرض "إضافه إلى المفضله" (ic_oui_favorite_on)
+            boolean allFavorited = resolveFavoriteAction();
+
+            String favoriteText = allFavorited
+                    ? activity.getString(R.string.action_unfavorite)
+                    : activity.getString(R.string.action_favorite);
+            int favoriteIcon = allFavorited
+                    ? dev.oneuiproject.oneui.R.drawable.ic_oui_favorite_off
+                    : dev.oneuiproject.oneui.R.drawable.ic_oui_favorite_on;
+
+            if (favoriteItemBottom != null) {
+                favoriteItemBottom.setTitle(favoriteText);
+                favoriteItemBottom.setIcon(favoriteIcon);
+            }
+            if (favoriteItemToolbar != null) {
+                favoriteItemToolbar.setTitle(favoriteText);
+            //  favoriteItemToolbar.setIcon(favoriteIcon);
+            }
         }
 
         checkAllListening = true;
     }
 
     /**
-     * يُعيد تطبيق updateActionModeUI() بعد دوران الجهاز.
-     * يُستدعى من TrashFragment#onConfigurationChanged() أو ما يعادله.
-     * يستخدم post() لضمان التنفيذ بعد أن تُعيد DrawerLayout
-     * بناء قائمة الـ Action Mode.
+     * ★ يحدد هل يجب عرض "إزاله من المفضله" أم "إضافه إلى المفضله" ★
+     *
+     * المنطق: تُعيد true (أي كل محدد مفضل) فقط إذا كانت جميع العناصر المحددة
+     * مفضلة بالفعل. أي عنصر غير مفضل ضمن التحديد يكفي لعرض "إضافه إلى المفضله".
+     *
+     * @return true  إذا كانت كل العناصر المحددة مفضلة → نعرض "إزاله من المفضله"
+     *         false إذا كانت مختلطة أو كلها غير مفضلة → نعرض "إضافه إلى المفضله"
      */
+    private boolean resolveFavoriteAction() {
+        if (favoriteStatusChecker == null || selectedItems.size() == 0) return false;
+        for (int i = 0; i < selectedItems.size(); i++) {
+            if (!favoriteStatusChecker.isFavorited(selectedItems.keyAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void refreshActionMode() {
         if (isSelecting) {
+            // ★ تأجيل بـ post() لضمان تطبيق updateActionModeUI() بعد أن تُعيد
+            // DrawerLayout بناء قائمة الـ action mode عند دوران الجهاز ★
             recyclerView.post(this::updateActionModeUI);
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    // معالجة إجراءات الأزرار
-    // ─────────────────────────────────────────────────────────
-
-    /**
-     * يجمع الخطوط المحددة ويُخطر TrashFragment بطلب الاستعادة.
-     * TrashFragment مسؤول عن تمرير الطلب إلى TrashViewModel.
-     */
-    private void handleRestoreAction() {
-        if (selectedItems.size() == 0 || actionListener == null) return;
-        actionListener.onRestoreRequested(getSelectedFonts());
+    private void handleRenameAction() {
+        if (selectedItems.size() != 1 || actionListener == null) return;
+        actionListener.onRenameRequested(selectedItems.keyAt(0));
     }
 
-    /**
-     * يجمع الخطوط المحددة ويُخطر TrashFragment بطلب الحذف النهائي.
-     * TrashFragment مسؤول عن عرض ديالوج التأكيد قبل التنفيذ.
-     */
     private void handleDeleteAction() {
         if (selectedItems.size() == 0 || actionListener == null) return;
-        actionListener.onDeletePermanentlyRequested(getSelectedFonts());
+        List<Integer> positions = new ArrayList<>();
+        for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
+        actionListener.onDeleteRequested(positions);
     }
 
     /**
-     * يبني قائمة FontEntity من المواقع المحددة حالياً في SparseBooleanArray.
-     * يستخدم getItemAtAdapterPosition() من TrashListAdapter للتحويل المباشر
-     * من موقع الـ Adapter إلى كيان FontEntity، مما يُلغي الحاجة إلى أي حسابات إزاحة هنا.
+     * ★ معالجة إجراء المفضلة ★
+     * يُحدّد تلقائياً هل العملية إضافة أم إزالة عبر resolveFavoriteAction()،
+     * ثم يُخطر الـ Fragment بالمواضع المحددة ونوع العملية.
      */
-    private List<FontEntity> getSelectedFonts() {
-        List<FontEntity> fonts = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) {
-            int adapterPos = selectedItems.keyAt(i);
-            FontEntity font = adapter.getItemAtAdapterPosition(adapterPos);
-            if (font != null) fonts.add(font);
-        }
-        return fonts;
+    private void handleFavoriteAction() {
+        if (selectedItems.size() == 0 || actionListener == null) return;
+
+        // ★ true = كل المحدد مفضل → نُزيل | false = مختلط أو غير مفضل → نُضيف ★
+        boolean allFavorited = resolveFavoriteAction();
+        boolean addToFavorites = !allFavorited;
+
+        List<Integer> positions = new ArrayList<>();
+        for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
+        actionListener.onFavoriteRequested(positions, addToFavorites);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // واجهة عامة للـ Fragment
-    // ─────────────────────────────────────────────────────────
+    private void disableSortBar() {
+        if (sortBar != null) {
+            sortBar.setEnabled(false);
+            sortBar.setClickable(false);
+            sortBar.setAlpha(0.4f);
+        }
+    }
 
-    /** قائمة بمواقع العناصر المحددة في الـ Adapter (تشمل إزاحة الهيدر). */
+    private void enableSortBar() {
+        if (sortBar != null) {
+            sortBar.setEnabled(true);
+            sortBar.setClickable(true);
+            sortBar.setAlpha(1.0f);
+        }
+    }
+
     public List<Integer> getSelectedPositions() {
         List<Integer> positions = new ArrayList<>();
         for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
@@ -401,13 +378,8 @@ public class TrashSelectionManager {
     public int getSelectedCount()  { return selectedItems.size(); }
     public boolean isSelecting()   { return isSelecting; }
 
-    /** يُعيد OnBackPressedCallback لتسجيله في Fragment#onViewCreated(). */
     public OnBackPressedCallback getOnBackPressedCallback() { return onBackPressedCallback; }
 
-    /**
-     * يُعالج ضغط زر الرجوع يدوياً (بديل عن OnBackPressedCallback في بعض الحالات).
-     * @return true إذا تمّ استهلاك الحدث (كنا في وضع التحديد)
-     */
     public boolean handleBackPress() {
         if (isSelecting) {
             setSelecting(false);
@@ -416,14 +388,11 @@ public class TrashSelectionManager {
         return false;
     }
 
-    /**
-     * يُنظّف جميع المراجع لمنع تسرب الذاكرة.
-     * يُستدعى من Fragment#onDestroyView().
-     */
     public void cleanup() {
         if (isSelecting) setSelecting(false);
         onBackPressedCallback = null;
         onBackInvokedCallback = null;
-        actionListener        = null;
+        actionListener = null;
+        favoriteStatusChecker = null;
     }
-            }
+                }
