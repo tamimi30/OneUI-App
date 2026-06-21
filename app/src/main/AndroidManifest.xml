@@ -45,6 +45,7 @@
         android:supportsRtl="true"
         android:localeConfig="@xml/locale_config"
         android:resizeableActivity="true"
+        android:enableOnBackInvokedCallback="true"
         android:usesCleartextTraffic="true"
         tools:targetApi="36">
 
