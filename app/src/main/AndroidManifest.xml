@@ -73,10 +73,9 @@
              ملاحظة: لم نضف uiMode عمداً لأنه يُسبّب خللاً في الثيم. -->
         <activity
             android:name=".activity.MainActivity"
-            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
+            android:configChanges="orientation|screenLayout|screenSize"
             android:exported="true"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize"
             android:theme="@style/AppTheme.Starting">
 
             <meta-data
@@ -101,7 +100,7 @@
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
         <activity
             android:name=".fragment.home.HomeActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+            android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
         <activity
@@ -109,7 +108,7 @@
 
         <activity
             android:name=".fragment.settings.about.LicensesActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+            android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- ★ locale|layoutDirection موجود هنا فقط ★
              SettingsActivity هي الشاشة التي يرى فيها المستخدم تغيير اللغة
@@ -118,7 +117,7 @@
              ملاحظة: لم نضف uiMode عمداً لأنه يُسبّب خللاً في الثيم. -->
         <activity
             android:name=".fragment.settings.SettingsActivity"
-            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection|smallestScreenSize" />
+            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection" />
 
         <!-- ════════════════════════════════════════════════════════════════
              ★ إصلاح المشكلة (1): تسجيل OperationForegroundService ★
