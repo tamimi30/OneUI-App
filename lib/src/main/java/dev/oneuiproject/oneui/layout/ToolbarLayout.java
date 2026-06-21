@@ -704,28 +704,51 @@ public class ToolbarLayout extends LinearLayout {
      *
      * @see #showSearchMode()
      */
-    public void dismissSearchMode() {
+     public void dismissSearchMode() {
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
 
-        // 1. الحل الرسمي من One UI 8: إخفاء شريط البحث فوراً (يقطع وميض كلمة بحث من جذوره)
-        mSearchToolbar.setVisibility(GONE);
+        // 1. إخفاء الكيبورد وسحب التركيز فوراً قبل أي شيء (يقطع وميض الشاشة البيضاء في الوضع الأفقي من جذوره)
+        if (mSearchView != null) {
+            mSearchView.clearFocus();
+        }
+
+        // 2. إخفاء كلمة "بحث" مؤقتاً (يمنع وميض الكلمة أثناء التلاشي)
+        CharSequence originalHint = mSearchView != null ? mSearchView.getQueryHint() : "";
+        if (mSearchView != null) {
+            mSearchView.setQueryHint("");
+        }
+
+        // 3. إشعار التطبيق بالإغلاق فوراً (لتحديث القائمة بسلاسة وبدون شاشة سوداء)
+        if (mSearchModeListener != null) {
+            mSearchModeListener.onSearchModeToggle(mSearchView, false);
+        }
+
+        // 4. مسح النص بعد الإشعار وتفريغ المستمع
+        if (mSearchView != null) {
+            mSearchView.setOnQueryTextListener(null);
+            mSearchView.setQuery("", false);
+        }
+
+        // 5. تفعيل أنيميشن التلاشي الناعم لشريط البحث (Fade out / Fade in)
+        animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
 
         setTitle(mTitleExpanded, mTitleCollapsed);
         mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
 
-        // 2. إشعار مشروعك بالإغلاق فوراً وبدون تأخير (هذا ما سيُرجع أيقونة النقاط الثلاث بنجاح)
-        if (mSearchModeListener != null) {
-            mSearchModeListener.onSearchModeToggle(mSearchView, false);
+        // 6. إعادة كلمة "بحث" وإنعاش النقاط الثلاث بعد انتهاء الأنيميشن (200 جزء من الثانية)
+        if (mSearchView != null) {
+            mSearchView.postDelayed(() -> {
+                mSearchView.setQueryHint(originalHint);
+                if (mActivity != null) {
+                    mActivity.invalidateOptionsMenu();
+                }
+            }, 200);
         }
-
-        // 3. الحل الرسمي من One UI 8: إزالة المستمع ومسح النص بأمان بعد أن أصبح الشريط مخفياً
-        mSearchView.setOnQueryTextListener(null);
-        mSearchView.setQuery("", false);
-        mSearchView.clearFocus();
     }
+
 
     /**
      * Check if SearchMode is enabled(=the {@link SearchView} in the Toolbar is visible).
@@ -1017,7 +1040,7 @@ public class ToolbarLayout extends LinearLayout {
                         updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
                     }
                 };
-                postDelayed(mTitleUpdateRunnable, 0);
+                postDelayed(mTitleUpdateRunnable, 100);
             } else {
                 mCollapsingToolbarLayout.setTitle(title);
                 mActionModeTitleTextView.setText(title);
