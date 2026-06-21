@@ -11,7 +11,7 @@
         android:id="@+id/toolbarlayout_search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:imeOptions="flagNoExtractUi"
+        android:imeOptions="flagNoExtractUi"
         app:iconifiedByDefault="false" />
 
 </androidx.appcompat.widget.Toolbar>
