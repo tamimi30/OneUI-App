@@ -43,6 +43,8 @@
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="true"
         android:supportsRtl="true"
+        android:resizeableActivity="true"
+        android:enableOnBackInvokedCallback="true"
         android:localeConfig="@xml/locale_config"
         android:resizeableActivity="true"
         android:usesCleartextTraffic="true"
@@ -73,7 +75,8 @@
              ملاحظة: لم نضف uiMode عمداً لأنه يُسبّب خللاً في الثيم. -->
         <activity
             android:name=".activity.MainActivity"
-            android:configChanges="orientation|screenLayout|screenSize"
+            android:configChanges="screenSize|screenLayout|orientation|keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Starting">
@@ -100,7 +103,7 @@
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
         <activity
             android:name=".fragment.home.HomeActivity"
-            android:configChanges="orientation|screenSize|screenLayout" />
+            android:configChanges="screenSize|screenLayout|orientation|keyboardHidden|keyboard" />
 
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
         <activity
@@ -108,7 +111,7 @@
 
         <activity
             android:name=".fragment.settings.about.LicensesActivity"
-            android:configChanges="orientation|screenSize|screenLayout" />
+            android:configChanges="screenSize|screenLayout|orientation|keyboardHidden|keyboard" />
 
         <!-- ★ locale|layoutDirection موجود هنا فقط ★
              SettingsActivity هي الشاشة التي يرى فيها المستخدم تغيير اللغة
@@ -117,7 +120,7 @@
              ملاحظة: لم نضف uiMode عمداً لأنه يُسبّب خللاً في الثيم. -->
         <activity
             android:name=".fragment.settings.SettingsActivity"
-            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection" />
+            android:configChanges="screenSize|screenLayout|orientation|keyboardHidden|keyboard|locale|layoutDirection" />
 
         <!-- ════════════════════════════════════════════════════════════════
              ★ إصلاح المشكلة (1): تسجيل OperationForegroundService ★
