@@ -16,7 +16,6 @@
             android:id="@+id/font_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fadingEdge="horizontal"
             android:scrollbars="vertical" />
 
         <androidx.core.widget.NestedScrollView

@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layoutDirection="locale"
+    android:gravity="center_vertical"
     android:orientation="vertical"
     android:background="@drawable/list_ripple">
     
@@ -16,7 +16,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layoutDirection="locale"
         app:checkableButtonSpacing="30dp"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
@@ -26,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="14.0dip"
-            android:layoutDirection="locale"
+            android:gravity="center_vertical"
             android:animateLayoutChanges="true"
             android:orientation="vertical">
 
@@ -36,8 +35,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:paddingBottom="4sp"
-                android:includeFontPadding="false"
+                android:layout_marginBottom="3dp"
                 android:fadingEdge="horizontal"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Font Name Example" />
@@ -47,7 +45,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingBottom="14.0dip"
-                android:layoutDirection="locale"
                 android:animateLayoutChanges="true"
                 android:orientation="horizontal">
                 
@@ -57,8 +54,8 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:includeFontPadding="false"
                     android:fadingEdge="horizontal"
+                
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     tools:text="Bold, Condensed" />
                     

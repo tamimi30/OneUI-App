@@ -704,51 +704,19 @@ public class ToolbarLayout extends LinearLayout {
      *
      * @see #showSearchMode()
      */
-     public void dismissSearchMode() {
+    public void dismissSearchMode() {
+        if (mSearchModeListener != null)
+            mSearchModeListener.onSearchModeToggle(mSearchView, false);
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
-
-        // 1. إخفاء الكيبورد وسحب التركيز فوراً قبل أي شيء (يقطع وميض الشاشة البيضاء في الوضع الأفقي من جذوره)
-        if (mSearchView != null) {
-            mSearchView.clearFocus();
-        }
-
-        // 2. إخفاء كلمة "بحث" مؤقتاً (يمنع وميض الكلمة أثناء التلاشي)
-        CharSequence originalHint = mSearchView != null ? mSearchView.getQueryHint() : "";
-        if (mSearchView != null) {
-            mSearchView.setQueryHint("");
-        }
-
-        // 3. إشعار التطبيق بالإغلاق فوراً (لتحديث القائمة بسلاسة وبدون شاشة سوداء)
-        if (mSearchModeListener != null) {
-            mSearchModeListener.onSearchModeToggle(mSearchView, false);
-        }
-
-        // 4. مسح النص بعد الإشعار وتفريغ المستمع
-        if (mSearchView != null) {
-            mSearchView.setOnQueryTextListener(null);
-            mSearchView.setQuery("", false);
-        }
-
-        // 5. تفعيل أنيميشن التلاشي الناعم لشريط البحث (Fade out / Fade in)
+        mSearchView.setQuery("", false);
         animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
 
         setTitle(mTitleExpanded, mTitleCollapsed);
         mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
-
-        // 6. إعادة كلمة "بحث" وإنعاش النقاط الثلاث بعد انتهاء الأنيميشن (200 جزء من الثانية)
-        if (mSearchView != null) {
-            mSearchView.postDelayed(() -> {
-                mSearchView.setQueryHint(originalHint);
-                if (mActivity != null) {
-                    mActivity.invalidateOptionsMenu();
-                }
-            }, 200);
-        }
     }
-
 
     /**
      * Check if SearchMode is enabled(=the {@link SearchView} in the Toolbar is visible).

@@ -217,10 +217,6 @@ public class SearchCoordinator {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
         }
 
-        // ★ وضعنا هذا الكود هنا (بعد setSearchableInfo) لكي لا يقوم النظام بمسحه.
-        // هذا السطر يمنع الكيبورد من تغطية الشاشة باللون الأبيض في الوضع الأفقي.
-        searchView.setImeOptions(searchView.getImeOptions() | android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-
         // ★ ربط مستمع مكتبة One UI
         drawerLayout.setSearchModeListener(new dev.oneuiproject.oneui.layout.ToolbarLayout.SearchModeListener() {
             @Override

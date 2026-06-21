@@ -19,7 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="always"
-        android:fadingEdge="horizontal"
         android:scrollbars="vertical"
         app:layout_location="drawer_panel" />
 
@@ -27,6 +26,7 @@
         android:id="@+id/fab_font_size"
         android:theme="@style/Theme.MaterialComponents.DayNight"
         style="@style/FabStyle"
+        android:transitionName="fabTransition"
         android:visibility="gone"
         android:tooltipText="@string/font_size_dialog_title"
         app:layout_location="root" />
