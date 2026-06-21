@@ -191,7 +191,10 @@ public class LocalFontSelectionManager {
         adapter.clearSelection();
         adapter.setSelectionMode(false);
 
-        drawerLayout.setActionModeAllSelector(0, true, false);
+        // ★ حل المشكلة 3: تم حذف السطر التالي لأنه يسبق dismissActionMode 
+        // ويسبب التصفير والوميض قبل الأوان (المكتبة تقوم بذلك داخلياً في الوقت المناسب)
+        // drawerLayout.setActionModeAllSelector(0, true, false);
+        
         drawerLayout.dismissActionMode();
 
         enableSortBar();
@@ -392,4 +395,4 @@ public class LocalFontSelectionManager {
         actionListener = null;
         favoriteStatusChecker = null;
     }
-                }
+            }
