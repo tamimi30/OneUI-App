@@ -730,7 +730,7 @@ public class ToolbarLayout extends LinearLayout {
                 if (mActivity != null) {
                     mActivity.invalidateOptionsMenu();
                 }
-            }, 200);
+            }, 0);
         }
     }
 
