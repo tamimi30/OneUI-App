@@ -705,17 +705,33 @@ public class ToolbarLayout extends LinearLayout {
      * @see #showSearchMode()
      */
     public void dismissSearchMode() {
-        if (mSearchModeListener != null)
-            mSearchModeListener.onSearchModeToggle(mSearchView, false);
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
-        mSearchView.setQuery("", false);
+
+        // 1. نبدأ أنيميشن الإغلاق فوراً (النص سيبقى موجوداً ولن تومض كلمة "بحث" أبداً)
         animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
 
         setTitle(mTitleExpanded, mTitleCollapsed);
         mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
+
+        // 2. نخبر مشروعك بالإغلاق ليعيد ترتيب القائمة في الخلفية
+        if (mSearchModeListener != null) {
+            mSearchModeListener.onSearchModeToggle(mSearchView, false);
+        }
+
+        // 3. نؤخر مسح النص وإزالة التركيز 200ms حتى يختفي الشريط تماماً من الشاشة
+        if (mSearchView != null) {
+            mSearchView.postDelayed(() -> {
+                mSearchView.setOnQueryTextListener(null);
+                mSearchView.setQuery("", false);
+                mSearchView.clearFocus();
+                if (mActivity != null) {
+                    mActivity.invalidateOptionsMenu();
+                }
+            }, 200);
+        }
     }
 
     /**
