@@ -705,26 +705,17 @@ public class ToolbarLayout extends LinearLayout {
      * @see #showSearchMode()
      */
     public void dismissSearchMode() {
+        if (mSearchModeListener != null)
+            mSearchModeListener.onSearchModeToggle(mSearchView, false);
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
-
-        // 1. الحل الرسمي من One UI 8: إخفاء شريط البحث فوراً (يقطع وميض كلمة بحث من جذوره)
-        mSearchToolbar.setVisibility(GONE);
+        mSearchView.setQuery("", false);
+        animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
 
         setTitle(mTitleExpanded, mTitleCollapsed);
         mCollapsingToolbarLayout.seslSetSubtitle(mSubtitleExpanded);
-
-        // 2. إشعار مشروعك بالإغلاق فوراً وبدون تأخير (هذا ما سيُرجع أيقونة النقاط الثلاث بنجاح)
-        if (mSearchModeListener != null) {
-            mSearchModeListener.onSearchModeToggle(mSearchView, false);
-        }
-
-        // 3. الحل الرسمي من One UI 8: إزالة المستمع ومسح النص بأمان بعد أن أصبح الشريط مخفياً
-        mSearchView.setOnQueryTextListener(null);
-        mSearchView.setQuery("", false);
-        mSearchView.clearFocus();
     }
 
     /**
@@ -1064,7 +1055,7 @@ public class ToolbarLayout extends LinearLayout {
                     updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
                 }
             };
-            postDelayed(mTitleUpdateRunnable, 100);
+            postDelayed(mTitleUpdateRunnable, 0);
         } else {
             mCollapsingToolbarLayout.setTitle(title);
             mActionModeTitleTextView.setText(title);
