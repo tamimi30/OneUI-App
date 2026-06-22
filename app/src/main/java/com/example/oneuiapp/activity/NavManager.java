@@ -502,6 +502,18 @@ public class NavManager {
     public void handleFontSelected(String fontPath, String realName, String fileName,
                                    int ttcIndex, String weightWidthLabel) {
 
+        // ★ حل مشكلة الشاشة البيضاء (إغلاق الكيبورد برمجياً فوراً) ★
+        if (mHost.getDrawerLayout() != null) {
+            android.view.View currentFocus = mHost.getDrawerLayout().findFocus();
+            if (currentFocus != null) {
+                currentFocus.clearFocus();
+                android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) currentFocus.getContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+                }
+            }
+        }
+
         // ★ الخطوة الثالثة: تحديد الشاشة المصدر الفعلي بالبحث عن قائمة الخطوط غير المخفية ★
         // الحالة المُعطِلة: عند ضغط زر الرجوع والنقر على خط في آنٍ واحد،
         // يُغيِّر handleBackPressed قيمة getCurrentScreen إلى FONT_VIEWER بشكل متزامن
