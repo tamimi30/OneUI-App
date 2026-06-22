@@ -231,9 +231,6 @@ public class SearchCoordinator {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // ★ حل المشكلة 2: تجاهل أي تحديث للنص إذا كان البحث مغلقاً لمنع اختفاء الأزرار
-                if (!isSearchExpanded) return true;
-
                 performSearch(newText);
                 if (stateListener != null) stateListener.onSearchQueryChanged(newText);
                 return true;
