@@ -756,7 +756,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         // ★ الخطوة الثانية من إصلاح مشكلة السكرول:
         //   تسجيل الاستخدام في قاعدة البيانات يتم هنا عند النقر الفعلي على الخط فقط.
         //   بذلك تتوقف Room عن إرسال تحديثات LiveData أثناء التمرير،
-        //   ويصبح التمرير سلساً من التمريرة الأولى. ★        mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
+        //   ويصبح التمرير سلساً من التمريرة الأولى. ★
+        mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
             // ✅ تسجيل الاستخدام في قاعدة البيانات عند النقر فقط (وليس أثناء التمرير)
             mViewModel.recordFontAccess(fontPath);
 
