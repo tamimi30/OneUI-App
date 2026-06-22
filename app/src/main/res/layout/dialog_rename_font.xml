@@ -26,6 +26,7 @@
                 android:id="@+id/rename_edit_text"
                 android:hint="@string/rename_dialog_hint"
                 android:inputType="text"
+                android:imeOptions="flagNoExtractUi"
                 android:singleLine="true" />
 
         </LinearLayout>
