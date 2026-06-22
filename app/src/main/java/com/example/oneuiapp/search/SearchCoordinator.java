@@ -217,6 +217,9 @@ public class SearchCoordinator {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
         }
 
+        // ★ حل المشكلة 1: وضعنا الكود هنا (بعد setSearchableInfo) حتى لا تقوم المكتبة بمسحه
+        searchView.setImeOptions(searchView.getImeOptions() | android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI | android.view.inputmethod.EditorInfo.IME_FLAG_NO_FULLSCREEN);
+
         // ★ ربط مستمع مكتبة One UI
         drawerLayout.setSearchModeListener(new dev.oneuiproject.oneui.layout.ToolbarLayout.SearchModeListener() {
             @Override
@@ -265,9 +268,13 @@ public class SearchCoordinator {
         isSearchExpanded = false;
         savedSearchQuery = "";
 
+        // ★ حل المشكلة 2: تم حذف التصفير الفوري للنص من هنا لمنع الوميض. 
+        // التصفير سيحدث بتأخير 200ms من داخل ToolbarLayout بشكل آمن
+        /*
         if (searchView != null) {
             searchView.setQuery("", false);
         }
+        */
 
         // ★ تصفير فلاتر جميع القوائم مباشرة من هنا لضمان نظافتها عند العودة ★
         if (fragmentProvider != null) {

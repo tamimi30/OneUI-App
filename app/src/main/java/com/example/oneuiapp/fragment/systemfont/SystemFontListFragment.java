@@ -386,6 +386,13 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         // ★ التعديل: استقبال weightWidthLabel كمعامل خامس وتمريره إلى mFontSelectedListener ★
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
             mViewModel.recordFontAccess(fontPath);
+
+            // ★ حل المشكلة 2: إغلاق الكيبورد برمجياً قبل الانتقال لمنع الشاشة البيضاء
+            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null && getView() != null) {
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+            }
+
             if (mFontSelectedListener != null) {
                 mFontSelectedListener.onFontSelected(fontPath, realName, fileName,
                                                      ttcIndex, weightWidthLabel);
