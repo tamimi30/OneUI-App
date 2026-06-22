@@ -217,7 +217,7 @@ public class SearchCoordinator {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
         }
 
-        // ★ نقلنا الكود إلى الأسفل لكي لا تقوم المكتبة بمسحه، وأضفنا أمر FULLSCREEN
+        // ★ حل المشكلة 1: وضعنا الكود هنا (بعد setSearchableInfo) حتى لا تقوم المكتبة بمسحه
         searchView.setImeOptions(searchView.getImeOptions() | android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI | android.view.inputmethod.EditorInfo.IME_FLAG_NO_FULLSCREEN);
 
         // ★ ربط مستمع مكتبة One UI
@@ -229,12 +229,11 @@ public class SearchCoordinator {
                 return true;
             }
 
-
             @Override
             public boolean onQueryTextChange(String newText) {
-                // ★ حل المشكلة: تجاهل تصفير النص إذا كان البحث مغلقاً لمنع اختفاء الثلاث نقاط
+                // ★ حل المشكلة 2: تجاهل أي تحديث للنص إذا كان البحث مغلقاً لمنع اختفاء الأزرار
                 if (!isSearchExpanded) return true;
-                
+
                 performSearch(newText);
                 if (stateListener != null) stateListener.onSearchQueryChanged(newText);
                 return true;
