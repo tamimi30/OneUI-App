@@ -228,7 +228,6 @@ public class SearchCoordinator {
                 if (stateListener != null) stateListener.onSearchQueryChanged(query);
                 return true;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 performSearch(newText);
