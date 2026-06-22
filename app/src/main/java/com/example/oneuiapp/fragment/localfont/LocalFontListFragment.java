@@ -620,14 +620,20 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         //   (بما فيها SearchView المتمدد) ثم يُعيد بناءها من الصفر — مسبباً:
         //   الكيبورد لا يفتح، زر الرجوع يتعطل، والعنوان يعلق. ★
         mSearchViewModel.getIsSearchActiveLiveData().observe(this, isActive -> {
-            // ✅ تحديث رؤية الزر بشكل صامت ومباشر دون تدمير القائمة
             if (mMenu != null) {
                 MenuItem changeFolderItem = mMenu.findItem(R.id.action_change_folder);
                 if (changeFolderItem != null) {
-                    changeFolderItem.setVisible(!isActive && mViewModel.hasSavedFolder());
+                    // ★ حل مشكلة تراقص الأيقونات: 
+                    // لا نُخفي زر الثلاث نقاط فوراً عند فتح البحث لكي لا تقفز أيقونة البحث لليسار.
+                    // (شريط الأدوات بأكمله سيختفي تلقائياً بتأثير بصري سلس).
+                    // نتدخل فقط لإعادة إظهاره عند إغلاق البحث.
+                    if (!isActive) {
+                        changeFolderItem.setVisible(mViewModel.hasSavedFolder());
+                    }
                 }
             }
         });
+
     }
 
     private void restoreInstanceState(@NonNull Bundle state) {
