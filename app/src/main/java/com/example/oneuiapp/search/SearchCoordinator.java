@@ -212,6 +212,9 @@ public class SearchCoordinator {
         searchView.setQueryHint(activity.getString(R.string.search_font));
         searchView.setMaxWidth(Integer.MAX_VALUE);
 
+        // ★ حل المشكلة 1: منع ظهور شاشة الكتابة البيضاء في الوضع الأفقي
+        searchView.setImeOptions(searchView.getImeOptions() | android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+
         SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         if (searchManager != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
@@ -265,9 +268,13 @@ public class SearchCoordinator {
         isSearchExpanded = false;
         savedSearchQuery = "";
 
+        // ★ حل المشكلة 2: تم حذف التصفير الفوري للنص من هنا لمنع الوميض. 
+        // التصفير سيحدث بتأخير 200ms من داخل ToolbarLayout بشكل آمن
+        /*
         if (searchView != null) {
             searchView.setQuery("", false);
         }
+        */
 
         // ★ تصفير فلاتر جميع القوائم مباشرة من هنا لضمان نظافتها عند العودة ★
         if (fragmentProvider != null) {
