@@ -234,9 +234,7 @@ public class TrashSelectionManager {
         adapter.clearSelection();
         adapter.setSelectionMode(false);
 
-        // ★ حل المشكلة 3: تم حذف هذا السطر لمنع التصفير المبكر والوميض
-        // drawerLayout.setActionModeAllSelector(0, true, false);
-        
+        drawerLayout.setActionModeAllSelector(0, true, false);
         drawerLayout.dismissActionMode();
 
         // إلغاء تسجيل معالجَي زر الرجوع

@@ -709,8 +709,7 @@ public class ToolbarLayout extends LinearLayout {
             mSearchModeListener.onSearchModeToggle(mSearchView, false);
         mIsSearchMode = false;
         mOnBackPressedCallback.setEnabled(false);
-        // ★ حل المشكلة 2: تأخير تصفير النص حتى ينتهي أنيميشن الإغلاق (200ms) لمنع وميض كلمة "بحث"
-        mSearchView.postDelayed(() -> mSearchView.setQuery("", false), 200);
+        mSearchView.setQuery("", false);
         animatedVisibility(mSearchToolbar, GONE);
         animatedVisibility(mMainToolbar, VISIBLE);
         mFooterContainer.setVisibility(VISIBLE);
@@ -983,13 +982,8 @@ public class ToolbarLayout extends LinearLayout {
             String title = count > 0
                     ? getResources().getString(R.string.oui_action_mode_n_selected, count)
                     : getResources().getString(R.string.oui_action_mode_select_items);
-            
-            // ★ حل المشكلة 3: تحديث النص فقط إذا كان وضع التحديد نشطاً
-            // هذا يمنع وميض كلمة "تحديد عناصر" أثناء إغلاق الوضع
-            if (mIsActionMode) {
-                mCollapsingToolbarLayout.setTitle(title);
-                mActionModeTitleTextView.setText(title);
-            }
+            mCollapsingToolbarLayout.setTitle(title);
+            mActionModeTitleTextView.setText(title);
             updateActionModeMenuVisibility(mContext.getResources().getConfiguration());
         }
         if (checked != null && checked != mActionModeCheckBox.isChecked()) {
