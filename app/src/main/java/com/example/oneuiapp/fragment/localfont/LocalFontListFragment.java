@@ -756,10 +756,15 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         // ★ الخطوة الثانية من إصلاح مشكلة السكرول:
         //   تسجيل الاستخدام في قاعدة البيانات يتم هنا عند النقر الفعلي على الخط فقط.
         //   بذلك تتوقف Room عن إرسال تحديثات LiveData أثناء التمرير،
-        //   ويصبح التمرير سلساً من التمريرة الأولى. ★
-        mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
+        //   ويصبح التمرير سلساً من التمريرة الأولى. ★        mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
             // ✅ تسجيل الاستخدام في قاعدة البيانات عند النقر فقط (وليس أثناء التمرير)
             mViewModel.recordFontAccess(fontPath);
+
+            // ★ حل المشكلة 2: إغلاق الكيبورد برمجياً قبل الانتقال لمنع الشاشة البيضاء
+            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null && getView() != null) {
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+            }
 
             if (mFontSelectedListener != null) {
                 mFontSelectedListener.onFontSelected(fontPath, realName, fileName,
@@ -1504,7 +1509,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     public void filterFonts(String query) {
         mSearchViewModel.setSearchQuery(query);
-        mSearchViewModel.activateSearch();
     }
 
     public void resetFilter() {
