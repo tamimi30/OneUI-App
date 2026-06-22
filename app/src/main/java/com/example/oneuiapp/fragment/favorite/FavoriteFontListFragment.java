@@ -942,6 +942,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     public void filterFonts(String query) {
         mSearchViewModel.setSearchQuery(query);
     }
+
     /** إلغاء البحث وإعادة عرض قائمة المفضلة كاملةً */
     public void resetFilter() {
         mSearchViewModel.deactivateSearch();
