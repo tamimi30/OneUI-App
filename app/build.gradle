@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'org.openrewrite.rewrite' version '7.35.0'
+    id 'org.openrewrite.rewrite' version '7.34.0'
 }
 
 rewrite {
@@ -80,12 +80,12 @@ configurations.all {
 }
 
 dependencies {
-    rewrite platform('org.openrewrite:rewrite-bom:8.85.4')
+    rewrite platform('org.openrewrite:rewrite-bom:8.84.9')
     rewrite 'org.openrewrite:rewrite-java'
     rewrite 'org.openrewrite:rewrite-xml'
     rewrite 'org.openrewrite:rewrite-gradle'
-    rewrite 'org.openrewrite.recipe:rewrite-static-analysis:2.37.0'
-    rewrite 'org.openrewrite.recipe:rewrite-java-dependencies:1.56.0'
+    rewrite 'org.openrewrite.recipe:rewrite-static-analysis:2.36.0'
+    rewrite 'org.openrewrite.recipe:rewrite-java-dependencies:1.55.3'
 
     implementation 'io.github.oneuiproject.sesl:appcompat:1.4.0'
     implementation 'io.github.oneuiproject.sesl:material:1.5.0'
@@ -103,10 +103,10 @@ dependencies {
     implementation 'com.airbnb.android:lottie:6.7.1'
 
      // Lifecycle Components
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.11.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata:2.11.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime:2.11.0'
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.11.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.10.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.10.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.10.0'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.10.0'
     
     // Room Database
     implementation 'androidx.room:room-runtime:2.8.4'

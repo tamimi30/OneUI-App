@@ -501,13 +501,6 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         // ★ مستمع النقر على الخط: تمرير weightWidthLabel لـ NavManager عبر MainActivity ★
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
-            
-            // ★ حل المشكلة 2: إغلاق الكيبورد برمجياً قبل الانتقال لمنع الشاشة البيضاء
-            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null && getView() != null) {
-                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-            }
-
             if (mFontSelectedListener != null) {
                 mFontSelectedListener.onFontSelected(fontPath, realName, fileName,
                                                      ttcIndex, weightWidthLabel);
@@ -941,7 +934,9 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     /** تفعيل البحث وتصفية قائمة المفضلة بنص البحث المعطى */
     public void filterFonts(String query) {
         mSearchViewModel.setSearchQuery(query);
+        mSearchViewModel.activateSearch();
     }
+
     /** إلغاء البحث وإعادة عرض قائمة المفضلة كاملةً */
     public void resetFilter() {
         mSearchViewModel.deactivateSearch();
