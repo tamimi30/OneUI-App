@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.content.Context;
+import android.view.inputmethod;
 
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
@@ -504,10 +506,10 @@ public class NavManager {
 
         // ★ حل مشكلة الشاشة البيضاء (إغلاق الكيبورد برمجياً فوراً) ★
         if (mHost.getDrawerLayout() != null) {
-            android.view.View currentFocus = mHost.getDrawerLayout().findFocus();
+            View currentFocus = mHost.getDrawerLayout().findFocus();
             if (currentFocus != null) {
                 currentFocus.clearFocus();
-                android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) currentFocus.getContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) currentFocus.getContext().getSystemService(INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
                 }
