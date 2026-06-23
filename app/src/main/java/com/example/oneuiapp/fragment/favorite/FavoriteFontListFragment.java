@@ -503,10 +503,10 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
             
             // ★ حل المشكلة 2: إغلاق الكيبورد برمجياً قبل الانتقال لمنع الشاشة البيضاء
-            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        /**    android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null && getView() != null) {
                 imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-            }
+            } */
 
             if (mFontSelectedListener != null) {
                 mFontSelectedListener.onFontSelected(fontPath, realName, fileName,
