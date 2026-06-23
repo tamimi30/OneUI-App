@@ -509,7 +509,7 @@ public class NavManager {
             View currentFocus = mHost.getDrawerLayout().findFocus();
             if (currentFocus != null) {
                 currentFocus.clearFocus();
-                InputMethodManager imm = (InputMethodManager) currentFocus.getContext().getSystemService(INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) currentFocus.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
                 }
