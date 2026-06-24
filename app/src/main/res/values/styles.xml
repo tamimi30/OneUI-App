@@ -40,7 +40,9 @@
         <item name="android:layout_marginHorizontal">10dp</item>
         <item name="android:layout_marginBottom">12dp</item>
         <item name="android:paddingStart">?android:attr/listPreferredItemPaddingStart</item>
-        <item name="android:paddingEnd">android:attr/listPreferredItemPaddingEnd</item>
+        <item name="android:paddingEnd">?android:attr/listPreferredItemPaddingEnd</item>
+        <item name="android:paddingTop">14.0dip</item>
+        <item name="android:paddingBottom">14.0dip</item>
         <item name="cardCornerRadius">14dp</item>
         <item name="cardElevation">0dp</item>
        <!-- <item name="strokeColor">4dp</item>
