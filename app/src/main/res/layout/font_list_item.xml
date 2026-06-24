@@ -42,7 +42,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingBottom="14.0dip"
-                android:animateLayoutChanges="true"
                 android:orientation="horizontal">
                 
                 <TextView
@@ -61,7 +60,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_favorite"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     tools:visibility="visible" />
                     
             </LinearLayout>
