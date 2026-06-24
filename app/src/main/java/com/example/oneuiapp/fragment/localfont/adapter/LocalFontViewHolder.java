@@ -281,7 +281,23 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
      */
     public void setFavoriteIndicator(boolean isFavorite) {
         if (favoriteIconView != null) {
-            favoriteIconView.setVisibility(isFavorite ? View.VISIBLE : View.GONE);
+            boolean isCurrentlyVisible = (favoriteIconView.getVisibility() == View.VISIBLE);
+
+            if (isFavorite && !isCurrentlyVisible) {
+                // تشغيل أنيميشن الظهور السلس
+                favoriteIconView.setAlpha(0f);
+                favoriteIconView.setVisibility(View.VISIBLE);
+                favoriteIconView.animate().alpha(1f).setDuration(200).start();
+            } else if (!isFavorite && isCurrentlyVisible) {
+                // تشغيل أنيميشن الاختفاء السلس
+                favoriteIconView.animate().alpha(0f).setDuration(200).withEndAction(() -> {
+                    favoriteIconView.setVisibility(View.INVISIBLE); // إبقاء المساحة محجوزة
+                }).start();
+            } else {
+                // أثناء التمرير السريع (بدون أنيميشن لمنع التقطيع)
+                favoriteIconView.setVisibility(isFavorite ? View.VISIBLE : View.INVISIBLE);
+                favoriteIconView.setAlpha(isFavorite ? 1f : 0f);
+            }
         }
     }
 
