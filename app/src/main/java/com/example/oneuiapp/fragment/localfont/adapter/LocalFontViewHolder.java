@@ -184,7 +184,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         bindCore(displayName, path, isSearchActive, searchQuery, isLastOpened,
                  highlighter, false, false, weightWidthLabel);
         // ★ setFavoriteIndicator يُستدعى دائماً بعد bindCore لضمان الصحة ★
-        setFavoriteIndicator(isFavorite);
+        setFavoriteIndicator(isFavorite, false);
     }
 
     // ════════════════════════════════════════════════════════════
@@ -260,9 +260,10 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
                      String weightWidthLabel,
                      boolean isFavorite) {
         bindCore(displayName, path, isSearchActive, searchQuery, isLastOpened,
-                 highlighter, isSelectionMode, isSelected, weightWidthLabel);
+                  highlighter, isSelectionMode, isSelected, weightWidthLabel);
         // ★ setFavoriteIndicator يُستدعى دائماً بعد bindCore لضمان الصحة ★
-        setFavoriteIndicator(isFavorite);
+        setFavoriteIndicator(isFavorite, false);
+
     }
 
     // ════════════════════════════════════════════════════════════
@@ -279,27 +280,29 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
      *
      * @param isFavorite true لإظهار النجمة الصفراء، false لإخفائها
      */
-    public void setFavoriteIndicator(boolean isFavorite) {
+     public void setFavoriteIndicator(boolean isFavorite, boolean animate) {
         if (favoriteIconView != null) {
-            boolean isCurrentlyVisible = (favoriteIconView.getVisibility() == View.VISIBLE);
+            favoriteIconView.animate().cancel(); // إيقاف أي أنيميشن معلق لمنع الوميض والتداخل
 
-            if (isFavorite && !isCurrentlyVisible) {
-                // تشغيل أنيميشن الظهور السلس
-                favoriteIconView.setAlpha(0f);
-                favoriteIconView.setVisibility(View.VISIBLE);
-                favoriteIconView.animate().alpha(1f).setDuration(350).start();
-            } else if (!isFavorite && isCurrentlyVisible) {
-                // تشغيل أنيميشن الاختفاء السلس
-                favoriteIconView.animate().alpha(0f).setDuration(350).withEndAction(() -> {
-                    favoriteIconView.setVisibility(View.INVISIBLE); // إبقاء المساحة محجوزة
-                }).start();
+            if (animate) {
+                boolean isCurrentlyVisible = (favoriteIconView.getVisibility() == View.VISIBLE);
+                if (isFavorite && !isCurrentlyVisible) {
+                    favoriteIconView.setAlpha(0f);
+                    favoriteIconView.setVisibility(View.VISIBLE);
+                    favoriteIconView.animate().alpha(1f).setDuration(350).start();
+                } else if (!isFavorite && isCurrentlyVisible) {
+                    favoriteIconView.animate().alpha(0f).setDuration(350).withEndAction(() -> {
+                        favoriteIconView.setVisibility(View.INVISIBLE);
+                    }).start();
+                }
             } else {
-                // أثناء التمرير السريع (بدون أنيميشن لمنع التقطيع)
+                // عرض فوري بدون أنيميشن أثناء التمرير (Scroll)
                 favoriteIconView.setVisibility(isFavorite ? View.VISIBLE : View.INVISIBLE);
                 favoriteIconView.setAlpha(isFavorite ? 1f : 0f);
             }
         }
     }
+
 
     // ════════════════════════════════════════════════════════════
     // ★ تحديث تمييز آخر خط مفتوح بصمت (PAYLOAD_UPDATE_LAST_OPENED) ★
