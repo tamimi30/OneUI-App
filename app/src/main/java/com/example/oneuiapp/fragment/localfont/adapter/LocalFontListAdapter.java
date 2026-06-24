@@ -822,7 +822,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         // الأيقونة صفراء اللون وتظهر فقط للعناصر التي أضافها المستخدم إلى المفضلة
         // ملاحظة للمطوّر: يجب أن يحتوي LocalFontViewHolder على setFavoriteIndicator(boolean)
         boolean isFavorited = favoriteStatusProvider != null && favoriteStatusProvider.isFavorited(path);
-        holder.setFavoriteIndicator(isFavorited);
+        holder.setFavoriteIndicator(isFavorited, false);
 
         // ★ الإصلاح (مشكلة السكرول): استخدام المتغير المحفوظ في الذاكرة بدلاً من قراءة DataStore ★
         // السطر القديم: if (SettingsHelper.isFontPreviewEnabled(context)) loadFontPreview(holder, path);
