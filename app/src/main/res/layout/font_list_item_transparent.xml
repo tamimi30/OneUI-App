@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme"
         android:orientation="horizontal"
         app:checkMode="checkBox"
-        app:checkableButtonSpacing="20.0dip">
+        app:checkableButtonSpacing="30.0dip">
 
         <LinearLayout
             android:layout_width="0dp"
