@@ -252,15 +252,21 @@ public class LocalFontRepository {
         executorService.execute(() -> {
             try {
                 long now = System.currentTimeMillis();
-                int totalRows = 0;
-                for (String path : paths) {
-                    totalRows += fontDao.updateFavoriteStatus(path, isFavorite, now);
-                }
-                Log.d(TAG, "★ Batch favorite status updated: " + paths.size()
-                    + " fonts → " + isFavorite);
-                if (listener != null) {
-                    listener.onComplete(totalRows > 0);
-                }
+                    final int[] totalRows = {0};
+                    
+                    // ★ تجميع التحديثات في معاملة واحدة لمنع إرسال إشعارات متكررة للواجهة ★
+                    database.runInTransaction(() -> {
+                        for (String path : paths) {
+                            totalRows[0] += fontDao.updateFavoriteStatus(path, isFavorite, now);
+                        }
+                    });
+                    
+                    Log.d(TAG, "★ Batch favorite status updated: " + paths.size()
+                        + " fonts → " + isFavorite);
+                    if (listener != null) {
+                        listener.onComplete(totalRows[0] > 0);
+                    }
+
             } catch (Exception e) {
                 Log.e(TAG, "Failed to batch update favorite status", e);
                 if (listener != null) {
