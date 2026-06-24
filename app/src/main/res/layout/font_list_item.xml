@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:fadingEdge="horizontal"
+                android:includeFontPadding="false"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Font Name Example" />
                 
@@ -48,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:fadingEdge="horizontal"
+                    android:includeFontPadding="false"
                     android:layout_marginEnd="17dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     tools:text="Bold, Condensed" />
