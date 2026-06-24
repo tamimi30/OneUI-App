@@ -1265,11 +1265,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         // الذي يُحدّث Room → LiveData يُحدَّث تلقائياً → مراقب getFontsLiveData()
         // يُجدّد mCurrentFontsList → notifyAllFavoritesChanged() يُحدّث الأيقونات بصحة تامة.
         mViewModel.toggleFavoritesBatch(paths, addToFavorites, () -> {
-            // ★ استدعاء احترازي: يُحدّث الأيقونات فوراً إن كانت LiveData قد وصلت ★
-            // في حالة تأخر LiveData، سيُكمل المراقب في setupViewModelObservers() العمل.
-            if (mAdapter != null) {
-                mAdapter.notifyAllFavoritesChanged();
-            }
+            // تم حذف الاستدعاء الاحترازي لمنع الـ Race Condition.
+            // الـ LiveData ستتولى تحديث النجمة بأنيميشن نظيف مرة واحدة فقط.
         });
     }
 
