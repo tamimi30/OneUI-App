@@ -703,7 +703,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 boolean isFavorited = favoriteStatusProvider != null
                         && favoriteStatusProvider.isFavorited(fontInfo.getPath());
-                ((LocalFontViewHolder) holder).setFavoriteIndicator(isFavorited);
+                ((LocalFontViewHolder) holder).setFavoriteIndicator(isFavorited, true);
             }
 
             // ★ الإصلاح (المشكلة 1 و 4): تحديث حالة الـ CheckBox فقط بصمت تام ★
