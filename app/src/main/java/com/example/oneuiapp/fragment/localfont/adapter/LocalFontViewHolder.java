@@ -285,17 +285,22 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
             favoriteIconView.animate().cancel(); // إيقاف أي أنيميشن معلق لمنع الوميض والتداخل
 
             if (animate) {
-                boolean isCurrentlyVisible = (favoriteIconView.getVisibility() == View.VISIBLE);
-                if (isFavorite && !isCurrentlyVisible) {
-                    favoriteIconView.setAlpha(0f);
-                    favoriteIconView.setVisibility(View.VISIBLE);
-                    favoriteIconView.animate().alpha(1f).setDuration(350).start();
-                } else if (!isFavorite && isCurrentlyVisible) {
-                    favoriteIconView.animate().alpha(0f).setDuration(350).withEndAction(() -> {
-                        favoriteIconView.setVisibility(View.INVISIBLE);
-                    }).start();
-                }
-            } else {
+                    boolean isCurrentlyVisible = (favoriteIconView.getVisibility() == View.VISIBLE);
+                    if (isFavorite && !isCurrentlyVisible) {
+                        favoriteIconView.setAlpha(0f);
+                        favoriteIconView.setVisibility(View.VISIBLE);
+                        favoriteIconView.animate().alpha(1f).setDuration(350).start();
+                    } else if (!isFavorite && isCurrentlyVisible) {
+                        favoriteIconView.animate().alpha(0f).setDuration(350).withEndAction(() -> {
+                            favoriteIconView.setVisibility(View.INVISIBLE);
+                        }).start();
+                    } else if (isFavorite && isCurrentlyVisible) {
+                        favoriteIconView.setAlpha(1f); // ★ الإصلاح: استعادة الشفافية إذا تم إلغاء الأنيميشن ★
+                    } else if (!isFavorite && !isCurrentlyVisible) {
+                        favoriteIconView.setAlpha(0f);
+                    }
+                } else {
+
                 // عرض فوري بدون أنيميشن أثناء التمرير (Scroll)
                 favoriteIconView.setVisibility(isFavorite ? View.VISIBLE : View.INVISIBLE);
                 favoriteIconView.setAlpha(isFavorite ? 1f : 0f);
