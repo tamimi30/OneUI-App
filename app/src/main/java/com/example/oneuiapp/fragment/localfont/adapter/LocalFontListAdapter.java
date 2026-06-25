@@ -675,26 +675,13 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 String displayName = FileUtils.removeExtension(fontInfo.getName());
 
-                // ★ تحديد الارتفاع المطلوب للنص وتحويله من DP إلى PX ★
-               /** int targetHeightPx = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        35,  الارتفاع المطلوب بوحدة الـ DP
-                        holder.itemView.getContext().getResources().getDisplayMetrics()
-                );
+                // تحديث نص اسم الخط مع دعم تمييز نص البحث 
                 if (isSearchActive) {
                     android.text.Spannable highlighted = highlighter.highlightText(displayName, currentSearchQuery);
-                    ★ تطبيق ExactLineHeightSpan لقص الهوامش المدمجة في الخط وتوحيد ارتفاع القائمة ★
-                    android.text.SpannableString spanned = new android.text.SpannableString(highlighted);
-                    spanned.setSpan(new ExactLineHeightSpan(targetHeightPx), 0, spanned.length(),
-                            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    ((LocalFontViewHolder) holder).fontNameTextView.setText(spanned);
+                    ((LocalFontViewHolder) holder).fontNameTextView.setText(highlighted);
                 } else {
-                    ★ SpannableString مع ExactLineHeightSpan يمسح اللون الأزرق ويوحد الارتفاع ★
-                    android.text.SpannableString spanned = new android.text.SpannableString(displayName);
-                    spanned.setSpan(new ExactLineHeightSpan(targetHeightPx), 0, spanned.length(),
-                            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    ((LocalFontViewHolder) holder).fontNameTextView.setText(spanned);
-                } */
+                    ((LocalFontViewHolder) holder).fontNameTextView.setText(displayName);
+                }
 
                 // ★ الإصلاح: تحديث لون آخر خط تم فتحه بالتزامن مع البحث ★
                 boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
