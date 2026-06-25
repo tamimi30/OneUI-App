@@ -279,7 +279,13 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void setFontPreviewEnabled(boolean enabled) {
         if (this.mIsFontPreviewEnabled != enabled) {
             this.mIsFontPreviewEnabled = enabled;
-            smartUpdate(); // تحديث القائمة لتعكس التغيير
+            // ★ الإصلاح: استدعاء notifyItemRangeChanged بالكامل (بدون payload)
+            // لإجبار جميع العناصر المرئية على سحب الـ Typeface الجديد فوراً ★
+            if (recyclerView != null && !recyclerView.isComputingLayout()) {
+                notifyItemRangeChanged(1, mSortedList.size());
+            } else {
+                notifyDataSetChanged();
+            }
         }
     }
 
