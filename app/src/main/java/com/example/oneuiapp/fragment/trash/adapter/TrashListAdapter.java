@@ -331,15 +331,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (holder.selectableLayout != null) {
             holder.selectableLayout.setSelectionMode(isSelectionMode);
             holder.selectableLayout.setSelectedAnimate(isItemSelected(position));
-            
-            // ★ إصلاح النصوص المقصوصة: إجبار الـ TextView على إعادة قياس نفسه
-            // بعد انتهاء أنيميشن انزلاق CheckBox (الذي يستغرق ~300ms) ★
-            if (!isSelectionMode && holder.fontNameTextView != null) {
-                holder.fontNameTextView.postDelayed(() -> {
-                    holder.fontNameTextView.requestLayout();
-                    holder.fontNameTextView.invalidate();
-                }, 350);
-            }
         }
     }
 
@@ -632,4 +623,4 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     && o.isTrashed() == n.isTrashed();
         }
     }
-    }
+                                  }
