@@ -131,9 +131,13 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
             );
         }
 
-        // ★ تحديد الارتفاع المطلوب للنص ديناميكياً لتجنب قص الأحرف ★
-        // نعتمد على الحجم الفعلي للخط المطبق لتتمدد وتتقلص المسافة بشكل طردي
-        int targetHeightPx = (int) (fontNameTextView.getTextSize() * 1.35f);
+        // ★ تحديد الارتفاع المطلوب للنص وتحويله من DP إلى PX ★
+        // يضمن توحيد ارتفاع جميع العناصر بغض النظر عن مساحات الخط الأصلية
+        int targetHeightPx = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                35, // الارتفاع المطلوب بوحدة الـ DP
+                itemView.getContext().getResources().getDisplayMetrics()
+        );
 
         // إعداد نص اسم الخط مع دعم تمييز نص البحث
         if (isSearchActive && searchQuery != null && !searchQuery.isEmpty()) {
@@ -278,26 +282,27 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
      */
      public void setFavoriteIndicator(boolean isFavorite, boolean animate) {
         if (favoriteIconView != null) {
-            // ★ منع تغيير الـ Visibility لمنع تجميد الأبعاد الذي يُسبب قص النص ★
-            if (favoriteIconView.getVisibility() != View.VISIBLE) {
-                favoriteIconView.setVisibility(View.VISIBLE);
-            }
-            
-            favoriteIconView.animate().cancel();
+            favoriteIconView.animate().cancel(); // إيقاف أي أنيميشن معلق لمنع الوميض والتداخل
 
             if (animate) {
-                boolean isCurrentlyVisible = (favoriteIconView.getAlpha() > 0f);
-                if (isFavorite && !isCurrentlyVisible) {
-                    favoriteIconView.setAlpha(0f);
-                    favoriteIconView.animate().alpha(1f).setDuration(350).start();
-                } else if (!isFavorite && isCurrentlyVisible) {
-                    favoriteIconView.animate().alpha(0f).setDuration(350).start();
-                } else if (isFavorite && isCurrentlyVisible) {
-                    favoriteIconView.setAlpha(1f);
-                } else if (!isFavorite && !isCurrentlyVisible) {
-                    favoriteIconView.setAlpha(0f);
-                }
-            } else {
+                    boolean isCurrentlyVisible = (favoriteIconView.getVisibility() == View.VISIBLE);
+                    if (isFavorite && !isCurrentlyVisible) {
+                        favoriteIconView.setAlpha(0f);
+                        favoriteIconView.setVisibility(View.VISIBLE);
+                        favoriteIconView.animate().alpha(1f).setDuration(350).start();
+                    } else if (!isFavorite && isCurrentlyVisible) {
+                        favoriteIconView.animate().alpha(0f).setDuration(350).withEndAction(() -> {
+                            favoriteIconView.setVisibility(View.INVISIBLE);
+                        }).start();
+                    } else if (isFavorite && isCurrentlyVisible) {
+                        favoriteIconView.setAlpha(1f); // ★ الإصلاح: استعادة الشفافية إذا تم إلغاء الأنيميشن ★
+                    } else if (!isFavorite && !isCurrentlyVisible) {
+                        favoriteIconView.setAlpha(0f);
+                    }
+                } else {
+
+                // عرض فوري بدون أنيميشن أثناء التمرير (Scroll)
+                favoriteIconView.setVisibility(isFavorite ? View.VISIBLE : View.INVISIBLE);
                 favoriteIconView.setAlpha(isFavorite ? 1f : 0f);
             }
         }

@@ -63,9 +63,13 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
                      String searchQuery, boolean isLastOpened, FontTextHighlighter highlighter,
                      String weightWidthLabel) {
 
-        // ★ تحديد الارتفاع المطلوب للنص ديناميكياً لتجنب قص الأحرف ★
-        // نعتمد على الحجم الفعلي للخط المطبق لتتمدد وتتقلص المسافة بشكل طردي
-        int targetHeightPx = (int) (nameView.getTextSize() * 1.35f);
+        // ★ تحديد الارتفاع المطلوب للنص وتحويله من DP إلى PX ★
+        // يضمن توحيد ارتفاع جميع العناصر بغض النظر عن مساحات الخط الأصلية
+        int targetHeightPx = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                35, // الارتفاع المطلوب بوحدة الـ DP
+                nameView.getContext().getResources().getDisplayMetrics()
+        );
 
         // عرض النص مع إبراز البحث إذا لزم الأمر
         if (isSearchActive && searchQuery != null && !searchQuery.isEmpty()) {

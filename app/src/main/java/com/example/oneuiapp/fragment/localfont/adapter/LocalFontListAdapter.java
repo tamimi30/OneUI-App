@@ -723,7 +723,14 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                         vh.selectableLayout.setSelectionMode(isSelectionMode);
                         vh.selectableLayout.setSelectedAnimate(isItemSelected(position));
                         
-                       
+                        // ★ إصلاح النصوص المقصوصة: إجبار الـ TextView على إعادة قياس نفسه
+                        // بعد انتهاء أنيميشن انزلاق CheckBox (الذي يستغرق ~300ms) ★
+                        if (!isSelectionMode && vh.fontNameTextView != null) {
+                            vh.fontNameTextView.postDelayed(() -> {
+                                vh.fontNameTextView.requestLayout();
+                                vh.fontNameTextView.invalidate();
+                            }, 250);
+                        }
                     }
                 } else if (holder instanceof SortHeaderViewHolder) {
                     // ★ تعطيل/تفعيل شريط الفرز حسب وضع التحديد ★
