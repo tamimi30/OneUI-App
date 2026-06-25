@@ -117,8 +117,30 @@ public class SelectableLinearLayout extends LinearLayout {
             fadeTransition.addTarget(checkBox);
             transitionSet.addTransition(fadeTransition);
 
+            // إضافة مراقب للأنيميشن لإجبار النصوص على استعادة حجمها الطبيعي 
+            // عند انتهاء الانزلاق أو عند انقطاعه بسبب ظهور أيقونة المفضلة
+            transitionSet.addListener(new android.transition.Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(android.transition.Transition transition) {}
+                
+                @Override
+                public void onTransitionEnd(android.transition.Transition transition) {
+                    post(() -> requestLayout());
+                }
+                
+                @Override
+                public void onTransitionCancel(android.transition.Transition transition) {
+                    post(() -> requestLayout());
+                }
+                
+                @Override
+                public void onTransitionPause(android.transition.Transition transition) {}
+                
+                @Override
+                public void onTransitionResume(android.transition.Transition transition) {}
+            });
+
             android.transition.TransitionManager.beginDelayedTransition(this, transitionSet);
-            // نهاية الحل.
 
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
