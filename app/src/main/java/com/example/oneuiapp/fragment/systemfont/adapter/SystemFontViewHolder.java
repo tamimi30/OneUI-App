@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.search.FontTextHighlighter;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
-import com.example.oneuiapp.utils.ExactLineHeightSpan;
 import com.google.android.material.color.MaterialColors;
 
 /**
@@ -63,28 +62,11 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
                      String searchQuery, boolean isLastOpened, FontTextHighlighter highlighter,
                      String weightWidthLabel) {
 
-        // ★ تحديد الارتفاع المطلوب للنص وتحويله من DP إلى PX ★
-        // يضمن توحيد ارتفاع جميع العناصر بغض النظر عن مساحات الخط الأصلية
-        int targetHeightPx = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                35, // الارتفاع المطلوب بوحدة الـ DP
-                nameView.getContext().getResources().getDisplayMetrics()
-        );
-
-        // عرض النص مع إبراز البحث إذا لزم الأمر
+        // عرض النص مع إبراز البحث إذا لزم الأمر (بدون ExactLineHeightSpan)
         if (isSearchActive && searchQuery != null && !searchQuery.isEmpty()) {
-            SpannableString highlighted = highlighter.highlightText(displayName, searchQuery);
-            // ★ تطبيق ExactLineHeightSpan لقص الهوامش المدمجة في الخط وتوحيد ارتفاع القائمة ★
-            SpannableString spanned = new SpannableString(highlighted);
-            spanned.setSpan(new ExactLineHeightSpan(targetHeightPx), 0, spanned.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            nameView.setText(spanned);
+            nameView.setText(highlighter.highlightText(displayName, searchQuery));
         } else {
-            // ★ تطبيق ExactLineHeightSpan لقص الهوامش المدمجة في الخط وتوحيد ارتفاع القائمة ★
-            SpannableString spanned = new SpannableString(displayName);
-            spanned.setSpan(new ExactLineHeightSpan(targetHeightPx), 0, spanned.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            nameView.setText(spanned);
+            nameView.setText(displayName);
         }
 
         // ★ تفويض تحديث اللون لـ bindLastOpened() لضمان مسار تحديث واحد لا ومضة فيه ★
