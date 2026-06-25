@@ -378,7 +378,13 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void setFontPreviewEnabled(boolean enabled) {
         if (this.mIsFontPreviewEnabled != enabled) {
             this.mIsFontPreviewEnabled = enabled;
-            smartUpdate(); // تحديث القائمة لتعكس التغيير
+            // ★ الإصلاح: استدعاء notifyItemRangeChanged بالكامل (بدون payload)
+            // لإجبار جميع العناصر المرئية على سحب الـ Typeface الجديد فوراً ★
+            if (recyclerView != null && !recyclerView.isComputingLayout()) {
+                notifyItemRangeChanged(1, mSortedList.size());
+            } else {
+                notifyDataSetChanged();
+            }
         }
     }
 
@@ -716,6 +722,15 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     if (vh.selectableLayout != null) {
                         vh.selectableLayout.setSelectionMode(isSelectionMode);
                         vh.selectableLayout.setSelectedAnimate(isItemSelected(position));
+                        
+                        // ★ إصلاح النصوص المقصوصة: إجبار الـ TextView على إعادة قياس نفسه
+                        // بعد انتهاء أنيميشن انزلاق CheckBox (الذي يستغرق ~300ms) ★
+                        if (!isSelectionMode && vh.fontNameTextView != null) {
+                            vh.fontNameTextView.postDelayed(() -> {
+                                vh.fontNameTextView.requestLayout();
+                                vh.fontNameTextView.invalidate();
+                            }, 350);
+                        }
                     }
                 } else if (holder instanceof SortHeaderViewHolder) {
                     // ★ تعطيل/تفعيل شريط الفرز حسب وضع التحديد ★
