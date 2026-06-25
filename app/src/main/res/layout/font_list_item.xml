@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
     android:orientation="vertical"
     android:background="@drawable/list_ripple">
     
@@ -23,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="14.0dip"
-            android:animateLayoutChanges="true"
+            
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -41,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:animateLayoutChanges="true"
+                
                 android:paddingBottom="14.0dip"
                 android:orientation="horizontal">
                 
