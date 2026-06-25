@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.search.FontTextHighlighter;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
-import com.example.oneuiapp.utils.ExactLineHeightSpan;
 import com.google.android.material.color.MaterialColors;
 
 /**
@@ -131,28 +130,11 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
             );
         }
 
-        // ★ تحديد الارتفاع المطلوب للنص وتحويله من DP إلى PX ★
-        // يضمن توحيد ارتفاع جميع العناصر بغض النظر عن مساحات الخط الأصلية
-        int targetHeightPx = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                35, // الارتفاع المطلوب بوحدة الـ DP
-                itemView.getContext().getResources().getDisplayMetrics()
-        );
-
-        // إعداد نص اسم الخط مع دعم تمييز نص البحث
+        // إعداد نص اسم الخط مع دعم تمييز نص البحث (بدون ExactLineHeightSpan)
         if (isSearchActive && searchQuery != null && !searchQuery.isEmpty()) {
-            Spannable highlightedText = highlighter.highlightText(displayName, searchQuery);
-            // ★ تطبيق ExactLineHeightSpan لقص الهوامش المدمجة في الخط وتوحيد ارتفاع القائمة ★
-            SpannableString spanned = new SpannableString(highlightedText);
-            spanned.setSpan(new ExactLineHeightSpan(targetHeightPx), 0, spanned.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            fontNameTextView.setText(spanned);
+            fontNameTextView.setText(highlighter.highlightText(displayName, searchQuery));
         } else {
-            // ★ تطبيق ExactLineHeightSpan لقص الهوامش المدمجة في الخط وتوحيد ارتفاع القائمة ★
-            SpannableString spanned = new SpannableString(displayName);
-            spanned.setSpan(new ExactLineHeightSpan(targetHeightPx), 0, spanned.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            fontNameTextView.setText(spanned);
+            fontNameTextView.setText(displayName);
         }
 
         // ★ عرض وصف الوزن والعرض في السطر الثاني ★
