@@ -24,7 +24,6 @@ import com.example.oneuiapp.search.FontTextHighlighter;
 import com.example.oneuiapp.fragment.localfont.adapter.LocalFontViewHolder;
 import com.example.oneuiapp.sort.SortHeaderViewHolder;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
-import com.example.oneuiapp.utils.ExactLineHeightSpan;
 import com.example.oneuiapp.utils.FileUtils;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 import com.example.oneuiapp.fragment.localfont.viewmodel.LocalFontListViewModel;
@@ -725,12 +724,12 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                         
                         // ★ إصلاح النصوص المقصوصة: إجبار الـ TextView على إعادة قياس نفسه
                         // بعد انتهاء أنيميشن انزلاق CheckBox (الذي يستغرق ~300ms) ★
-                        if (!isSelectionMode && vh.fontNameTextView != null) {
+                     /**   if (!isSelectionMode && vh.fontNameTextView != null) {
                             vh.fontNameTextView.postDelayed(() -> {
                                 vh.fontNameTextView.requestLayout();
                                 vh.fontNameTextView.invalidate();
                             }, 250);
-                        }
+                        } */
                     }
                 } else if (holder instanceof SortHeaderViewHolder) {
                     // ★ تعطيل/تفعيل شريط الفرز حسب وضع التحديد ★
