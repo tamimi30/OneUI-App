@@ -729,7 +729,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                             vh.fontNameTextView.postDelayed(() -> {
                                 vh.fontNameTextView.requestLayout();
                                 vh.fontNameTextView.invalidate();
-                            }, 100);
+                            }, 250);
                         }
                     }
                 } else if (holder instanceof SortHeaderViewHolder) {
