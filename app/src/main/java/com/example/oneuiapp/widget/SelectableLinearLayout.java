@@ -117,27 +117,9 @@ public class SelectableLinearLayout extends LinearLayout {
             fadeTransition.addTarget(checkBox);
             transitionSet.addTransition(fadeTransition);
 
-        if (!mode) {
-            transitionSet.addListener(new android.transition.Transition.TransitionListener() {
-        @Override public void onTransitionStart(android.transition.Transition t) {}
-
-        @Override
-        public void onTransitionEnd(android.transition.Transition t) {
-            t.removeListener(this);
-            post(SelectableLinearLayout.this::requestLayout);
-        }
-
-        @Override
-        public void onTransitionCancel(android.transition.Transition t) {
-            t.removeListener(this);
-            post(SelectableLinearLayout.this::requestLayout);
-        }
-
-        @Override public void onTransitionPause(android.transition.Transition t) {}
-        @Override public void onTransitionResume(android.transition.Transition t) {}
-        });
-    }
             android.transition.TransitionManager.beginDelayedTransition(this, transitionSet);
+            // نهاية الحل.
+
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
     }
