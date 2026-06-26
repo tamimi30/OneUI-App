@@ -78,7 +78,6 @@ public class VariableFontHelper {
     /**
      * الحصول على محاور التغيير من الخط مع دعم TTC Index
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private static FontVariationAxis[] getVariationAxes(File fontFile, int ttcIndex) {
         try {
             Font.Builder fontBuilder = new Font.Builder(fontFile);
@@ -332,13 +331,7 @@ public class VariableFontHelper {
      *   الإصلاح: تطبيق محور wght صراحةً لأي وزن موجب، بما فيه 400. ★
      */
     public static Typeface createTypefaceWithWeight(File fontFile, float weight, int ttcIndex) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            try {
-                return Typeface.createFromFile(fontFile);
-            } catch (Exception e) {
-                return null;
-            }
-        }
+        
         
         try {
             Font.Builder fontBuilder = new Font.Builder(fontFile);
