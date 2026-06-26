@@ -894,7 +894,10 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
              */
             @Override
             public void onFavoriteRequested(List<Integer> positions, boolean addToFavorites) {
-                handleFavoriteAction(positions, addToFavorites);
+                // تأخير العملية 350 مللي ثانية لانتظار انتهاء أنيميشن إغلاق وضع التحديد
+                mMainHandler.postDelayed(() -> {
+                    handleFavoriteAction(positions, addToFavorites);
+                }, 350);
             }
         });
 
