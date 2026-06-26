@@ -413,20 +413,18 @@ public final class TrashActionDialogs {
      *   • setSound(null, null): يُلغي أي صوت محتمل من القناة
      */
     private static void createChannelIfNeeded(@NonNull Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager nm = (NotificationManager)
-                    context.getSystemService(Context.NOTIFICATION_SERVICE);
-            if (nm == null || nm.getNotificationChannel(CHANNEL_ID) != null) return;
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (nm == null || nm.getNotificationChannel(CHANNEL_ID) != null) return;
 
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    context.getString(R.string.trash_notif_channel_name),
-                    NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription(context.getString(R.string.trash_notif_channel_desc));
-            channel.setShowBadge(false);
-            channel.setSound(null, null);
-            nm.createNotificationChannel(channel);
-        }
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                context.getString(R.string.trash_notif_channel_name),
+                NotificationManager.IMPORTANCE_LOW);
+        channel.setDescription(context.getString(R.string.trash_notif_channel_desc));
+        channel.setShowBadge(false);
+        channel.setSound(null, null);
+        nm.createNotificationChannel(channel);
     }
 
 
