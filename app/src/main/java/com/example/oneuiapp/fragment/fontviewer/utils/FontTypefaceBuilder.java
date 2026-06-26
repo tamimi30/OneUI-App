@@ -53,22 +53,10 @@ public class FontTypefaceBuilder {
         
         Typeface typeface = null;
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            typeface = createTypefaceUsingBuilder(fontFile, 0, ttcIndex);
-            if (typeface != null) {
-                Log.d(TAG, "Successfully created Typeface using Font.Builder with TTC index: " + ttcIndex);
-                return typeface;
-            }
-        }
-        
-        try {
-            typeface = Typeface.createFromFile(fontFile);
-            if (typeface != null) {
-                Log.d(TAG, "Successfully created Typeface using createFromFile");
-                return typeface;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error creating Typeface from file", e);
+        typeface = createTypefaceUsingBuilder(fontFile, 0, ttcIndex);
+        if (typeface != null) {
+            Log.d(TAG, "Successfully created Typeface using Font.Builder with TTC index: " + ttcIndex);
+            return typeface;
         }
         
         Log.e(TAG, "Failed to create Typeface from file: " + fontFile.getAbsolutePath());
@@ -105,18 +93,9 @@ public class FontTypefaceBuilder {
         
         Log.d(TAG, "Font is variable, creating Typeface with weight: " + weight + ", TTC index: " + ttcIndex);
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Typeface typeface = createTypefaceUsingBuilder(fontFile, weight, ttcIndex);
-            if (typeface != null) {
-                Log.d(TAG, "Successfully created variable Typeface with weight using Font.Builder");
-                return typeface;
-            }
-        }
-        
-        Typeface typeface = VariableFontHelper.createTypefaceWithWeight(fontFile, weight);
-        
+        Typeface typeface = createTypefaceUsingBuilder(fontFile, weight, ttcIndex);
         if (typeface != null) {
-            Log.d(TAG, "Successfully created variable Typeface with weight using VariableFontHelper");
+            Log.d(TAG, "Successfully created variable Typeface with weight using Font.Builder");
             return typeface;
         }
         
@@ -128,7 +107,6 @@ public class FontTypefaceBuilder {
      * إنشاء Typeface باستخدام Font.Builder (Android O وما بعده)
      * مع دعم كامل لملفات TTC والخطوط المتغيرة
      */
-    @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.O)
     private static Typeface createTypefaceUsingBuilder(File fontFile, float weight, int ttcIndex) {
         try {
             android.graphics.fonts.Font.Builder fontBuilder = 
