@@ -1269,7 +1269,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 // تم حذف الاستدعاء الاحترازي لمنع الـ Race Condition.
                 // الـ LiveData ستتولى تحديث النجمة بأنيميشن نظيف مرة واحدة فقط.
             });
-        }, 350);
+        }, 400);
     }
 
     public boolean handleBackPressed() {
