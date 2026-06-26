@@ -143,13 +143,7 @@ public class FontInfoDialog {
         if (!hasContent) {
             htmlBuilder.append("No metadata available.");
         }
-
-        Spanned formattedText;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            formattedText = Html.fromHtml(htmlBuilder.toString(), Html.FROM_HTML_MODE_LEGACY);
-        } else {
-            formattedText = Html.fromHtml(htmlBuilder.toString());
-        }
+        Spanned formattedText = Html.fromHtml(htmlBuilder.toString(), Html.FROM_HTML_MODE_LEGACY);
 
         String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null 
                 && !metadata.get("FullName").isEmpty() ?
