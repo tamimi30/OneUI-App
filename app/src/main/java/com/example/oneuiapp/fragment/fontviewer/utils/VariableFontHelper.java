@@ -48,9 +48,7 @@ public class VariableFontHelper {
      * فحص إذا كان الخط متغيراً - مع دعم TTC Index
      */
     public static boolean isVariableFont(File fontFile, int ttcIndex) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return false;
-        }
+        
         
         if (fontFile == null || !fontFile.exists()) {
             return false;
@@ -164,9 +162,7 @@ public class VariableFontHelper {
     public static List<VariableInstance> extractVariableInstances(File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
         
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return instances;
-        }
+        
         
         if (!isVariableFont(fontFile, ttcIndex)) {
             return instances;
