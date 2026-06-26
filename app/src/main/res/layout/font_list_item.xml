@@ -18,6 +18,7 @@
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
         app:checkableButtonSpacing="20.0dip"
+        android:gravity="center_vertical"
         app:checkMode="checkBox">
         	
         <LinearLayout
@@ -31,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="14.0dip"
                 android:paddingBottom="14.0dip"
-                android:paddingHorizontal="4dp"
+                android:paddingHorizontal="6dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
