@@ -156,12 +156,7 @@ public class OperationForegroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: removing foreground notification (id=" + mNotifId + ")");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            stopForeground(STOP_FOREGROUND_REMOVE);
-        } else {
-            //noinspection deprecation
-            stopForeground(true);
-        }
+        stopForeground(STOP_FOREGROUND_REMOVE);
     }
 
     @Nullable
