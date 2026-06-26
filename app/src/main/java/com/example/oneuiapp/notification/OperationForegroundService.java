@@ -253,19 +253,17 @@ public class OperationForegroundService extends Service {
      * آمن للاستدعاء المتعدد — Android يتجاهل الإنشاء المكرر للقناة الموجودة.
      */
     private void ensureChannelCreated() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager nm =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (nm == null || nm.getNotificationChannel(CHANNEL_ID) != null) return;
+        NotificationManager nm =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (nm == null || nm.getNotificationChannel(CHANNEL_ID) != null) return;
 
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    getString(R.string.trash_notif_channel_name),
-                    NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription(getString(R.string.trash_notif_channel_desc));
-            channel.setShowBadge(false);
-            channel.setSound(null, null);
-            nm.createNotificationChannel(channel);
-        }
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                getString(R.string.trash_notif_channel_name),
+                NotificationManager.IMPORTANCE_LOW);
+        channel.setDescription(getString(R.string.trash_notif_channel_desc));
+        channel.setShowBadge(false);
+        channel.setSound(null, null);
+        nm.createNotificationChannel(channel);
     }
 }
