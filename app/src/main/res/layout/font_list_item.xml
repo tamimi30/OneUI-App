@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="14.0dip"
                 android:paddingBottom="14.0dip"
-                android:paddingHorizintal="4dp"
+                android:paddingHorizontal="4dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
