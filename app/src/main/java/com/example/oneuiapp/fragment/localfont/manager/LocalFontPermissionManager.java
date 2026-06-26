@@ -53,13 +53,11 @@ public class LocalFontPermissionManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // Android 11+: نحتاج MANAGE_EXTERNAL_STORAGE للوصول الكامل
             return Environment.isExternalStorageManager();
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Android 6-10: نحتاج READ_EXTERNAL_STORAGE
+        } else {
+            // Android 8-10: نحتاج READ_EXTERNAL_STORAGE
             return ContextCompat.checkSelfPermission(context, 
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         }
-        // أقل من Android 6: الصلاحيات تُمنح تلقائيًا
-        return true;
     }
     
     /**
@@ -69,8 +67,7 @@ public class LocalFontPermissionManager {
         if (fragment == null) {
             throw new IllegalStateException("Fragment is required to request permissions");
         }
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // Android 11+: طلب MANAGE_EXTERNAL_STORAGE
             if (!Environment.isExternalStorageManager()) {
                 if (listener != null) {
@@ -78,8 +75,8 @@ public class LocalFontPermissionManager {
                 }
                 requestManageStoragePermission();
             }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Android 6-10: طلب READ_EXTERNAL_STORAGE
+        } else {
+            // Android 8-10: طلب READ_EXTERNAL_STORAGE
             fragment.requestPermissions(
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                 STORAGE_PERMISSION_REQUEST_CODE
@@ -152,7 +149,7 @@ public class LocalFontPermissionManager {
     }
     
     public boolean shouldShowPermissionRationale() {
-        if (fragment == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (fragment == null) {
             return false;
         }
         return fragment.shouldShowRequestPermissionRationale(
