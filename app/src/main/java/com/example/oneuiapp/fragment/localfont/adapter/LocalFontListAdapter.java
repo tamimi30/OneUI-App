@@ -680,8 +680,11 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     android.text.Spannable highlighted = highlighter.highlightText(displayName, currentSearchQuery);
                     ((LocalFontViewHolder) holder).fontNameTextView.setText(highlighted);
                 } else {
+                CharSequence curr = ((LocalFontViewHolder) holder).fontNameTextView.getText();
+                if (curr instanceof android.text.Spanned || !displayName.contentEquals(curr)) {
                     ((LocalFontViewHolder) holder).fontNameTextView.setText(displayName);
                 }
+            }
 
                 // ★ الإصلاح: تحديث لون آخر خط تم فتحه بالتزامن مع البحث ★
                 boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
@@ -911,4 +914,4 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (adj < 0 || adj >= positionSections.size()) return 0;
         return positionSections.get(adj);
     }
-                        }
+    }
