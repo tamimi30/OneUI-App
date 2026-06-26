@@ -88,11 +88,7 @@ public class SelectableLinearLayout extends LinearLayout {
         if (checkMode == CHECK_MODE_OVERLAY && imageTargetId != 0) {
             imageTarget = findViewById(imageTargetId);
             if (imageTarget != null && checkDrawable != null) {
-                if (Build.VERSION.SDK_INT >= 23) {
-                    imageTarget.setForeground(checkDrawable);
-                } else {
-                    imageTarget.setBackground(checkDrawable);
-                }
+                imageTarget.setForeground(checkDrawable);
             }
         }
     }
@@ -141,9 +137,6 @@ public class SelectableLinearLayout extends LinearLayout {
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
             checkBox.setChecked(isSelected);
         } else if (checkMode == CHECK_MODE_OVERLAY && imageTarget != null) {
-            if (Build.VERSION.SDK_INT < 23) {
-                imageTarget.setImageAlpha(!isSelected ? 255 : 0);
-            }
             imageTarget.setSelected(isSelected);
         }
         setBackground(isSelected ? selectedHighlightColor : null);
