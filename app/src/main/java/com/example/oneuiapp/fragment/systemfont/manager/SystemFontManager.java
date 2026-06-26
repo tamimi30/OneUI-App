@@ -136,16 +136,14 @@ public class SystemFontManager {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private String extractAxesInfo(Font font) {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                android.graphics.fonts.FontVariationAxis[] axes = font.getAxes();
-                if (axes != null && axes.length > 0) {
-                    StringBuilder axesInfo = new StringBuilder();
-                    for (int i = 0; i < axes.length; i++) {
-                        if (i > 0) axesInfo.append(", ");
-                        axesInfo.append(axes[i].getTag());
-                    }
-                    return axesInfo.toString();
+            android.graphics.fonts.FontVariationAxis[] axes = font.getAxes();
+            if (axes != null && axes.length > 0) {
+                StringBuilder axesInfo = new StringBuilder();
+                for (int i = 0; i < axes.length; i++) {
+                    if (i > 0) axesInfo.append(", ");
+                    axesInfo.append(axes[i].getTag());
                 }
+                return axesInfo.toString();
             }
         } catch (Exception e) {
             Log.w(TAG, "Error extracting axes info: " + e.getMessage());
