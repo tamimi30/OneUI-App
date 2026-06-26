@@ -391,7 +391,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         mSettingsViewModel.getFontPreviewEnabled().observe(this, enabled -> {
             if (mAdapter != null && isAdded()) {
-                mAdapter.smartUpdate();
+                mAdapter.setFontPreviewEnabled(enabled);
                 Log.d(TAG, "Font preview setting changed: " + enabled);
             }
         });
