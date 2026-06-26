@@ -191,7 +191,7 @@ public class HomeFragment extends Fragment {
     }
 
     private boolean isInMultiWindowMode() {
-        return Build.VERSION.SDK_INT >= 24 && requireActivity().isInMultiWindowMode();
+        return requireActivity().isInMultiWindowMode();
     }
 
     private class AppBarOffsetListener implements AppBarLayout.OnOffsetChangedListener {
