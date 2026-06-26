@@ -211,11 +211,8 @@ public class LanguageHelper {
                 return new Locale("en");
             case SettingsHelper.LANGUAGE_SYSTEM:
             default:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    return Resources.getSystem().getConfiguration().getLocales().get(0);
-                } else {
-                    return Resources.getSystem().getConfiguration().locale;
-                }
+
+                return android.content.res.Resources.getSystem().getConfiguration().getLocales().get(0);
         }
     }
 }
