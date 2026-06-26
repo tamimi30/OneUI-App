@@ -80,14 +80,12 @@ public class FontSizeDialog {
         });
 
         // ★ 3. منع ظهور مؤشر الإدراج (القطرة) في النظام ★
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            fontSizeValue.setCustomInsertionActionModeCallback(new android.view.ActionMode.Callback() {
-                @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
-                @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
-                @Override public boolean onActionItemClicked(android.view.ActionMode mode, android.view.MenuItem item) { return false; }
-                @Override public void onDestroyActionMode(android.view.ActionMode mode) {}
-            });
-        }
+        fontSizeValue.setCustomInsertionActionModeCallback(new android.view.ActionMode.Callback() {
+            @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
+            @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
+            @Override public boolean onActionItemClicked(android.view.ActionMode mode, android.view.MenuItem item) { return false; }
+            @Override public void onDestroyActionMode(android.view.ActionMode mode) {}
+        });
 
         fontSizeValue.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
