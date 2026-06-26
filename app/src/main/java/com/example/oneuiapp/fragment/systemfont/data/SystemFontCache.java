@@ -212,15 +212,9 @@ public class SystemFontCache {
             return null;
         }
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return loadTypefaceUsingBuilder(fontFile, weight, ttcIndex);
-        } else {
-            return loadTypefaceFromFile(fontPath);
-        }
+        return loadTypefaceUsingBuilder(fontFile, weight, ttcIndex);
     }
-    
-    @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.O)
-    private Typeface loadTypefaceUsingBuilder(File fontFile, float weight, int ttcIndex) {
+        private Typeface loadTypefaceUsingBuilder(File fontFile, float weight, int ttcIndex) {
         try {
             android.graphics.fonts.Font.Builder fontBuilder = 
                 new android.graphics.fonts.Font.Builder(fontFile);
