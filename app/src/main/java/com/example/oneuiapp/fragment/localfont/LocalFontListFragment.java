@@ -894,10 +894,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
              */
             @Override
             public void onFavoriteRequested(List<Integer> positions, boolean addToFavorites) {
-                // تأخير العملية 350 مللي ثانية لانتظار انتهاء أنيميشن إغلاق وضع التحديد
-                mMainHandler.postDelayed(() -> {
-                    handleFavoriteAction(positions, addToFavorites);
-                }, 350);
+                handleFavoriteAction(positions, addToFavorites);
             }
         });
 
@@ -1267,10 +1264,12 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         // toggleFavoritesBatch يستدعي updateFavoriteStatusBatch في Repository
         // الذي يُحدّث Room → LiveData يُحدَّث تلقائياً → مراقب getFontsLiveData()
         // يُجدّد mCurrentFontsList → notifyAllFavoritesChanged() يُحدّث الأيقونات بصحة تامة.
-        mViewModel.toggleFavoritesBatch(paths, addToFavorites, () -> {
-            // تم حذف الاستدعاء الاحترازي لمنع الـ Race Condition.
-            // الـ LiveData ستتولى تحديث النجمة بأنيميشن نظيف مرة واحدة فقط.
-        });
+        mMainHandler.postDelayed(() -> {
+            mViewModel.toggleFavoritesBatch(paths, addToFavorites, () -> {
+                // تم حذف الاستدعاء الاحترازي لمنع الـ Race Condition.
+                // الـ LiveData ستتولى تحديث النجمة بأنيميشن نظيف مرة واحدة فقط.
+            });
+        }, 350);
     }
 
     public boolean handleBackPressed() {
