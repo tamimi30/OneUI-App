@@ -291,13 +291,8 @@ public class SettingsHelper {
 
     /**
      * الحصول على Locale النظام
-     */
-    private static Locale getSystemLocale() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Resources.getSystem().getConfiguration().getLocales().get(0);
-        } else {
-            return Resources.getSystem().getConfiguration().locale;
-        }
+     */    private static Locale getSystemLocale() {
+        return Resources.getSystem().getConfiguration().getLocales().get(0);
     }
 
     /**
