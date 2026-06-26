@@ -108,12 +108,7 @@ public class LanguageHelper {
         // أما TextUtils.getLayoutDirectionFromLocale() فيحسب الاتجاه مباشرةً
         // من الـ Locale النهائي المُحلَّل في newConfig، مما يضمن الصحة دائماً
         // بما في ذلك حالة System Default.
-        Locale resolvedLocale;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            resolvedLocale = newConfig.getLocales().get(0);
-        } else {
-            resolvedLocale = newConfig.locale;
-        }
+        Locale resolvedLocale = newConfig.getLocales().get(0);
 
         int newDirection = android.text.TextUtils.getLayoutDirectionFromLocale(resolvedLocale);
         activity.getWindow().getDecorView().setLayoutDirection(newDirection);
@@ -136,12 +131,7 @@ public class LanguageHelper {
         if (rootView == null || newConfig == null) return;
 
         // ★ نفس المنطق: نشتق الاتجاه من الـ Locale الفعلي لضمان صحة System Default ★
-        Locale resolvedLocale;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            resolvedLocale = newConfig.getLocales().get(0);
-        } else {
-            resolvedLocale = newConfig.locale;
-        }
+        Locale resolvedLocale = newConfig.getLocales().get(0);
 
         int newDirection = android.text.TextUtils.getLayoutDirectionFromLocale(resolvedLocale);
         rootView.setLayoutDirection(newDirection);
@@ -186,12 +176,7 @@ public class LanguageHelper {
     public static int resolveLayoutDirection(Configuration newConfig) {
         if (newConfig == null) return View.LAYOUT_DIRECTION_LTR;
 
-        Locale resolvedLocale;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            resolvedLocale = newConfig.getLocales().get(0);
-        } else {
-            resolvedLocale = newConfig.locale;
-        }
+        Locale resolvedLocale = newConfig.getLocales().get(0);
 
         return android.text.TextUtils.getLayoutDirectionFromLocale(resolvedLocale);
     }
