@@ -14,21 +14,21 @@
         android:id="@+id/selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="?attr/listPreferredItemHeightSmall"
         android:paddingTop="14.0dip"
         android:paddingBottom="14.0dip"
-        android:paddingStart="20.0dip"
-        android:paddingEnd="20.0dip"
+        android:paddingStart="7.0dip"
+        android:paddingEnd="7.0dip"
         android:gravity="center_vertical"
         android:theme="@style/AppTheme"
         android:orientation="horizontal"
         app:checkMode="checkBox"
-        app:checkableButtonSpacing="30.0dip">
+        app:checkableButtonSpacing="17.0dip">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -37,29 +37,39 @@
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
                 android:ellipsize="end"
+                android:layout_marginBottom="3sp"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:maxLines="1"
                 tools:text="Font Name Example" />
-
-            <TextView
-                android:id="@+id/font_item_weight_width"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                tools:text="Bold, Condensed" />
-
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                    
+                <TextView
+                    android:id="@+id/font_item_weight_width"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:layout_marginEnd="17dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    tools:text="Bold, Condensed" />
         
-        <ImageView
-            android:id="@+id/font_item_favorite_icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_favorite"
-            android:visibility="invisible"
-            tools:visibility="visible" />
+                <ImageView
+                    android:id="@+id/font_item_favorite_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_favorite"
+                    android:visibility="invisible"
+                    tools:visibility="visible" />
+                    
+            </LinearLayout>     
+         
+        </LinearLayout>        
 
     </com.example.oneuiapp.widget.SelectableLinearLayout>
 
