@@ -51,14 +51,14 @@
                     android:layout_marginBottom="15dp"
                     android:text="@string/favorites_empty_title"
                     android:textSize="17sp"
-                    android:textColor="@color/sesl_description_text_color" />
+                    android:textColor="@color/drawer_icon_color" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/empty_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:lineSpacingExtra="5dp"
+                    android:lineSpacingExtra="6dp"
                     android:text="@string/favorites_empty_message"
                     android:textSize="13sp"
                     android:textColor="?android:attr/textColorSecondary" />
@@ -70,7 +70,7 @@
                     android:gravity="center"
                     android:text="@string/no_results_found"
                     android:textSize="17sp"
-                    android:textColor="@color/sesl_description_text_color"
+                    android:textColor="@color/drawer_icon_color"
                     android:visibility="gone" />
 
             </LinearLayout>
