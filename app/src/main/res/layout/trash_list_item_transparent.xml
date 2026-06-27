@@ -8,40 +8,37 @@
     style="@style/CardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"
     android:orientation="vertical">
 
     <com.example.oneuiapp.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="?attr/listPreferredItemHeightSmall"
         android:theme="@style/AppTheme"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:animateLayoutChanges="true"
-        android:paddingTop="14dp"
-        android:paddingBottom="14dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
+        android:paddingTop="14.0dip"
+        android:paddingBottom="14.0dip"
+        android:paddingStart="14.0dip"
+        android:paddingEnd="14.0dip"
         app:checkMode="checkBox"
-        app:checkableButtonSpacing="14dp">
-
+        app:checkableButtonSpacing="24.0dip">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/trash_item_font_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:includeFontPadding="false"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:layout_marginBottom="6sp"
-                android:textSize="16sp"
-                android:textColor="?android:attr/textColorPrimary"
+                android:textAppearance="?attr/textAppearanceListItem"
                 android:textStyle="bold"
                 tools:text="Cairo Regular" />
 
@@ -49,11 +46,9 @@
                 android:id="@+id/trash_item_days_remaining"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:includeFontPadding="false"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="13sp"
-                android:textColor="?android:attr/textColorSecondary"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 tools:text="28 يوماً" />
 
         </LinearLayout>
