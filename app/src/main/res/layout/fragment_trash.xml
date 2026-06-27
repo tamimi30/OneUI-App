@@ -53,14 +53,14 @@
                 android:layout_marginBottom="15dp"
                 android:text="@string/trash_empty_title"
                 android:textSize="17sp"
-                android:textColor="@color/sesl_description_text_color" />
+                android:textColor="@color/drawer_icon_color" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/empty_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:lineSpacingExtra="5dp"
+                android:lineSpacingExtra="6dp"
                 android:text="@string/trash_empty_description"
                 android:textSize="13sp"
                 android:textColor="?android:attr/textColorSecondary" />
