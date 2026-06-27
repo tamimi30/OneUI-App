@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:gravity="center_vertical"
     android:background="@drawable/list_ripple">
     
     <com.example.oneuiapp.widget.SelectableLinearLayout
@@ -19,7 +20,7 @@
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
         android:orientation="horizontal"
-        app:checkableButtonSpacing="20.0dip"
+        app:checkableButtonSpacing="24.0dip"
         android:animateLayoutChanges="true"
         android:gravity="center_vertical"
         app:checkMode="checkBox">
