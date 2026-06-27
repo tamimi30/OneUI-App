@@ -3,6 +3,8 @@
     
     <color name="primary_text_color">#fffafafa</color>
 
+    <color name="sort_bar_text_color">#ffa9a9a9</color>
+
     <color name="drawer_icon_color">#cccccc</color>
 
     <color name="primary_text_color_2">#E5E5E5</color>
