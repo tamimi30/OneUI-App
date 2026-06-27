@@ -47,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textSize="17sp"
-                    android:textColor="@color/sesl_description_text_color" />
+                    android:textColor="@color/drawer_icon_color" />
 
             </LinearLayout>
 
