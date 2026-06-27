@@ -21,8 +21,8 @@
         android:animateLayoutChanges="true"
         android:paddingTop="14.0dip"
         android:paddingBottom="14.0dip"
-        android:paddingStart="14.0dip"
-        android:paddingEnd="14.0dip"
+        android:paddingStart="17.0dip"
+        android:paddingEnd="17.0dip"
         app:checkMode="checkBox"
         app:checkableButtonSpacing="24.0dip">
 
