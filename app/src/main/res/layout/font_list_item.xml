@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:layout_marginBottom="3sp"
+                    android:layout_marginBottom="4sp"
                     android:includeFontPadding="false"
                     android:textAppearance="?attr/textAppearanceListItem"
                     tools:text="Font Name Example" />
