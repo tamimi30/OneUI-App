@@ -10,16 +10,16 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.example.oneuiapp.widget.SelectableLinearLayout
+    <LinearLayout
         android:id="@+id/selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="14.0dip"
         android:gravity="center_vertical"
+        android:paddingEnd="14.0dip"
         android:theme="@style/AppTheme"
-        android:orientation="horizontal"
-        app:checkMode="checkBox"
-        app:checkableButtonSpacing="19.0dip">
+        android:animateLayoutChanges="true"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,6 +71,6 @@
          
         </LinearLayout>        
 
-    </com.example.oneuiapp.widget.SelectableLinearLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
