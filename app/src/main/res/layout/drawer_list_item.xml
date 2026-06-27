@@ -28,7 +28,7 @@
                 android:layout_height="28dp"
                 android:layout_gravity="center"
                 android:scaleType="fitXY"
-                app:tint="@color/oui_primary_text_color" />
+                app:tint="@color/drawer_icon_color" />
 
         </FrameLayout>
 
@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:textColor="@color/oui_primary_text_color"
+                android:textColor="?android:attr/textColorPrimary"
                 android:singleLine="true"
                 android:ellipsize="end" />
 
