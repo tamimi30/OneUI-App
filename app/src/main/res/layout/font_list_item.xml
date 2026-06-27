@@ -9,18 +9,27 @@
     android:orientation="vertical"
     android:background="@drawable/list_ripple">
     
-    <com.example.oneuiapp.widget.SelectableLinearLayout
+    <LinearLayout
         android:id="@+id/selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/listPreferredItemHeightSmall"
         android:orientation="horizontal"
+        android:animateLayoutChanges="true"    
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        app:checkableButtonSpacing="20.0dip"
-        android:gravity="center_vertical"
-        app:checkMode="checkBox">
+        android:gravity="center_vertical">
         	
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="?android:listPreferredItemPaddingStart"
+            android:background="@null"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
+            	
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -84,6 +93,6 @@
 
         </LinearLayout>  
         
-    </com.example.oneuiapp.widget.SelectableLinearLayout>
+    </LinearLayout>
     
 </dev.oneuiproject.oneui.widget.RoundLinearLayout>
