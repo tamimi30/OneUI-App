@@ -9,6 +9,8 @@
     <color name="sesl_action_bar_background_color_light">#f1f1f3</color>
     <color name="sesl_list_ripple_color_dark">#29ffffff</color>
     <color name="sesl_list_ripple_color_light">#1a000000</color> -->
+
+    <color name="drawer_icon_color">#4d4d52</color>
     
     <color name="primary_text_color">#ff010101</color>
 
