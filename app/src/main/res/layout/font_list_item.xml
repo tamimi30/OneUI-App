@@ -35,7 +35,7 @@
                 android:id="@+id/font_item_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
+                
                 android:maxLines="1"
                 android:paddingBottom="4sp"
                 android:includeFontPadding="false"
@@ -52,7 +52,7 @@
                     android:id="@+id/font_item_weight_width"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
+                    
                     android:maxLines="1"
                     android:includeFontPadding="false"
                     android:layout_marginEnd="17dp"
