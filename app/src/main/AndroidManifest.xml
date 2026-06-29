@@ -95,7 +95,35 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="font/*" />
+                <data android:mimeType="application/x-font-ttf" />
+                <data android:mimeType="application/x-font-otf" />
+                <data android:mimeType="application/font-woff" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.ttf" />
+                <data android:pathPattern=".*\\.otf" />
+                <data android:pathPattern=".*\\.ttc" />
+                <data android:pathPattern=".*\\.TTF" />
+                <data android:pathPattern=".*\\.OTF" />
+                <data android:pathPattern=".*\\.TTC" />
+            </intent-filter>
         </activity>
+
 
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
         <activity
