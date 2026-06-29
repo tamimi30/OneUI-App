@@ -593,9 +593,10 @@ public class NavManager {
                 // ★ الخطوة الثالثة: مقارنة AppScreen بدلاً من مقارنة رقم الفهرس ★
                 boolean isSystemFont = (sourceScreen == AppScreen.SYSTEM_FONTS);
                 if (fontPath != null && fontPath.startsWith("content://")) {
-                    // ★ خطوط URI: لا يوجد weightWidthLabel من القائمة — يُستخرج التنوع تلقائياً ★
-                    fontViewerFragment.loadFontFromUri(Uri.parse(fontPath), realName);
-                } else {
+                // ★ خطوط URI: لا يوجد weightWidthLabel من القائمة — يُستخرج التنوع تلقائياً ★
+                fontViewerFragment.loadFontFromUri(Uri.parse(fontPath), fileName);
+            } else {
+
                     // ★ التعديل: تمرير weightWidthLabel مباشرةً للفراغمنت ★
                     fontViewerFragment.loadFontFromPath(fontPath, fileName, realName,
                                                         ttcIndex, isSystemFont, weightWidthLabel);
