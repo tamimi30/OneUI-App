@@ -45,6 +45,7 @@ import com.example.oneuiapp.fragment.fontviewer.manager.FontViewerPreferenceMana
 import com.example.oneuiapp.fragment.systemfont.data.SystemFontCache;
 import com.example.oneuiapp.metadata.FontMetadataExtractor;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
+import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
 
 /**
  * FontViewerFragment - Clean DataStore version
@@ -706,9 +707,11 @@ public class FontViewerFragment extends Fragment {
 
     public void loadFontFromUri(Uri uri, String fileName) {
         originalFontPath = storageManager.getRealPathFromUri(uri);
+        // حل مشكلة المسار: إذا فشل استخراج المسار، نستخدم الـ URI نفسه كمسار أصلي للعرض
+        if (originalFontPath == null || originalFontPath.isEmpty()) {
+            originalFontPath = android.net.Uri.decode(uri.toString());
+        }
         isSystemFont     = false;
-        // ★ لا label متاح عند التحميل من URI (خارج القائمة) ★
-        currentWeightWidthLabel = null;
 
         bgExecutor.execute(() -> {
             File copiedFont = storageManager.copyFontForViewing(uri, fileName);
@@ -718,8 +721,10 @@ public class FontViewerFragment extends Fragment {
 
                 try {
                     realName = FontMetadataExtractor.extractFontName(copiedFont, 0);
+                    // حل مشكلة الوزن والعرض: نقوم باستخراجهما فوراً للخطوط المفتوحة من الخارج
+                    currentWeightWidthLabel = FontWeightWidthExtractor.extract(copiedFont, 0);
                 } catch (Exception e) {
-                    Log.e(TAG, "Failed to extract font name from URI", e);
+                    Log.e(TAG, "Failed to extract font metadata from URI", e);
                 }
 
                 // If name extraction failed
