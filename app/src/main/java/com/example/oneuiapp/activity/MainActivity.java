@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.core.splashscreen.SplashScreen;
@@ -44,6 +45,8 @@ import com.example.oneuiapp.widget.TextDrawable;
 import com.example.oneuiapp.fragment.settings.SettingsActivity;
 import com.example.oneuiapp.fragment.home.HomeActivity;
 import com.example.oneuiapp.notification.BatchOperationState;
+import com.example.oneuiapp.utils.ExternalFontIntentHandler;
+
 /**
  * MainActivity - معدّل لعرض العناوين بشكل صحيح
  * العنوان الرئيسي: الاسم الحقيقي للخط
@@ -302,6 +305,17 @@ public class MainActivity extends BaseActivity
         mSearchCoordinator.handleSearchIntent(intent);
 
         if (intent != null) {
+            // ★ معالجة فتح الخط مباشرة من متصفح الملفات الخارجي ★
+            if (ExternalFontIntentHandler.isFontViewIntent(intent)) {
+                Uri fontUri = intent.getData();
+                String fileName = ExternalFontIntentHandler.getFileName(this, fontUri);
+                
+                if (mNavManager != null) {
+                    mNavManager.handleFontSelected(fontUri.toString(), null, fileName, 0, null);
+                }
+                return;
+            }
+
             // ★ التحقق مما إذا كان الدخول عبر الإشعار
             boolean fromNotif = intent.getBooleanExtra("from_notification", false);
             if (fromNotif) {
