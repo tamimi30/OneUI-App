@@ -732,7 +732,7 @@ public class FontViewerFragment extends Fragment {
                     String finalFileName = fileName != null ? fileName : copiedFont.getName();
                     realName = getString(R.string.unknown_font);
 
-                    preferenceManager.saveLastViewedFont(copiedFont.getAbsolutePath(), finalFileName, realName);
+                    // ★ حل مشكلة تعلق الخط الخارجي: منعنا حفظ الخط الخارجي كـ "آخر خط مستخدم" ★
 
                     final String finalRealName = realName;
                     mainHandler.post(() -> {
@@ -746,7 +746,7 @@ public class FontViewerFragment extends Fragment {
                     final String finalFileName = fileName != null ? fileName : copiedFont.getName();
                     final String finalRealName = realName;
 
-                    preferenceManager.saveLastViewedFont(copiedFont.getAbsolutePath(), finalFileName, finalRealName);
+                    // ★ حل مشكلة تعلق الخط الخارجي: منعنا حفظ الخط الخارجي كـ "آخر خط مستخدم" ★
 
                     mainHandler.post(() -> {
                         loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
