@@ -297,6 +297,18 @@ public class FontViewerStorageManager {
             }
         }
 
+        // ★ حل مشكلة المسار الخارجي: استخراج المسار الحقيقي من مزود المحتوى ★
+        if (realPath == null && "content".equalsIgnoreCase(uri.getScheme())) {
+            try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int columnIndex = cursor.getColumnIndexOrThrow("_data");
+                    realPath = cursor.getString(columnIndex);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to get real path from content resolver", e);
+            }
+        }
+
         if (realPath == null) {
             realPath = uri.getPath();
         }
