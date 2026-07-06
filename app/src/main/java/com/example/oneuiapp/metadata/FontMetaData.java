@@ -255,12 +255,12 @@ public class FontMetaData {
             raf.seek(fontOffset + 4);
             int numTables = raf.readUnsignedShort();
             raf.skipBytes(6);
-            
-            long os2TableOffset = -1;
+                        long os2TableOffset = -1;
             long headTableOffset = -1;
             long maxpTableOffset = -1;
             long cmapTableOffset = -1;
             long fvarTableOffset = -1;
+            boolean isHinted = false;
             
             for (int i = 0; i < numTables; i++) {
                 byte[] tag = new byte[4];
@@ -281,7 +281,15 @@ public class FontMetaData {
                     cmapTableOffset = offset;
                 } else if ("fvar".equals(tagStr)) {
                     fvarTableOffset = offset;
+                } else if ("fpgm".equals(tagStr) || "prep".equals(tagStr)) {
+                    isHinted = true;
                 }
+            }
+            
+            if (isHinted) {
+                data.put("Hinted", "Improved");
+            } else {
+                data.put("Hinted", "Not improved");
             }
             
             if (fvarTableOffset != -1) {
