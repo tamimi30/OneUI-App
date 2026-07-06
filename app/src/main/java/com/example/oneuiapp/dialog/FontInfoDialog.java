@@ -39,7 +39,9 @@ public class FontInfoDialog {
             return;
         }
 
-        int secondaryColor = context.getResources().getColor(R.color.secondary_text_color, context.getTheme());
+        android.content.res.TypedArray ta = context.obtainStyledAttributes(new int[]{android.R.attr.textColorSecondary});
+        int secondaryColor = ta.getColor(0, 0);
+        ta.recycle();
         String secondaryColorHex = String.format("#%06X", (0xFFFFFF & secondaryColor));
 
         StringBuilder htmlBuilder = new StringBuilder();
@@ -122,10 +124,9 @@ public class FontInfoDialog {
                 if (hasContent) {
                     htmlBuilder.append("<br><br>");
                 }
-
-                htmlBuilder.append("<font color='").append(secondaryColorHex).append("'>")
+                htmlBuilder.append("<small><font color='").append(secondaryColorHex).append("'>")
                         .append(displayName)
-                        .append("</font><br>");
+                        .append("</font></small><br>");
 
                 if (isUrl(value)) {
                     htmlBuilder.append("<a href='").append(value).append("'>")
