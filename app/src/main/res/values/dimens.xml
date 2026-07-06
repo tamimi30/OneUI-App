@@ -19,6 +19,9 @@
 
     <dimen name="sesl_button_corner_radius">26dp</dimen>
 
+    <dimen name="sesl_dialog_title_padding_bottom">24.0dip</dimen>
+    <dimen name="sesl_dialog_title_text_size">17.0sp</dimen>
+
 
    <!-- <dimen name="sesl_appbar_extended_subtitle_text_size">15sp</dimen>-->
    <!-- <dimen name="sesl_appbar_extended_title_and_subtitle_padding">4dp</dimen> -->
