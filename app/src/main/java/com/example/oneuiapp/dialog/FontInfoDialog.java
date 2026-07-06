@@ -166,7 +166,7 @@ public class FontInfoDialog {
 
         TextView messageView = dialog.findViewById(android.R.id.message);
         if (messageView != null) {
-            messageView.setTextSize(16);
+            messageView.setTextSize(18);
             messageView.setMovementMethod(LinkMovementMethod.getInstance());
             Linkify.addLinks(messageView, Linkify.WEB_URLS | Linkify.EMAIL_ADDRESSES);
             messageView.setLinkTextColor(context.getResources().getColor(R.color.blue_text_color, context.getTheme()));
