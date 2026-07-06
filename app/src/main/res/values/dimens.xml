@@ -22,6 +22,7 @@
     <dimen name="sesl_dialog_title_padding_bottom">20.0dip</dimen>
     <dimen name="sesl_dialog_title_padding_top">20.0dip</dimen>
     <dimen name="sesl_dialog_title_text_size">18.0sp</dimen>
+    <item name="sesl_dialog_padding_vertical">20.0dip</item>
 
 
    <!-- <dimen name="sesl_appbar_extended_subtitle_text_size">15sp</dimen>-->
