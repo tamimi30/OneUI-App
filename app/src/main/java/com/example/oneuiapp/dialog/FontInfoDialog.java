@@ -39,11 +39,12 @@ public class FontInfoDialog {
             return;
         }
 
-        android.content.res.TypedArray ta = context.obtainStyledAttributes(new int[]{android.R.attr.textColorSecondary});
+        android.content.res.TypedArray ta = context.obtainStyledAttributes(new int[]{android.R.attr.textColorSecondary, android.R.attr.textColorPrimary});
         int secondaryColor = ta.getColor(0, 0);
+        int primaryColor = ta.getColor(1, 0);
         ta.recycle();
         String secondaryColorHex = String.format("#%06X", (0xFFFFFF & secondaryColor));
-
+        String primaryColorHex = String.format("#%06X", (0xFFFFFF & primaryColor));
         StringBuilder htmlBuilder = new StringBuilder();
 
         String[] orderedKeys = {
@@ -134,7 +135,9 @@ public class FontInfoDialog {
                             .append("</a>");
                 } else {
                     String escapedValue = android.text.TextUtils.htmlEncode(value);
-                    htmlBuilder.append(escapedValue);
+                    htmlBuilder.append("<font color='").append(primaryColorHex).append("'>")
+                            .append(escapedValue)
+                            .append("</font>");
                 }
 
                 hasContent = true;
