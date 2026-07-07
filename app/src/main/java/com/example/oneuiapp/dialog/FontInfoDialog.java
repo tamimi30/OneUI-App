@@ -55,7 +55,7 @@ public class FontInfoDialog {
                 "Weight",
                 "Width",
                 "Hinted",
-                "SupportedLanguages",
+                "SupportedScripts",
                 "GlyphCount",
                 "UnitsPerEm",
                 "VariableInstances",
