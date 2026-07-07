@@ -60,12 +60,11 @@ public class TranslationService {
             try {
                 Map<String, String> translatedData = new HashMap<>(metadata);
                 
+
+                // القيم التي سيتم إرسالها للترجمة (تم استثناء الأسماء، العائلة، الوزن، العرض، الخ)
                 String[] fieldsToTranslate = {
-                    "Copyright", 
-                    "Trademark", 
-                    "Description", 
-                    "LicenseDescription", 
-                    "SupportedScripts"
+                    "Hinted", "Designer", "Manufacturer", "Copyright", 
+                    "Trademark", "Description", "LicenseDescription", "SupportedScripts"
                 };
                 
                 for (String field : fieldsToTranslate) {
