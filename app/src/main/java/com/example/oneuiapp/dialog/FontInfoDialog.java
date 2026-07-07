@@ -7,6 +7,7 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.widget.TextView;
+import android.text.BidiFormatter;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -76,34 +77,25 @@ public class FontInfoDialog {
                 "Path"
         };
 
-        String[] displayNames = {
-                "Full name",
-                "Post script name",
-                "Family",
-                "Sub family",
-                "Weight",
-                "Width",
-                "Improved text clarity",
-                "Supported languages",
-                "Glyph count",
-                "Font resolution",
-                "Variable instances",
-                "Version",
-                "Modified date",
-                "Created date",
-                "Designer",
-                "Designer URL",
-                "Manufacturer",
-                "Copyright",
-                "Vendor URL",
-                "Vendor ID",
-                "Trademark",
-                "Description",
-                "License description",
-                "License URL",
-                "File name",
-                "Path"
+        // تحديد لغة الجهاز الحالية لترجمة العناوين فورياً
+        boolean isArabic = context.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("ar");
+
+        String[] displayNames = isArabic ? new String[]{
+                "الاسم الكامل", "اسم PostScript", "العائلة", "العائلة الفرعية", "الوزن",
+                "العرض", "تحسين وضوح النص", "اللغات المدعومة", "عدد الرموز", "دقة الخط",
+                "المتغيرات", "الإصدار", "تاريخ التعديل", "تاريخ الإنشاء", "المصمم",
+                "رابط المصمم", "الشركة المصنعة", "حقوق النشر", "رابط المورد", "معرف المورد",
+                "العلامة التجارية", "الوصف", "وصف الترخيص", "رابط الترخيص", "اسم الملف", "المسار"
+        } : new String[]{
+                "Full name", "Post script name", "Family", "Sub family", "Weight",
+                "Width", "Improved text clarity", "Supported languages", "Glyph count", "Font resolution",
+                "Variable instances", "Version", "Modified date", "Created date", "Designer",
+                "Designer URL", "Manufacturer", "Copyright", "Vendor URL", "Vendor ID",
+                "Trademark", "Description", "License description", "License URL", "File name", "Path"
         };
+
+        // أداة لضبط اتجاه النصوص المختلطة (عربي/إنجليزي)
+        BidiFormatter bidiFormatter = BidiFormatter.getInstance();
 
         boolean hasContent = false;
 
@@ -135,8 +127,10 @@ public class FontInfoDialog {
                             .append("</a>");
                 } else {
                     String escapedValue = android.text.TextUtils.htmlEncode(value);
+                    // تغليف النص لضمان قراءة صحيحة للنصوص المختلطة
+                    String bidiValue = bidiFormatter.unicodeWrap(escapedValue);
                     htmlBuilder.append("<font color='").append(primaryColorHex).append("'>")
-                            .append(escapedValue)
+                            .append(bidiValue)
                             .append("</font>");
                 }
 
