@@ -1596,13 +1596,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     // ════════════════════════════════════════════════════════════════════════
     private void setDrawerLocked(boolean locked) {
         if (mDrawerLayout == null) return;
-        try {
-            mDrawerLayout.setDrawerLockMode(locked ? 1 : 0);
-        } catch (Exception e) {
-            androidx.drawerlayout.widget.DrawerLayout inner = findInnerDrawer(mDrawerLayout);
-            if (inner != null) {
-                inner.setDrawerLockMode(locked ? 1 : 0);
-            }
+        androidx.drawerlayout.widget.DrawerLayout inner = findInnerDrawer(mDrawerLayout);
+        if (inner != null) {
+            inner.setDrawerLockMode(locked ? 1 : 0);
         }
     }
 
