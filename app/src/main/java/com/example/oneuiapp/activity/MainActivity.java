@@ -1042,28 +1042,19 @@ public class MainActivity extends BaseActivity
         dialog.show();
     }
 
-    private android.os.Handler loadingHandler = new android.os.Handler(android.os.Looper.getMainLooper());
-    private Runnable showLoadingRunnable = () -> {
+    private void showLoadingDialog() {
+        dismissLoadingDialog();
         try {
-            if (!isFinishing() && !isDestroyed()) {
-                loadingDialog = new ProgressDialog(MainActivity.this);
-                loadingDialog.setMessage("Translating...");
-                loadingDialog.setCancelable(false);
-                loadingDialog.show();
-            }
+            loadingDialog = new ProgressDialog(this);
+            loadingDialog.setMessage("Translating...");
+            loadingDialog.setCancelable(false);
+            loadingDialog.show();
         } catch (Exception e) {
             android.util.Log.e("MainActivity", "Failed to show loading dialog", e);
         }
-    };
-
-    private void showLoadingDialog() {
-        dismissLoadingDialog();
-        // تأخير 300 ملي ثانية. إذا كانت الترجمة في الكاش (سريعة)، سيتم استدعاء dismiss قبل أن ينتهي التأخير ولن يظهر الوميض
-        loadingHandler.postDelayed(showLoadingRunnable, 300);
     }
 
     private void dismissLoadingDialog() {
-        loadingHandler.removeCallbacks(showLoadingRunnable);
         if (loadingDialog != null && loadingDialog.isShowing()) {
             try {
                 loadingDialog.dismiss();
