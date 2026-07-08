@@ -300,6 +300,11 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         mLocalFontDirectoryPicker.setDirectorySelectionListener(new LocalFontDirectoryPicker.DirectorySelectionListener() {
             public void onDirectorySelected(String directoryPath) {
                 if (mViewModel != null) {
+                    // طي الـ CollapsingToolbar لجعل مؤشر التحميل في المنتصف
+                    if (mAppBarLayout != null) {
+                        mAppBarLayout.setExpanded(false, true);
+                    }
+
                     // ❌ تم حذف التفريغ اليدوي للقائمة من هنا (إصلاح مشكلة الشاشة الفارغة)
                     // السبب: عند اختيار نفس المجلد، لا يُرسل Room تحديثاً جديداً عبر LiveData
                     // لأنه لا يجد تغييراً في البيانات. وبما أن mCurrentFontsList.clear() فرّغ
@@ -520,12 +525,18 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         mViewModel.getIsLoadingLiveData().observe(this, isLoading -> {
             if (isLoading != null && isLoading) {
                 mUIManager.showLoadingState();
+                setDrawerLocked(true); // حظر درج التنقل أثناء التحميل
             } else {
                 mUIManager.hideLoadingState();
                 // ✅ إجبار الواجهة على إعادة رسم القائمة بعد اختفاء مؤشر التحميل
-                // (يحل مشكلة عدم الإظهار إذا لم يرسل Room أي تحديث جديد،
-                //  وهو ما يحدث عند اختيار نفس المجلد لأن البيانات لم تتغير)
                 refreshAdapterData();
+                setDrawerLocked(false); // فك حظر درج التنقل
+                
+                // أنيميشن الظهور والتلاشي عند انتهاء التحميل
+                if (mRecyclerView != null && mRecyclerView.getVisibility() == View.VISIBLE) {
+                    mRecyclerView.setAlpha(0f);
+                    mRecyclerView.animate().alpha(1f).setDuration(400).start();
+                }
             }
         });
 
@@ -1579,4 +1590,32 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
         if (mExecutor != null)    mExecutor.shutdown();
     }
+    
+        // ════════════════════════════════════════════════════════════════════════
+    // دوال حظر درج التنقل
+    // ════════════════════════════════════════════════════════════════════════
+    private void setDrawerLocked(boolean locked) {
+        if (mDrawerLayout == null) return;
+        try {
+            mDrawerLayout.setDrawerLockMode(locked ? 1 : 0);
+        } catch (Exception e) {
+            androidx.drawerlayout.widget.DrawerLayout inner = findInnerDrawer(mDrawerLayout);
+            if (inner != null) {
+                inner.setDrawerLockMode(locked ? 1 : 0);
+            }
+        }
+    }
+
+    private androidx.drawerlayout.widget.DrawerLayout findInnerDrawer(android.view.ViewGroup parent) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            android.view.View child = parent.getChildAt(i);
+            if (child instanceof androidx.drawerlayout.widget.DrawerLayout) return (androidx.drawerlayout.widget.DrawerLayout) child;
+            if (child instanceof android.view.ViewGroup) {
+                androidx.drawerlayout.widget.DrawerLayout result = findInnerDrawer((android.view.ViewGroup) child);
+                if (result != null) return result;
+            }
+        }
+        return null;
+    }
+
                             }
