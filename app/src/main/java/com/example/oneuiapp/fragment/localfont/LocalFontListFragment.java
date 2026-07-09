@@ -525,7 +525,10 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         mViewModel.getIsLoadingLiveData().observe(this, isLoading -> {
             if (isLoading != null && isLoading) {
                 mUIManager.showLoadingState();
-                setDrawerLocked(true); // حظر درج التنقل أثناء التحميل
+                // قفل الدرج فقط إذا كانت الشاشة ظاهرة للمستخدم وليس في الخلفية
+                if (!isHidden()) {
+                    setDrawerLocked(true); 
+                }
             } else {
                 mUIManager.hideLoadingState();
                 // ✅ إجبار الواجهة على إعادة رسم القائمة بعد اختفاء مؤشر التحميل
@@ -1326,45 +1329,40 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
 
-        // ★ المرحلة الأولى: إدارة ظهور أيقونات AppBar عند التنقل بين الشاشات ★
-        // setMenuVisibility يُخفي أيقونات هذا الـ Fragment عند إخفائه ويُظهرها عند عودته،
-        // وinvalidateOptionsMenu يُجبر الـ AppBar على إعادة رسم الأيقونات فور ظهور الشاشة
         setMenuVisibility(!hidden);
         if (!hidden && getActivity() != null) {
-            getActivity().invalidateOptionsMenu(); // إجبار الـ AppBar على التحديث
+            getActivity().invalidateOptionsMenu(); 
         }
 
         if (hidden) {
-            // ★ 1. حفظ موضع التمرير فوراً قبل إخفاء الشاشة وقبل أي تحديث للـ Adapter ★
+            // فك قفل الدرج عند مغادرة الشاشة (حتى لو كان التحميل مستمراً)
+            setDrawerLocked(false);
+
             mUIManager.saveRecyclerViewState();
 
-            // ★ 2. إيقاف الأنيميشن فوراً لنزع قدرة القائمة على الحركة في الخلفية ★
-            // هذا يضمن أن أي تحديثات تحدث في الخلفية (مثل إعادة الترتيب عند إغلاق البحث)
-            // تُطبَّق بصمت تام دون أن يراها المستخدم عند العودة
             if (mRecyclerView != null) {
                 mRecyclerView.setItemAnimator(null);
             }
 
             mSearchViewModel.deactivateSearch();
             if (mSelectionManager != null && mSelectionManager.isSelecting()) {
-                mSelectionManager.setSelecting(false);
+                 mSelectionManager.setSelecting(false);
             }
         } else {
-            // ★ إعادة تفعيل اللمس وإعادة تفعيل الحارس لقبول النقرات مجدداً ★
+            // إعادة قفل الدرج إذا رجع المستخدم والشاشة لا تزال تُحمّل
+            Boolean isLoading = mViewModel.getIsLoadingLiveData().getValue();
+            if (isLoading != null && isLoading) {
+                setDrawerLocked(true);
+            }
+
             unblockTouch();
 
-            // ★ إعادة رسم القائمة عند العودة لإظهار تمييز آخر خط تم فتحه ★
             if (mAdapter != null) mAdapter.smartUpdate();
 
             updateMainActivityFontsCount(mCurrentFontsList.size());
 
-            // ★ 3. استعادة موضع التمرير بعد ظهور الشاشة مع تأجيل بـ post()
-            // لضمان اكتمال layout قبل تطبيق الاستعادة ★
             mMainHandler.post(() -> mUIManager.restoreRecyclerViewState());
 
-            // ★ 4. الضربة القاضية للأنيميشن: تأخير إعادته 100 ملي ثانية ★
-            // هذا يضمن أن الـ RecyclerView قد رسم العناصر في مواضعها النهائية بدون حركة،
-            // وبعد ذلك فقط نعيد الأنيميشن للاستخدام الطبيعي
             if (mRecyclerView != null) {
                 mRecyclerView.postDelayed(() -> {
                     if (isAdded() && !isHidden()) {
@@ -1373,9 +1371,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 }, 100);
             }
 
-            // ★ إصلاح (3): التحقق من عملية جارية عند الانتقال لهذه الشاشة ★
-            // يُغطي سيناريو: المستخدم يضغط على الإشعار → MainActivity تُنقله
-            // لشاشة الخطوط المحلية → onHiddenChanged(false) يتحقق ويُعيد عرض الديالوج.
             checkAndReopenProgressDialogPublic();
         }
     }
@@ -1596,9 +1591,23 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     // ════════════════════════════════════════════════════════════════════════
     private void setDrawerLocked(boolean locked) {
         if (mDrawerLayout == null) return;
+        
+        // 1. قفل السحب الجانبي
         androidx.drawerlayout.widget.DrawerLayout inner = findInnerDrawer(mDrawerLayout);
         if (inner != null) {
             inner.setDrawerLockMode(locked ? 1 : 0);
+        }
+        
+        // 2. قفل أيقونة القائمة (الهامبرغر) لمنع الفتح بالضغط
+        androidx.appcompat.widget.Toolbar toolbar = mDrawerLayout.getToolbar();
+        if (toolbar != null) {
+            for (int i = 0; i < toolbar.getChildCount(); i++) {
+                android.view.View child = toolbar.getChildAt(i);
+                if (child instanceof android.widget.ImageButton) {
+                    child.setEnabled(!locked);
+                    child.setClickable(!locked);
+                }
+            }
         }
     }
 
