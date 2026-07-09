@@ -76,7 +76,35 @@ public class FontInfoDialog {
                 "Path"
         };
 
-        String[] displayNames = {
+        boolean isArabic = java.util.Locale.getDefault().getLanguage().equals("ar");
+        String[] displayNames = isArabic ? new String[]{
+                "الاسم الكامل",
+                "اسم PostScript",
+                "العائلة",
+                "العائلة الفرعية",
+                "الوزن",
+                "العرض",
+                "تحسين وضوح النص",
+                "اللغات المدعومة",
+                "عدد الرموز (Glyphs)",
+                "دقة الخط (Resolution)",
+                "المتغيرات (Instances)",
+                "الإصدار",
+                "تاريخ التعديل",
+                "تاريخ الإنشاء",
+                "المصمم",
+                "رابط المصمم",
+                "الشركة المصنعة",
+                "حقوق النشر",
+                "رابط البائع",
+                "معرف البائع",
+                "العلامة التجارية",
+                "الوصف",
+                "وصف الترخيص",
+                "رابط الترخيص",
+                "اسم الملف",
+                "المسار"
+        } : new String[]{
                 "Full name",
                 "Post script name",
                 "Family",
@@ -120,6 +148,16 @@ public class FontInfoDialog {
             if (value != null && !value.isEmpty()) {
                 if ("Version".equals(key)) {
                     value = cleanVersionString(value);
+                }
+                
+                // تحديد النص الثابت لقيمة تحسين وضوح النص بناءً على لغة التطبيق الحالية
+                if ("Hinted".equals(key)) {
+                    boolean isAr = java.util.Locale.getDefault().getLanguage().equals("ar");
+                    if ("Improved".equalsIgnoreCase(value)) {
+                        value = isAr ? "مُحسّن" : "Improved";
+                    } else {
+                        value = isAr ? "غير مُحسّن" : "Not Improved";
+                    }
                 }
 
                 if (hasContent) {
