@@ -86,7 +86,7 @@
             android:visibility="gone">
 
             <androidx.appcompat.widget.SeslProgressBar
-                style="@style/Widget.AppCompat.ProgressBar.large"
+                style="@style/Widget.AppCompat.ProgressBar.Large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" />
