@@ -569,11 +569,18 @@ public class MainActivity extends BaseActivity
 
         TranslationService translationService = new TranslationService(this);
         if (translationService.isTranslationEnabled()) {
-            showLoadingDialog();
+            boolean[] isFinished = {false};
+            
+            // تأخير ظهور مؤشر التحميل ربع ثانية لمنع الوميض
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                if (!isFinished[0]) showLoadingDialog();
+            }, 250);
+
             translationService.translateMetadata(meta, new TranslationService.TranslationCallback() {
                 @Override
                 public void onTranslationComplete(Map<String, String> translatedData) {
                     runOnUiThread(() -> {
+                        isFinished[0] = true;
                         dismissLoadingDialog();
                         showFontInfoDialog(translatedData);
                     });
@@ -582,13 +589,15 @@ public class MainActivity extends BaseActivity
                 @Override
                 public void onTranslationFailed(String error) {
                     runOnUiThread(() -> {
+                        isFinished[0] = true;
                         dismissLoadingDialog();
                         android.util.Log.w("MainActivity", "Translation failed: " + error);
                         showFontInfoDialog(meta);
                     });
                 }
             });
-        } else {
+        }
+ else {
             showFontInfoDialog(meta);
         }
     }
