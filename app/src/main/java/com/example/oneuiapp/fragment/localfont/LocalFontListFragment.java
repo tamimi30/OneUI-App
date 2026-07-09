@@ -1443,6 +1443,13 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
      * SortedList داخل الـ Adapter يتولى الترتيب وتوليد الأنيميشن المناسب.
      */
     private void refreshAdapterData() {
+        // ★ الإصلاح الجذري: منع تحديث الواجهة إذا كان التحميل جارياً
+        // لكي لا يقوم الـ RecyclerView بدفع مؤشر التحميل خارج الشاشة ويُخفيه!
+        Boolean isLoading = mViewModel.getIsLoadingLiveData().getValue();
+        if (Boolean.TRUE.equals(isLoading)) {
+            return;
+        }
+
         if (mCurrentFontsList.isEmpty()) {
             mSearchManager.updateFontsList(new ArrayList<>());
             if (mAdapter != null) {
@@ -1595,23 +1602,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     // دوال حظر درج التنقل
     // ════════════════════════════════════════════════════════════════════════
     private void setDrawerLocked(boolean locked) {
-        if (mDrawerLayout == null) return;
-        androidx.drawerlayout.widget.DrawerLayout inner = findInnerDrawer(mDrawerLayout);
-        if (inner != null) {
-            inner.setDrawerLockMode(locked ? 1 : 0);
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setDrawerLocked(locked);
         }
-    }
-
-    private androidx.drawerlayout.widget.DrawerLayout findInnerDrawer(android.view.ViewGroup parent) {
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            android.view.View child = parent.getChildAt(i);
-            if (child instanceof androidx.drawerlayout.widget.DrawerLayout) return (androidx.drawerlayout.widget.DrawerLayout) child;
-            if (child instanceof android.view.ViewGroup) {
-                androidx.drawerlayout.widget.DrawerLayout result = findInnerDrawer((android.view.ViewGroup) child);
-                if (result != null) return result;
-            }
-        }
-        return null;
     }
 
                             }
