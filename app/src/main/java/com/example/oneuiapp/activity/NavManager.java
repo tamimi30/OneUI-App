@@ -267,15 +267,6 @@ public class NavManager {
     }
 
     /**
-     * حظر أو فك حظر سحب درج التنقل
-     */
-    public void setDrawerLocked(boolean locked) {
-        if (mInnerDrawer != null) {
-            mInnerDrawer.setDrawerLockMode(locked ? androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED : androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED);
-        }
-    }
-
-    /**
      * ★ البحث عن الـ inner androidx DrawerLayout داخل شجرة الـ Views ★
      * يتجول في أبناء الـ ViewGroup بشكل تكراري حتى يجد أول
      * androidx.drawerlayout.widget.DrawerLayout مُغلَّف داخل OneUI DrawerLayout.

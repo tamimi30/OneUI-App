@@ -622,21 +622,6 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    /**
-     * حظر درج التنقل بالكامل (يمنع السحب ويُعطل النقر على القائمة)
-     */
-    public void setDrawerLocked(boolean locked) {
-        if (mNavManager != null) {
-            mNavManager.setDrawerLocked(locked);
-        }
-        if (mDrawerListView != null) {
-            // تعطيل القائمة بصرياً ووظيفياً أثناء التحميل
-            mDrawerListView.setEnabled(!locked);
-            mDrawerListView.setClickable(!locked);
-            mDrawerListView.setAlpha(locked ? 0.5f : 1f);
-        }
-    }
-
     private void openSettingsActivity() {
         startActivity(new Intent(this, SettingsActivity.class));
     }
