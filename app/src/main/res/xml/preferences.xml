@@ -5,12 +5,8 @@
     <!-- ═══════════════════════════════════════════════════════════════
          قسم الثيم (Theme Section) - أول قسم في الإعدادات
          يستخدم HorizontalRadioPreference لعرض الصور
-         ★ android:key="category_theme" مضاف لتمكين تحديث النصوص يدوياً
-           في onConfigurationChanged بدون تدمير الشاشة ★
-         ★ android:title="@string/settings_theme" مضاف لعرض عنوان القسم ★
          ═══════════════════════════════════════════════════════════════ -->
     <PreferenceCategory
-        android:key="category_theme"
         android:title="@string/settings_theme">
 
         <dev.oneuiproject.oneui.preference.HorizontalRadioPreference
@@ -33,11 +29,8 @@
 
     <!-- ═══════════════════════════════════════════════════════════════
          قسم خلفية القوائم والمعاينة (List and Preview Background Section)
-         ★ android:key="category_list_background" لتمكين تحديث العنوان يدوياً
-           في onConfigurationChanged ★
          ═══════════════════════════════════════════════════════════════ -->
     <PreferenceCategory
-        android:key="category_list_background"
         android:title="@string/settings_list_background_section">
 
         <!-- ★ الثيم الأسود: خلفية سوداء للقوائم والمعاينة في الوضع الداكن ★
@@ -56,10 +49,8 @@
     <!-- ═══════════════════════════════════════════════════════════════
          قسم عام (General Section)
          يضم: اللغة، نمط الخط، معاينة الخطوط، ترجمة معلومات الخط، نص المعاينة
-         ★ android:key="category_general" لتحديث عنوان القسم يدوياً ★
          ═══════════════════════════════════════════════════════════════ -->
     <PreferenceCategory
-        android:key="category_general"
         android:title="@string/settings_general">
 
         <DropDownPreference
@@ -107,10 +98,8 @@
 
     <!-- ═══════════════════════════════════════════════════════════════
          قسم حول التطبيق والتواصل (About Section) - بدون عنوان
-         ★ android:key="category_about" لتحديث عناوين العناصر يدوياً ★
          ═══════════════════════════════════════════════════════════════ -->
-    <PreferenceCategory
-        android:key="category_about">
+    <PreferenceCategory>
 
         <Preference
             android:key="about_app"
