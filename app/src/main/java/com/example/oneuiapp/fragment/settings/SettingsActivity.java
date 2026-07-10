@@ -55,22 +55,7 @@ public class SettingsActivity extends BaseActivity {
     private void initToolbar() {
         mToolbarLayout = findViewById(R.id.toolbar_layout);
         if (mToolbarLayout != null) {
-            // ★ ضبط اتجاه ToolbarLayout صريحاً عند كل بناء للـ Activity ★
-            //
-            // السبب: عند تغيير الثيم يُعاد بناء SettingsActivity عبر recreate().
-            // في الدورة الجديدة يمر الـ Activity بـ onCreate من جديد، لكن
-            // ToolbarLayout لا يحصل على اتجاه صريح فيرث اتجاهاً خاطئاً
-            // من السياق الداخلي للمكتبة قبل أن يُطبَّق السياق الملفوف.
-            // الحل: نضبط الاتجاه من Configuration الحالي فور تهيئة الـ Toolbar.
-            int direction = LanguageHelper.resolveLayoutDirection(
-                    getResources().getConfiguration());
-            mToolbarLayout.setLayoutDirection(direction);
-
-            // تعيين tooltip لزر الرجوع
-            mToolbarLayout.setNavigationButtonTooltip(
-                getString(R.string.navigate_up));
-            
-            // معالجة النقر على زر الرجوع
+            mToolbarLayout.setNavigationButtonTooltip(getString(R.string.navigate_up));
             mToolbarLayout.setNavigationButtonOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -79,6 +64,7 @@ public class SettingsActivity extends BaseActivity {
             });
         }
     }
+
 
     /**
      * ★ تحديث الاتجاه وعناصر الـ Activity فوراً عند تغيير اللغة ★
@@ -94,39 +80,7 @@ public class SettingsActivity extends BaseActivity {
      * في الذاكرة ولا يُعيد تحميلهما تلقائياً عند تغيير اللغة. يجب سحب النصوص
      * الجديدة من freshContext وتمريرها صريحاً.
      */
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        // ★ تفويض تحديث اتجاه DecorView إلى LanguageHelper ★
-        // يحلّ مشكلة System Default والتأخر في تغيير الاتجاه بين أي لغتين
-        LanguageHelper.forceUpdateLayoutDirection(this, newConfig);
-
-        // ★ تحديث اتجاه ToolbarLayout صريحاً ★
-        // السبب: ToolbarLayout كـ ViewGroup مستقل يحتفظ باتجاهه الداخلي
-        // الذي يُعيَّن عند بناء الـ Activity (onCreate). عند تغيير الثيم يُعاد
-        // البناء ويُضبط الاتجاه من جديد، لكن عند تغيير اللغة لاحقاً يُحدَّث
-        // DecorView فقط ويبقى ToolbarLayout على اتجاهه القديم مما يسبب خللاً
-        // في موضع زر الرجوع والعنوان. نحتاج لتحديثه صريحاً بنفس الاتجاه المحسوب.
-        int resolvedDirection = LanguageHelper.resolveLayoutDirection(newConfig);
-        if (mToolbarLayout != null) {
-            mToolbarLayout.setLayoutDirection(resolvedDirection);
-        }
-
-        // ★ إنشاء freshContext لسحب النصوص المترجمة للغة الجديدة بشكل مضمون ★
-        // ضروري لأن getString() يعود إلى السياق القديم الذي أنشأته attachBaseContext()
-        Context freshContext = LanguageHelper.createFreshContext(this, newConfig);
-
-        // ★ تحديث عنوان وعنوان فرعي CollapsingToolbar يدوياً ★
-        // ToolbarLayout لا يُحدّثهما تلقائياً عند تغيير اللغة بدون تدمير الـ Activity
-        if (mToolbarLayout != null) {
-            mToolbarLayout.setTitle(freshContext.getString(R.string.title_settings));
-            // إذا كان لديك subtitle، أضفه هنا:
-           // mToolbarLayout.setExpandedSubtitle(freshContext.getString(R.string.app_name));
-            mToolbarLayout.setNavigationButtonTooltip(
-                    freshContext.getString(R.string.navigate_up));
-        }
-    }
+    
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
