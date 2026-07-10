@@ -34,7 +34,6 @@ import dev.oneuiproject.oneui.widget.Toast;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.MyApplication;
 import com.example.oneuiapp.fragment.settings.about.AboutActivity;
-import com.example.oneuiapp.fragment.settings.utils.LanguageHelper;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
 
