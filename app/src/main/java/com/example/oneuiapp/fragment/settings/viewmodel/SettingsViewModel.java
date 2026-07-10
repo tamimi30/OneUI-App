@@ -243,7 +243,7 @@ public class SettingsViewModel extends AndroidViewModel {
         if (languageMode.getValue() != null && languageMode.getValue() == mode) {
             return;
         }
-        
+
         disposables.add(
             dataStore.setLanguageMode(mode)
                 .subscribeOn(Schedulers.io())
@@ -252,36 +252,30 @@ public class SettingsViewModel extends AndroidViewModel {
                     preferences -> {
                         Log.d(TAG, "Language mode saved to DataStore: " + mode);
 
-                        // ★ تفويض تطبيق اللغة إلى LanguageHelper ★
-                        // يتكفل LanguageHelper باختيار الآلية الصحيحة
-                        // بناءً على إصدار Android تلقائياً
-                        LanguageHelper.applyLanguage(getApplication(), mode);
-
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                            // ما دون Android 13: إعادة إنشاء الأنشطة ليعمل ContextWrapper
-                            Log.d(TAG, "Sending RECREATE for pre-Android 13");
-                            settingsEvent.setValue(new SettingsEvent(
-                                    SettingsEventType.RECREATE_ALL_ACTIVITIES));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            android.app.LocaleManager localeManager = getApplication().getSystemService(android.app.LocaleManager.class);
+                            if (localeManager != null) {
+                                if (mode == SettingsHelper.LANGUAGE_ARABIC) {
+                                    localeManager.setApplicationLocales(android.os.LocaleList.forLanguageTags("ar"));
+                                } else if (mode == SettingsHelper.LANGUAGE_ENGLISH) {
+                                    localeManager.setApplicationLocales(android.os.LocaleList.forLanguageTags("en"));
+                                } else {
+                                    localeManager.setApplicationLocales(android.os.LocaleList.getEmptyLocaleList());
+                                }
+                            }
                         } else {
-                            // ★ Android 13+: إعادة بناء الأنشطة الخلفية بعد تأخير ★
-                            //
-                            // المشكلة: عند تغيير الثيم قبل تغيير اللغة، تُعاد بناء الأنشطة
-                            // الخلفية (كـ MainActivity) باللغة القديمة بواسطة AppCompat.
-                            // بعد تغيير اللغة، يُبلَّغ SettingsActivity عبر onConfigurationChanged
-                            // فقط، لكن النظام قد لا يُعيد بناء الأنشطة الخلفية تلقائياً مرة ثانية.
-                            //
-                            // الحل: بعد تأخير يضمن اكتمال onConfigurationChanged في SettingsActivity،
-                            // نُرسل حدث RECREATE_BACKGROUND_ACTIVITIES الذي يُعيد بناء
-                            // الأنشطة الخلفية فقط دون SettingsActivity.
-                            //
-                            // التأخير 400ms: يضمن أن onConfigurationChanged والتحديثات
-                            // المرتبطة به قد اكتملت قبل إعادة البناء.
-                            new android.os.Handler(android.os.Looper.getMainLooper())
-                                    .postDelayed(() -> settingsEvent.setValue(new SettingsEvent(
-                                            SettingsEventType.RECREATE_BACKGROUND_ACTIVITIES)),
-                                            400);
-                            Log.d(TAG, "Language delegated to LocaleManager (Android 13+), background recreation scheduled");
+                            java.util.Locale locale;
+                            if (mode == SettingsHelper.LANGUAGE_ARABIC) {
+                                locale = new java.util.Locale("ar");
+                            } else if (mode == SettingsHelper.LANGUAGE_ENGLISH) {
+                                locale = new java.util.Locale("en");
+                            } else {
+                                locale = android.content.res.Resources.getSystem().getConfiguration().getLocales().get(0);
+                            }
+                            java.util.Locale.setDefault(locale);
                         }
+
+                        settingsEvent.setValue(new SettingsEvent(SettingsEventType.RECREATE_ALL_ACTIVITIES));
                     },
                     error -> Log.e(TAG, "Error setting language mode", error)
                 )
