@@ -10,7 +10,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.oneuiapp.fragment.settings.datastore.SettingsDataStore;
-import com.example.oneuiapp.fragment.settings.utils.LanguageHelper;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
