@@ -90,10 +90,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private Preference reportIssuePreference;
 
     // ★ مراجع لأقسام الإعدادات — ضرورية لتحديث عناوينها يدوياً في onConfigurationChanged ★
-    private PreferenceCategory categoryTheme;
-    private PreferenceCategory categoryListBackground;
-    private PreferenceCategory categoryGeneral;
-    private PreferenceCategory categoryAbout;
+    
 
     // ★ بطاقة الروابط ذات الصلة — تظهر أسفل الإعدادات وتضيف الفراغ السفلي تلقائياً ★
     private PreferenceRelatedCard mRelatedCard;
@@ -143,54 +140,27 @@ public class SettingsFragment extends PreferenceFragmentCompat {
      * لأن setLanguageMode() في ViewModel يُحدّث languagePreference.getValue()
      * فوراً، فعند وصول onResume لاحقاً لا يجد أي تعارض ولا يُرسل RECREATE.
      */
-    @Override
+        @Override
     public void onResume() {
         super.onResume();
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && languagePreference != null) {
             int actualLang = SettingsHelper.getSystemAssignedLanguage(requireContext());
             String actualLangStr = String.valueOf(actualLang);
 
-            // تحديث الـ Dropdown فقط إذا كانت القيمة المعروضة مختلفة عن الواقع
             if (!actualLangStr.equals(languagePreference.getValue())) {
                 languagePreference.setValue(actualLangStr);
-
-                // مزامنة DataStore مع قيمة النظام الحقيقية
-                // نستخدم syncLanguageModeFromSystem لتجنب تشغيل LocaleManager مرة أخرى
                 Integer currentDataStoreLang = viewModel.getLanguageMode().getValue();
                 if (currentDataStoreLang == null || currentDataStoreLang != actualLang) {
                     viewModel.syncLanguageModeFromSystem(actualLang);
                 }
-
-                // ★ إعادة بناء الأنشطة الخلفية التي لم تُعَد بناؤها تلقائياً ★
-                //
-                // السبب: SettingsActivity تعترض حدث locale في configChanges وتمنع النظام
-                // من تمرير إعادة البناء تلقائياً إلى MainActivity في خلفية مكدس التنقل.
-                // عند العودة من SettingsActivity ستجد MainActivity باللغة القديمة.
-                //
-                // التأخير 300ms: يضمن اكتمال onConfigurationChanged في SettingsActivity
-                // وكل تحديثاته على النصوص والاتجاه قبل أن تُعاد بناء الأنشطة الخلفية.
-                // هذا يمنع أي تعارض بين تحديث onConfigurationChanged وعملية إعادة البناء.
-                new android.os.Handler(android.os.Looper.getMainLooper())
-                        .postDelayed(() -> {
-                            if (getActivity() != null && !getActivity().isFinishing()) {
-                                viewModel.requestBackgroundRecreation();
-                            }
-                        }, 300);
             }
         }
-
-        // ★ عرض بطاقة الروابط ذات الصلة عند أول استئناف للـ Fragment ★
-        // null-check داخل setupRelatedCard() يمنع إنشاء بطاقة مكررة عند العودة من شاشة أخرى
         setupRelatedCard();
     }
 
+
     private void initPreferences() {
         // ── تهيئة مراجع الأقسام (لتحديث عناوينها في onConfigurationChanged) ──
-        categoryTheme        = findPreference("category_theme");
-        categoryListBackground = findPreference("category_list_background");
-        categoryGeneral      = findPreference("category_general");
-        categoryAbout        = findPreference("category_about");
 
         // ── تهيئة عناصر الإعدادات الفردية ──
         languagePreference = findPreference("language_mode");
@@ -563,98 +533,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
      *   3. القسم العام           (category_general)
      *   4. قسم حول التطبيق      (category_about)
      */
-    private void updatePreferencesText(Context freshContext) {
-        Resources res = freshContext.getResources();
-
-        // ── قسم الثيم ──
-        if (categoryTheme != null) {
-            categoryTheme.setTitle(freshContext.getString(R.string.settings_theme));
-        }
-        if (themePreference != null) {
-            themePreference.setTitle(freshContext.getString(R.string.settings_theme));
-            // ★ تحديث نصوص HorizontalRadioPreference عبر Reflection ★
-            //
-            // المشكلة: الحقل mEntries خاص (private) ولا توجد دالة setEntries() عامة
-            // في مكتبة One UI. المكتبة تستخدم mEntries في onBindViewHolder لضبط
-            // نص icon_title تحت كل صورة.
-            //
-            // الحل: نصل إلى mEntries بـ Reflection ونستبدل قيمته بالنصوص المترجمة
-            // الجديدة المسحوبة من freshContext، ثم نستدعي notifyChanged() لإعادة
-            // تشغيل onBindViewHolder الذي يعيد رسم النصوص تحت الصور.
-            try {
-                java.lang.reflect.Field entriesField =
-                        HorizontalRadioPreference.class.getDeclaredField("mEntries");
-                entriesField.setAccessible(true);
-                entriesField.set(
-                        themePreference,
-                        freshContext.getResources().getTextArray(R.array.settings_theme_entries)
-                );
-                // ★ notifyChanged() محمية (protected) في Preference، نستدعيها بـ Reflection أيضاً ★
-                // هي المسؤولة عن إعادة تشغيل onBindViewHolder لتطبيق النصوص الجديدة على الواجهة
-                java.lang.reflect.Method notifyChangedMethod =
-                        Preference.class.getDeclaredMethod("notifyChanged");
-                notifyChangedMethod.setAccessible(true);
-                notifyChangedMethod.invoke(themePreference);
-            } catch (Exception e) {
-                android.util.Log.w(TAG, "Could not update HorizontalRadioPreference entries via reflection", e);
-                // الفشل هنا غير مؤثر على وظيفة التطبيق،
-                // الصور ستظل ظاهرة وفقط نصوص Light/Dark لن تُترجم فورياً.
-            }
-        }
-        if (themeAutoPreference != null) {
-            themeAutoPreference.setTitle(freshContext.getString(R.string.settings_theme_system));
-        }
-
-        // ── قسم خلفية القوائم والمعاينة ──
-        if (categoryListBackground != null) {
-            categoryListBackground.setTitle(freshContext.getString(R.string.settings_list_background_section));
-        }
-        if (themeTransparentPreference != null) {
-            themeTransparentPreference.setTitle(freshContext.getString(R.string.settings_theme_transparent));
-            themeTransparentPreference.setSummary(freshContext.getString(R.string.settings_theme_transparent_description));
-        }
-
-        // ── القسم العام ──
-        if (categoryGeneral != null) {
-            categoryGeneral.setTitle(freshContext.getString(R.string.settings_general));
-        }
-        if (languagePreference != null) {
-            languagePreference.setTitle(freshContext.getString(R.string.settings_language));
-            // ★ CharSequence[] يُجبر القائمة على عرض النصوص المترجمة الجديدة فوراً ★
-            languagePreference.setEntries(res.getStringArray(R.array.settings_language_entries));
-        }
-        if (fontPreference != null) {
-            fontPreference.setTitle(freshContext.getString(R.string.settings_font));
-            // ★ CharSequence[] يُجبر القائمة على عرض النصوص المترجمة الجديدة فوراً ★
-            fontPreference.setEntries(res.getStringArray(R.array.settings_font_entries));
-        }
-        if (fontPreviewPreference != null) {
-            fontPreviewPreference.setTitle(freshContext.getString(R.string.settings_font_preview));
-            fontPreviewPreference.setSummary(freshContext.getString(R.string.settings_font_preview_description));
-        }
-        if (translationPreference != null) {
-            translationPreference.setTitle(freshContext.getString(R.string.settings_translation));
-            translationPreference.setSummary(freshContext.getString(R.string.settings_translation_description));
-        }
-        if (previewTextPreference != null) {
-            previewTextPreference.setTitle(freshContext.getString(R.string.settings_preview_text));
-            // ★ لا نستدعي setSummary() هنا عمداً ★
-            // هذا الـ Preference يملك useSimpleSummaryProvider="true" في XML،
-            // مما يُنشئ SummaryProvider تلقائياً يعرض القيمة الحالية.
-            // استدعاء setSummary() معه يرمي IllegalStateException.
-            previewTextPreference.setDialogTitle(freshContext.getString(R.string.settings_preview_text_dialog_title));
-            previewTextPreference.setDialogMessage(freshContext.getString(R.string.settings_preview_text_dialog_message));
-        }
-
-        // ── قسم حول التطبيق ──
-        Preference aboutPreference = findPreference("about_app");
-        if (aboutPreference != null) {
-            aboutPreference.setTitle(freshContext.getString(R.string.about_title));
-        }
-        if (reportIssuePreference != null) {
-            reportIssuePreference.setTitle(freshContext.getString(R.string.settings_report_issue));
-        }
-    }
+    
 
     /**
      * ★ تحديث الاتجاه والنصوص فوراً عند تغيير اللغة — بدون تدمير الشاشة ★
@@ -670,37 +549,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
      *    (البطاقة تحتفظ بثيمها الصحيح، ونمرر إليها النصوص المترجمة فقط)
      * 6. إخبار القائمة بإعادة الرسم
      */
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        // ★ الخطوة الأولى: إنشاء سياق جديد يحمل اللغة المحدّثة بشكل مضمون ★
-        // createConfigurationContext(newConfig) مستقل تماماً عن السياق القديم
-        // الذي أنشأته attachBaseContext() عند بدء التطبيق.
-        Context freshContext = LanguageHelper.createFreshContext(requireContext(), newConfig);
-
-        // ★ الخطوة الثانية: تحديث mContext ليكون جاهزاً للعمليات اللاحقة ★
-        mContext = freshContext;
-
-        // ★ الخطوة الثالثة: تفويض تحديث الاتجاه إلى LanguageHelper ★
-        // يحلّ مشكلة System Default والتأخر في تغيير الاتجاه بين أي لغتين
-        LanguageHelper.forceUpdateLayoutDirectionForView(getView(), newConfig);
-
-        // ★ الخطوة الرابعة: تحديث جميع النصوص من freshContext ★
-        updatePreferencesText(freshContext);
-
-        // ==========================================
-        // ★ الخطوة الخامسة: تحديث نصوص البطاقة السفلية فقط باللغة الجديدة ★
-        // يتم استخدام freshContext لجلب النصوص المترجمة،
-        // بينما تحتفظ البطاقة داخلياً بالثيم الصحيح!
-        updateRelatedCardText(freshContext);
-        // ==========================================
-
-        // ★ الخطوة السادسة: إخبار القائمة بإعادة رسم عناصرها ★
-        if (getListView() != null && getListView().getAdapter() != null) {
-            getListView().getAdapter().notifyDataSetChanged();
-        }
-    }
+    
 
     private ColorStateList getColoredSummaryColor(boolean enabled) {
         if (enabled) {
