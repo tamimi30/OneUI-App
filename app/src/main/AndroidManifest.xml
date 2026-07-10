@@ -145,7 +145,7 @@
              ملاحظة: لم نضف uiMode عمداً لأنه يُسبّب خللاً في الثيم. -->
         <activity
             android:name=".fragment.settings.SettingsActivity"
-            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection|smallestScreenSize" />
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
         <!-- ════════════════════════════════════════════════════════════════
              ★ إصلاح المشكلة (1): تسجيل OperationForegroundService ★
