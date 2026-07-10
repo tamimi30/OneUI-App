@@ -232,6 +232,7 @@ public class MyApplication extends Application {
             Activity act = ref.get();
             if (act != null && !act.isFinishing()) {
                 act.recreate();
+                act.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         }
     }
