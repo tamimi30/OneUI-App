@@ -321,5 +321,7 @@
     <string name="cancel">إلغاء</string>
     <string name="ok">حسنًا</string>
 
+    <string name="unknown">غير معروف</string>
+
 
 </resources>
