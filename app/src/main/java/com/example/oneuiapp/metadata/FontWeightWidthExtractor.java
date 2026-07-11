@@ -55,7 +55,7 @@ public class FontWeightWidthExtractor {
             String width  = getWidthName(ww[1]);
             String label  = buildLabel(weight, width);
 
-            return isVF ? VF_PREFIX + " · " + label : label;
+            return isVF ? VF_PREFIX + " • " + label : label;
 
         } catch (Exception e) {
             Log.w(TAG, "extract() failed for " + fontFile.getName() + ": " + e.getMessage());
