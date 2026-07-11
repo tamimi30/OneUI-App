@@ -26,7 +26,7 @@ public class FontWeightWidthExtractor {
     private static final String TAG = "FontWeightWidthExtractor";
 
     /** نص يُعرض عند تعذّر استخراج المعلومات أو تلف الخط */
-    public static final String UNKNOWN = "غير معروف";
+    public static final int UNKNOWN = R.string.unknown;
 
     /** بادئة تُضاف لخطوط Variable Font قبل وصف الوزن والعرض */
     private static final String VF_PREFIX = "VF";
@@ -44,11 +44,11 @@ public class FontWeightWidthExtractor {
      */
     public static String extract(File fontFile, int ttcIndex) {
         if (fontFile == null || !fontFile.exists() || !fontFile.canRead()) {
-            return UNKNOWN;
+            return context.getString(UNKNOWN);
         }
         try {
             int[] ww = readWeightWidth(fontFile, ttcIndex);
-            if (ww == null) return UNKNOWN;
+            if (ww == null) return context.getString(UNKNOWN);
 
             boolean isVF  = isVariableFont(fontFile, ttcIndex);
             String weight = getWeightName(ww[0]);
@@ -59,7 +59,7 @@ public class FontWeightWidthExtractor {
 
         } catch (Exception e) {
             Log.w(TAG, "extract() failed for " + fontFile.getName() + ": " + e.getMessage());
-            return UNKNOWN;
+            return context.getString(UNKNOWN);
         }
     }
 
@@ -206,7 +206,7 @@ public class FontWeightWidthExtractor {
     private static String buildLabel(String weight, String width) {
         boolean hasWeight = weight != null && !weight.isEmpty();
         boolean hasWidth  = width  != null && !width.isEmpty();
-        if (!hasWeight && !hasWidth) return UNKNOWN;
+        if (!hasWeight && !hasWidth) return context.getString(UNKNOWN);
         if (!hasWeight) return width;
         if (!hasWidth)  return weight;
         return weight + " • " + width;
