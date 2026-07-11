@@ -166,7 +166,7 @@ public class FontViewerFragment extends Fragment {
         // Initialize ViewModel
         settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
-        currentFontSize   = preferenceManager.getFontSize(DEFAULT_FONT_SIZE);
+        currentFontSize   = DEFAULT_FONT_SIZE;
         currentFontWeight = preferenceManager.getFontWeight(DEFAULT_FONT_WEIGHT);
     }
 
@@ -316,7 +316,7 @@ public class FontViewerFragment extends Fragment {
     private void onFontSizeChanged(float newSize) {
         currentFontSize = newSize;
         applyFontSize();
-        preferenceManager.saveFontSize(newSize);
+        //preferenceManager.saveFontSize(newSize);
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).updateFabFontSizeText(newSize);
         }
