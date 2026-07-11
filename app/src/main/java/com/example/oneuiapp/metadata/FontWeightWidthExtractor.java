@@ -5,6 +5,8 @@ import android.util.Log;
 import java.io.File;
 import java.io.RandomAccessFile;
 
+import com.example.oneuiapp.R;
+
 /**
  * FontWeightWidthExtractor — استخراج وصف الوزن والعرض من ملفات الخطوط
  *
