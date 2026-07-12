@@ -515,11 +515,10 @@ public class FontViewerFragment extends Fragment {
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "★ Typeface creation failed - font might be corrupted", e);
-
                     // ★★★ Solution: Immediate title update when corrupted font detected ★★★
                     mainHandler.post(() -> {
-                        // 1. Set name to "Unknown Font"
-                        currentFontRealName = getString(R.string.unknown_font);
+                        // 1. Set name to null to support dynamic translation
+                        currentFontRealName = null;
                         currentTypeface     = null;
 
                         // 2. ★ Force MainActivity to update title immediately ★
@@ -578,8 +577,10 @@ public class FontViewerFragment extends Fragment {
             } catch (Exception e) {
                 // ★★★ General error handling ★★★
                 mainHandler.post(() -> {
-                    // 1. Set name to "Unknown Font"
-                    currentFontRealName = getString(R.string.unknown_font);
+                   
+                    // 1. Set name to null to support dynamic translation
+                    currentFontRealName = null;
+
 
                     // 2. Notify MainActivity of update
                     if (fontChangedListener != null) {
@@ -728,10 +729,9 @@ public class FontViewerFragment extends Fragment {
                 }
 
                 // If name extraction failed
-                if (realName == null || realName.isEmpty() || "Unknown Font".equals(realName)) {
+                if (realName == null || realName.isEmpty() || "Unknown Font".equals(realName) || getString(R.string.unknown_font).equals(realName)) {
                     String finalFileName = fileName != null ? fileName : copiedFont.getName();
-                    realName = getString(R.string.unknown_font);
-
+                    realName = null;
                     // ★ حل مشكلة تعلق الخط الخارجي: منعنا حفظ الخط الخارجي كـ "آخر خط مستخدم" ★
 
                     final String finalRealName = realName;
@@ -851,9 +851,9 @@ public class FontViewerFragment extends Fragment {
                 // ★ لا label متاح للخط الأخير المحفوظ (لم يُفتح من القائمة مباشرةً) ★
                 currentWeightWidthLabel = null;
 
-                // Check real name
-                if (currentFontRealName == null || currentFontRealName.isEmpty()) {
-                    currentFontRealName = getString(R.string.unknown_font);
+                // Check real name to wipe out old cached localized strings
+                if (currentFontRealName != null && (currentFontRealName.isEmpty() || currentFontRealName.equals(getString(R.string.unknown_font)))) {
+                    currentFontRealName = null;
                 }
 
                 if (originalFontPath == null || originalFontPath.isEmpty()) {
@@ -888,9 +888,9 @@ public class FontViewerFragment extends Fragment {
         metadata.put("Path", displayPath);
         metadata.put("FileName", currentFontFileName != null ? currentFontFileName : "");
 
-        // If font is corrupted, add "Unknown Font" to metadata
-        if (!metadata.containsKey("FullName") && currentFontRealName != null) {
-            if (currentFontRealName.equals(getString(R.string.unknown_font))) {
+        // If font is corrupted or real name is unknown, add "Unknown Font" to metadata
+        if (!metadata.containsKey("FullName")) {
+            if (currentFontRealName == null || currentFontRealName.isEmpty() || currentFontRealName.equals(getString(R.string.unknown_font))) {
                 metadata.put("FullName", getString(R.string.unknown_font));
                 metadata.put("Warning", "Font metadata could not be extracted - file may be corrupted");
             } else {
