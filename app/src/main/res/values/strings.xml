@@ -328,5 +328,6 @@
 
     <string name="unknown">Unknown</string>
 
+    <string name="font_metadata_error">The font metadata cannot be displayed, the font file may be corrupted or lack metadata.</string>
 
 </resources>
