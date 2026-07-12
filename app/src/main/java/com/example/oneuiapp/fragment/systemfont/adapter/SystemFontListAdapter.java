@@ -611,7 +611,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         String realName    = (sfi != null) ? sfi.getRealName() : null;
         int ttcIndex       = (sfi != null) ? sfi.getTtcIndex() : 0;
 
-        if (realName == null || realName.isEmpty()) realName = context.getString(R.string.unknown_font);
+       
 
         // ★ استخراج وصف الوزن/العرض من SystemFontInfo ★
         String weightWidthLabel = (sfi != null) ? sfi.getWeightWidthLabel() : null;
