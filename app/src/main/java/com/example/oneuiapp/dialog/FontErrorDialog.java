@@ -7,6 +7,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
+import com.example.oneuiapp.R;
+
 public class FontErrorDialog {
 
     public static void show(Context context) {
@@ -32,11 +34,15 @@ public class FontErrorDialog {
         iconParams.bottomMargin = (int) (20 * density);
         errorIcon.setLayoutParams(iconParams);
 
-        // 3. إنشاء رسالة الخطأ
+                // 3. إنشاء رسالة الخطأ
         TextView errorMessage = new TextView(context);
-        errorMessage.setText("لا يمكن عرض البيانات الوصفية للخط.\nربما ملف الخط تالف أو لا يحتوي على بيانات وصفية.");
+        
+        // جلب النص من ملف strings
+        errorMessage.setText(R.string.font_metadata_error);
+        
         errorMessage.setGravity(Gravity.CENTER);
         errorMessage.setTextSize(16f);
+
 
         // 4. تجميع الأيقونة والنص داخل الحاوية
         layout.addView(errorIcon);
