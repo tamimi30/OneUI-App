@@ -323,5 +323,6 @@
 
     <string name="unknown">غير معروف</string>
 
+    <string name="font_metadata_error">لا يمكن عرض البيانات الوصفية للخط.\nربما ملف الخط تالف أو لا يحتوي على بيانات وصفية.</string>
 
 </resources>
