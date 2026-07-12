@@ -803,7 +803,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         LocalFontListViewModel.FontFileInfoWithMetadata metadata = getFontMetadataForPath(path);
         String realName = (metadata != null) ? metadata.getRealName() : null;
-        if (realName == null || realName.isEmpty()) realName = context.getString(R.string.unknown_font);
+        
 
         // ★ استخراج وصف الوزن/العرض من البيانات الوصفية ★
         // إذا لم يُستخرج بعد يُعرض "غير معروف" تلقائياً من الـ ViewHolder
