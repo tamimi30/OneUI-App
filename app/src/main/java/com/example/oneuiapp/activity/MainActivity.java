@@ -833,9 +833,12 @@ public class MainActivity extends BaseActivity
             case FONT_VIEWER:
                 if (currentFontRealName != null && !currentFontRealName.isEmpty()) {
                     title = currentFontRealName;
+                } else if (currentFontFileName != null && !currentFontFileName.isEmpty()) {
+                    title = getString(R.string.unknown_font);
                 } else {
                     title = getString(R.string.drawer_font_viewer);
                 }
+                
                 if (currentFontFileName != null && !currentFontFileName.isEmpty()) {
                     subtitle = FileUtils.removeExtension(currentFontFileName);
                 } else {
