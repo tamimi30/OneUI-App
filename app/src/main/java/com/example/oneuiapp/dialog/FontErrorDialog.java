@@ -34,7 +34,7 @@ public class FontErrorDialog {
         iconParams.bottomMargin = (int) (20 * density);
         errorIcon.setLayoutParams(iconParams);
 
-                // 3. إنشاء رسالة الخطأ
+        // 3. إنشاء رسالة الخطأ
         TextView errorMessage = new TextView(context);
         
         // جلب النص من ملف strings
