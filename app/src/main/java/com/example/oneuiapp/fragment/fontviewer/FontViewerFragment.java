@@ -469,7 +469,8 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void performNotification() {
-        if (fontChangedListener != null && currentFontRealName != null && currentFontFileName != null) {
+        // ★ إزالة شرط (currentFontRealName) لكي يتم إشعار الواجهة حتى للخطوط غير المعروفة ★
+        if (fontChangedListener != null && currentFontFileName != null) {
             fontChangedListener.onFontChanged(currentFontRealName, currentFontFileName);
             Log.d(TAG, "MainActivity notified with realName: " + currentFontRealName + ", fileName: " + currentFontFileName);
         }
