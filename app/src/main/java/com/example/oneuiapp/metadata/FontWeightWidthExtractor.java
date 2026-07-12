@@ -43,7 +43,7 @@ public class FontWeightWidthExtractor {
      */
     public static String extract(File fontFile, int ttcIndex) {
         if (fontFile == null || !fontFile.exists() || !fontFile.canRead()) {
-            return UNKNOWN;
+            return null;
         }
         try {
             int[] ww = readWeightWidth(fontFile, ttcIndex);
