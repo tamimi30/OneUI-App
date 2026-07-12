@@ -77,7 +77,7 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
         if (weightWidthView != null) {
             String label = (weightWidthLabel != null && !weightWidthLabel.isEmpty())
                     ? weightWidthLabel
-                    : FontWeightWidthExtractor.UNKNOWN;
+                    : itemView.getContext().getString(R.string.unknown_font);
             weightWidthView.setText(label);
         }
 
