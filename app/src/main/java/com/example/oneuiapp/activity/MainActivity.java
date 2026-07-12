@@ -1047,6 +1047,15 @@ public class MainActivity extends BaseActivity
 
         FontViewerFragment fvf = (FontViewerFragment) frag;
 
+        // --- التعديل الجديد يبدأ من هنا ---
+        // نتحقق إذا كان الخط غير معروف (لا يوجد اسم حقيقي أو البيانات الوصفية فارغة)
+        if (currentFontRealName == null || currentFontRealName.isEmpty() || metadata == null || metadata.isEmpty()) {
+            // نظهر ديالوج الخطأ الذي صنعناه في الملف المنفصل
+            com.example.oneuiapp.dialog.FontErrorDialog.show(this);
+            return; // نوقف الدالة هنا حتى لا يتم عرض الديالوج القديم
+        }
+        // --- التعديل الجديد ينتهي هنا ---
+
         String fileName = fvf.getCurrentFontFileName();
         String path     = fvf.originalFontPath;
 
