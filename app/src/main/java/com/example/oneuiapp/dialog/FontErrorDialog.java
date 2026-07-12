@@ -41,8 +41,8 @@ public class FontErrorDialog {
         errorMessage.setText(R.string.font_metadata_error);
         
         errorMessage.setGravity(Gravity.CENTER);
-        errorMessage.setTextSize(14f);
-        errorMessage.setTextColor(context.getColor(R.color.sesl_description_text_color));
+        errorMessage.setTextSize(16f);
+        errorMessage.setTextColor(context.getColor(R.color.sort_bar_text_color));
 
         // 4. تجميع الأيقونة والنص داخل الحاوية
         layout.addView(errorIcon);
