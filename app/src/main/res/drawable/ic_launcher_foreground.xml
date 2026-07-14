@@ -6,11 +6,11 @@
     android:viewportWidth="24.0"
     android:viewportHeight="24.0">
 
-    <!--<group
+    <group
         android:pivotX="11.95"
         android:pivotY="11.95"
         android:scaleX="0.45"
-        android:scaleY="0.45">-->
+        android:scaleY="0.45"
 
         <path
             android:fillColor="#ffffff"
