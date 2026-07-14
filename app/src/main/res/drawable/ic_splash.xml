@@ -8,8 +8,8 @@
 
     <group
         android:name="squircle"
-        android:pivotX="7.0"
-        android:pivotY="7.0"
+        android:pivotX="6.10"
+        android:pivotY="6.10"
         android:scaleX="0.14"
         android:scaleY="0.14">
 
