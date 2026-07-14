@@ -8,10 +8,10 @@
 
     <group
         android:name="squircle"
-        android:pivotX="6.8"
-        android:pivotY="6.8"
-        android:scaleX="0.16"
-        android:scaleY="0.16">
+        android:pivotX="7.0"
+        android:pivotY="7.0"
+        android:scaleX="0.14"
+        android:scaleY="0.14">
 
         <path
             android:fillColor="@color/primary_color_themed"
