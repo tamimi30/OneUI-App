@@ -7,8 +7,8 @@
     <style name="AppTheme.Starting" parent="Theme.SplashScreen">
         <item name="postSplashScreenTheme">@style/AppTheme</item>
         <item name="windowSplashScreenBackground">@color/oui_round_and_bgcolor</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher</item>
-        <item name="windowSplashScreenAnimationDuration">800</item>
+        <!--<item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher</item>-->
+       <!-- <item name="windowSplashScreenAnimationDuration">800</item>-->
     </style>
         
 </resources>
