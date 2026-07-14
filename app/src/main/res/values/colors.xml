@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="primary_color_themed">#6345E5</color>
+
+
     <!--<color name="primary_color">#ff0381fe</color>-->
 
  <!--   <color name="sesl_round_and_bgcolor_dark">#010102</color>
