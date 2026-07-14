@@ -9,7 +9,7 @@
     <group
         android:pivotX="12"
         android:pivotY="12"
-        android:scaleX="0.4.5"
+        android:scaleX="0.4.8"
         android:scaleY="0.4.8">
 
         <path
