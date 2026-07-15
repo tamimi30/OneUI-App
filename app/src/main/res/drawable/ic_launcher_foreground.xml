@@ -7,10 +7,10 @@
     android:viewportHeight="24.0">
 
     <group
-        android:pivotX="11.95"
-        android:pivotY="11.95"
-        android:scaleX="0.45"
-        android:scaleY="0.45">
+        android:pivotX="12"
+        android:pivotY="12"
+        android:scaleX="0.5"
+        android:scaleY="0.5">
 
         <path
             android:fillColor="#ffffff"
