@@ -21,10 +21,10 @@
 
     <group
         android:name="foreground"
-        android:pivotX="12"
-        android:pivotY="12"
-        android:scaleX="0.4"
-        android:scaleY="0.4">
+        android:pivotX="11.9"
+        android:pivotY="11.9"
+        android:scaleX="0.39"
+        android:scaleY="0.39">
 
         <path
             android:fillType="nonZero"
