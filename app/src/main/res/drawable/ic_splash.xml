@@ -10,8 +10,8 @@
         android:name="squircle"
         android:pivotX="6.10"
         android:pivotY="6.10"
-        android:scaleX="0.13"
-        android:scaleY="0.13">
+        android:scaleX="0.14"
+        android:scaleY="0.14">
 
         <path
             android:fillColor="@color/primary_color_themed"
@@ -21,10 +21,10 @@
 
     <group
         android:name="foreground"
-        android:pivotX="11.9"
-        android:pivotY="11.9"
-        android:scaleX="0.39"
-        android:scaleY="0.39">
+        android:pivotX="11.8"
+        android:pivotY="11.8"
+        android:scaleX="0.38"
+        android:scaleY="0.38">
 
         <path
             android:fillType="nonZero"
