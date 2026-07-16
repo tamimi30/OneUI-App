@@ -42,8 +42,14 @@
         android:visibility="gone"
         app:cardCornerRadius="28dp"
         app:cardElevation="4dp"
-        android:orientation="horizontal"
+        
         app:layout_location="root">
+        	
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            
 
         <LinearLayout
             android:layout_width="56dp"
@@ -78,6 +84,8 @@
                 android:tooltipText="@string/btn_italic"
                 android:scaleType="fitCenter" />
 
+        </LinearLayout>
+        
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
