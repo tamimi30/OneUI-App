@@ -268,7 +268,7 @@ public class MainActivity extends BaseActivity
 
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
             isUIReady = true;
-        }, 1500);
+        }, 2500);
     }
 
     @Override
