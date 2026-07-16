@@ -266,7 +266,9 @@ public class MainActivity extends BaseActivity
         // يُستدعى بعد handleIntent() لضمان جهوزية الـ NavManager قبل أي تنقل محتمل
         requestNotificationPermissionIfNeeded();
 
-        isUIReady = true;
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            isUIReady = true;
+        }, 1500);
     }
 
     @Override
