@@ -52,8 +52,8 @@
             
 
         <LinearLayout
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:padding="15dp"
             android:layout_marginEnd="56dp"
             android:background="@drawable/drawer_item_selector"
@@ -70,8 +70,8 @@
         </LinearLayout>
          
         <LinearLayout
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:padding="15dp"
             android:background="@drawable/drawer_item_selector"
             android:foreground="@drawable/drawer_item_list_ripple">
