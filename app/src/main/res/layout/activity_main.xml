@@ -65,7 +65,7 @@
                 android:layout_height="48dp"
                 android:src="@drawable/ic_oui_text_bold"
                 android:tooltipText="@string/btn_bold"
-                android:scaleType="fitCenter" />
+                android:gravity="center"/>
                 
         </LinearLayout>
          
@@ -82,7 +82,7 @@
                 android:layout_height="48dp"
                 android:src="@drawable/ic_oui_text_italic"
                 android:tooltipText="@string/btn_italic"
-                android:scaleType="fitCenter" />
+                android:gravity="center" />
 
         </LinearLayout>
         
