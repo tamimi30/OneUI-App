@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,7 +39,6 @@ import com.example.oneuiapp.activity.MainActivity;       // ★ المرحلة �
 import com.example.oneuiapp.dialog.FontSizeDialog;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.fragment.fontviewer.utils.VariableFontHelper;
-import com.example.oneuiapp.fragment.fontviewer.utils.BoldItalicFormatting;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
 import com.example.oneuiapp.fragment.fontviewer.manager.FontViewerStorageManager;
 import com.example.oneuiapp.fragment.fontviewer.manager.FontViewerPreferenceManager;
@@ -108,9 +106,6 @@ public class FontViewerFragment extends Fragment {
 
     // ★ قائمة أوزان الخط المتغير — تُستخدم في setupWeightSpinner ★
     private List<VariableFontHelper.VariableInstance> currentVariableInstances;
-
-    // ★ يُدير حالتَي الخط العريض والمائل ★
-    private BoldItalicFormatting boldItalicFormatting;
 
     private OnFontChangedListener fontChangedListener;
 
@@ -250,7 +245,6 @@ public class FontViewerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
-        setupBoldItalicFormatting();
 
         // ★ NEW: Observe preview text changes from SettingsViewModel ★
         settingsViewModel.getPreviewText().observe(getViewLifecycleOwner(), previewText -> {
@@ -280,9 +274,6 @@ public class FontViewerFragment extends Fragment {
                 notifyFontChangedImmediate();
                 loadFontFromPathWithWeight(currentFontPath, currentFontFileName, currentFontRealName, currentFontWeight);
             }
-            // ★ استعادة حالة العريض/المائل بعد إعادة بناء الشاشة ★
-            boldItalicFormatting.restoreState(savedInstanceState);
-            boldItalicFormatting.syncViewState();
         } else {
             loadLastUsedFont();
         }
@@ -315,11 +306,6 @@ public class FontViewerFragment extends Fragment {
         // ★ إلغاء ربط عناصر الوزن الجديدة عند تدمير الـ View ★
         weightLabelText = null;
         weightSpinner   = null;
-        // ★ فك ربط زري التنسيق لمنع تسرب الذاكرة ★
-        if (boldItalicFormatting != null) {
-            boldItalicFormatting.unbind();
-            boldItalicFormatting = null;
-        }
     }
 
     @Override
@@ -397,18 +383,6 @@ public class FontViewerFragment extends Fragment {
         weightSpinner   = view.findViewById(R.id.weight_spinner);
     }
 
-    /**
-     * ★ ربط زري التنسيق (عريض/مائل) الموجودَين في activity_main.xml ★
-     * الزران خارج تخطيط هذا الفراغمنت، لذا نبحث عنهما عبر requireActivity().
-     */
-    private void setupBoldItalicFormatting() {
-        ImageView btnBold   = requireActivity().findViewById(R.id.btn_bold);
-        ImageView btnItalic = requireActivity().findViewById(R.id.btn_italic);
-
-        boldItalicFormatting = new BoldItalicFormatting();
-        boldItalicFormatting.setup(btnBold, btnItalic, textStyle -> applyFontToPreviewTexts());
-    }
-
     // ─────────────────────────────────────────────────────────
     // دوال loadFontFromPath — ترتيب التفويض يحافظ على تعيين currentWeightWidthLabel
     // ─────────────────────────────────────────────────────────
@@ -440,9 +414,6 @@ public class FontViewerFragment extends Fragment {
         Log.d(TAG, "  fileName: " + fileName);
         Log.d(TAG, "  ttcIndex: " + ttcIndex);
         Log.d(TAG, "  isSystemFont: " + isSystemFont);
-
-        // ★ كل خط جديد يبدأ بحالة تنسيق نظيفة (بدون عريض/مائل) ★
-        if (boldItalicFormatting != null) boldItalicFormatting.reset();
 
         currentFontPath     = path;
         currentFontFileName = fileName;
@@ -794,10 +765,7 @@ public class FontViewerFragment extends Fragment {
 
     private void applyFontToPreviewTexts() {
         if (currentTypeface != null && previewSentence != null) {
-            int style = (boldItalicFormatting != null)
-                    ? boldItalicFormatting.getCurrentTextStyle()
-                    : Typeface.NORMAL;
-            previewSentence.setTypeface(currentTypeface, style);
+            previewSentence.setTypeface(currentTypeface);
         }
         applyFontSize();
     }
@@ -855,7 +823,6 @@ public class FontViewerFragment extends Fragment {
         // ★ إعادة ضبط الـ label عند مسح حالة العارض ★
         currentWeightWidthLabel  = null;
         currentVariableInstances = null;
-        if (boldItalicFormatting != null) boldItalicFormatting.reset();
 
         Typeface defaultTypeface = Typeface.DEFAULT;
         if (previewSentence != null) previewSentence.setTypeface(defaultTypeface);
@@ -942,7 +909,6 @@ public class FontViewerFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (boldItalicFormatting != null) boldItalicFormatting.saveState(outState);
         if (currentFontPath != null) {
             outState.putString(KEY_FONT_PATH, currentFontPath);
         }

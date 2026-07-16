@@ -203,7 +203,6 @@ public class MainActivity extends BaseActivity
     // كل فراجمنت يُدير أيقوناته بشكل مستقل عبر setHasOptionsMenu(true)
 
     private FloatingActionButton fabFontSize;
-    private View formatBarCard;
 
 
 
@@ -392,7 +391,6 @@ public class MainActivity extends BaseActivity
         mDrawerLayout   = findViewById(R.id.drawer_layout);
         mDrawerListView = findViewById(R.id.drawer_list_view);
         fabFontSize = findViewById(R.id.fab_font_size);
-        formatBarCard = findViewById(R.id.format_bar_card);
     }
 
 
@@ -950,10 +948,6 @@ public class MainActivity extends BaseActivity
         } else {
             // هذا الأمر سيقرأ أنيميشن الاختفاء من الـ XML
             fabFontSize.hide(); 
-        }
-
-        if (formatBarCard != null) {
-            formatBarCard.setVisibility(screen == AppScreen.FONT_VIEWER ? View.VISIBLE : View.GONE);
         }
     }
 
