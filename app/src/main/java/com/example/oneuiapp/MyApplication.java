@@ -237,28 +237,6 @@ public class MyApplication extends Application {
         }
     }
 
-    /**
-     * ★ إعادة بناء جميع الأنشطة الحية باستثناء نشاط محدد ★
-     *
-     * تُستخدم بعد تغيير اللغة على Android 13+ لضمان أن الأنشطة في
-     * الخلفية (كـ MainActivity) تحمل اللغة الجديدة، دون إعادة بناء
-     * النشاط المستثنى (SettingsActivity) الذي يتلقى التغيير بالفعل
-     * عبر onConfigurationChanged دون الحاجة لإعادة بناء كاملة.
-     *
-     * السبب: عند تغيير الثيم قبل تغيير اللغة، تُعاد بناء الأنشطة الخلفية
-     * باللغة القديمة. بعد تغيير اللغة، قد لا يُعيد النظام بناءها تلقائياً
-     * مرة ثانية. هذه الدالة تضمن إعادة بنائها باللغة الجديدة.
-     *
-     * @param excludeActivity النشاط الذي يجب استثناؤه من إعادة البناء
-     */
-    public void recreateAllActivitiesExcept(Activity excludeActivity) {
-        for (WeakReference<Activity> ref : new ArrayList<>(activities)) {
-            Activity act = ref.get();
-            if (act != null && !act.isFinishing() && act != excludeActivity) {
-                act.recreate();
-            }
-        }
-    }
 
     @Override
     public void onLowMemory() {
