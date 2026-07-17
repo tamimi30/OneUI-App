@@ -44,7 +44,6 @@ public class BaseActivity extends AppCompatActivity {
         }
         
         super.onCreate(savedInstanceState);
-        super.onCreate(savedInstanceState);
         
         // إضافة تأثير التلاشي (Fade In / Fade Out) عند فتح أو إعادة بناء الشاشة
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
