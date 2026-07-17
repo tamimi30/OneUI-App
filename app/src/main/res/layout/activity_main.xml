@@ -30,5 +30,48 @@
         android:visibility="gone"
         android:tooltipText="@string/font_size_dialog_title"
         app:layout_location="root" />
+        
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/format_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        app:layout_location="root"
+        app:cardCornerRadius="26dp"
+        app:cardElevation="4dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <ImageView
+                android:id="@+id/btn_bold"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_oui_text_bold"
+                android:background="@drawable/bg_format_toggle"
+                android:clickable="true"
+                android:focusable="true"
+                android:tooltipText="@string/btn_bold"
+                android:foreground="?attr/colorControlHighlight" />
+
+            <ImageView
+                android:id="@+id/btn_italic"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_oui_text_italic"
+                android:background="@drawable/bg_format_toggle"
+                android:clickable="true"
+                android:focusable="true"
+                android:tooltipText="@string/btn_italic"
+                android:foreground="?attr/colorControlHighlight" />
+        </LinearLayout>
+        
+    </com.google.android.material.card.MaterialCardView>
 
 </dev.oneuiproject.oneui.layout.DrawerLayout>
