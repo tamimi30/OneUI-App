@@ -39,7 +39,7 @@
         android:layout_gravity="bottom|start"
         app:layout_location="root"
         app:cardCornerRadius="24dp"
-        
+        app:cardBackgroundColor="@color/sesl_menu_popup_bg_color"
         android:layout_margin="24dp"
         app:cardElevation="4dp"
         android:visibility="gone">
