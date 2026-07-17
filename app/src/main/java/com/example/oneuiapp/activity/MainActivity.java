@@ -463,6 +463,11 @@ btnItalic = findViewById(R.id.btn_italic);
             public void onSearchExpanded() {
                 // ★ إشعار الفراغمنتات فور تمدد البحث لإخفاء زر الثلاث نقاط ★
                 notifyFragmentsSearchState(true);
+                
+                // إجبار النظام على فك حظر درج التنقل أثناء البحث
+                if (mDrawerLayout != null) {
+                    mDrawerLayout.setDrawerLockMode(androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED);
+                }
             }
 
             @Override
