@@ -953,7 +953,7 @@ btnItalic = findViewById(R.id.btn_italic);
                 formatBar.setVisibility(View.VISIBLE);
                 formatBar.animate()
                          .alpha(1f).scaleX(1f).scaleY(1f)
-                         .setDuration(400) // أبطأنا السرعة قليلاً لتطابق الـ FAB
+                         .setDuration(500) // أبطأنا السرعة قليلاً لتطابق الـ FAB
                          .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f)) // أضفنا مرونة للظهور
                          .start();
             }
