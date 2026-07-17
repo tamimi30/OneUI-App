@@ -293,7 +293,7 @@ public class FontViewerFragment extends Fragment {
             formattingHelper.setup(main.getBtnBold(), main.getBtnItalic(), (isFakeBold, isFakeItalic) -> {
         if (previewSentence != null) {
             previewSentence.getPaint().setFakeBoldText(isFakeBold);
-            previewSentence.setTextSkewX(isFakeItalic ? -0.25f : 0f);
+            previewSentence.getPaint().setTextSkewX(isFakeItalic ? -0.25f : 0f);
             previewSentence.invalidate(); // إجبار الشاشة على التحديث
         }
     });
@@ -786,7 +786,7 @@ public class FontViewerFragment extends Fragment {
         previewSentence.setTypeface(currentTypeface);
         // إعادة تطبيق التأثير البرمجي في حال تم تغيير الخط
         previewSentence.getPaint().setFakeBoldText(formattingHelper.isBoldActive());
-        previewSentence.setTextSkewX(formattingHelper.isItalicActive() ? -0.25f : 0f);
+        previewSentence.getPaint().setTextSkewX(formattingHelper.isItalicActive() ? -0.25f : 0f);
         }
         applyFontSize();
     }
