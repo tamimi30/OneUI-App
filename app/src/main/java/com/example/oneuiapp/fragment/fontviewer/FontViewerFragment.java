@@ -446,6 +446,11 @@ public class FontViewerFragment extends Fragment {
         // Update title immediately (will show real name or "Unknown Font" as received)
         notifyFontChangedImmediate();
 
+        // الغاء تفعيل العريض والمائل عند اختيار خط جديد
+        if (formattingHelper != null) {
+            formattingHelper.reset();
+        }
+
         // Start loading font in background
         loadFontFromPathWithWeight(path, fileName, realName, DEFAULT_FONT_WEIGHT);
     }
