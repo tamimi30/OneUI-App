@@ -203,7 +203,9 @@ public class MainActivity extends BaseActivity
     // كل فراجمنت يُدير أيقوناته بشكل مستقل عبر setHasOptionsMenu(true)
 
     private FloatingActionButton fabFontSize;
-
+private View formatBar;
+private android.widget.ImageView btnBold;
+private android.widget.ImageView btnItalic;
 
 
     private SearchCoordinator mSearchCoordinator;
@@ -391,6 +393,9 @@ public class MainActivity extends BaseActivity
         mDrawerLayout   = findViewById(R.id.drawer_layout);
         mDrawerListView = findViewById(R.id.drawer_list_view);
         fabFontSize = findViewById(R.id.fab_font_size);
+formatBar = findViewById(R.id.format_bar);
+btnBold = findViewById(R.id.btn_bold);
+btnItalic = findViewById(R.id.btn_italic);
     }
 
 
@@ -940,16 +945,23 @@ public class MainActivity extends BaseActivity
      */
     @Override
     public void updateFabVisibility(AppScreen screen) {
-        if (fabFontSize == null) return;
+    if (fabFontSize == null) return;
 
-        if (screen == AppScreen.FONT_VIEWER) {
-            // هذا الأمر سيقرأ الأنيميشن من الـ XML ويطبقه تلقائياً
-            fabFontSize.show(); 
-        } else {
-            // هذا الأمر سيقرأ أنيميشن الاختفاء من الـ XML
-            fabFontSize.hide(); 
+    if (screen == AppScreen.FONT_VIEWER) {
+        fabFontSize.show(); 
+        if (formatBar != null) {
+            formatBar.setVisibility(View.VISIBLE);
+            formatBar.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start();
+        }
+    } else {
+        fabFontSize.hide(); 
+        if (formatBar != null) {
+            formatBar.animate().alpha(0f).scaleX(0f).scaleY(0f).setDuration(200)
+                     .withEndAction(() -> formatBar.setVisibility(View.GONE)).start();
+            }
         }
     }
+
 
         public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
@@ -1296,4 +1308,8 @@ public class MainActivity extends BaseActivity
         }
         updateDrawerTitle(screen);
     }
+    
+    public android.widget.ImageView getBtnBold() { return btnBold; }
+    public android.widget.ImageView getBtnItalic() { return btnItalic; }
+
                                                           }
