@@ -26,6 +26,16 @@ import com.example.oneuiapp.fragment.settings.utils.FontHelper;
  */
 public class BaseActivity extends AppCompatActivity {
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        // تطبيق اللغة على السياق عبر ContextWrapper
+        // للأجهزة دون Android 13: يضمن تحميل الموارد باللغة الصحيحة
+        // للأجهزة Android 13+: تكفل النظام بالأمر عبر LocaleManager، وهذا مجرد تأكيد إضافي
+        // الاتجاه (RTL/LTR) يُحدَّد تلقائياً من الـ Locale دون الحاجة لفرضه يدوياً
+        Context wrappedContext = SettingsHelper.wrapContext(newBase);
+        
+        super.attachBaseContext(wrappedContext);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,10 +54,6 @@ public class BaseActivity extends AppCompatActivity {
         }
         
         super.onCreate(savedInstanceState);
-        
-        // إضافة تأثير التلاشي (Fade In / Fade Out) عند فتح أو إعادة بناء الشاشة
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-
     }
 
     @Override
