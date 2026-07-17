@@ -953,7 +953,7 @@ btnItalic = findViewById(R.id.btn_italic);
                 formatBar.setVisibility(View.VISIBLE);
                 formatBar.animate()
                          .alpha(1f).scaleX(1f).scaleY(1f)
-                         .setDuration(250) // أبطأنا السرعة قليلاً لتطابق الـ FAB
+                         .setDuration(350) // أبطأنا السرعة قليلاً لتطابق الـ FAB
                          .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f)) // أضفنا مرونة للظهور
                          .start();
             }
@@ -962,7 +962,7 @@ btnItalic = findViewById(R.id.btn_italic);
             if (formatBar != null) {
                 formatBar.animate()
                          .alpha(0f).scaleX(0f).scaleY(0f)
-                         .setDuration(200)
+                         .setDuration(350)
                          .setInterpolator(new android.view.animation.AccelerateInterpolator()) // اختفاء ناعم
                          .withEndAction(() -> formatBar.setVisibility(View.GONE))
                          .start();
