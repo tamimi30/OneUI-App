@@ -425,7 +425,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 if (appBg != null) {
                     if (currentActivity != null && !currentActivity.isFinishing()) {
                         // المستخدم لا يزال في SettingsActivity — نستثنيها صراحةً
-                        appBg.recreateAllActivitiesExcept(currentActivity);
                     } else {
                         // المستخدم غادر SettingsActivity — تُستثنى تلقائياً عبر isFinishing()
                         appBg.recreateAllActivities();
