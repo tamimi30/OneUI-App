@@ -945,19 +945,27 @@ btnItalic = findViewById(R.id.btn_italic);
      */
     @Override
     public void updateFabVisibility(AppScreen screen) {
-    if (fabFontSize == null) return;
+        if (fabFontSize == null) return;
 
-    if (screen == AppScreen.FONT_VIEWER) {
-        fabFontSize.show(); 
-        if (formatBar != null) {
-            formatBar.setVisibility(View.VISIBLE);
-            formatBar.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start();
-        }
-    } else {
-        fabFontSize.hide(); 
-        if (formatBar != null) {
-            formatBar.animate().alpha(0f).scaleX(0f).scaleY(0f).setDuration(200)
-                     .withEndAction(() -> formatBar.setVisibility(View.GONE)).start();
+        if (screen == AppScreen.FONT_VIEWER) {
+            fabFontSize.show(); 
+            if (formatBar != null) {
+                formatBar.setVisibility(View.VISIBLE);
+                formatBar.animate()
+                         .alpha(1f).scaleX(1f).scaleY(1f)
+                         .setDuration(250) // أبطأنا السرعة قليلاً لتطابق الـ FAB
+                         .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f)) // أضفنا مرونة للظهور
+                         .start();
+            }
+        } else {
+            fabFontSize.hide(); 
+            if (formatBar != null) {
+                formatBar.animate()
+                         .alpha(0f).scaleX(0f).scaleY(0f)
+                         .setDuration(200)
+                         .setInterpolator(new android.view.animation.AccelerateInterpolator()) // اختفاء ناعم
+                         .withEndAction(() -> formatBar.setVisibility(View.GONE))
+                         .start();
             }
         }
     }
