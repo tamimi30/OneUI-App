@@ -19,17 +19,6 @@ import dev.oneuiproject.oneui.layout.ToolbarLayout;
  * 
  * تعرض SettingsFragment في شاشة منفصلة مع شريط أدوات علوي
  * يمكن الوصول إليها من أيقونة الإعدادات في درج التنقل في MainActivity
- *
- * ★ آلية تغيير اللغة بدون تدمير الـ Activity: ★
- * بما أن locale|layoutDirection مُضاف إلى configChanges في المانيفيست،
- * عند تغيير اللغة يُستدعى onConfigurationChanged بدلاً من إعادة بناء الـ Activity.
- * نعتمد على LanguageHelper لتطبيق الاتجاه الصحيح بشكل مركزي ومنظم.
- *
- * ★ لماذا locale|layoutDirection هنا فقط؟ ★
- * لأن SettingsActivity هي الشاشة الوحيدة التي يرى فيها المستخدم تغيير اللغة
- * بشكل مباشر. منع تدميرها يُلغي وميض الصور والرسومات أثناء التغيير.
- * باقي الأنشطة (MainActivity, HomeActivity) لا تملك هذا الإعداد فيعيد
- * النظام بناءها تلقائياً في الخلفية، وعند الرجوع إليها تكون محدّثة بالكامل.
  */
 public class SettingsActivity extends BaseActivity {
 
@@ -64,22 +53,6 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
-
-    /**
-     * ★ تحديث الاتجاه وعناصر الـ Activity فوراً عند تغيير اللغة ★
-     *
-     * يُستدعى بدلاً من إعادة بناء الـ Activity لأن locale|layoutDirection
-     * مُضاف إلى configChanges. النظام يُحدّث الموارد قبل هذا الاستدعاء.
-     *
-     * نفوّض تحديث الاتجاه إلى LanguageHelper ليبقى المنطق مركزياً.
-     * SettingsFragment يتلقى نفس الاستدعاء تلقائياً عبر سلسلة Activity → Fragment.
-     *
-     * ★ سبب تحديث CollapsingToolbar يدوياً: ★
-     * ToolbarLayout من مكتبة OneUI يحتفظ بالعنوان والعنوان الفرعي كقيم مستقلة
-     * في الذاكرة ولا يُعيد تحميلهما تلقائياً عند تغيير اللغة. يجب سحب النصوص
-     * الجديدة من freshContext وتمريرها صريحاً.
-     */
-    
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
