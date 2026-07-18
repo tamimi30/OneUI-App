@@ -114,61 +114,9 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     // حالة onHiddenChanged(false) تعتمد على mMainHandler.post() المباشر ولا تحتاج للعلامة.
     private boolean mNeedsScrollRestore = false;
 
-    // ★ يحجب جميع أحداث اللمس على الـ RecyclerView ★
-    private final RecyclerView.OnItemTouchListener mTouchBlocker =
-        new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv,
-                                                 @NonNull MotionEvent e) { return true; }
-            @Override
-            public void onTouchEvent(@NonNull RecyclerView rv,
-                                     @NonNull MotionEvent e) {}
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean b) {}
-        };
-
-    /**
-     * ★ التعديل: إضافة weightWidthLabel كمعامل خامس ★
-     * يحمل وصف الوزن/العرض الجاهز من القائمة لتمريره لـ NavManager ثم FontViewerFragment.
-     */
     public interface OnFontSelectedListener {
         void onFontSelected(String fontPath, String realName, String fileName,
                             int ttcIndex, String weightWidthLabel);
-    }
-
-    // ─────────────────────────────────────────────────────────
-    // دوال التحكم في اللمس — تُستدعى من MainActivity
-    // ─────────────────────────────────────────────────────────
-
-    /** تعطيل اللمس فوراً عند النقر على خط */
-    public void blockTouch() {
-        if (mRecyclerView != null) {
-            mRecyclerView.removeOnItemTouchListener(mTouchBlocker);
-            mRecyclerView.addOnItemTouchListener(mTouchBlocker);
-        }
-    }
-
-    /** تفعيل اللمس عند العودة للقائمة */
-    public void unblockTouch() {
-        if (mRecyclerView != null)
-            mRecyclerView.removeOnItemTouchListener(mTouchBlocker);
-        // ★ إعادة تفعيل الحارس لقبول النقرات مجدداً ★
-        if (mAdapter != null) mAdapter.resetClickGuard();
-        View root = getView();
-        if (root != null) {
-            root.setClickable(true);
-            root.setFocusable(true);
-            root.setEnabled(true);
-            root.bringToFront();
-            root.requestFocus();
-        }
-    }
-
-    /** حفظ آخر خط مفتوح وتمييزه — يُستدعى بعد تأكيد الانتقال */
-    public void saveAndHighlight(String path) {
-        if (mAdapter != null) {
-            mAdapter.saveLastOpenedAndUpdate(path);
-        }
     }
 
     @Override
@@ -386,6 +334,8 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         // ★ التعديل: استقبال weightWidthLabel كمعامل خامس وتمريره إلى mFontSelectedListener ★
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
             mViewModel.recordFontAccess(fontPath);
+
+            mAdapter.saveLastOpenedAndUpdate(fontPath);
 
             if (mFontSelectedListener != null) {
                 mFontSelectedListener.onFontSelected(fontPath, realName, fileName,
@@ -645,9 +595,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
             mSearchViewModel.deactivateSearch();
         } else {
-            // ★ إعادة تفعيل اللمس وإعادة تفعيل الحارس لقبول النقرات مجدداً ★
-            unblockTouch();
-
             // ★ إعادة رسم القائمة عند العودة لإظهار تمييز آخر خط تم فتحه ★
             if (mAdapter != null) mAdapter.smartUpdate();
 
