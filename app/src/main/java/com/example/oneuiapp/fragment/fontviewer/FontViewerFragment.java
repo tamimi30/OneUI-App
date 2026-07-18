@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.example.oneuiapp.activity.MainActivity;       // ★ المرحلة الأولى: استيراد MainActivity ★
+
 import com.example.oneuiapp.dialog.FontSizeDialog;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.fragment.fontviewer.utils.VariableFontHelper;
@@ -119,22 +119,6 @@ public class FontViewerFragment extends Fragment {
     private BoldItalicFormatting formattingHelper = new BoldItalicFormatting();
 
 
-    /**
-     * ★ يُفعّل اللمس على شاشة عارض الخطوط فوراً قبل اكتمال الأنيميشن ★
-     * يُستدعى من MainActivity عند النقر على خط
-     */
-    public void enableTouch() {
-        View root = getView();
-        if (root != null) {
-            root.setClickable(true);
-            root.setFocusable(true);
-            root.setEnabled(true);
-            // ★ يضمن أولوية اللمس خلال الأنيميشن عبر رفع الـ View لأعلى Z-order ★
-            root.bringToFront();
-            root.requestFocus();
-        }
-    }
-
     public interface OnFontChangedListener {
         void onFontChanged(String fontRealName, String fontFileName);
         void onFontCleared();
@@ -198,9 +182,8 @@ public class FontViewerFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_font_meta) {
-            // ★ استدعاء MainActivity لعرض معلومات الخط ★
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).showFontMetaFromFragment();
+            if (getActivity() instanceof FontViewerActivity) {
+                ((FontViewerActivity) getActivity()).showFontMetaFromFragment();
             }
             return true;
         }
@@ -284,12 +267,12 @@ public class FontViewerFragment extends Fragment {
 
         updatePreviewTexts();
         
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).updateFabFontSizeText(currentFontSize);
+        if (getActivity() instanceof FontViewerActivity) {
+            ((FontViewerActivity) getActivity()).updateFabFontSizeText(currentFontSize);
         }
         
-        if (getActivity() instanceof MainActivity) {
-            MainActivity main = (MainActivity) getActivity();
+        if (getActivity() instanceof FontViewerActivity) {
+            FontViewerActivity main = (FontViewerActivity) getActivity();
             formattingHelper.setup(main.getBtnBold(), main.getBtnItalic(), (isFakeBold, isFakeItalic) -> {
         if (previewSentence != null) {
             previewSentence.getPaint().setFakeBoldText(isFakeBold);
@@ -335,8 +318,8 @@ public class FontViewerFragment extends Fragment {
         currentFontSize = newSize;
         applyFontSize();
         //preferenceManager.saveFontSize(newSize);
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).updateFabFontSizeText(newSize);
+        if (getActivity() instanceof FontViewerActivity) {
+            ((FontViewerActivity) getActivity()).updateFabFontSizeText(newSize);
         }
     }
 
@@ -829,8 +812,8 @@ public class FontViewerFragment extends Fragment {
             applyFontSize();
             
             // تحديث زر الـ FAB ليعود للرقم القديم عند الإلغاء
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).updateFabFontSizeText(originalSize);
+            if (getActivity() instanceof FontViewerActivity) {
+                ((FontViewerActivity) getActivity()).updateFabFontSizeText(originalSize);
             }
         });
 
