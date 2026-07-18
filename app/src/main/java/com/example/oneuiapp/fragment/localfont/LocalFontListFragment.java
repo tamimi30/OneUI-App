@@ -177,6 +177,10 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     // ★ إضافة هذا المتغير لمنع القفز العشوائي ★
     private boolean mNeedsScrollRestore = false;
 
+    // ★ منطق الخروج بضغطتين على زر الرجوع — أصبح مسؤولية شاشة الخطوط المحلية ★
+    private long mBackPressedTime = 0;
+    private static final long BACK_PRESS_EXIT_INTERVAL = 2000;
+
     // ─────────────────────────────────────────────────────────
     // ★ الخطوة الأولى من إصلاح Menu State Corruption ★
     // حفظ مرجع القائمة لتحديث رؤية الأزرار مباشرةً بدون invalidateOptionsMenu()
@@ -215,61 +219,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     @Nullable
     private ProgressDialog mCurrentProgressDialog;
 
-    // ★ يحجب جميع أحداث اللمس على الـ RecyclerView ★
-    private final RecyclerView.OnItemTouchListener mTouchBlocker =
-        new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv,
-                                                 @NonNull MotionEvent e) { return true; }
-            @Override
-            public void onTouchEvent(@NonNull RecyclerView rv,
-                                     @NonNull MotionEvent e) {}
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean b) {}
-        };
-
-    /**
-     * ★ التعديل: إضافة weightWidthLabel كمعامل خامس ★
-     * يحمل وصف الوزن/العرض الجاهز من القائمة لتمريره لـ NavManager ثم FontViewerFragment.
-     */
     public interface OnFontSelectedListener {
         void onFontSelected(String fontPath, String realName, String fileName,
                             int ttcIndex, String weightWidthLabel);
-    }
-
-    // ─────────────────────────────────────────────────────────
-    // دوال التحكم في اللمس — تُستدعى من MainActivity
-    // ─────────────────────────────────────────────────────────
-
-    /** تعطيل اللمس فوراً عند النقر على خط */
-    public void blockTouch() {
-        if (mRecyclerView != null) {
-            mRecyclerView.removeOnItemTouchListener(mTouchBlocker);
-            mRecyclerView.addOnItemTouchListener(mTouchBlocker);
-        }
-    }
-
-    /** تفعيل اللمس عند العودة للقائمة */
-    public void unblockTouch() {
-        if (mRecyclerView != null)
-            mRecyclerView.removeOnItemTouchListener(mTouchBlocker);
-        // ★ إعادة تفعيل الحارس لقبول النقرات مجدداً ★
-        if (mAdapter != null) mAdapter.resetClickGuard();
-        View root = getView();
-        if (root != null) {
-            root.setClickable(true);
-            root.setFocusable(true);
-            root.setEnabled(true);
-            root.bringToFront();
-            root.requestFocus();
-        }
-    }
-
-    /** حفظ آخر خط مفتوح وتمييزه — يُستدعى بعد تأكيد الانتقال */
-    public void saveAndHighlight(String path) {
-        if (mAdapter != null) {
-            mAdapter.saveLastOpenedAndUpdate(path);
-        }
     }
 
     @Override
@@ -781,6 +733,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             // ✅ تسجيل الاستخدام في قاعدة البيانات عند النقر فقط (وليس أثناء التمرير)
             mViewModel.recordFontAccess(fontPath);
 
+            // ★ تمييز الخط بالأزرق فوراً ★
+            mAdapter.saveLastOpenedAndUpdate(fontPath);
+
             if (mFontSelectedListener != null) {
                 mFontSelectedListener.onFontSelected(fontPath, realName, fileName,
                                                      ttcIndex, weightWidthLabel);
@@ -1291,6 +1246,25 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         return false;
     }
 
+    /**
+     * ★ منطق "اضغط مرة أخرى للخروج" ★
+     * @return true إذا يجب الخروج فعلياً الآن، false إذا عُرضت رسالة التحذير فقط
+     */
+    public boolean handleExitBackPress() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - mBackPressedTime < BACK_PRESS_EXIT_INTERVAL) {
+            return true;
+        } else {
+            mBackPressedTime = currentTime;
+            if (mContext != null) {
+                dev.oneuiproject.oneui.widget.Toast.makeText(mContext,
+                        getString(R.string.exit_on_double_back),
+                        dev.oneuiproject.oneui.widget.Toast.LENGTH_SHORT).show();
+            }
+            return false;
+        }
+    }
+
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -1354,8 +1328,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             if (isLoading != null && isLoading) {
                 setDrawerLocked(true);
             }
-
-            unblockTouch();
 
             if (mAdapter != null) mAdapter.smartUpdate();
 
