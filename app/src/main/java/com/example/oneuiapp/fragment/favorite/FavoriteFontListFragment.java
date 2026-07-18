@@ -179,20 +179,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     @Nullable
     private ProgressDialog mCurrentProgressDialog;
 
-    // ─────────────────────────────────────────────────────────
-    // ★ حاجب اللمس — يُستدعى من NavManager عند الانتقال لعارض الخطوط ★
-    // ─────────────────────────────────────────────────────────
-    private final RecyclerView.OnItemTouchListener mTouchBlocker =
-        new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv,
-                                                 @NonNull MotionEvent e) { return true; }
-            @Override
-            public void onTouchEvent(@NonNull RecyclerView rv,
-                                     @NonNull MotionEvent e) {}
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean b) {}
-        };
+    
 
     // ════════════════════════════════════════════════════════════
     // ★ واجهة الإشعار عند اختيار خط ★
@@ -208,43 +195,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
                             int ttcIndex, String weightWidthLabel);
     }
 
-    // ════════════════════════════════════════════════════════════
-    // دوال التحكم في اللمس — تُستدعى من NavManager
-    // ════════════════════════════════════════════════════════════
-
-    /** تعطيل اللمس فوراً عند النقر على خط للانتقال لعارض الخطوط */
-    public void blockTouch() {
-        if (mRecyclerView != null) {
-            mRecyclerView.removeOnItemTouchListener(mTouchBlocker);
-            mRecyclerView.addOnItemTouchListener(mTouchBlocker);
-        }
-    }
-
-    /** تفعيل اللمس عند العودة لقائمة المفضلة من عارض الخطوط */
-    public void unblockTouch() {
-        if (mRecyclerView != null)
-            mRecyclerView.removeOnItemTouchListener(mTouchBlocker);
-        // ★ إعادة تفعيل الحارس لقبول النقرات مجدداً ★
-        if (mAdapter != null) mAdapter.resetClickGuard();
-        View root = getView();
-        if (root != null) {
-            root.setClickable(true);
-            root.setFocusable(true);
-            root.setEnabled(true);
-            root.bringToFront();
-            root.requestFocus();
-        }
-    }
-
-    /**
-     * حفظ آخر خط مفتوح وتمييزه بالأزرق عند العودة للقائمة.
-     * يُستدعى من NavManager بعد اكتمال أنيميشن الانتقال.
-     */
-    public void saveAndHighlight(String path) {
-        if (mAdapter != null) {
-            mAdapter.saveLastOpenedAndUpdate(path);
-        }
-    }
+    
 
     // ════════════════════════════════════════════════════════════
     // دورة حياة الـ Fragment
@@ -501,12 +452,8 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         // ★ مستمع النقر على الخط: تمرير weightWidthLabel لـ NavManager عبر MainActivity ★
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
-            
-            // ★ حل المشكلة 2: إغلاق الكيبورد برمجياً قبل الانتقال لمنع الشاشة البيضاء
-        /**    android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null && getView() != null) {
-                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-            } */
+
+            mAdapter.saveLastOpenedAndUpdate(fontPath);
 
             if (mFontSelectedListener != null) {
                 mFontSelectedListener.onFontSelected(fontPath, realName, fileName,
@@ -1070,9 +1017,6 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
                 mSelectionManager.setSelecting(false);
             }
         } else {
-            // ★ إعادة تفعيل اللمس عند ظهور الشاشة ★
-            unblockTouch();
-
             // ★ إعادة رسم القائمة لتمييز آخر خط مفتوح ★
             if (mAdapter != null) mAdapter.smartUpdate();
 
