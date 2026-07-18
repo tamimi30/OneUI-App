@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.app.AlertDialog;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -31,7 +31,7 @@ import dev.oneuiproject.oneui.layout.DrawerLayout;
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
 
 import com.example.oneuiapp.dialog.FontInfoDialog;
-import com.example.oneuiapp.fragment.fontviewer.FontViewerFragment;
+import com.example.oneuiapp.fragment.fontviewer.FontViewerActivity;
 import com.example.oneuiapp.fragment.localfont.LocalFontListFragment;
 import com.example.oneuiapp.fragment.systemfont.SystemFontListFragment;
 import com.example.oneuiapp.fragment.favorite.FavoriteFontListFragment;
@@ -127,8 +127,7 @@ import com.example.oneuiapp.utils.ExternalFontIntentHandler;
  *     بدلاً من انتظار كتابة أول حرف. ★
  */
 public class MainActivity extends BaseActivity
-        implements FontViewerFragment.OnFontChangedListener,
-        LocalFontListFragment.OnFontSelectedListener,
+        implements LocalFontListFragment.OnFontSelectedListener,
         SystemFontListFragment.OnFontSelectedListener,
         FavoriteFontListFragment.OnFontSelectedListener,
         NavManager.Host {
@@ -148,9 +147,8 @@ public class MainActivity extends BaseActivity
     // ════════════════════════════════════════════════════════════════════════
     private final Map<AppScreen, Fragment> mFragmentsMap = new EnumMap<>(AppScreen.class);
 
-    // ★ الخطوة الثانية: AppScreen بدلاً من int ★
-    // الشاشة الافتراضية عند الإطلاق الأول هي عارض الخطوط
-    private AppScreen mCurrentScreen = AppScreen.FONT_VIEWER;
+    // الشاشة الافتراضية عند الإطلاق الأول هي الخطوط المحلية
+    private AppScreen mCurrentScreen = AppScreen.LOCAL_FONTS;
 
     private static final String KEY_CURRENT_SCREEN          = "current_screen";
     private static final String KEY_LOCAL_FONTS_COUNT        = "local_fonts_count";
@@ -179,8 +177,7 @@ public class MainActivity extends BaseActivity
      */
     public static final String EXTRA_TARGET_FRAGMENT = "target_fragment";
 
-    private String currentFontRealName;
-    private String currentFontFileName;
+    
 
     // ★ الإصلاح الجوهري: فصل عداد المجلد المحلي عن عداد خطوط النظام ★
     // هذا يمنع أي فراجمنت من الكتابة فوق عدد الفراجمنت الآخر عند إعادة البناء
@@ -202,10 +199,7 @@ public class MainActivity extends BaseActivity
     // mLocalFontsMoreMenuItem → انتقل إلى LocalFontListFragment
     // كل فراجمنت يُدير أيقوناته بشكل مستقل عبر setHasOptionsMenu(true)
 
-    private FloatingActionButton fabFontSize;
-private View formatBar;
-private android.widget.ImageView btnBold;
-private android.widget.ImageView btnItalic;
+    
 
 
     private SearchCoordinator mSearchCoordinator;
@@ -248,18 +242,15 @@ private android.widget.ImageView btnItalic;
             mFavoriteFontsCount = savedInstanceState.getInt(KEY_FAVORITE_FONTS_COUNT, 0);
             // ★ استعادة عداد سلة المحذوفات عند إعادة البناء ★
             mTrashFontsCount    = savedInstanceState.getInt(KEY_TRASH_FONTS_COUNT, 0);
-            // ★ استعادة مكدس التنقل عند إعادة البناء — مُفوَّضة لـ NavManager ★
-            mNavManager.restoreNavBackStack(savedInstanceState);
             restoreFragmentsState(savedInstanceState);
             mSearchCoordinator.restoreState(savedInstanceState);
         } else {
             addAllFragments();
-            mCurrentScreen = AppScreen.FONT_VIEWER;
-            mNavManager.showFragmentFast(AppScreen.FONT_VIEWER);
+            mCurrentScreen = AppScreen.LOCAL_FONTS;
+            mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
         }
 
         setupDrawer();
-        setupFabFontSize();
         updateDrawerTitle(mCurrentScreen);
 
         handleIntent(getIntent());
@@ -313,10 +304,11 @@ private android.widget.ImageView btnItalic;
             if (ExternalFontIntentHandler.isFontViewIntent(intent)) {
                 Uri fontUri = intent.getData();
                 String fileName = ExternalFontIntentHandler.getFileName(this, fontUri);
-                
-                if (mNavManager != null) {
-                    mNavManager.handleFontSelected(fontUri.toString(), null, fileName, 0, null);
-                }
+
+                Intent viewerIntent = new Intent(this, FontViewerActivity.class);
+                viewerIntent.putExtra(FontViewerActivity.EXTRA_FONT_PATH, fontUri.toString());
+                viewerIntent.putExtra(FontViewerActivity.EXTRA_FONT_FILE_NAME, fileName);
+                startActivity(viewerIntent);
                 return;
             }
 
@@ -392,10 +384,6 @@ private android.widget.ImageView btnItalic;
     private void initViews() {
         mDrawerLayout   = findViewById(R.id.drawer_layout);
         mDrawerListView = findViewById(R.id.drawer_list_view);
-        fabFontSize = findViewById(R.id.fab_font_size);
-formatBar = findViewById(R.id.format_bar);
-btnBold = findViewById(R.id.btn_bold);
-btnItalic = findViewById(R.id.btn_italic);
     }
 
 
@@ -414,8 +402,7 @@ btnItalic = findViewById(R.id.btn_italic);
      */
     private void initFragmentsList() {
         if (mFragmentsMap.isEmpty()) {
-            // ★ HomeFragment لا تُضاف هنا — تُفتح كـ HomeActivity عند الضغط على الدرج ★
-            mFragmentsMap.put(AppScreen.FONT_VIEWER, new FontViewerFragment());
+            // ★ HomeFragment و FontViewerFragment لا تُضافان هنا — تُفتحان كنشاط مستقل ★
             mFragmentsMap.put(AppScreen.LOCAL_FONTS, new LocalFontListFragment());
             mFragmentsMap.put(AppScreen.SYSTEM_FONTS, new SystemFontListFragment());
             mFragmentsMap.put(AppScreen.FAVORITES, new FavoriteFontListFragment());
@@ -536,78 +523,7 @@ btnItalic = findViewById(R.id.btn_italic);
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * ★ دالة مساعدة: البحث عن فراغمنت بنوعه في Map الفراغمنتات ★
-     *
-     * @param type نوع الفراغمنت المطلوب
-     * @return أول فراغمنت من هذا النوع، أو null إن لم يُعثر عليه
-     */
-    @androidx.annotation.Nullable
-    private <T extends Fragment> Fragment findFragmentByType(Class<T> type) {
-        for (Fragment f : mFragmentsMap.values()) {
-            if (type.isInstance(f)) return f;
-        }
-        return null;
-    }
-
-    /**
-     * ★ عرض معلومات الخط — أصبحت public لاستدعائها من FontViewerFragment ★
-     *
-     * يُستدعى من FontViewerFragment.onOptionsItemSelected() عند الضغط على
-     * زر معلومات الخط (action_font_meta) في الـ AppBar.
-     *
-     * ★ المرحلة الأولى: الدالة انتقلت من private إلى public ★
-     * لتمكين FontViewerFragment من استدعائها مباشرةً دون وسيط.
-     */
-    public void showFontMetaFromFragment() {
-        Fragment frag = findFragmentByType(FontViewerFragment.class);
-        if (!(frag instanceof FontViewerFragment)) {
-            showNoFontDialog();
-            return;
-        }
-
-        FontViewerFragment fvf = (FontViewerFragment) frag;
-        if (!fvf.hasFontSelected()) {
-            showNoFontDialog();
-            return;
-        }
-
-        Map<String, String> meta = fvf.getFontMetaData();
-
-        TranslationService translationService = new TranslationService(this);
-        if (translationService.isTranslationEnabled()) {
-            boolean[] isFinished = {false};
-            
-            // تأخير ظهور مؤشر التحميل ربع ثانية لمنع الوميض
-            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                if (!isFinished[0]) showLoadingDialog();
-            }, 250);
-
-            translationService.translateMetadata(meta, new TranslationService.TranslationCallback() {
-                @Override
-                public void onTranslationComplete(Map<String, String> translatedData) {
-                    runOnUiThread(() -> {
-                        isFinished[0] = true;
-                        dismissLoadingDialog();
-                        showFontInfoDialog(translatedData);
-                    });
-                }
-
-                @Override
-                public void onTranslationFailed(String error) {
-                    runOnUiThread(() -> {
-                        isFinished[0] = true;
-                        dismissLoadingDialog();
-                        android.util.Log.w("MainActivity", "Translation failed: " + error);
-                        showFontInfoDialog(meta);
-                    });
-                }
-            });
-        }
- else {
-            showFontInfoDialog(meta);
-        }
-    }
+    
 
     /**
      * ★ الإضافة: استقبال حالة المجلد المحلي من LocalFontListFragment ★
@@ -642,17 +558,7 @@ btnItalic = findViewById(R.id.btn_italic);
         startActivity(new Intent(this, SettingsActivity.class));
     }
 
-    private void setupFabFontSize() {
-        if (fabFontSize != null) {
-            fabFontSize.setOnClickListener(v -> {
-                // ★ الإصلاح: استخدام mFragmentsMap.get(FONT_VIEWER) بدلاً من mFragments.get(1) ★
-                Fragment currentFragment = mFragmentsMap.get(mCurrentScreen);
-                if (currentFragment instanceof FontViewerFragment) {
-                    ((FontViewerFragment) currentFragment).showFontSizeDialogPublic();
-                }
-            });
-        }
-    }
+    
 
     /**
      * ★ استعادة حالة الفراغمنتات من Bundle ★
@@ -668,15 +574,15 @@ btnItalic = findViewById(R.id.btn_italic);
         } catch (IllegalArgumentException e) {
             mCurrentScreen = AppScreen.FONT_VIEWER;
         }
-        // HOME ليس فراغمنت في Map — إعادة التوجيه لـ FONT_VIEWER إن جاء من حالة قديمة
-        if (mCurrentScreen == AppScreen.HOME) {
-            mCurrentScreen = AppScreen.FONT_VIEWER;
+        // HOME و FONT_VIEWER ليسا فراغمنتين — إعادة التوجيه للخطوط المحلية إن جاء من حالة قديمة
+        if (mCurrentScreen == AppScreen.HOME || mCurrentScreen == AppScreen.FONT_VIEWER) {
+            mCurrentScreen = AppScreen.LOCAL_FONTS;
         }
 
         FragmentManager fm = getSupportFragmentManager();
         // ★ محاولة استعادة كل فراغمنت من FragmentManager بـ Tag = AppScreen.name() ★
         for (AppScreen screen : AppScreen.values()) {
-            if (screen == AppScreen.HOME) continue; // HOME ليس في Map الفراغمنتات
+            if (screen == AppScreen.HOME || screen == AppScreen.FONT_VIEWER) continue;
             Fragment f = fm.findFragmentByTag(screen.name());
             if (f != null) {
                 mFragmentsMap.put(screen, f);
@@ -753,6 +659,13 @@ btnItalic = findViewById(R.id.btn_italic);
                         Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                         startActivity(intent);
                         return false; // لا تغيير في التحديد البصري
+                    }
+
+                    // ★ عارض الخطوط أصبح نشاطاً مستقلاً ★
+                    if (screen == AppScreen.FONT_VIEWER) {
+                        Intent intent = new Intent(MainActivity.this, FontViewerActivity.class);
+                        startActivity(intent);
+                        return false;
                     }
 
                     setDrawerOpen(false, true);
@@ -838,19 +751,8 @@ btnItalic = findViewById(R.id.btn_italic);
                 break;
 
             case FONT_VIEWER:
-                if (currentFontRealName != null && !currentFontRealName.isEmpty()) {
-                    title = currentFontRealName;
-                } else if (currentFontFileName != null && !currentFontFileName.isEmpty()) {
-                    title = getString(R.string.unknown_font);
-                } else {
-                    title = getString(R.string.drawer_font_viewer);
-                }
-                
-                if (currentFontFileName != null && !currentFontFileName.isEmpty()) {
-                    subtitle = FileUtils.removeExtension(currentFontFileName);
-                } else {
-                    subtitle = getString(R.string.font_viewer_select_description);
-                }
+                title    = getString(R.string.drawer_font_viewer);
+                subtitle = getString(R.string.font_viewer_select_description);
                 break;
 
             case LOCAL_FONTS:
@@ -937,52 +839,7 @@ btnItalic = findViewById(R.id.btn_italic);
         // هذه الدالة أصبحت لا عملية (no-op) — تظل موجودة لإرضاء واجهة NavManager.Host
     }
 
-    /**
-     * ★ الخطوة الثانية: updateFabVisibility يستقبل AppScreen بدلاً من int ★
-     *
-     * المقارنة المباشرة بـ AppScreen.FONT_VIEWER تحل محل:
-     *   if (position == 1) fabFontSize.show()
-     */
-    @Override
-    public void updateFabVisibility(AppScreen screen) {
-        if (fabFontSize == null) return;
-
-        if (screen == AppScreen.FONT_VIEWER) {
-            fabFontSize.show(); 
-            if (formatBar != null) {
-                formatBar.setVisibility(View.VISIBLE);
-                formatBar.animate()
-                         .alpha(1f).scaleX(1f).scaleY(1f)
-                         .setDuration(550) // أبطأنا السرعة قليلاً لتطابق الـ FAB
-                         .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f)) // أضفنا مرونة للظهور
-                         .start();
-            }
-        } else {
-            fabFontSize.hide(); 
-            if (formatBar != null) {
-                formatBar.animate()
-                         .alpha(0f).scaleX(0f).scaleY(0f)
-                         .setDuration(250)
-                         .setInterpolator(new android.view.animation.AccelerateInterpolator()) // اختفاء ناعم
-                         .withEndAction(() -> formatBar.setVisibility(View.GONE))
-                         .start();
-            }
-        }
-    }
-
-
-        public void updateFabFontSizeText(float size) {
-        if (fabFontSize != null) {
-            int textColor = getColor(dev.oneuiproject.oneui.design.R.color.oui_primary_text_color);
-            // لاحظ أننا نمرر "this" كـ Context، ثم النص، ثم الحجم بالـ dp (مثلاً 24f)، ثم اللون
-            fabFontSize.setImageDrawable(new TextDrawable(
-                    this, 
-                    String.valueOf(Math.round(size)), 
-                    24f, 
-                    textColor
-            ));
-        }
-    }
+    
 
 
     /**
@@ -1061,60 +918,7 @@ btnItalic = findViewById(R.id.btn_italic);
         updateFontsCount(screen, count);
     }
 
-    private void showFontInfoDialog(Map<String, String> metadata) {
-        Fragment frag = findFragmentByType(FontViewerFragment.class);
-        if (!(frag instanceof FontViewerFragment)) {
-            return;
-        }
-
-        FontViewerFragment fvf = (FontViewerFragment) frag;
-
-        // --- التعديل الجديد يبدأ من هنا ---
-        // نتحقق إذا كان الخط غير معروف (لا يوجد اسم حقيقي أو البيانات الوصفية فارغة)
-        if (currentFontRealName == null || currentFontRealName.isEmpty() || metadata == null || metadata.isEmpty()) {
-            // نظهر ديالوج الخطأ الذي صنعناه في الملف المنفصل
-            com.example.oneuiapp.dialog.FontErrorDialog.show(this);
-            return; // نوقف الدالة هنا حتى لا يتم عرض الديالوج القديم
-        }
-        // --- التعديل الجديد ينتهي هنا ---
-
-        String fileName = fvf.getCurrentFontFileName();
-        String path     = fvf.originalFontPath;
-
-        FontInfoDialog dialog = new FontInfoDialog(this, metadata, fileName, path);
-        dialog.show();
-    }
-
-    private void showLoadingDialog() {
-        dismissLoadingDialog();
-        try {
-            loadingDialog = new ProgressDialog(this);
-            loadingDialog.setMessage("Translating...");
-            loadingDialog.setCancelable(false);
-            loadingDialog.show();
-        } catch (Exception e) {
-            android.util.Log.e("MainActivity", "Failed to show loading dialog", e);
-        }
-    }
-
-    private void dismissLoadingDialog() {
-        if (loadingDialog != null && loadingDialog.isShowing()) {
-            try {
-                loadingDialog.dismiss();
-            } catch (Exception e) {
-                android.util.Log.e("MainActivity", "Failed to dismiss loading dialog", e);
-            }
-            loadingDialog = null;
-        }
-    }
-
-    private void showNoFontDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.font_viewer_select_font))
-                .setMessage(getString(R.string.font_viewer_no_font_selected))
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
-    }
+    
 
     // ════════════════════════════════════════════════════════════════════════
     //  واجهات Listener — مُفوَّضة لـ NavManager
@@ -1134,29 +938,16 @@ btnItalic = findViewById(R.id.btn_italic);
     @Override
     public void onFontSelected(String fontPath, String realName, String fileName,
                                int ttcIndex, String weightWidthLabel) {
-        mNavManager.handleFontSelected(fontPath, realName, fileName, ttcIndex, weightWidthLabel);
-    }
-
-    @Override
-    public void onFontChanged(String fontRealName, String fontFileName) {
-        this.currentFontRealName = fontRealName;
-        this.currentFontFileName = fontFileName;
-
-        // ★ الإصلاح: مقارنة AppScreen.FONT_VIEWER بدلاً من int ★
-        if (mCurrentScreen == AppScreen.FONT_VIEWER) {
-            runOnUiThread(() -> updateDrawerTitle(mCurrentScreen));
-        }
-    }
-
-    @Override
-    public void onFontCleared() {
-        this.currentFontRealName = null;
-        this.currentFontFileName = null;
-
-        // ★ الإصلاح: مقارنة AppScreen.FONT_VIEWER بدلاً من int ★
-        if (mCurrentScreen == AppScreen.FONT_VIEWER) {
-            updateDrawerTitle(mCurrentScreen);
-        }
+        // ★ عارض الخطوط أصبح نشاطاً مستقلاً — يُفتح مباشرةً عبر Intent ★
+        boolean isSystemFont = mCurrentScreen == AppScreen.SYSTEM_FONTS;
+        Intent intent = new Intent(this, FontViewerActivity.class);
+        intent.putExtra(FontViewerActivity.EXTRA_FONT_PATH, fontPath);
+        intent.putExtra(FontViewerActivity.EXTRA_FONT_REAL_NAME, realName);
+        intent.putExtra(FontViewerActivity.EXTRA_FONT_FILE_NAME, fileName);
+        intent.putExtra(FontViewerActivity.EXTRA_TTC_INDEX, ttcIndex);
+        intent.putExtra(FontViewerActivity.EXTRA_IS_SYSTEM_FONT, isSystemFont);
+        intent.putExtra(FontViewerActivity.EXTRA_WEIGHT_WIDTH_LABEL, weightWidthLabel);
+        startActivity(intent);
     }
 
     // ════════════════════════════════════════════════════════════════════════
@@ -1219,26 +1010,6 @@ btnItalic = findViewById(R.id.btn_italic);
         return mSearchCoordinator;
     }
 
-    @Override
-    public String getFontRealName() {
-        return currentFontRealName;
-    }
-
-    @Override
-    public String getFontFileName() {
-        return currentFontFileName;
-    }
-
-    @Override
-    public void setFontRealName(String name) {
-        currentFontRealName = name;
-    }
-
-    @Override
-    public void setFontFileName(String name) {
-        currentFontFileName = name;
-    }
-
     /**
      * يُنفّذ الخروج الفعلي من التطبيق.
      * يُفرّق بين Android O (API 26) مع isTaskRoot وبقية الإصدارات.
@@ -1250,14 +1021,6 @@ btnItalic = findViewById(R.id.btn_italic);
         } else {
             super.onBackPressed();
         }
-    }
-
-    /** يعرض رسالة Toast تطلب من المستخدم الضغط مرة أخرى للخروج */
-    @Override
-    public void showPressAgainToExitToast() {
-        Toast.makeText(this,
-                getString(R.string.exit_on_double_back),
-                Toast.LENGTH_SHORT).show();
     }
 
     // ════════════════════════════════════════════════════════════════════════
@@ -1274,8 +1037,6 @@ btnItalic = findViewById(R.id.btn_italic);
         outState.putInt(KEY_SYSTEM_FONTS_COUNT,   mSystemFontsCount);
         outState.putInt(KEY_FAVORITE_FONTS_COUNT, mFavoriteFontsCount);
         outState.putInt(KEY_TRASH_FONTS_COUNT,    mTrashFontsCount);
-        // ★ حفظ مكدس التنقل — مُفوَّض لـ NavManager ★
-        mNavManager.saveState(outState);
         mSearchCoordinator.saveState(outState);
     }
 
@@ -1317,7 +1078,4 @@ btnItalic = findViewById(R.id.btn_italic);
         updateDrawerTitle(screen);
     }
     
-    public android.widget.ImageView getBtnBold() { return btnBold; }
-    public android.widget.ImageView getBtnItalic() { return btnItalic; }
-
-                                                          }
+    }
