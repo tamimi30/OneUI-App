@@ -46,27 +46,9 @@ import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
  * تلقائياً بناءً على الـ Locale الصحيح المضبوط في Context.
  * فرضها يدوياً كان يتعارض مع "خيارات المطورين" ويسبب خللاً في الاتجاهات.
  *
- * ★ آلية تغيير اللغة بدون وميض (Android 13+): ★
- * - بما أن locale|layoutDirection مُضاف إلى configChanges في المانيفيست
- *   لـ SettingsActivity فقط، لن يُدمَّر هذا الـ Fragment عند تغيير اللغة.
- * - onConfigurationChanged يُستدعى بدلاً من ذلك، ويقوم بـ:
- *   1. إنشاء freshContext عبر LanguageHelper يحمل اللغة الجديدة.
- *   2. تحديث mContext لاستخدامه في العمليات اللاحقة.
- *   3. إجبار View الجذر على تغيير اتجاهه (RTL/LTR) فوراً عبر LanguageHelper.
- *   4. تحديث النصوص فقط دون المساس بالصور أو الرسومات أو البطاقات.
- *
- * ★ جوهر مشكلة النصوص وحلها: ★
- * attachBaseContext() في BaseActivity يُنشئ Context ملفوفاً باللغة القديمة
- * مرة واحدة عند بدء التطبيق. حتى بعد تغيير اللغة عبر LocaleManager،
- * يظل هذا الـ Context القديم هو مصدر getString() في الـ Fragment.
- * الحل: LanguageHelper.createFreshContext(newConfig) يُنشئ سياقاً مستقلاً
- * يقرأ الموارد باللغة الجديدة بشكل مضمون.
- *
  * ★ مزامنة اللغة مع إعدادات النظام: ★
  * - onResume يقرأ اللغة الفعلية من LocaleManager في كل مرة يُستأنَم فيها الـ Fragment،
  *   مما يضمن تحديث الـ Dropdown ليعكس أي تغيير جرى من إعدادات النظام.
- * - عند اكتشاف تغيير اللغة من إعدادات النظام، يُجدول إعادة بناء الأنشطة الخلفية
- *   التي لم يُعدها النظام تلقائياً بسبب اعتراض SettingsActivity لحدث locale.
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -119,27 +101,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     /**
      * ★ مزامنة قيمة اللغة مع ما هو مطبق فعلياً في النظام ★
      *
-     * يُحلّ مشكلتين:
-     *
-     * المشكلة الأولى: عند تغيير لغة التطبيق من إعدادات النظام والعودة
-     * للتطبيق وهو لا يزال في الـ RAM، كان الـ Dropdown يعرض القيمة القديمة.
-     *
-     * المشكلة الثانية: SettingsActivity تعترض حدث locale في configChanges
-     * وتتعامل معه بنفسها عبر onConfigurationChanged، مما يجعل نظام Android
-     * يعتبر أن التطبيق قد تعامل مع التغيير بالكامل، فلا يُعيد بناء MainActivity
-     * تلقائياً. عند العودة من SettingsActivity إلى MainActivity، تبقى
-     * MainActivity على اللغة القديمة.
-     *
-     * الحل: في كل مرة يُستأنَم الـ Fragment، نستعلم من LocaleManager
-     * عن اللغة الفعلية المطبقة ونحدّث الـ Dropdown وDataStore معاً.
-     * ثم نُجدول إعادة بناء الأنشطة الخلفية بعد تأخير يضمن اكتمال
-     * onConfigurationChanged وتحديثاته في SettingsActivity.
-     *
-     * ★ لماذا لا تحدث مشكلة التكرار عند التغيير من القائمة المنسدلة؟ ★
-     * لأن setLanguageMode() في ViewModel يُحدّث languagePreference.getValue()
-     * فوراً، فعند وصول onResume لاحقاً لا يجد أي تعارض ولا يُرسل RECREATE.
+     * عند تغيير لغة التطبيق من إعدادات النظام (وليس من داخل التطبيق)
+     * ثم العودة للتطبيق وهو لا يزال في الذاكرة، كان الـ Dropdown يعرض
+     * القيمة القديمة. لذلك نستعلم هنا من LocaleManager عن اللغة الفعلية
+     * ونحدّث الـ Dropdown وDataStore معاً.
      */
-        @Override
+    @Override
     public void onResume() {
         super.onResume();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && languagePreference != null) {
@@ -408,31 +375,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
                 break;
 
-            case RECREATE_BACKGROUND_ACTIVITIES:
-                // ★ إعادة بناء الأنشطة الخلفية باللغة الجديدة دون SettingsActivity ★
-                //
-                // السبب: SettingsActivity تتلقى تغيير اللغة عبر onConfigurationChanged
-                // (لأن locale في configChanges)، وإعادة بناؤها ستكسر سلوك عدم الوميض.
-                // أما الأنشطة الأخرى (كـ MainActivity) فتحتاج إعادة بناء صريحة
-                // لأن النظام قد لا يُعيدها تلقائياً بعد تغيير الثيم + تغيير اللغة،
-                // أو بعد تغيير اللغة من إعدادات النظام مع اعتراض locale في configChanges.
-                //
-                // إذا كان المستخدم قد خرج من SettingsActivity قبل انتهاء التأخير،
-                // نُعيد بناء كل الأنشطة الحية لأن SettingsActivity ستكون isFinishing()
-                // وستُستثنى تلقائياً من recreateAllActivities().
-                MyApplication appBg = MyApplication.getInstance();
-                Activity currentActivity = getActivity();
-                if (appBg != null) {
-                    if (currentActivity != null && !currentActivity.isFinishing()) {
-                        // المستخدم لا يزال في SettingsActivity — نستثنيها صراحةً
-                        appBg.recreateAllActivitiesExcept(currentActivity);
-                    } else {
-                        // المستخدم غادر SettingsActivity — تُستثنى تلقائياً عبر isFinishing()
-                        appBg.recreateAllActivities();
-                    }
-                }
-                break;
-        }
+            }
     }
 
     @Override
@@ -514,41 +457,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     });
         }
     }
-
-    /**
-     * ★ تحديث جميع النصوص في الإعدادات من سياق يحمل اللغة الجديدة بشكل مضمون ★
-     *
-     * @param freshContext سياق مُنشأ عبر LanguageHelper.createFreshContext(newConfig)
-     *                     يحمل اللغة الجديدة بشكل مضمون، متجاوزاً السياق القديم
-     *                     الذي أنشأته attachBaseContext() وقت بدء التطبيق.
-     *
-     * ★ مهم جداً: نحدّث النصوص والعناوين والقوائم فقط.
-     *    لا نلمس الصور ولا الرسومات ولا الألوان ولا البطاقات،
-     *    وهذا هو السبب الذي يمنع وميض الشاشة تماماً. ★
-     *
-     * هيكل الأقسام المُحدَّثة:
-     *   1. قسم الثيم             (category_theme)
-     *   2. قسم خلفية القوائم    (category_list_background)
-     *   3. القسم العام           (category_general)
-     *   4. قسم حول التطبيق      (category_about)
-     */
-    
-
-    /**
-     * ★ تحديث الاتجاه والنصوص فوراً عند تغيير اللغة — بدون تدمير الشاشة ★
-     *
-     * يُستدعى لأن locale|layoutDirection في configChanges يمنع تدمير الـ Activity.
-     *
-     * الترتيب مهم:
-     * 1. إنشاء freshContext عبر LanguageHelper (مصدر النصوص الجديدة المضمون)
-     * 2. تحديث mContext للعمليات اللاحقة
-     * 3. تحديث الاتجاه عبر LanguageHelper (يطبّق فوراً على كل العناصر الداخلية)
-     * 4. تحديث النصوص من freshContext
-     * 5. تحديث نصوص بطاقة PreferenceRelatedCard فقط باللغة الجديدة
-     *    (البطاقة تحتفظ بثيمها الصحيح، ونمرر إليها النصوص المترجمة فقط)
-     * 6. إخبار القائمة بإعادة الرسم
-     */
-    
 
     private ColorStateList getColoredSummaryColor(boolean enabled) {
         if (enabled) {
