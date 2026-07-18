@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widgit.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +33,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
-import dev.oneuiproject.oneui.widget.Toast;
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.example.oneuiapp.activity.AppScreen;           // ★ الإصلاح الجوهري: استيراد AppScreen ★
