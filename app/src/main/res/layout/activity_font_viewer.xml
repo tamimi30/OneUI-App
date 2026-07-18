@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     app:expanded="false"
     app:navigationIcon="@drawable/ic_oui_back"
-    app:title="@string/drawer_font_viewer">
+    app:title="@string/drawer_font_viewer"
+    app:subtitle="@string/font_viewer_select_description">
 
     <FrameLayout
         android:id="@+id/font_viewer_container"
