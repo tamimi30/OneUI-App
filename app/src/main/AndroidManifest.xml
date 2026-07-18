@@ -130,6 +130,10 @@
             android:name=".fragment.home.HomeActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
+        <activity
+            android:name=".fragment.fontviewer.FontViewerActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+
         <!-- ★ بدون locale|layoutDirection: النظام يعيد بناءها عند تغيير اللغة ★ -->
         <activity
             android:name=".fragment.settings.about.AboutActivity" />
