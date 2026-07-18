@@ -1042,7 +1042,9 @@ public class MainActivity extends BaseActivity
 
     @Override
     protected void onDestroy() {
-        dismissLoadingDialog();
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
         mSearchCoordinator.cleanup();
         super.onDestroy();
     }
