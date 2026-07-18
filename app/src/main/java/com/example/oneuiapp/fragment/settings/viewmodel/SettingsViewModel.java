@@ -305,28 +305,7 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    /**
-     * ★ طلب إعادة بناء الأنشطة الخلفية عند تغيير اللغة من إعدادات النظام ★
-     *
-     * تُستدعى من SettingsFragment.onResume() بعد اكتشاف أن اللغة تغيّرت
-     * من إعدادات النظام بينما كان التطبيق في الخلفية.
-     *
-     * جوهر المشكلة التي تحلّها:
-     * SettingsActivity تعترض حدث locale في configChanges وتتعامل معه عبر
-     * onConfigurationChanged، مما يجعل نظام Android يعتبر أن التطبيق قد
-     * تعامل مع التغيير بالكامل، فلا يُعيد بناء MainActivity تلقائياً.
-     * هذه الدالة تعوّض هذا النقص بإرسال حدث صريح لإعادة بناء الأنشطة الخلفية.
-     *
-     * الفرق عن setLanguageMode():
-     * - لا تُشغّل LanguageHelper (اللغة مُطبَّقة بالفعل من النظام)
-     * - لا تكتب إلى DataStore (syncLanguageModeFromSystem تتكفل بذلك مسبقاً)
-     * - تُرسل RECREATE_BACKGROUND_ACTIVITIES مباشرةً دون تأخير
-     *   (التأخير موجود في استدعائها من onResume)
-     */
-    public void requestBackgroundRecreation() {
-        Log.d(TAG, "Requesting background activities recreation due to system locale change");
-        settingsEvent.setValue(new SettingsEvent(SettingsEventType.RECREATE_BACKGROUND_ACTIVITIES));
-    }
+    
 
     /**
      * تغيير وضع الثيم
@@ -576,10 +555,6 @@ public class SettingsViewModel extends AndroidViewModel {
     public enum SettingsEventType {
         SHOW_TOAST,
         RECREATE_ACTIVITY,
-        RECREATE_ALL_ACTIVITIES,
-        // ★ نوع حدث جديد: إعادة بناء الأنشطة الخلفية فقط دون SettingsActivity ★
-        // يُستخدم بعد تغيير اللغة على Android 13+ لضمان أن الأنشطة الخلفية
-        // التي أُعيد بناؤها بسبب تغيير الثيم تحمل اللغة الجديدة الصحيحة.
-        RECREATE_BACKGROUND_ACTIVITIES
+        RECREATE_ALL_ACTIVITIES
     }
                            }
