@@ -81,8 +81,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     //   تُحدّد أي Layout يُستخدم لعناصر الخطوط وتُعطّل حسابات الزوايا والفواصل غير المطلوبة ★
     private final boolean isTransparentTheme;
 
-    // ★ يمنع تشغيل نقرتين متزامنتين قبل اكتمال الانتقال الأول ★
-    private boolean mClickGuard = false;
+    
 
     // ★ الإصلاح (مشكلة السكرول): إعداد معاينة الخط يُقرأ مرة واحدة فقط عند إنشاء الأدابتر
     //   بدلاً من قراءته من DataStore لكل عنصر أثناء السكرول، مما يُسبب التقطيع.
@@ -264,8 +263,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void setFontClickListener(OnFontClickListener l)                    { this.fontClickListener = l; }
     public void setSortChangeListener(SortByItemLayout.OnSortChangeListener l) { this.sortChangeListener = l; }
 
-    // ★ يُستدعى من saveLastOpenedAndUpdate (انتقال مؤكد) أو من unblockTouch (إلغاء) ★
-    public void resetClickGuard() { mClickGuard = false; }
+    
 
     /**
      * ★ الإصلاح (مشكلة السكرول): تحديث متغير معاينة الخط عند تغيير الإعداد من الـ Fragment ★
@@ -302,8 +300,6 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      * مما يُعيد رسم جميع العناصر ويُسبب ومضة مرئية في لون اسم الخط المفتوح.
      */
     public void saveLastOpenedAndUpdate(String path) {
-        mClickGuard = false;
-
         // ★ حفظ المسار القديم قبل التحديث لتحديد العنصر الذي يحتاج إعادة اللون الأصلي ★
         String prevPath = mCurrentLastOpenedPath;
         mCurrentLastOpenedPath = path;
@@ -639,11 +635,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         final String finalWeightWidth = weightWidthLabel;
 
         holder.setOnClickListener(v -> {
-            // ★ الحارس: يمنع تشغيل نقرتين متزامنتين ★
-            if (mClickGuard) return;
-            mClickGuard = true;
             if (fontClickListener != null)
-                // ★ التعديل: تمرير finalWeightWidth كمعامل خامس ★
                 fontClickListener.onFontClick(path, finalRealName, fileName, finalTtcIndex, finalWeightWidth);
         });
     }
