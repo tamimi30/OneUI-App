@@ -106,8 +106,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     //   تُحدّد أي Layout يُستخدم لعناصر الخطوط وتُعطّل حسابات الزوايا والفواصل غير المطلوبة ★
     private final boolean isTransparentTheme;
 
-    // ★ يمنع تشغيل نقرتين متزامنتين قبل اكتمال الانتقال الأول ★
-    private boolean mClickGuard = false;
+    
 
     // ★ الإصلاح (مشكلة السكرول): إعداد معاينة الخط يُقرأ مرة واحدة فقط عند إنشاء الأدابتر
     //   بدلاً من قراءته من DataStore لكل عنصر أثناء السكرول، مما يُسبب التقطيع.
@@ -362,8 +361,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.favoriteStatusProvider = provider;
     }
 
-    // ★ يُستدعى من saveLastOpenedAndUpdate (انتقال مؤكد) أو من unblockTouch (إلغاء) ★
-    public void resetClickGuard() { mClickGuard = false; }
+    
 
     /**
      * ★ الإصلاح (مشكلة السكرول): تحديث متغير معاينة الخط عند تغيير الإعداد من الـ Fragment ★
@@ -388,7 +386,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void saveLastOpenedAndUpdate(String path) {
-        mClickGuard = false;
         preferenceManager.saveLastOpenedFont(path);
         // ★ الإصلاح: smartUpdate() تستخدم الآن PAYLOAD_UPDATE_LAST_OPENED ★
         // لذا يكفي استدعاؤها مباشرةً — لون نص اسم الخط يُحدَّث بصمت دون وميض النجمة
@@ -840,17 +837,12 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         final String finalWeightWidth   = weightWidthLabel;
 
         holder.itemView.setOnClickListener(v -> {
-            // ★ الحارس: يمنع تشغيل نقرتين متزامنتين ★
-            if (mClickGuard) return;
-            mClickGuard = true;
             int pos = holder.getBindingAdapterPosition();
-            if (pos == RecyclerView.NO_POSITION) { mClickGuard = false; return; }
+            if (pos == RecyclerView.NO_POSITION) return;
             if (isSelectionMode) {
-                mClickGuard = false;
                 if (selectionListener != null) selectionListener.onToggleSelection(pos);
             } else {
                 if (fontClickListener != null)
-                    // ★ التعديل: تمرير finalWeightWidth كمعامل خامس ★
                     fontClickListener.onFontClick(path, finalRealName, fileName, 0, finalWeightWidth);
             }
         });
