@@ -453,12 +453,12 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         // ★ مستمع النقر على الخط: تمرير weightWidthLabel لـ NavManager عبر MainActivity ★
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
 
-            mAdapter.saveLastOpenedAndUpdate(fontPath);
-
             if (mFontSelectedListener != null) {
                 mFontSelectedListener.onFontSelected(fontPath, realName, fileName,
                                                      ttcIndex, weightWidthLabel);
             }
+
+            mAdapter.saveLastOpenedAndUpdate(fontPath);
         });
 
         // ★ مستمع تغيير الفرز: يحفظ التفضيل عبر SortManager ثم يُطبّق الأنيميشن ★
