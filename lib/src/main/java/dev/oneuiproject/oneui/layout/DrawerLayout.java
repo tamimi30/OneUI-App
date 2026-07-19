@@ -244,7 +244,7 @@ public class DrawerLayout extends ToolbarLayout {
 
     @Override
     public void showSearchMode() {
-        lockDrawerIfAvailable(true);
+        lockDrawerIfAvailable(false);
         super.showSearchMode();
     }
 
