@@ -733,13 +733,13 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             // ✅ تسجيل الاستخدام في قاعدة البيانات عند النقر فقط (وليس أثناء التمرير)
             mViewModel.recordFontAccess(fontPath);
 
-            // ★ تمييز الخط بالأزرق فوراً ★
-            mAdapter.saveLastOpenedAndUpdate(fontPath);
-
             if (mFontSelectedListener != null) {
                 mFontSelectedListener.onFontSelected(fontPath, realName, fileName,
                                                      ttcIndex, weightWidthLabel);
             }
+
+            // ★ تمييز الخط بالأزرق بعد بدء الانتقال لعارض الخطوط ★
+            mAdapter.saveLastOpenedAndUpdate(fontPath);
         });
 
 
