@@ -7,7 +7,7 @@ import android.view.View;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
-import android.view.animation;
+import android.view.animation.OvershootInterpolator;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -90,7 +90,7 @@ public class FontViewerActivity extends BaseActivity
             fabFontSize.animate()
                      .alpha(1f).scaleX(1f).scaleY(1f)
                      .setDuration(750)
-                     .setInterpolator(new animation.OvershootInterpolator(1.2f))
+                     .setInterpolator(new OvershootInterpolator(1.2f))
                      .start();
             fabFontSize.setOnClickListener(v -> {
                 if (mFontViewerFragment != null) {
@@ -106,7 +106,7 @@ public class FontViewerActivity extends BaseActivity
             formatBar.animate()
                      .alpha(1f).scaleX(1f).scaleY(1f)
                      .setDuration(750)
-                     .setInterpolator(new animation.OvershootInterpolator(1.2f))
+                     .setInterpolator(new OvershootInterpolator(1.2f))
                      .start();
         }
     }
