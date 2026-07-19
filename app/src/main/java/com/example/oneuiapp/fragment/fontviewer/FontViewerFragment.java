@@ -153,7 +153,7 @@ public class FontViewerFragment extends Fragment {
         // Initialize ViewModel
         settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
-        currentFontSize   = DEFAULT_FONT_SIZE;
+        currentFontSize   = preferenceManager.getFontSize(DEFAULT_FONT_SIZE);
         currentFontWeight = preferenceManager.getFontWeight(DEFAULT_FONT_WEIGHT);
     }
 
@@ -317,7 +317,7 @@ public class FontViewerFragment extends Fragment {
     private void onFontSizeChanged(float newSize) {
         currentFontSize = newSize;
         applyFontSize();
-        //preferenceManager.saveFontSize(newSize);
+        preferenceManager.saveFontSize(newSize);
         if (getActivity() instanceof FontViewerActivity) {
             ((FontViewerActivity) getActivity()).updateFabFontSizeText(newSize);
         }
@@ -425,6 +425,9 @@ public class FontViewerFragment extends Fragment {
         if (originalFontPath == null || originalFontPath.isEmpty()) {
             originalFontPath = extractRealPathFromUri(path);
         }
+
+        // ★ حفظ آخر خط تم فتحه لاستعادته عند فتح عارض الخطوط من الدرج ★
+        preferenceManager.saveLastViewedFont(path, fileName, realName);
 
         // Update title immediately (will show real name or "Unknown Font" as received)
         notifyFontChangedImmediate();
