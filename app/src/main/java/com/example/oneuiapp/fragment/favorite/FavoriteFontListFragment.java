@@ -458,7 +458,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
                                                      ttcIndex, weightWidthLabel);
             }
 
-            mAdapter.saveLastOpenedAndUpdate(fontPath);
+            mMainHandler.postDelayed(() -> mAdapter.saveLastOpenedAndUpdate(fontPath), 400);
         });
 
         // ★ مستمع تغيير الفرز: يحفظ التفضيل عبر SortManager ثم يُطبّق الأنيميشن ★
