@@ -91,7 +91,7 @@ public class FontViewerActivity extends BaseActivity
                     .findFragmentById(R.id.font_viewer_container);
         }
 
-        new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 750);
+        new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 450);
     }
 
     private void setupFab() {
