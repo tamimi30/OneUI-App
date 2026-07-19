@@ -242,12 +242,12 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void showLoadingDialog() {
-        dismissLoadingDialog();
-        try {
-            loadingDialog = new ProgressDialog(this);
-            loadingDialog.setMessage("Translating...");
-            loadingDialog.setCancelable(false);
-            loadingDialog.show();
+    dismissLoadingDialog();
+    try {
+        loadingDialog = new ProgressDialog(this);
+        loadingDialog.setMessage(getString(R.string.translating));
+        loadingDialog.setCancelable(false);
+        loadingDialog.show();
         } catch (Exception ignored) {}
     }
 
@@ -265,4 +265,4 @@ public class FontViewerActivity extends BaseActivity
         dismissLoadingDialog();
         super.onDestroy();
     }
-              }
+              } 
