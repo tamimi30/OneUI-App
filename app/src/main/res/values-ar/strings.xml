@@ -324,6 +324,8 @@
     <string name="btn_bold">عريض</string>
     <string name="btn_italic">مائل</string>
 
+    <string name="translating">جارٍ الترجمة...</string>
+
     <string name="font_metadata_error">لا يمكن عرض البيانات الوصفية للخط.\nربما ملف الخط تالف أو لا يحتوي على بيانات وصفية.</string>
 
 </resources>
