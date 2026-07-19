@@ -85,6 +85,9 @@ public class FontViewerFragment extends Fragment {
     private static final float MAX_FONT_SIZE       = 99f;
     private static final float DEFAULT_FONT_WEIGHT = 400f;
 
+    // حجم الخط يُحفظ هنا فقط طالما التطبيق يعمل، ويُصفَّر تلقائياً عند إغلاقه من الأخيرة
+    private static float sSessionFontSize = -1f;
+
     // ★ مراجع واجهة المستخدم ★
     private TextView previewSentence;
     // ★ الجديد: عنصرا عرض الوزن في أعلى الصفحة ★
@@ -153,7 +156,7 @@ public class FontViewerFragment extends Fragment {
         // Initialize ViewModel
         settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
-        currentFontSize   = preferenceManager.getFontSize(DEFAULT_FONT_SIZE);
+        currentFontSize   = (sSessionFontSize > 0f) ? sSessionFontSize : DEFAULT_FONT_SIZE;
         currentFontWeight = preferenceManager.getFontWeight(DEFAULT_FONT_WEIGHT);
     }
 
@@ -261,7 +264,12 @@ public class FontViewerFragment extends Fragment {
                 loadFontFromPathWithWeight(currentFontPath, currentFontFileName, currentFontRealName, currentFontWeight);
             }
         } else {
-            loadLastUsedFont();
+            Intent hostIntent = requireActivity().getIntent();
+            boolean hasFontFromIntent = hostIntent != null
+                    && hostIntent.getStringExtra(FontViewerActivity.EXTRA_FONT_PATH) != null;
+            if (!hasFontFromIntent) {
+                loadLastUsedFont();
+            }
         }
 
 
@@ -317,7 +325,7 @@ public class FontViewerFragment extends Fragment {
     private void onFontSizeChanged(float newSize) {
         currentFontSize = newSize;
         applyFontSize();
-        preferenceManager.saveFontSize(newSize);
+        sSessionFontSize = newSize;
         if (getActivity() instanceof FontViewerActivity) {
             ((FontViewerActivity) getActivity()).updateFabFontSizeText(newSize);
         }
