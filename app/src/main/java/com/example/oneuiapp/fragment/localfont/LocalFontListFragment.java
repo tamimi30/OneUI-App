@@ -739,7 +739,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             }
 
             // ★ تمييز الخط بالأزرق بعد بدء الانتقال لعارض الخطوط ★
-            mAdapter.saveLastOpenedAndUpdate(fontPath);
+            mMainHandler.postDelayed(() -> mAdapter.saveLastOpenedAndUpdate(fontPath), 400);
         });
 
 
