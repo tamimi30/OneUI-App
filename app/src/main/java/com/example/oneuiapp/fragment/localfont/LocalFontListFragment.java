@@ -1257,9 +1257,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         } else {
             mBackPressedTime = currentTime;
             if (mContext != null) {
-                dev.oneuiproject.oneui.widget.Toast.makeText(mContext,
+                Toast.makeText(mContext,
                         getString(R.string.exit_on_double_back),
-                        dev.oneuiproject.oneui.widget.Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();
             }
             return false;
         }
