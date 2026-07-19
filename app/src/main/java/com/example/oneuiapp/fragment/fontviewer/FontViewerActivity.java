@@ -78,7 +78,15 @@ public class FontViewerActivity extends BaseActivity
 
     private void setupFab() {
         if (fabFontSize != null) {
-            fabFontSize.show();
+            fabFontSize.setVisibility(View.VISIBLE);
+            fabFontSize.setAlpha(0f);
+            fabFontSize.setScaleX(0f);
+            fabFontSize.setScaleY(0f);
+            fabFontSize.animate()
+                     .alpha(1f).scaleX(1f).scaleY(1f)
+                     .setDuration(550)
+                     .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f))
+                     .start();
             fabFontSize.setOnClickListener(v -> {
                 if (mFontViewerFragment != null) {
                     mFontViewerFragment.showFontSizeDialogPublic();
