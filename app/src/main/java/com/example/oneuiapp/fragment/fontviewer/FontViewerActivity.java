@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.Nullable;
 
@@ -73,7 +75,7 @@ public class FontViewerActivity extends BaseActivity
                     .findFragmentById(R.id.font_viewer_container);
         }
 
-        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(this::setupFab, 400);
+        new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 200);
     }
 
     private void setupFab() {
