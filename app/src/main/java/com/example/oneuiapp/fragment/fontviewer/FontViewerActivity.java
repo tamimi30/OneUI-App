@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.ImageView;
+import android.view.animation;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog.Builder;
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.activity.BaseActivity;
@@ -76,7 +78,7 @@ public class FontViewerActivity extends BaseActivity
                     .findFragmentById(R.id.font_viewer_container);
         }
 
-        new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 100);
+        new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 750);
     }
 
     private void setupFab() {
@@ -87,8 +89,8 @@ public class FontViewerActivity extends BaseActivity
             fabFontSize.setScaleY(0f);
             fabFontSize.animate()
                      .alpha(1f).scaleX(1f).scaleY(1f)
-                     .setDuration(550)
-                     .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f))
+                     .setDuration(750)
+                     .setInterpolator(new animation.OvershootInterpolator(1.2f))
                      .start();
             fabFontSize.setOnClickListener(v -> {
                 if (mFontViewerFragment != null) {
@@ -103,8 +105,8 @@ public class FontViewerActivity extends BaseActivity
             formatBar.setScaleY(0f);
             formatBar.animate()
                      .alpha(1f).scaleX(1f).scaleY(1f)
-                     .setDuration(550)
-                     .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f))
+                     .setDuration(750)
+                     .setInterpolator(new animation.OvershootInterpolator(1.2f))
                      .start();
         }
     }
@@ -128,8 +130,8 @@ public class FontViewerActivity extends BaseActivity
         }
     }
 
-    public android.widget.ImageView getBtnBold() { return btnBold; }
-    public android.widget.ImageView getBtnItalic() { return btnItalic; }
+    public ImageView getBtnBold() { return btnBold; }
+    public ImageView getBtnItalic() { return btnItalic; }
 
     public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
@@ -189,7 +191,7 @@ public class FontViewerActivity extends BaseActivity
         if (translationService.isTranslationEnabled()) {
             boolean[] isFinished = {false};
 
-            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (!isFinished[0]) showLoadingDialog();
             }, 250);
 
@@ -234,7 +236,7 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void showNoFontDialog() {
-        new Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.font_viewer_select_font))
                 .setMessage(getString(R.string.font_viewer_no_font_selected))
                 .setPositiveButton(android.R.string.ok, null)
