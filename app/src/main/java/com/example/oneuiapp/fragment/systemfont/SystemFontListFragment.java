@@ -335,12 +335,12 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
             mViewModel.recordFontAccess(fontPath);
 
-            mAdapter.saveLastOpenedAndUpdate(fontPath);
-
             if (mFontSelectedListener != null) {
                 mFontSelectedListener.onFontSelected(fontPath, realName, fileName,
                                                      ttcIndex, weightWidthLabel);
             }
+
+            mAdapter.saveLastOpenedAndUpdate(fontPath);
         });
 
 
