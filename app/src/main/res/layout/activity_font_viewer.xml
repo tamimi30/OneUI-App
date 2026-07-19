@@ -18,15 +18,14 @@
         android:id="@+id/fab_font_size"
         android:theme="@style/Theme.MaterialComponents.DayNight"
         style="@style/FabStyle"
-        android:tooltipText="@string/font_size_dialog_title"
-        app:layout_location="footer" />
+        android:tooltipText="@string/font_size_dialog_title" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/format_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:theme="@style/Theme.MaterialComponents.DayNight"
-        app:layout_location="footer"
+        app:layout_location="root"
         app:cardCornerRadius="28dp"
         android:layout_gravity="bottom|start"
         app:cardBackgroundColor="@color/sesl_menu_popup_bg_color"
