@@ -340,7 +340,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
                                                      ttcIndex, weightWidthLabel);
             }
 
-            mAdapter.saveLastOpenedAndUpdate(fontPath);
+            mMainHandler.postDelayed(() -> mAdapter.saveLastOpenedAndUpdate(fontPath), 400);
         });
 
 
