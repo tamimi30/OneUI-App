@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.activity.BaseActivity;
@@ -75,7 +76,7 @@ public class FontViewerActivity extends BaseActivity
                     .findFragmentById(R.id.font_viewer_container);
         }
 
-        new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 200);
+        new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 100);
     }
 
     private void setupFab() {
@@ -233,7 +234,7 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void showNoFontDialog() {
-        new androidx.appcompat.app.AlertDialog.Builder(this)
+        new Builder(this)
                 .setTitle(getString(R.string.font_viewer_select_font))
                 .setMessage(getString(R.string.font_viewer_no_font_selected))
                 .setPositiveButton(android.R.string.ok, null)
