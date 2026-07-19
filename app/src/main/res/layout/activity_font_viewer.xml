@@ -18,6 +18,7 @@
         android:id="@+id/fab_font_size"
         android:theme="@style/Theme.MaterialComponents.DayNight"
         style="@style/FabStyle"
+        app:layout_location="root"
         android:tooltipText="@string/font_size_dialog_title" />
 
     <com.google.android.material.card.MaterialCardView
@@ -63,6 +64,7 @@
                 android:focusable="true"
                 android:tooltipText="@string/btn_italic"
                 android:foreground="@drawable/drawer_item_list_ripple" />
+            
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
