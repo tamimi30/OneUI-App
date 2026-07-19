@@ -61,6 +61,19 @@ public class FontViewerActivity extends BaseActivity
         btnBold = findViewById(R.id.btn_bold);
         btnItalic = findViewById(R.id.btn_italic);
 
+        if (fabFontSize != null) {
+            fabFontSize.setVisibility(View.INVISIBLE);
+            fabFontSize.setAlpha(0f);
+            fabFontSize.setScaleX(0f);
+            fabFontSize.setScaleY(0f);
+        }
+        if (formatBar != null) {
+            formatBar.setVisibility(View.INVISIBLE);
+            formatBar.setAlpha(0f);
+            formatBar.setScaleX(0f);
+            formatBar.setScaleY(0f);
+        }
+
         if (mToolbarLayout != null) {
             mToolbarLayout.setNavigationButtonTooltip(getString(R.string.navigate_up));
             mToolbarLayout.setNavigationButtonOnClickListener(v -> onBackPressed());
