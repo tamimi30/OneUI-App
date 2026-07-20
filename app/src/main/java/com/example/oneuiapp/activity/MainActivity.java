@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
 import android.net.Uri;
+import android.os.Looper;
+import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.core.splashscreen.SplashScreen;
@@ -133,6 +135,7 @@ public class MainActivity extends BaseActivity
         NavManager.Host {
 
     private boolean isUIReady = false;
+    private long mSplashStartTime = 0L;
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
@@ -209,6 +212,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+        mSplashStartTime = System.currentTimeMillis();
 
         super.onCreate(savedInstanceState);
 
@@ -259,9 +263,12 @@ public class MainActivity extends BaseActivity
         // يُستدعى بعد handleIntent() لضمان جهوزية الـ NavManager قبل أي تنقل محتمل
         requestNotificationPermissionIfNeeded();
 
-        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+        long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
+        long remainingDelay = Math.max(0L, 3000L - elapsedTime);
+
+        new Handler(getMainLooper()).postDelayed(() -> {
             isUIReady = true;
-        }, 0);
+        }, remainingDelay);
     }
 
     @Override
