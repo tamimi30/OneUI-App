@@ -9,6 +9,7 @@ import android.text.util.Linkify;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.R.color;
 
 import java.util.Map;
 
@@ -207,7 +208,7 @@ public class FontInfoDialog {
             messageView.setTextSize(17);
             messageView.setMovementMethod(LinkMovementMethod.getInstance());
             Linkify.addLinks(messageView, Linkify.WEB_URLS | Linkify.EMAIL_ADDRESSES);
-            messageView.setLinkTextColor(context.getResources().getColor(R.color.blue_text_color, context.getTheme()));
+            messageView.setLinkTextColor(context.getResources().getColor(R.color.sesl_primary_color_light, context.getTheme()));
         }
     }
 
