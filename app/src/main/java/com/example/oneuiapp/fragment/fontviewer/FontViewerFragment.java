@@ -875,8 +875,8 @@ public class FontViewerFragment extends Fragment {
                 currentFontRealName = lastRealName;
                 currentTtcIndex     = 0;
                 isSystemFont        = false;
-                // ★ لا label متاح للخط الأخير المحفوظ (لم يُفتح من القائمة مباشرةً) ★
-                currentWeightWidthLabel = null;
+                // ★ الإصلاح: استخراج وصف الوزن والعرض مباشرة من ملف الخط ★
+                currentWeightWidthLabel = FontWeightWidthExtractor.extract(localFile, 0);
 
                 // Check real name to wipe out old cached localized strings
                 if (currentFontRealName != null && (currentFontRealName.isEmpty() || currentFontRealName.equals(getString(R.string.unknown_font)))) {
