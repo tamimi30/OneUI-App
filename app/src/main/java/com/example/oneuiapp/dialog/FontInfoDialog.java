@@ -9,7 +9,7 @@ import android.text.util.Linkify;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.R.color;
+//import androidx.appcompat.R.color;
 
 import java.util.Map;
 
