@@ -42,8 +42,8 @@ public class FontViewerActivity extends BaseActivity
 
     private FloatingActionButton fabFontSize;
     private View formatBar;
-    private android.widget.ImageView btnBold;
-    private android.widget.ImageView btnItalic;
+    private ImageView btnBold;
+    private ImageView btnItalic;
 
     private String currentFontRealName;
     private String currentFontFileName;
