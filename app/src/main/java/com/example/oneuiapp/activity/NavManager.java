@@ -101,6 +101,41 @@ public class NavManager {
         }
     }
 
+    // ★ نسخة جديدة من navigateFromDrawer مع تأثير تلاشي (Fade) عند التنقل ★
+    public void navigateFromDrawerAnimated(AppScreen screen) {
+        mHost.setCurrentScreen(screen);
+        showFragmentAnimated(screen);
+        mHost.getDrawerAdapter().setSelectedItem(screen);
+        mHost.updateDrawerTitle(screen);
+    }
+
+    // ★ نسخة جديدة من showFragmentFast تُضيف أنيميشن تلاشي عند الظهور والاختفاء ★
+    public void showFragmentAnimated(AppScreen screen) {
+        FragmentManager fm = mHost.getAppFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+
+        for (AppScreen s : AppScreen.values()) {
+            Fragment frag = mHost.getFragment(s);
+            if (frag != null && frag.isAdded()) {
+                if (s == screen) {
+                    transaction.show(frag);
+                    frag.setMenuVisibility(true);
+                } else {
+                    transaction.hide(frag);
+                    frag.setMenuVisibility(false);
+                }
+            }
+        }
+
+        transaction.commitNow();
+
+        mHost.setCurrentScreen(screen);
+        if (mHost.getSearchCoordinator() != null) {
+            mHost.getSearchCoordinator().onFragmentChanged(screen);
+        }
+    }
+
     public void handleBackPressed() {
         if (isDrawerCurrentlyOpen()) {
             mHost.getDrawerLayout().setDrawerOpen(false, true);
@@ -123,7 +158,7 @@ public class NavManager {
         }
 
         if (mHost.getCurrentScreen() != AppScreen.LOCAL_FONTS) {
-            navigateFromDrawer(AppScreen.LOCAL_FONTS);
+            navigateFromDrawerAnimated(AppScreen.LOCAL_FONTS);
             return;
         }
 
