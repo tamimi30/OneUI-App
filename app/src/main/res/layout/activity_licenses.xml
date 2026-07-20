@@ -32,7 +32,7 @@
                 android:textAlignment="viewStart"
                 android:autoLink="web"
                 android:fadingEdge="horizontal"
-                android:textColorLink="@color/sesl_design_snackbar_action_text_color"
+                android:textColorLink="?attr/colorPrimary"
                 android:linksClickable="true"/>
 
         </LinearLayout>
