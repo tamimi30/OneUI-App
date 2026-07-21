@@ -7,6 +7,7 @@ import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.oneuiapp.fragment.localfont.LocalFontListFragment;
 import com.example.oneuiapp.fragment.favorite.FavoriteFontListFragment;
@@ -38,7 +39,7 @@ public class NavManager {
     }
 
     private final Host mHost;
-    private androidx.drawerlayout.widget.DrawerLayout mInnerDrawer;
+    private DrawerLayout mInnerDrawer;
 
     public NavManager(Host host) {
         mHost = host;
@@ -54,14 +55,14 @@ public class NavManager {
         return mInnerDrawer != null && mInnerDrawer.isDrawerOpen(GravityCompat.START);
     }
 
-    private androidx.drawerlayout.widget.DrawerLayout findInnerDrawerLayout(ViewGroup parent) {
+    private DrawerLayout findInnerDrawerLayout(ViewGroup parent) {
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
-            if (child instanceof androidx.drawerlayout.widget.DrawerLayout) {
-                return (androidx.drawerlayout.widget.DrawerLayout) child;
+            if (child instanceof DrawerLayout) {
+                return (DrawerLayout) child;
             }
             if (child instanceof ViewGroup) {
-                androidx.drawerlayout.widget.DrawerLayout result =
+                DrawerLayout result =
                         findInnerDrawerLayout((ViewGroup) child);
                 if (result != null) return result;
             }
@@ -126,7 +127,7 @@ public class NavManager {
             final Fragment fragToHide = currentlyVisible;
             fragToHide.getView().animate()
                     .alpha(0f)
-                    .setDuration(150)
+                    .setDuration(200)
                     .withEndAction(new Runnable() {
                         @Override
                         public void run() {
@@ -168,7 +169,7 @@ public class NavManager {
 
         if (newFrag != null && newFrag.getView() != null) {
             newFrag.getView().setAlpha(0f);
-            newFrag.getView().animate().alpha(1f).setDuration(150).start();
+            newFrag.getView().animate().alpha(1f).setDuration(200).start();
         }
 
         mHost.setCurrentScreen(screen);
