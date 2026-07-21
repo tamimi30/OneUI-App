@@ -472,7 +472,11 @@ public class SettingsDataStore {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
             if (path != null) mutablePrefs.set(KEY_VIEWER_FONT_PATH, path);
             if (fileName != null) mutablePrefs.set(KEY_VIEWER_FILE_NAME, fileName);
-            if (realName != null) mutablePrefs.set(KEY_VIEWER_REAL_NAME, realName);
+            if (realName != null) {
+                mutablePrefs.set(KEY_VIEWER_REAL_NAME, realName);
+            } else {
+                mutablePrefs.remove(KEY_VIEWER_REAL_NAME);
+            }
             return Single.just(mutablePrefs);
         });
     }
