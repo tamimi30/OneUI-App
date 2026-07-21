@@ -109,11 +109,41 @@ public class NavManager {
         mHost.updateDrawerTitle(screen);
     }
 
-    // ★ نسخة جديدة من showFragmentFast تُضيف أنيميشن تلاشي عند الظهور والاختفاء ★
+    // ★ نسخة معدّلة: تختفي الشاشة الحالية أولاً بالكامل، ثم تظهر الشاشة الجديدة ★
     public void showFragmentAnimated(AppScreen screen) {
         FragmentManager fm = mHost.getAppFragmentManager();
+
+        Fragment currentlyVisible = null;
+        for (AppScreen s : AppScreen.values()) {
+            Fragment frag = mHost.getFragment(s);
+            if (frag != null && frag.isAdded() && !frag.isHidden() && s != screen) {
+                currentlyVisible = frag;
+                break;
+            }
+        }
+
+        if (currentlyVisible != null) {
+            FragmentTransaction hideTransaction = fm.beginTransaction();
+            hideTransaction.setCustomAnimations(0, android.R.anim.fade_out);
+            hideTransaction.hide(currentlyVisible);
+            currentlyVisible.setMenuVisibility(false);
+            hideTransaction.commitNow();
+
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showNewScreenWithFade(screen);
+                }
+            }, 400);
+        } else {
+            showNewScreenWithFade(screen);
+        }
+    }
+
+    private void showNewScreenWithFade(AppScreen screen) {
+        FragmentManager fm = mHost.getAppFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        transaction.setCustomAnimations(android.R.anim.fade_in, 0);
 
         for (AppScreen s : AppScreen.values()) {
             Fragment frag = mHost.getFragment(s);
