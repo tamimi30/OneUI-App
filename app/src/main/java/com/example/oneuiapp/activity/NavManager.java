@@ -109,7 +109,7 @@ public class NavManager {
         mHost.updateDrawerTitle(screen);
     }
 
-    // ★ نسخة معدّلة: تختفي الشاشة الحالية أولاً بالكامل، ثم تظهر الشاشة الجديدة ★
+    // ★ نسخة أسرع: تختفي الشاشة الحالية بسرعة، ثم تظهر الشاشة الجديدة بسرعة ★
     public void showFragmentAnimated(AppScreen screen) {
         FragmentManager fm = mHost.getAppFragmentManager();
 
@@ -122,19 +122,25 @@ public class NavManager {
             }
         }
 
-        if (currentlyVisible != null) {
-            FragmentTransaction hideTransaction = fm.beginTransaction();
-            hideTransaction.setCustomAnimations(0, android.R.anim.fade_out);
-            hideTransaction.hide(currentlyVisible);
-            currentlyVisible.setMenuVisibility(false);
-            hideTransaction.commitNow();
-
-            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    showNewScreenWithFade(screen);
-                }
-            }, 400);
+        if (currentlyVisible != null && currentlyVisible.getView() != null) {
+            final Fragment fragToHide = currentlyVisible;
+            fragToHide.getView().animate()
+                    .alpha(0f)
+                    .setDuration(150)
+                    .withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            FragmentTransaction hideTransaction = fm.beginTransaction();
+                            hideTransaction.hide(fragToHide);
+                            fragToHide.setMenuVisibility(false);
+                            hideTransaction.commitNow();
+                            if (fragToHide.getView() != null) {
+                                fragToHide.getView().setAlpha(1f);
+                            }
+                            showNewScreenWithFade(screen);
+                        }
+                    })
+                    .start();
         } else {
             showNewScreenWithFade(screen);
         }
@@ -143,22 +149,27 @@ public class NavManager {
     private void showNewScreenWithFade(AppScreen screen) {
         FragmentManager fm = mHost.getAppFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.setCustomAnimations(android.R.anim.fade_in, 0);
 
         for (AppScreen s : AppScreen.values()) {
             Fragment frag = mHost.getFragment(s);
-            if (frag != null && frag.isAdded()) {
-                if (s == screen) {
-                    transaction.show(frag);
-                    frag.setMenuVisibility(true);
-                } else {
-                    transaction.hide(frag);
-                    frag.setMenuVisibility(false);
-                }
+            if (frag != null && frag.isAdded() && s != screen && !frag.isHidden()) {
+                transaction.hide(frag);
+                frag.setMenuVisibility(false);
             }
         }
 
+        Fragment newFrag = mHost.getFragment(screen);
+        if (newFrag != null && newFrag.isAdded()) {
+            transaction.show(newFrag);
+            newFrag.setMenuVisibility(true);
+        }
+
         transaction.commitNow();
+
+        if (newFrag != null && newFrag.getView() != null) {
+            newFrag.getView().setAlpha(0f);
+            newFrag.getView().animate().alpha(1f).setDuration(150).start();
+        }
 
         mHost.setCurrentScreen(screen);
         if (mHost.getSearchCoordinator() != null) {
