@@ -7,7 +7,6 @@ import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.oneuiapp.fragment.localfont.LocalFontListFragment;
 import com.example.oneuiapp.fragment.favorite.FavoriteFontListFragment;
@@ -39,7 +38,7 @@ public class NavManager {
     }
 
     private final Host mHost;
-    private DrawerLayout mInnerDrawer;
+    private androidx.drawerlayout.widget.DrawerLayout mInnerDrawer;
 
     public NavManager(Host host) {
         mHost = host;
@@ -55,14 +54,14 @@ public class NavManager {
         return mInnerDrawer != null && mInnerDrawer.isDrawerOpen(GravityCompat.START);
     }
 
-    private DrawerLayout findInnerDrawerLayout(ViewGroup parent) {
+    private androidx.drawerlayout.widget.DrawerLayout findInnerDrawerLayout(ViewGroup parent) {
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
-            if (child instanceof DrawerLayout) {
-                return (DrawerLayout) child;
+            if (child instanceof androidx.drawerlayout.widget.DrawerLayout) {
+                return (androidx.drawerlayout.widget.DrawerLayout) child;
             }
             if (child instanceof ViewGroup) {
-                DrawerLayout result =
+                androidx.drawerlayout.widget.DrawerLayout result =
                         findInnerDrawerLayout((ViewGroup) child);
                 if (result != null) return result;
             }
