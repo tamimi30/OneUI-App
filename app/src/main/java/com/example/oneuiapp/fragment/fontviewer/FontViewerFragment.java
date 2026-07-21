@@ -515,6 +515,10 @@ public class FontViewerFragment extends Fragment {
                     preferenceManager.saveFontWeight(400f);
                 }
 
+                if (!isVar) {
+                    finalWeight = 0f;
+                }
+
                 // ★ استخراج قائمة أوزان الخط المتغير في الخيط الخلفي لتجنب تأخير الواجهة ★
                 // للخطوط الثابتة: لا داعي للاستخراج لأن الوزن موجود في currentWeightWidthLabel
                 List<VariableFontHelper.VariableInstance> variableInstances = null;
