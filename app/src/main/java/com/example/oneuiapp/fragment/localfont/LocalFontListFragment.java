@@ -56,7 +56,7 @@ import com.example.oneuiapp.sort.SortByItemLayout;
 import com.example.oneuiapp.fragment.localfont.viewmodel.LocalFontListViewModel;
 import com.example.oneuiapp.search.SearchViewModel;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
-import com.example.oneuiapp.notification.BatchOperationState;
+import com.example.oneuiapp.utils.notification.BatchOperationState;
 
 /**
  * LocalFontListFragment — محدث ليفوّض الفرز بالكامل إلى SortedList داخل LocalFontListAdapter.
