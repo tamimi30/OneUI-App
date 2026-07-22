@@ -7,8 +7,7 @@
     android:theme="@style/Theme.MaterialComponents.DayNight"
     style="@style/CardStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <com.oneui.fontviewer.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
