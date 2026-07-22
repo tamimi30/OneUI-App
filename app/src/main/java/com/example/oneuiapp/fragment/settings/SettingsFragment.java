@@ -63,7 +63,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private SwitchPreferenceCompat themeAutoPreference;
     // ★ الثيم الأسود: مستقل تماماً عن themePreference و themeAutoPreference ★
     private SwitchPreferenceCompat themeTransparentPreference;
-    private DropDownPreference fontPreference;
     private SwitchPreferenceCompat fontPreviewPreference;
     private SwitchPreferenceCompat translationPreference;
     private EditTextPreference previewTextPreference;
@@ -163,16 +162,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 // عملية إعادة تحميل الـ layouts المرتبطة بتغيير الثيم
                 new android.os.Handler(android.os.Looper.getMainLooper())
                         .postDelayed(() -> viewModel.setThemeTransparent(enabled), 300);
-                return true;
-            });
-        }
-
-        fontPreference = findPreference("font_mode");
-        if (fontPreference != null) {
-            fontPreference.seslSetSummaryColor(getColoredSummaryColor(true));
-            fontPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                int mode = Integer.parseInt((String) newValue);
-                viewModel.setFontMode(mode);
                 return true;
             });
         }
@@ -318,12 +307,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         viewModel.getThemeTransparent().observe(this, enabled -> {
             if (themeTransparentPreference != null && enabled != null) {
                 themeTransparentPreference.setChecked(enabled);
-            }
-        });
-
-        viewModel.getFontMode().observe(this, mode -> {
-            if (fontPreference != null && mode != null) {
-                fontPreference.setValue(String.valueOf(mode));
             }
         });
 
