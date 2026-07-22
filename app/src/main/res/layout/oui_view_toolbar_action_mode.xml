@@ -40,7 +40,7 @@
 
         </LinearLayout>
 
-        <com.example.oneuiapp.widget.OneUiTextView
+        <com.oneui.fontviewer.widget.OneUiTextView
             android:id="@+id/toolbar_layout_action_mode_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
