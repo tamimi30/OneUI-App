@@ -1,4 +1,4 @@
-package com.example.oneuiapp.notification;
+package com.example.oneuiapp.utils.notification;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
