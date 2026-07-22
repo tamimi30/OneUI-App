@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.SortedList;
 
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.data.entity.FontFileInfo;
-import com.example.oneuiapp.search.FontTextHighlighter;
+import com.example.oneuiapp.widget.search.FontTextHighlighter;
 import com.example.oneuiapp.fragment.systemfont.adapter.SystemFontViewHolder;
 import com.example.oneuiapp.sort.SortHeaderViewHolder;
 import com.example.oneuiapp.fragment.systemfont.data.SystemFontCache;
