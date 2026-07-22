@@ -11,7 +11,6 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oneuiapp.R;
-import com.example.oneuiapp.fragment.settings.utils.FontHelper;
 
 /**
  * DrawerListViewHolder - حامل عرض عنصر الدرج
@@ -32,6 +31,10 @@ public class DrawerListViewHolder extends RecyclerView.ViewHolder {
 
     // ★ تمييز نوع الـ ViewHolder: فاصل أم عنصر تنقل عادي ★
     private final boolean mIsSeparator;
+
+    // ★ خط sec-roboto-light لعناوين درج التنقل (كما في مكتبة One UI الرسمية) ★
+    private final Typeface mNormalTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
+    private final Typeface mSelectedTypeface = Typeface.create("sec-roboto-light", Typeface.BOLD);
 
     /**
      * بناء ViewHolder لعنصر تنقل عادي.
@@ -75,10 +78,7 @@ public class DrawerListViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * تطبيق حالة التحديد مع دعم الخط المخصص
-     *
-     * الآن يتم الحصول على الخط المخصص ديناميكياً من FontHelper
-     * بدلاً من استخدام نسخ مخزنة، مما يضمن تحديث الخط عند تغيير الإعدادات
+     * تطبيق حالة التحديد باستخدام خط sec-roboto-light
      */
     public void setSelected(boolean selected) {
         if (mTitleView == null) {
@@ -87,24 +87,7 @@ public class DrawerListViewHolder extends RecyclerView.ViewHolder {
 
         itemView.setSelected(selected);
 
-        // الحصول على الخط المخصص الحالي من FontHelper
-        Typeface customTypeface = FontHelper.getCustomTypeface();
-
-        if (customTypeface != null) {
-            // إذا كان هناك خط مخصص، نستخدمه مع style مناسب
-            if (selected) {
-                mTitleView.setTypeface(customTypeface, Typeface.BOLD);
-            } else {
-                mTitleView.setTypeface(customTypeface, Typeface.NORMAL);
-            }
-        } else {
-            // إذا لم يكن هناك خط مخصص، نستخدم الخط الافتراضي
-            if (selected) {
-                mTitleView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-            } else {
-                mTitleView.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
-            }
-        }
+        mTitleView.setTypeface(selected ? mSelectedTypeface : mNormalTypeface);
 
         // تطبيق تأثير Marquee للعنصر المختار
         mTitleView.setEllipsize(selected ?
