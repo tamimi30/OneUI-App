@@ -863,7 +863,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (cached != null) {
             holder.setTypeface(cached);
         } else {
-            holder.setDefaultTypeface(SettingsHelper.getTypeface(context));
+            holder.setDefaultTypeface(null);
             if (executor != null && !executor.isShutdown()) {
                 executor.execute(() -> {
                     Typeface loaded = cache.getTypeface(path);
