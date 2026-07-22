@@ -38,7 +38,7 @@ import com.example.oneuiapp.utils.FontUIStateManager;  // ★ إضافة
 import com.example.oneuiapp.fragment.trash.manager.TrashSelectionManager;
 import com.example.oneuiapp.fragment.trash.adapter.TrashListAdapter;
 import com.example.oneuiapp.fragment.trash.viewmodel.TrashViewModel;
-import com.example.oneuiapp.notification.BatchOperationState;
+import com.example.oneuiapp.utils.notification.BatchOperationState;
 
 /**
  * TrashFragment — شاشة سلة المحذوفات
