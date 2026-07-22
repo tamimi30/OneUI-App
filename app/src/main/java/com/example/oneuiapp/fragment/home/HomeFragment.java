@@ -22,7 +22,6 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import dev.oneuiproject.oneui.utils.internal.ToolbarLayoutUtils;
 
 import com.example.oneuiapp.R;
-import com.example.oneuiapp.fragment.settings.utils.FontHelper;
 
 public class HomeFragment extends Fragment {
 
@@ -61,14 +60,7 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        applyCustomFontToCollapsingToolbar();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                applyCustomFontToCollapsingToolbar();
-            }
-        }, 100);
-    }
+        }
 
     private void initViews(View view) {
         mAppBarLayout = view.findViewById(R.id.app_bar);
@@ -135,11 +127,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void applyCustomFontToCollapsingToolbar() {
-        if (mCollapsingToolbar != null) {
-            FontHelper.applyFontToCollapsingToolbar(mCollapsingToolbar);
-        }
-    }
+    
 
     public boolean handleBackPressed() {
         if (mEnableBackToHeader && mAppBarLayout != null && mAppBarLayout.seslIsCollapsed()) {
@@ -152,30 +140,12 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        applyCustomFontToCollapsingToolbar();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isAdded() && mCollapsingToolbar != null) {
-                    applyCustomFontToCollapsingToolbar();
-                }
-            }
-        }, 150);
     }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setupAppBar(newConfig);
-
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isAdded()) {
-                    applyCustomFontToCollapsingToolbar();
-                }
-            }
-        }, 100);
     }
 
     @Override
