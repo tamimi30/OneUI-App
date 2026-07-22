@@ -627,7 +627,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         // كان يُسبب عملية I/O لكل عنصر يظهر على الشاشة أثناء السكرول → تقطيع.
         // السطر الجديد: مقارنة boolean سريعة جداً من الذاكرة العشوائية → سكرول سلس. ★
         if (mIsFontPreviewEnabled) loadFontPreview(holder, path);
-        else holder.setDefaultTypeface(SettingsHelper.getTypeface(context));
+        else holder.setDefaultTypeface(null);
 
         final String finalRealName    = realName;
         final int    finalTtcIndex    = ttcIndex;
