@@ -45,28 +45,6 @@
         <item>@drawable/display_help_dark_mode</item>
     </array>
 
-    <!-- ═══════════════════════════════════════════════════════════════
-         قائمة خيارات الخط (Font Options)
-         ═══════════════════════════════════════════════════════════════ -->
     
-    <string-array name="settings_font_entries">
-        <item>@string/settings_font_system</item>
-        <item>@string/settings_font_wf_rglr</item>
-        <item>@string/settings_font_samsung_one</item>
-        <item>@string/settings_font_sst_roman</item>
-        <item>@string/settings_font_product_sans</item>
-        <item>@string/settings_font_new_sec_keypad</item>
-        <item>@string/settings_font_din_next_lt</item>
-    </string-array>
-    
-    <string-array name="settings_font_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-    </string-array>
 
 </resources>
