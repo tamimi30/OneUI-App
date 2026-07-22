@@ -45,14 +45,6 @@ public class SettingsHelper {
     public static final int THEME_LIGHT = 0;
     public static final int THEME_DARK = 1;
 
-    public static final int FONT_SYSTEM = 0;
-    public static final int FONT_WF = 1;
-    public static final int FONT_SAMSUNG = 2;
-    public static final int FONT_SST = 3;
-    public static final int FONT_PRODUCT = 4;
-    public static final int FONT_NEW = 5;
-    public static final int FONT_DIN = 6;
-
     // ═══════════════════════════════════════════════════════════════
     // Getters (Static methods using DataStore)
     // ═══════════════════════════════════════════════════════════════
@@ -167,20 +159,6 @@ public class SettingsHelper {
         } catch (Exception e) {
             Log.e(TAG, "Error reading transparent theme", e);
             return false;
-        }
-    }
-    
-    /**
-     * الحصول على وضع الخط الحالي
-     */
-    public static int getFontMode(Context context) {
-        try {
-            return SettingsDataStore.getInstance(context)
-                    .getFontMode()
-                    .blockingFirst();
-        } catch (Exception e) {
-            Log.e(TAG, "Error reading font mode", e);
-            return FONT_SYSTEM;
         }
     }
     
@@ -318,39 +296,7 @@ public class SettingsHelper {
         return context.createConfigurationContext(config);
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // إدارة الخطوط
-    // ═══════════════════════════════════════════════════════════════
-
-    /**
-     * الحصول على Typeface بناءً على وضع الخط المحدد
-     */
-    public static Typeface getTypeface(Context ctx) {
-        int mode = getFontMode(ctx);
-        
-        try {
-            switch (mode) {
-                case FONT_WF:
-                    return ResourcesCompat.getFont(ctx, R.font.wf_rglr);
-                case FONT_SAMSUNG:
-                    return ResourcesCompat.getFont(ctx, R.font.samsung_one);
-                case FONT_SST:
-                    return ResourcesCompat.getFont(ctx, R.font.sst_roman);
-                case FONT_PRODUCT:
-                    return ResourcesCompat.getFont(ctx, R.font.product_sans);
-                case FONT_NEW:
-                    return ResourcesCompat.getFont(ctx, R.font.new_sec_keypad);
-                case FONT_DIN:
-                    return ResourcesCompat.getFont(ctx, R.font.din_next_lt);
-                case FONT_SYSTEM:
-                default:
-                    return null;
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "getTypeface failed, fallback to system", e);
-            return null;
-        }
-    }
+    
 
     // ═══════════════════════════════════════════════════════════════
     // Initialization
