@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- شريط الفرز -->
-<com.example.oneuiapp.sort.SortByItemLayout
+<com.example.oneuiapp.widget.sort.SortByItemLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sort_layout"
