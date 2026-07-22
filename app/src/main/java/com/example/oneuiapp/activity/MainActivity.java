@@ -46,7 +46,7 @@ import com.example.oneuiapp.search.SearchCoordinator;
 import com.example.oneuiapp.widget.TextDrawable;
 import com.example.oneuiapp.fragment.settings.SettingsActivity;
 import com.example.oneuiapp.fragment.home.HomeActivity;
-import com.example.oneuiapp.notification.BatchOperationState;
+import com.example.oneuiapp.utils.notification.BatchOperationState;
 import com.example.oneuiapp.utils.ExternalFontIntentHandler;
 
 /**
