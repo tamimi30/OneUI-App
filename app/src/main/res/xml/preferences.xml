@@ -62,7 +62,7 @@
             android:persistent="false"
             app:useSimpleSummaryProvider="true" />
 
-        <com.example.oneuiapp.custom.CustomDropDownPreference
+        <DropDownPreference
             android:key="font_mode"
             android:title="@string/settings_font"
             android:entries="@array/settings_font_entries"
