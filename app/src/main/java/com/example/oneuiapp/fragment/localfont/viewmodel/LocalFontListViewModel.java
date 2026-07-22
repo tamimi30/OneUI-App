@@ -17,8 +17,8 @@ import com.example.oneuiapp.fragment.localfont.data.LocalFontRepository;
 import com.example.oneuiapp.fragment.trash.data.TrashRepository;   // ★ جديد ★
 import com.example.oneuiapp.dialog.TrashActionDialogs;          // ★ إصلاح (1)(3): إدارة الإشعارات والخدمة ★
 import com.example.oneuiapp.fragment.localfont.manager.LocalFontPreferenceManager;
-import com.example.oneuiapp.notification.BatchOperationState;
-import com.example.oneuiapp.notification.OperationForegroundService;   // ★ إصلاح (1)(3): الدرع الواقي ★
+import com.example.oneuiapp.utils.notification.BatchOperationState;
+import com.example.oneuiapp.utils.notification.OperationForegroundService;   // ★ إصلاح (1)(3): الدرع الواقي ★
 
 import java.io.File;
 import java.util.ArrayList;
