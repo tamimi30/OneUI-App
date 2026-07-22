@@ -34,13 +34,13 @@ import com.example.oneuiapp.activity.MainActivity;
 import com.example.oneuiapp.data.entity.FontEntity;
 import com.example.oneuiapp.data.entity.FontFileInfo;
 import com.example.oneuiapp.widget.search.FontSearchManager;
+import com.example.oneuiapp.widget.search.SearchViewModel;
 import com.example.oneuiapp.sort.FontSortManager;
 import com.example.oneuiapp.utils.FontUIStateManager;
 import com.example.oneuiapp.fragment.systemfont.adapter.SystemFontListAdapter;
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.sort.SortByItemLayout;
 import com.example.oneuiapp.fragment.systemfont.viewmodel.SystemFontListViewModel;
-import com.example.oneuiapp.widget.search.SearchViewModel;
 import com.example.oneuiapp.fragment.settings.viewmodel.SettingsViewModel;
 import com.example.oneuiapp.fragment.systemfont.data.SystemFontInfo;
 
