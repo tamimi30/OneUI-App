@@ -1,4 +1,4 @@
-package com.example.oneuiapp.translation;
+package com.example.oneuiapp.utils.translation;
 
 import android.content.Context;
 import android.util.Log;
