@@ -32,7 +32,7 @@ import dev.oneuiproject.oneui.preference.internal.PreferenceRelatedCard;
 import dev.oneuiproject.oneui.utils.PreferenceUtils;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.MyApplication;
+import com.oneui.fontviewer.App;
 import com.oneui.fontviewer.fragment.settings.about.AboutActivity;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
@@ -350,7 +350,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 break;
 
             case RECREATE_ALL_ACTIVITIES:
-                MyApplication app = MyApplication.getInstance();
+                App app = App.getInstance();
                 if (app != null) {
                     app.recreateAllActivities();
                 } else if (getActivity() != null) {
