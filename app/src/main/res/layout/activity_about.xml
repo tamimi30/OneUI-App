@@ -9,13 +9,13 @@
     android:layout_height="match_parent"
     tools:viewBindingIgnore="true">
 
-    <com.example.oneuiapp.widget.OneUiButton
+    <com.oneui.fontviewer.widget.OneUiButton
         style="@style/OneUI.AppInfoButton"
         android:onClick="changeStatus"
         app:maxFontLevel="large"
         android:text="@string/about_button_status" />
 
-    <com.example.oneuiapp.widget.OneUiButton
+    <com.oneui.fontviewer.widget.OneUiButton
         style="@style/OneUI.AppInfoButton"
         android:onClick="openLicensesPage"
         app:maxFontLevel="large"
