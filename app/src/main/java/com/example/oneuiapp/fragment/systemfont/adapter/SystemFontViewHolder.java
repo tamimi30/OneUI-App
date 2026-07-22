@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oneuiapp.R;
-import com.example.oneuiapp.search.FontTextHighlighter;
+import com.example.oneuiapp.widget.search.FontTextHighlighter;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
 import com.google.android.material.color.MaterialColors;
 
