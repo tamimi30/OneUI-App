@@ -1,4 +1,4 @@
-package com.example.oneuiapp.search;
+package com.example.oneuiapp.widget.search;
 
 import android.app.Activity;
 import android.app.SearchManager;
