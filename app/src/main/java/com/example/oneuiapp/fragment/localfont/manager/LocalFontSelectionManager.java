@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oneuiapp.R;
 import com.example.oneuiapp.fragment.localfont.adapter.LocalFontListAdapter;
-import com.example.oneuiapp.sort.SortByItemLayout;
+import com.example.oneuiapp.widget.sort.SortByItemLayout;
 
 import java.util.ArrayList;
 import java.util.List;
