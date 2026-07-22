@@ -18,14 +18,14 @@ import com.example.oneuiapp.R;
 import com.example.oneuiapp.data.entity.FontFileInfo;
 import com.example.oneuiapp.widget.search.FontTextHighlighter;
 import com.example.oneuiapp.fragment.systemfont.adapter.SystemFontViewHolder;
-import com.example.oneuiapp.sort.SortHeaderViewHolder;
+import com.example.oneuiapp.widget.sort.SortHeaderViewHolder;
+import com.example.oneuiapp.widget.sort.SortByItemLayout;
 import com.example.oneuiapp.fragment.systemfont.data.SystemFontCache;
 import com.example.oneuiapp.fragment.systemfont.data.SystemFontInfo;
 import com.example.oneuiapp.fragment.systemfont.manager.SystemFontPreferenceManager;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
 import com.example.oneuiapp.utils.FileUtils;
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
-import com.example.oneuiapp.sort.SortByItemLayout;
 
 import dev.oneuiproject.oneui.widget.RoundLinearLayout;
 
