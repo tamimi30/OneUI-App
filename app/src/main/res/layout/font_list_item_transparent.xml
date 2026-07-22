@@ -72,6 +72,6 @@
          
         </LinearLayout>        
 
-    </com.example.oneuiapp.widget.SelectableLinearLayout>
+    </com.oneui.fontviewer.widget.SelectableLinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
