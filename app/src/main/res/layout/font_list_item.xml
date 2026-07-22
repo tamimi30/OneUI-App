@@ -10,7 +10,7 @@
     android:gravity="center_vertical"
     android:background="@drawable/list_ripple">
     
-    <com.example.oneuiapp.widget.SelectableLinearLayout
+    <com.oneui.fontviewer.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
