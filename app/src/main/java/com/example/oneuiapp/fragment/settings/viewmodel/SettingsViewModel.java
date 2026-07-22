@@ -49,7 +49,6 @@ public class SettingsViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> languageMode = new MutableLiveData<>();
     private final MutableLiveData<Integer> themeMode = new MutableLiveData<>();
     private final MutableLiveData<Boolean> themeAuto = new MutableLiveData<>();
-    private final MutableLiveData<Integer> fontMode = new MutableLiveData<>();
     
     // LiveData للإعدادات الثنائية (Boolean)
     private final MutableLiveData<Boolean> fontPreviewEnabled = new MutableLiveData<>();
@@ -122,17 +121,6 @@ public class SettingsViewModel extends AndroidViewModel {
                 )
         );
 
-        // Font Mode
-        disposables.add(
-            dataStore.getFontMode()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    fontMode::setValue,
-                    error -> Log.e(TAG, "Error observing font mode", error)
-                )
-        );
-
         // Font Preview
         disposables.add(
             dataStore.getFontPreviewEnabled()
@@ -192,10 +180,6 @@ public class SettingsViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getThemeAuto() {
         return themeAuto;
-    }
-
-    public LiveData<Integer> getFontMode() {
-        return fontMode;
     }
 
     public LiveData<Boolean> getFontPreviewEnabled() {
@@ -383,30 +367,6 @@ public class SettingsViewModel extends AndroidViewModel {
                             SettingsEventType.RECREATE_ALL_ACTIVITIES));
                     },
                     error -> Log.e(TAG, "Error setting transparent theme", error)
-                )
-        );
-    }
-
-    /**
-     * تغيير وضع الخط
-     * يتطلب إعادة إنشاء جميع الأنشطة
-     */
-    public void setFontMode(int mode) {
-        if (fontMode.getValue() != null && fontMode.getValue() == mode) {
-            return;
-        }
-        
-        disposables.add(
-            dataStore.setFontMode(mode)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    preferences -> {
-                        Log.d(TAG, "Font mode updated to: " + mode);
-                        settingsEvent.setValue(new SettingsEvent(
-                            SettingsEventType.RECREATE_ALL_ACTIVITIES));
-                    },
-                    error -> Log.e(TAG, "Error setting font mode", error)
                 )
         );
     }
