@@ -167,7 +167,7 @@
                يمنع أي تطبيق خارجي من تشغيل أو إيقاف هذه الخدمة.
              ════════════════════════════════════════════════════════════════ -->
         <service
-            android:name=".notification.OperationForegroundService"
+            android:name=".utils.notification.OperationForegroundService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 
@@ -189,7 +189,7 @@
                ولا يصل ضغط زر "إلغاء" إلى أي مكان في التطبيق.
              ════════════════════════════════════════════════════════════════ -->
         <receiver
-            android:name=".notification.NotificationActionReceiver"
+            android:name=".utils.notification.NotificationActionReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.example.oneuiapp.ACTION_CANCEL_OPERATION" />
