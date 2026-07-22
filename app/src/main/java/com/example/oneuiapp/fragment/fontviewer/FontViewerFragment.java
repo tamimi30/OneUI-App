@@ -665,7 +665,7 @@ public class FontViewerFragment extends Fragment {
             android.R.layout.simple_spinner_item,
             instanceNames
         );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 
         // ★ ضبط الـ Adapter والاختيار الأولي قبل تعيين المستمع ★
         weightSpinner.setAdapter(adapter);
