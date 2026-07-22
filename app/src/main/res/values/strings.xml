@@ -64,15 +64,7 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
 
-    <!-- إعدادات الخط -->
-    <string name="settings_font">Font Style</string>
-    <string name="settings_font_system">System Default</string>
-    <string name="settings_font_wf_rglr">WF Regular</string>
-    <string name="settings_font_samsung_one">Samsung One</string>
-    <string name="settings_font_sst_roman">SST Roman</string>
-    <string name="settings_font_product_sans">Product Sans</string>
-    <string name="settings_font_new_sec_keypad">New SEC Keypad</string>
-    <string name="settings_font_din_next_lt">DIN Next LT</string>
+    
 
 
     <!-- ═══════════════════════════════════════════════════════════════
