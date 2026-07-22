@@ -1,4 +1,4 @@
-package com.example.oneuiapp.sort;
+package com.example.oneuiapp.widget.sort;
 
 import android.view.View;
 import android.view.ViewGroup;
