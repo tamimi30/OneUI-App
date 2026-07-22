@@ -647,7 +647,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (cached != null) {
             holder.setTypeface(cached);
         } else {
-            holder.setDefaultTypeface(SettingsHelper.getTypeface(context));
+            holder.setDefaultTypeface(null);
             if (executor != null && !executor.isShutdown()) {
                 executor.execute(() -> {
                     Typeface loaded = cache.getTypeface(path);
