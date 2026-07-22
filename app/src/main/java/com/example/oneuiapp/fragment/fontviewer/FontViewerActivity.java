@@ -16,7 +16,7 @@ import com.example.oneuiapp.R;
 import com.example.oneuiapp.activity.BaseActivity;
 import com.example.oneuiapp.dialog.FontInfoDialog;
 import com.example.oneuiapp.dialog.FontErrorDialog;
-import com.example.oneuiapp.translation.TranslationService;
+import com.example.oneuiapp.utils.translation.TranslationService;
 import com.example.oneuiapp.utils.FileUtils;
 import com.example.oneuiapp.widget.TextDrawable;
 
