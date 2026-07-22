@@ -71,7 +71,7 @@
 
         </LinearLayout>  
         
-    </com.example.oneuiapp.widget.SelectableLinearLayout>
+    </com.oneui.fontviewer.widget.SelectableLinearLayout>
     
     <View
         android:id="@+id/item_divider"
