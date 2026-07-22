@@ -26,7 +26,6 @@ public class SettingsDataStore {
     private final Preferences.Key<Integer> KEY_LANGUAGE_MODE;
     private final Preferences.Key<Integer> KEY_THEME_MODE;
     private final Preferences.Key<Boolean> KEY_THEME_AUTO;
-    private final Preferences.Key<Integer> KEY_FONT_MODE;
     private final Preferences.Key<Boolean> KEY_FONT_PREVIEW_ENABLED;
     private final Preferences.Key<Boolean> KEY_TRANSLATION_ENABLED;
     private final Preferences.Key<Boolean> KEY_NOTIFICATIONS_ENABLED;
@@ -61,7 +60,6 @@ public class SettingsDataStore {
     public static final int DEFAULT_LANGUAGE_MODE = 0;
     public static final int DEFAULT_THEME_MODE = 0;
     public static final boolean DEFAULT_THEME_AUTO = true;
-    public static final int DEFAULT_FONT_MODE = 0;
     public static final boolean DEFAULT_FONT_PREVIEW_ENABLED = true;
     public static final boolean DEFAULT_TRANSLATION_ENABLED = false;
     public static final boolean DEFAULT_NOTIFICATIONS_ENABLED = true;
@@ -88,7 +86,6 @@ public class SettingsDataStore {
         KEY_LANGUAGE_MODE = PreferencesKeys.intKey("language_mode");
         KEY_THEME_MODE = PreferencesKeys.intKey("theme_mode");
         KEY_THEME_AUTO = PreferencesKeys.booleanKey("theme_auto");
-        KEY_FONT_MODE = PreferencesKeys.intKey("font_mode");
         KEY_FONT_PREVIEW_ENABLED = PreferencesKeys.booleanKey("font_preview_enabled");
         KEY_TRANSLATION_ENABLED = PreferencesKeys.booleanKey("translation_enabled");
         KEY_NOTIFICATIONS_ENABLED = PreferencesKeys.booleanKey("notifications_enabled");
@@ -200,25 +197,6 @@ public class SettingsDataStore {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
             mutablePrefs.set(KEY_THEME_TRANSPARENT, enabled);
-            return Single.just(mutablePrefs);
-        });
-    }
-    
-    // ════════════════════════════════════════════════════════════
-    // Font Mode
-    // ════════════════════════════════════════════════════════════
-    
-    public Flowable<Integer> getFontMode() {
-        return dataStore.data().map(prefs -> 
-            prefs.get(KEY_FONT_MODE) != null ? 
-            prefs.get(KEY_FONT_MODE) : DEFAULT_FONT_MODE
-        );
-    }
-    
-    public Single<Preferences> setFontMode(int mode) {
-        return dataStore.updateDataAsync(prefs -> {
-            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            mutablePrefs.set(KEY_FONT_MODE, mode);
             return Single.just(mutablePrefs);
         });
     }
