@@ -830,7 +830,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         // كان يُسبب عملية I/O لكل عنصر يظهر على الشاشة أثناء السكرول → تقطيع.
         // السطر الجديد: مقارنة boolean سريعة جداً من الذاكرة العشوائية → سكرول سلس. ★
         if (mIsFontPreviewEnabled) loadFontPreview(holder, path);
-        else holder.setDefaultTypeface(SettingsHelper.getTypeface(context));
+        else holder.setDefaultTypeface(null);
 
         final String finalRealName      = realName;
         // ★ حفظ weightWidthLabel كـ final لاستخدامه في مستمع النقر ★
