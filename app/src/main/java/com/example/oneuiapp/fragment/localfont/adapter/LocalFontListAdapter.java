@@ -20,7 +20,7 @@ import com.example.oneuiapp.R;
 import com.example.oneuiapp.data.entity.FontFileInfo;
 import com.example.oneuiapp.fragment.localfont.data.LocalFontCache;
 import com.example.oneuiapp.fragment.localfont.manager.LocalFontPreferenceManager;
-import com.example.oneuiapp.search.FontTextHighlighter;
+import com.example.oneuiapp.widget.search.FontTextHighlighter;
 import com.example.oneuiapp.fragment.localfont.adapter.LocalFontViewHolder;
 import com.example.oneuiapp.sort.SortHeaderViewHolder;
 import com.example.oneuiapp.metadata.FontWeightWidthExtractor;
