@@ -12,7 +12,7 @@ import com.example.oneuiapp.fragment.localfont.LocalFontListFragment;
 import com.example.oneuiapp.fragment.favorite.FavoriteFontListFragment;
 import com.example.oneuiapp.fragment.trash.TrashFragment;
 import com.example.oneuiapp.drawer.DrawerListAdapter;
-import com.example.oneuiapp.search.SearchCoordinator;
+import com.example.oneuiapp.widget.search.SearchCoordinator;
 
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
