@@ -64,13 +64,7 @@
     <string name="settings_theme_light">فاتح</string>
     <string name="settings_theme_dark">داكن</string>
 
-    <!-- إعدادات الخط -->
-    <string name="settings_font">نمط الخط</string>
-    <string name="settings_font_system">الافتراضي للنظام</string>
-    <string name="settings_font_wf_rglr">WF عادي</string>
-    <string name="settings_font_samsung_one">Samsung One</string>
-    <string name="settings_font_sst_roman">SST Roman</string>
-    <string name="settings_font_product_sans">Product Sans</string>
+    
 
     <!-- ═══════════════════════════════════════════════════════════════
          إعدادات الإشعارات (Notification Settings)
