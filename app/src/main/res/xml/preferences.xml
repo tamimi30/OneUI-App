@@ -62,15 +62,6 @@
             android:persistent="false"
             app:useSimpleSummaryProvider="true" />
 
-        <DropDownPreference
-            android:key="font_mode"
-            android:title="@string/settings_font"
-            android:entries="@array/settings_font_entries"
-            android:entryValues="@array/settings_font_values"
-            android:defaultValue="0"
-            android:persistent="false"
-            app:useSimpleSummaryProvider="true" />
-
         <SwitchPreferenceCompat
             android:key="font_preview_enabled"
             android:title="@string/settings_font_preview"
