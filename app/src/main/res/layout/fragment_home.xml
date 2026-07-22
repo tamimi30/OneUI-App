@@ -136,7 +136,7 @@
                     android:text="@string/title_features"
                     android:textSize="22sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    app:fontFamily="@font/samsung_one"
+                    app:fontFamily="sans-serif"
                     android:textStyle="bold"
                     android:layout_marginBottom="7dp" />
 
@@ -182,7 +182,7 @@
                     android:text="@string/title_about"
                     android:textSize="22sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    app:fontFamily="@font/product_sans"
+                    app:fontFamily="sans-serif"
                     android:textStyle="bold"
                     android:layout_marginBottom="7dp" />
 
