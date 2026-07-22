@@ -25,7 +25,7 @@
 # هذا الأمر يخبر المحرك بطباعة قائمة الكود غير المستخدم في ملف اسمه usage.txt
 -printusage usage.txt
 -keep class dev.oneuiproject.oneui.** {*;}
--keep class com.example.oneuiapp.** {*;}
+-keep class com.oneui.fontviewer.** {*;}
 
 
 

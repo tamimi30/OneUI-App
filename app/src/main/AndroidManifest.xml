@@ -34,7 +34,7 @@
         tools:ignore="ScopedStorage" />
 
     <application
-        android:name=".MyApplication"
+        android:name=".App"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -91,7 +91,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
 
                 <action android:name="android.intent.action.SEARCH" />
-                <action android:name="com.example.oneuiapp.WIDGETACTION" />
+                <action android:name="com.oneui.fontviewer.WIDGETACTION" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -184,7 +184,7 @@
 
              intent-filter:
                يجب أن يطابق ACTION_CANCEL المُعرَّف في NotificationActionReceiver
-               وهو "com.example.oneuiapp.ACTION_CANCEL_OPERATION".
+               وهو "com.oneui.fontviewer.ACTION_CANCEL_OPERATION".
                بدون هذا التسجيل، يُهمل Android إشارة البث تماماً
                ولا يصل ضغط زر "إلغاء" إلى أي مكان في التطبيق.
              ════════════════════════════════════════════════════════════════ -->
@@ -192,7 +192,7 @@
             android:name=".utils.notification.NotificationActionReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.example.oneuiapp.ACTION_CANCEL_OPERATION" />
+                <action android:name="com.oneui.fontviewer.ACTION_CANCEL_OPERATION" />
             </intent-filter>
         </receiver>
 

@@ -13,7 +13,7 @@ rewrite {
 }
 
 android {
-    namespace 'com.example.oneuiapp'
+    namespace 'com.oneui.fontviewer'
     compileSdk 36
 
     buildFeatures {
@@ -21,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.oneuiapp"
+        applicationId "com.oneui.fontviewer"
         minSdk 26
         targetSdk 36
         versionCode 1

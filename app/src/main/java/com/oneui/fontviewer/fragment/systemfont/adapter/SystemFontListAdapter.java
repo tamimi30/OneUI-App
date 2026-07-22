@@ -1,0 +1,684 @@
+package com.oneui.fontviewer.fragment.systemfont.adapter;
+
+import android.content.Context;
+import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.SectionIndexer;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.util.SeslRoundedCorner;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
+
+import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.data.entity.FontFileInfo;
+import com.oneui.fontviewer.widget.search.FontTextHighlighter;
+import com.oneui.fontviewer.fragment.systemfont.adapter.SystemFontViewHolder;
+import com.oneui.fontviewer.widget.sort.SortHeaderViewHolder;
+import com.oneui.fontviewer.widget.sort.SortByItemLayout;
+import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
+import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
+import com.oneui.fontviewer.fragment.systemfont.manager.SystemFontPreferenceManager;
+import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
+import com.oneui.fontviewer.utils.FileUtils;
+import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
+
+import dev.oneuiproject.oneui.widget.RoundLinearLayout;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+
+/**
+ * SystemFontListAdapter — مبني على SortedList لأنيميشن الفرز الانسيابي.
+ * ★ يحتوي على recyclerView مع onAttachedToRecyclerView / onDetachedFromRecyclerView ★
+ * ★ PAYLOAD_UPDATE_HIGHLIGHT يحدّث تظليل نص البحث بصمت عبر bind الجزئي ★
+ * ★ isTransparentTheme يُعطّل حسابات الزوايا والفواصل غير الضرورية لتوفير المعالجة ★
+ *
+ * ★ التعديل: تمرير weightWidthLabel من SystemFontInfo إلى SystemFontViewHolder ★
+ * ★ التعديل: إضافة weightWidthLabel كمعامل خامس في OnFontClickListener
+ *   لتمريره إلى NavManager ثم FontViewerFragment دون إعادة استخراجه ★
+ *
+ * ★ الإصلاح (ومضة اللون): إضافة PAYLOAD_UPDATE_LAST_OPENED وتعديل
+ *   saveLastOpenedAndUpdate() لتحديث العنصرين المتأثرين فقط (القديم والجديد)
+ *   بدلاً من استدعاء smartUpdate() الذي يُعيد رسم القائمة كاملةً
+ *   ويُسبب ومضة مرئية في لون اسم الخط المفتوح عند العودة من العارض. ★
+ *
+ * ★ إصلاح مشكلة السكرول (توحيد الأداء):
+ *   تمّ تحديث areContentsTheSame() لتشمل التحقق من getLastModified()
+ *   بما يتطابق مع LocalFontListAdapter، مما يمنع إعادة رسم العناصر
+ *   التي لم يتغير محتواها الفعلي ويُحسّن سلاسة التمرير. ★
+ *
+ * ملاحظة للمطوّر: بعد تحديث هذه الواجهة، يجب تحديث SystemFontListFragment ليعكس
+ * التغيير في تنفيذه لـ onFontClick وليمرر weightWidthLabel إلى onFontSelected.
+ */
+public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SectionIndexer {
+
+    private static final int VIEW_TYPE_HEADER = 0;
+    private static final int VIEW_TYPE_FONT   = 1;
+    private static final int VIEW_TYPE_SPACE  = 2;
+
+    private static final String PAYLOAD_UPDATE_CORNERS    = "UPDATE_CORNERS";
+    private static final String PAYLOAD_UPDATE_HIGHLIGHT  = "UPDATE_HIGHLIGHT";
+    // ★ الإصلاح: Payload مستقل لتحديث لون اسم الخط المفتوح بصمت دون إعادة رسم العنصر كاملاً ★
+    // يُفعَّل في saveLastOpenedAndUpdate() لتجنب الومضة المرئية عند العودة من عارض الخطوط
+    private static final String PAYLOAD_UPDATE_LAST_OPENED = "UPDATE_LAST_OPENED";
+
+    private final Context context;
+    private final SystemFontPreferenceManager preferenceManager;
+    private final FontTextHighlighter highlighter;
+    private final Handler mainHandler;
+    private final ExecutorService executor;
+
+    // ★ مرجع الـ RecyclerView لاستخدام post() في تأجيل الإشعارات ★
+    private RecyclerView recyclerView;
+
+    // ★ حالة الثيم الشفاف — تُقرأ مرة واحدة عند إنشاء الـ Adapter
+    //   تُحدّد أي Layout يُستخدم لعناصر الخطوط وتُعطّل حسابات الزوايا والفواصل غير المطلوبة ★
+    private final boolean isTransparentTheme;
+
+    
+
+    // ★ الإصلاح (مشكلة السكرول): إعداد معاينة الخط يُقرأ مرة واحدة فقط عند إنشاء الأدابتر
+    //   بدلاً من قراءته من DataStore لكل عنصر أثناء السكرول، مما يُسبب التقطيع.
+    //   يُحدَّث عبر setFontPreviewEnabled() عند تغيير الإعداد من الـ Fragment. ★
+    private boolean mIsFontPreviewEnabled = true;
+
+    // ★ الإصلاح: حفظ مسار آخر خط مفتوح داخلياً لتحديد العنصرين المتأثرين فقط
+    //   عند استدعاء saveLastOpenedAndUpdate() دون الحاجة لقراءة إضافية من SharedPreferences ★
+    private String mCurrentLastOpenedPath = null;
+
+    private final SortedList<FontFileInfo> mSortedList;
+
+    private List<SystemFontInfo> allFontsInfo;
+    private String currentSearchQuery;
+
+    private List<String> sections;
+    private List<Integer> sectionPositions;
+    private List<Integer> positionSections;
+
+    private SortByItemLayout.SortType currentSortType;
+    private boolean currentSortAscending;
+
+    private OnFontClickListener fontClickListener;
+    private SortByItemLayout.OnSortChangeListener sortChangeListener;
+
+    // ─────────────────────────────────────────────────────────
+    // SortedList.Callback — الإزاحة +1 بسبب الـ Header في position=0
+    // ─────────────────────────────────────────────────────────
+    private class FontSortedListCallback extends SortedList.Callback<FontFileInfo> {
+
+        @Override
+        public int compare(FontFileInfo a, FontFileInfo b) {
+            return compareItems(a, b);
+        }
+
+        @Override
+        public boolean areItemsTheSame(FontFileInfo a, FontFileInfo b) {
+            return a.getPath().equals(b.getPath());
+        }
+
+        @Override
+        public boolean areContentsTheSame(FontFileInfo a, FontFileInfo b) {
+            // ✅ تمت إضافة التحقق من تاريخ التعديل (getLastModified) لمنع إعادة الرسم العشوائي
+            // يتطابق الآن مع LocalFontListAdapter لتوحيد الأداء بين قائمتَي الخطوط.
+            // بدون هذا التحقق، قد يُعيد SortedList رسم العناصر حتى عند عدم وجود تغيير فعلي،
+            // مما يُسبب Over-emission ويُقلّل سلاسة التمرير.
+            return a.getName().equals(b.getName()) &&
+                   a.getSize() == b.getSize() &&
+                   a.getLastModified() == b.getLastModified();
+        }
+
+        @Override public void onInserted(int position, int count) { notifyItemRangeInserted(position + 1, count); }
+        @Override public void onRemoved(int position, int count)  { notifyItemRangeRemoved(position + 1, count); }
+        @Override public void onMoved(int from, int to)           { notifyItemMoved(from + 1, to + 1); }
+        @Override public void onChanged(int position, int count)  { notifyItemRangeChanged(position + 1, count); }
+    }
+
+    private int compareItems(FontFileInfo a, FontFileInfo b) {
+        if (a == null) return 1;
+        if (b == null) return -1;
+        int result;
+        switch (currentSortType) {
+            case DATE:  result = Long.compare(a.getLastModified(), b.getLastModified()); break;
+            case SIZE:  result = Long.compare(a.getSize(), b.getSize()); break;
+            case NAME:
+            default:
+                String nameA = a.getName() != null ? a.getName() : "";
+                String nameB = b.getName() != null ? b.getName() : "";
+                result = nameA.compareToIgnoreCase(nameB);
+        }
+        return currentSortAscending ? result : -result;
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // ViewHolder للفراغ السفلي
+    // ─────────────────────────────────────────────────────────
+    public static class SpaceViewHolder extends RecyclerView.ViewHolder {
+        public SpaceViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemView.setFocusable(false);
+            itemView.setClickable(false);
+        }
+    }
+
+    /**
+     * ★ التعديل: إضافة weightWidthLabel كمعامل خامس ★
+     * يحمل وصف الوزن والعرض الجاهز من القائمة (مثل "Bold, Condensed" أو "VF · Regular")
+     * مما يُغني عن إعادة استخراجه عند فتح شاشة العارض.
+     *
+     * تحديث مطلوب في SystemFontListFragment:
+     *   void onFontClick(String fontPath, String realName, String fileName,
+     *                    int ttcIndex, String weightWidthLabel) {
+     *       listener.onFontSelected(fontPath, realName, fileName, ttcIndex, weightWidthLabel);
+     *   }
+     */
+    public interface OnFontClickListener {
+        void onFontClick(String fontPath, String realName, String fileName,
+                         int ttcIndex, String weightWidthLabel);
+    }
+
+    public SystemFontListAdapter(Context context, ExecutorService executor) {
+        this.context           = context;
+        this.preferenceManager = new SystemFontPreferenceManager(context);
+        this.highlighter       = new FontTextHighlighter(context);
+        this.mainHandler       = new Handler(Looper.getMainLooper());
+        this.executor          = executor;
+
+        this.allFontsInfo       = new ArrayList<>();
+        this.currentSearchQuery = "";
+
+        this.sections         = new ArrayList<>();
+        this.sectionPositions = new ArrayList<>();
+        this.positionSections = new ArrayList<>();
+
+        this.currentSortType      = SortByItemLayout.SortType.NAME;
+        this.currentSortAscending = true;
+
+        // ★ قراءة حالة الثيم الشفاف مرة واحدة عند الإنشاء
+        //   إذا كان مفعّلاً سيتم استخدام layouts الـ MaterialCardView لعناصر الخطوط
+        //   وتعطيل حسابات الزوايا الدائرية لتوفير معالجة الـ CPU ★
+        this.isTransparentTheme = SettingsHelper.isTransparentThemeEnabled(context);
+
+        // ★ الإصلاح (مشكلة السكرول): اقرأ الإعداد مرة واحدة عند إنشاء الأدابتر
+        //   بدلاً من قراءته من DataStore (عملية I/O) لكل عنصر أثناء السكرول ★
+        this.mIsFontPreviewEnabled = SettingsHelper.isFontPreviewEnabled(context);
+
+        this.mSortedList = new SortedList<>(
+            FontFileInfo.class,
+            new FontSortedListCallback()
+        );
+
+        setHasStableIds(true);
+
+        // ★ المراقب: يصحح زوايا OneUI مع تأجيل لتجنب قطع الأنيميشن ★
+        // ★ في الثيم الشفاف: لا حاجة لهذه الحسابات فيُتجاهل التنفيذ تماماً ★
+        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override public void onItemRangeInserted(int p, int c) { updateListEdges(); }
+            @Override public void onItemRangeRemoved(int p, int c)  { updateListEdges(); }
+            @Override public void onItemRangeMoved(int f, int t, int c) { updateListEdges(); }
+
+            private void updateListEdges() {
+                // ★ توفير معالجة: في الثيم الشفاف لا زوايا دائرية للحساب ★
+                if (isTransparentTheme || recyclerView == null) return;
+
+                // ★ الإصلاح (المشكلة 1 — بقاء الزوايا الدائرية):
+                //   تأجيل التحديث حتى ينتهي RecyclerView من حسابات الأنيميشن،
+                //   ثم إرسال PAYLOAD_UPDATE_CORNERS لجميع العناصر وليس للأول والأخيرين فقط.
+                //   هذا يضمن أن العنصر الذي كان آخراً في نتائج البحث (زوايا دائرية سفلية)
+                //   وأصبح في منتصف القائمة الكاملة يستعيد زواياه الصحيحة دون الحاجة لعمل سكرول. ★
+                recyclerView.post(() -> {
+                    if (recyclerView == null || recyclerView.isComputingLayout()) return;
+                    int total = getItemCount();
+                    if (total > 0) {
+                        notifyItemRangeChanged(0, total, PAYLOAD_UPDATE_CORNERS);
+                    }
+                });
+            }
+        });
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // ★ ربط / فك ربط الـ RecyclerView ★
+    // ─────────────────────────────────────────────────────────
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = recyclerView;
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        this.recyclerView = null;
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // Setters
+    // ─────────────────────────────────────────────────────────
+    public void setFontClickListener(OnFontClickListener l)                    { this.fontClickListener = l; }
+    public void setSortChangeListener(SortByItemLayout.OnSortChangeListener l) { this.sortChangeListener = l; }
+
+    
+
+    /**
+     * ★ الإصلاح (مشكلة السكرول): تحديث متغير معاينة الخط عند تغيير الإعداد من الـ Fragment ★
+     *
+     * يُستدعى من Observer في SystemFontListFragment عوضاً عن smartUpdate()،
+     * فيُحدِّث المتغير مرة واحدة ثم يُحدِّث القائمة لتعكس التغيير.
+     * هذا يمنع قراءة DataStore لكل عنصر أثناء السكرول التي كانت تُسبب التقطيع.
+     *
+     * @param enabled true إذا كانت معاينة الخط مفعّلة
+     */
+    public void setFontPreviewEnabled(boolean enabled) {
+        if (this.mIsFontPreviewEnabled != enabled) {
+            this.mIsFontPreviewEnabled = enabled;
+            // ★ الإصلاح: استدعاء notifyItemRangeChanged بالكامل (بدون payload)
+            // لإجبار جميع العناصر المرئية على سحب الـ Typeface الجديد فوراً ★
+            if (recyclerView != null && !recyclerView.isComputingLayout()) {
+                notifyItemRangeChanged(1, mSortedList.size());
+            } else {
+                notifyDataSetChanged();
+            }
+        }
+    }
+
+    /**
+     * ★ الإصلاح (ومضة اللون): تحديث العنصرين المتأثرين فقط بدلاً من smartUpdate() الكامل. ★
+     *
+     * المنطق:
+     *   1. حفظ مسار الخط القديم قبل تحديث التفضيل.
+     *   2. تحديث التفضيل المحفوظ في SharedPreferences.
+     *   3. إرسال PAYLOAD_UPDATE_LAST_OPENED للعنصر القديم (يعود للون الأصلي)
+     *      وللعنصر الجديد (يُلوَّن بـ colorPrimary) دون المساس ببقية العناصر.
+     *
+     * بدون هذا الإصلاح، كانت smartUpdate() تستدعي notifyItemRangeChanged(1, size)
+     * مما يُعيد رسم جميع العناصر ويُسبب ومضة مرئية في لون اسم الخط المفتوح.
+     */
+    public void saveLastOpenedAndUpdate(String path) {
+        // ★ حفظ المسار القديم قبل التحديث لتحديد العنصر الذي يحتاج إعادة اللون الأصلي ★
+        String prevPath = mCurrentLastOpenedPath;
+        mCurrentLastOpenedPath = path;
+        preferenceManager.saveLastOpenedFont(path);
+
+        // ★ تحديث العنصرين المتأثرين فقط عبر Payload مستقل ★
+        notifyLastOpenedChanged(prevPath, path);
+    }
+
+    /**
+     * ★ الإصلاح: البحث عن العنصرين المتأثرين وإرسال PAYLOAD_UPDATE_LAST_OPENED لهما فقط. ★
+     *
+     * يُؤجَّل التنفيذ عبر recyclerView.post() لضمان انتهاء أي عملية حساب جارية
+     * قبل إرسال الإشعار، وهو نفس نمط الحماية المُتَّبع في AdapterDataObserver.
+     *
+     * @param prevPath مسار الخط الذي كان مفتوحاً سابقاً (قد يكون null أول مرة)
+     * @param newPath  مسار الخط المفتوح الجديد
+     */
+    private void notifyLastOpenedChanged(String prevPath, String newPath) {
+        if (recyclerView == null) return;
+        recyclerView.post(() -> {
+            if (recyclerView == null || recyclerView.isComputingLayout()) return;
+            int size = mSortedList.size();
+            for (int i = 0; i < size; i++) {
+                String p = mSortedList.get(i).getPath();
+                // ★ تحديث العنصر الجديد (يُلوَّن بالأزرق) والقديم (يعود للون الأصلي) ★
+                if ((newPath != null && p.equals(newPath))
+                        || (prevPath != null && p.equals(prevPath))) {
+                    notifyItemChanged(i + 1, PAYLOAD_UPDATE_LAST_OPENED);
+                }
+            }
+        });
+    }
+
+    public void setAllFontsInfo(List<SystemFontInfo> fontsInfo) {
+        this.allFontsInfo = fontsInfo != null ? new ArrayList<>(fontsInfo) : new ArrayList<>();
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // تحديث البيانات
+    // ─────────────────────────────────────────────────────────
+    public void updateFilteredFonts(List<FontFileInfo> fonts, String searchQuery) {
+        String oldQuery = this.currentSearchQuery;
+        this.currentSearchQuery = searchQuery != null ? searchQuery : "";
+        List<FontFileInfo> newList = fonts != null ? fonts : new ArrayList<>();
+
+        mSortedList.replaceAll(newList);
+        buildSections();
+
+        // ★ تحديث تظليل النص للعناصر المتبقية بصمت عبر Payload ★
+        if (!this.currentSearchQuery.equals(oldQuery) && recyclerView != null) {
+            recyclerView.post(() -> {
+                if (recyclerView != null && !recyclerView.isComputingLayout()) {
+                    int size = mSortedList.size();
+                    if (size > 0) notifyItemRangeChanged(1, size, PAYLOAD_UPDATE_HIGHLIGHT);
+                }
+            });
+        }
+    }
+
+    /**
+     * ★ أنيميشن الفرز: snapshot → تحديث معيار الفرز → replaceAll → onMoved ★
+     */
+    public void setSortOptions(SortByItemLayout.SortType sortType, boolean ascending) {
+        this.currentSortType      = sortType;
+        this.currentSortAscending = ascending;
+
+        final int size = mSortedList.size();
+        List<FontFileInfo> snapshot = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) snapshot.add(mSortedList.get(i));
+
+        mSortedList.replaceAll(snapshot);
+        buildSections();
+
+        // ★ تحديث الهيدر بعد انتهاء أنيميشن العناصر ★
+        if (recyclerView != null) {
+            recyclerView.post(() -> {
+                if (recyclerView != null && !recyclerView.isComputingLayout()) {
+                    notifyItemChanged(0);
+                }
+            });
+        }
+    }
+
+    public void updateSortOptionsOnly(SortByItemLayout.SortType sortType, boolean ascending) {
+        this.currentSortType      = sortType;
+        this.currentSortAscending = ascending;
+        notifyItemChanged(0);
+    }
+
+    /**
+     * تحديث شامل للقائمة يُستخدم في الحالات العامة كتغيير إعداد معاينة الخط.
+     * ★ لا يُستخدم عند العودة من عارض الخطوط — يُستخدم notifyLastOpenedChanged() بدلاً منه ★
+     *
+     * ★ الإصلاح (المشكلة 2 — بقايا اللون الأزرق):
+     *   تأجيل إرسال الـ Payloads عبر post() لضمان عدم ضياع الإشعارات
+     *   أثناء كون الـ RecyclerView مخفياً أو قيد البناء عند العودة من فراجمنت آخر. ★
+     */
+    public void smartUpdate() {
+        buildSections();
+        int size = mSortedList.size();
+        if (size > 0) {
+            // ★ الإصلاح: تأجيل إرسال الـ Payloads عبر post ★
+            // يضمن هذا عدم ضياع الإشعارات أثناء كون الـ RecyclerView مخفياً أو قيد البناء
+            if (recyclerView != null) {
+                recyclerView.post(() -> {
+                    if (recyclerView != null && !recyclerView.isComputingLayout()) {
+                        notifyItemRangeChanged(1, size, PAYLOAD_UPDATE_LAST_OPENED);
+                        notifyItemRangeChanged(1, size, PAYLOAD_UPDATE_HIGHLIGHT);
+                    }
+                });
+            } else {
+                notifyItemRangeChanged(1, size, PAYLOAD_UPDATE_LAST_OPENED);
+                notifyItemRangeChanged(1, size, PAYLOAD_UPDATE_HIGHLIGHT);
+            }
+        } else {
+            notifyDataSetChanged();
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // بناء الـ Sections
+    // ─────────────────────────────────────────────────────────
+    private void buildSections() {
+        sections.clear();
+        sectionPositions.clear();
+        positionSections.clear();
+
+        for (int i = 0; i < mSortedList.size(); i++) {
+            String name   = mSortedList.get(i).getName();
+            String letter = (name != null && !name.isEmpty()) ? name.substring(0, 1).toUpperCase() : "#";
+            if (!Character.isLetter(letter.charAt(0))) letter = "#";
+
+            if (sections.isEmpty() || !sections.get(sections.size() - 1).equals(letter)) {
+                sections.add(letter);
+                sectionPositions.add(i + 1);
+            }
+            positionSections.add(sections.size() - 1);
+        }
+    }
+
+    private SystemFontInfo getFontInfoForPath(String path) {
+        for (SystemFontInfo font : allFontsInfo)
+            if (font.getPath().equals(path)) return font;
+        return null;
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // RecyclerView.Adapter
+    // ─────────────────────────────────────────────────────────
+    @Override public int getItemCount() { return mSortedList.size() + 2; }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0) return VIEW_TYPE_HEADER;
+        if (position == getItemCount() - 1) return VIEW_TYPE_SPACE;
+        return VIEW_TYPE_FONT;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        if (position == 0) return "HEADER".hashCode();
+        if (position == getItemCount() - 1) return "SPACE".hashCode();
+        return mSortedList.get(position - 1).getPath().hashCode();
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inf = LayoutInflater.from(context);
+
+        if (viewType == VIEW_TYPE_HEADER) {
+            // ★ الخطوة 3: نستخدم دائماً الملف الموحد لأن شريط الفرز
+            //   أصبح شفافاً في كلا الثيمين — لم تعد هناك حاجة للملف المنفصل ★
+            return new SortHeaderViewHolder(inf.inflate(R.layout.sort_header_item, parent, false));
+        }
+
+        if (viewType == VIEW_TYPE_SPACE) {
+            return new SpaceViewHolder(inf.inflate(R.layout.item_bottom_space, parent, false));
+        }
+
+        // ★ اختيار Layout عنصر الخط بناءً على الثيم:
+        //   - الثيم الشفاف: MaterialCardView بزوايا دائرية كاملة وخلفية شفافة
+        //   - الثيم الافتراضي: RoundLinearLayout مع حسابات زوايا OneUI ★
+        int itemLayout = isTransparentTheme
+                ? R.layout.font_list_item_transparent
+                : R.layout.font_list_item;
+        return new SystemFontViewHolder(inf.inflate(itemLayout, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof SortHeaderViewHolder) {
+            ((SortHeaderViewHolder) holder).bind(currentSortType, currentSortAscending, sortChangeListener);
+        } else if (holder instanceof SystemFontViewHolder) {
+            bindFontViewHolder((SystemFontViewHolder) holder, mSortedList.get(position - 1));
+        }
+        updateItemAppearance(holder, position);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position,
+                                 @NonNull List<Object> payloads) {
+        if (!payloads.isEmpty()) {
+            if (payloads.contains(PAYLOAD_UPDATE_CORNERS)) {
+                updateItemAppearance(holder, position);
+            }
+
+            // ★ الإصلاح السحري (المشكلة 2 — بقايا اللون الأزرق):
+            //   إضافة (!isSearchActive) للشرط يضمن أنه إذا استلم العنصر أي Payload
+            //   (مثل الزوايا أو Last Opened) وكان البحث مغلقاً، سيُجبَر النص
+            //   على التخلص من اللون الأزرق العالق دون الحاجة لربط كامل.
+            //   هذا يوقف "اختطاف الربط" الذي كان يحدث عندما يرى RecyclerView
+            //   Payload معلقاً (الزوايا) فيتجاهل تنظيف النص الأزرق. ★
+            boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
+            if ((payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) || !isSearchActive) && holder instanceof SystemFontViewHolder) {
+                FontFileInfo fontInfo      = mSortedList.get(position - 1);
+                String displayName         = FileUtils.removeExtension(fontInfo.getName());
+                boolean isLastOpened       = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+                
+                // ★ إلغاء تمييز آخر خط تم فتحه مؤقتاً أثناء البحث ★
+                if (isSearchActive) isLastOpened = false;
+                
+                SystemFontInfo sfi         = getFontInfoForPath(fontInfo.getPath());
+                String weightWidthLabel    = (sfi != null) ? sfi.getWeightWidthLabel() : null;
+                // دالة bind بداخلها تتعامل مع مسح اللون إذا كان isSearchActive = false
+                ((SystemFontViewHolder) holder).bind(
+                    displayName, fontInfo.getPath(), isSearchActive,
+                    currentSearchQuery, isLastOpened, highlighter, weightWidthLabel
+                );
+            }
+
+            // ★ الإصلاح: تحديث لون اسم الخط فقط دون إعادة رسم العنصر بأكمله ★
+            // يُفعَّل من notifyLastOpenedChanged() التي تُستدعى من saveLastOpenedAndUpdate()
+            // عند العودة من عارض الخطوط، مما يُلغي الومضة المرئية في اللون.
+            if (payloads.contains(PAYLOAD_UPDATE_LAST_OPENED) && holder instanceof SystemFontViewHolder) {
+                FontFileInfo fontInfo = mSortedList.get(position - 1);
+                boolean isLastOpened  = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+                
+                // ★ إلغاء تمييز آخر خط تم فتحه مؤقتاً أثناء البحث ★
+                if (isSearchActive) isLastOpened = false;
+                
+                ((SystemFontViewHolder) holder).bindLastOpened(isLastOpened);
+            }
+        } else {
+            super.onBindViewHolder(holder, position, payloads);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // ★ الخطوة 4: التعديل الجوهري لهندسة الزوايا (updateItemAppearance) ★
+    //
+    // المنطق الجديد:
+    //   • شريط الفرز أصبح شفافاً — نعود فوراً دون أي معالجة
+    //   • العنصر الأول الحقيقي (position==1) يأخذ الزوايا العلوية
+    //   • العنصر الأخير يأخذ الزوايا السفلية
+    //   • إذا كان عنصراً وحيداً يأخذ الزوايا الأربع
+    //   • العناصر الوسطى بدون تدوير
+    // ─────────────────────────────────────────────────────────
+    private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
+        // ★ توفير معالجة: في الثيم الشفاف، MaterialCardView يدير الزوايا تلقائياً ★
+        if (isTransparentTheme) return;
+
+        // ★ شريط الفرز أصبح شفافاً — لا يحتاج أي معالجة للزوايا أو الفواصل ★
+        if (holder instanceof SortHeaderViewHolder) return;
+
+        if (holder instanceof SystemFontViewHolder) {
+            SystemFontViewHolder sfh = (SystemFontViewHolder) holder;
+            RoundLinearLayout root   = (RoundLinearLayout) sfh.itemView;
+            int totalFonts           = mSortedList.size();
+            boolean isFirst          = (position == 1);
+            boolean isLast           = (position == getItemCount() - 2);
+
+            if (totalFonts == 1) {
+                // ★ عنصر وحيد في القائمة: تدوير الزوايا الأربع وإخفاء الفاصل ★
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_ALL);
+                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.GONE);
+            } else if (isFirst) {
+                // ★ العنصر الأول: يأخذ الزوايا العلوية الدائرية ويُظهر الفاصل ★
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
+                                     | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
+                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.VISIBLE);
+            } else if (isLast) {
+                // ★ العنصر الأخير: يأخذ الزوايا السفلية الدائرية ويخفي الفاصل ★
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
+                                     | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
+                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.INVISIBLE);
+            } else {
+                // ★ عنصر وسطي: بدون تدوير للزوايا ويُظهر الفاصل ★
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_NONE);
+                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // ربط بيانات عنصر الخط
+    // ─────────────────────────────────────────────────────────
+    private void bindFontViewHolder(SystemFontViewHolder holder, FontFileInfo fontInfo) {
+        String fileName    = fontInfo.getName();
+        String path        = fontInfo.getPath();
+        String displayName = FileUtils.removeExtension(fileName);
+
+        SystemFontInfo sfi = getFontInfoForPath(path);
+        String realName    = (sfi != null) ? sfi.getRealName() : null;
+        int ttcIndex       = (sfi != null) ? sfi.getTtcIndex() : 0;
+
+       
+
+        // ★ استخراج وصف الوزن/العرض من SystemFontInfo ★
+        String weightWidthLabel = (sfi != null) ? sfi.getWeightWidthLabel() : null;
+
+        boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
+        boolean isLastOpened   = preferenceManager.isLastOpenedFont(path);
+
+        // ★ إلغاء تمييز آخر خط تم فتحه مؤقتاً أثناء البحث ★
+        if (isSearchActive) isLastOpened = false;
+
+        // ★ تمرير weightWidthLabel إلى bind() ★
+        holder.bind(displayName, path, isSearchActive, currentSearchQuery,
+                    isLastOpened, highlighter, weightWidthLabel);
+
+        // ★ الإصلاح (مشكلة السكرول): استخدام المتغير المحفوظ في الذاكرة بدلاً من قراءة DataStore ★
+        // السطر القديم: if (SettingsHelper.isFontPreviewEnabled(context)) loadFontPreview(holder, path);
+        // كان يُسبب عملية I/O لكل عنصر يظهر على الشاشة أثناء السكرول → تقطيع.
+        // السطر الجديد: مقارنة boolean سريعة جداً من الذاكرة العشوائية → سكرول سلس. ★
+        if (mIsFontPreviewEnabled) loadFontPreview(holder, path);
+        else holder.setDefaultTypeface(null);
+
+        final String finalRealName    = realName;
+        final int    finalTtcIndex    = ttcIndex;
+        // ★ حفظ weightWidthLabel كـ final لاستخدامه في مستمع النقر ★
+        final String finalWeightWidth = weightWidthLabel;
+
+        holder.setOnClickListener(v -> {
+            if (fontClickListener != null)
+                fontClickListener.onFontClick(path, finalRealName, fileName, finalTtcIndex, finalWeightWidth);
+        });
+    }
+
+    private void loadFontPreview(SystemFontViewHolder holder, String path) {
+        SystemFontCache cache = SystemFontCache.getInstance();
+        Typeface cached       = cache.getIfCached(path);
+
+        if (cached != null) {
+            holder.setTypeface(cached);
+        } else {
+            holder.setDefaultTypeface(null);
+            if (executor != null && !executor.isShutdown()) {
+                executor.execute(() -> {
+                    Typeface loaded = cache.getTypeface(path);
+                    if (loaded != null) {
+                        mainHandler.post(() -> {
+                            if (path.equals(holder.getTag())) holder.setTypeface(loaded);
+                        });
+                    }
+                });
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // SectionIndexer
+    // ─────────────────────────────────────────────────────────
+    @Override public Object[] getSections() { return sections.toArray(); }
+
+    @Override
+    public int getPositionForSection(int sectionIndex) {
+        if (sectionIndex < 0 || sectionIndex >= sectionPositions.size()) return 0;
+        return sectionPositions.get(sectionIndex);
+    }
+
+    @Override
+    public int getSectionForPosition(int position) {
+        if (position <= 0) return 0;
+        if (position >= getItemCount() - 1)
+            return positionSections.isEmpty() ? 0 : positionSections.get(positionSections.size() - 1);
+        int adj = position - 1;
+        if (adj < 0 || adj >= positionSections.size()) return 0;
+        return positionSections.get(adj);
+    }
+            }
