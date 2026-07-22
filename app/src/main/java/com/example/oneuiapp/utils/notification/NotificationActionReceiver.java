@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.oneuiapp.notification.BatchOperationState;
-
 /**
  * NotificationActionReceiver — مُستقبل إجراءات إشعارات عمليات السلة
  *
