@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.oneuiapp.fragment.settings.utils.SettingsHelper;
-import com.example.oneuiapp.fragment.settings.utils.FontHelper;
 
 /**
  * BaseActivity - الأساس لجميع الأنشطة في التطبيق
@@ -39,30 +38,6 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        // تحميل معلومات الخط المخصص
-        // يجب أن يحدث هذا قبل استدعاء super.onCreate()
-        FontHelper.applyFont(this);
-        
-        // تثبيت Factory مخصص لاعتراض إنشاء Views
-        // يجب أن يحدث هذا قبل استدعاء super.onCreate()
-        // لأن AppCompat سيثبت factory خاص به في super.onCreate()
-        // ونحن نريد أن نغلف factory الخاص به
-        try {
-            FontHelper.installFontFactory(this);
-        } catch (Exception e) {
-            android.util.Log.e("BaseActivity", "Failed to install font factory", e);
-        }
-        
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        
-        // تطبيق الخط على العناصر الخاصة التي لا يعترضها Factory
-        // مثل Toolbar و CollapsingToolbarLayout
-        // نفعل هذا في onPostCreate لضمان أن جميع Views قد تم إنشاؤها
-        FontHelper.applyFontToSpecialViews(this);
     }
 }
