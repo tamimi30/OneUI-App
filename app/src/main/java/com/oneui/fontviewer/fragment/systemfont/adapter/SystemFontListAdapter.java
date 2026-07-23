@@ -51,10 +51,6 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private RecyclerView recyclerView;
 
-    
-
-    
-
     private boolean mIsFontPreviewEnabled = true;
 
     private String mCurrentLastOpenedPath = null;
