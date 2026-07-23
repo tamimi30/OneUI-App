@@ -16,28 +16,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-/**
- * SettingsViewModel - نسخة محدّثة تعتمد بالكامل على DataStore
- * تم إزالة كل استخدام لـ SharedPreferences والاستماع المباشر لـ PreferenceManager
- *
- * آلية تغيير اللغة:
- * - Android 13 فما فوق: يُفوّض إلى LanguageHelper.applyLanguage() الذي يستخدم
- *   LocaleManager من الـ Framework مباشرةً. بما أن locale|layoutDirection مُضاف
- *   إلى configChanges في SettingsActivity فقط، يقوم النظام تلقائياً بإعادة بناء
- *   MainActivity و HomeActivity في الخلفية، بينما يتلقى SettingsActivity الحدث
- *   عبر onConfigurationChanged فقط دون تدمير. لا نرسل RECREATE هنا.
- * - ما دون Android 13: يُعيد إنشاء جميع الأنشطة ليعمل ContextWrapper في BaseActivity.
- *
- * ★ دالة syncLanguageModeFromSystem مُضافة: ★
- * تُستخدم حصرياً لمزامنة DataStore مع قيمة LocaleManager دون تشغيل
- * أي تأثيرات جانبية (لا LocaleManager ولا RECREATE).
- *
- * ★ دالة requestBackgroundRecreation مُضافة: ★
- * تُستخدم من SettingsFragment.onResume() عند اكتشاف أن اللغة تغيّرت
- * من إعدادات النظام بينما كان التطبيق في الخلفية، وذلك لإعادة بناء
- * الأنشطة الخلفية التي لم يُعدها النظام تلقائياً بسبب اعتراض
- * SettingsActivity لحدث locale في configChanges.
- */
 public class SettingsViewModel extends AndroidViewModel {
 
     private static final String TAG = "SettingsViewModel";
@@ -45,22 +23,16 @@ public class SettingsViewModel extends AndroidViewModel {
     private final SettingsDataStore dataStore;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    // LiveData للإعدادات الأساسية
     private final MutableLiveData<Integer> languageMode = new MutableLiveData<>();
     private final MutableLiveData<Integer> themeMode = new MutableLiveData<>();
     private final MutableLiveData<Boolean> themeAuto = new MutableLiveData<>();
     
-    // LiveData للإعدادات الثنائية (Boolean)
     private final MutableLiveData<Boolean> fontPreviewEnabled = new MutableLiveData<>();
     private final MutableLiveData<Boolean> translationEnabled = new MutableLiveData<>();
     private final MutableLiveData<Boolean> notificationsEnabled = new MutableLiveData<>();
 
-    
-    
-    // LiveData للنصوص
     private final MutableLiveData<String> previewText = new MutableLiveData<>();
     
-    // LiveData لحالات خاصة
     private final MutableLiveData<SettingsEvent> settingsEvent = new MutableLiveData<>();
 
     public SettingsViewModel(@NonNull Application application) {
@@ -68,15 +40,10 @@ public class SettingsViewModel extends AndroidViewModel {
         
         dataStore = SettingsDataStore.getInstance(application);
         
-        // مراقبة DataStore مباشرة بدلاً من SharedPreferences Listener
         observeDataStore();
     }
 
-    /**
-     * مراقبة جميع القيم في DataStore وتحديث LiveData تلقائياً
-     */
     private void observeDataStore() {
-        // Language Mode
         disposables.add(
             dataStore.getLanguageMode()
                 .subscribeOn(Schedulers.io())
@@ -87,7 +54,6 @@ public class SettingsViewModel extends AndroidViewModel {
                 )
         );
 
-        // Theme Mode
         disposables.add(
             dataStore.getThemeMode()
                 .subscribeOn(Schedulers.io())
@@ -98,7 +64,6 @@ public class SettingsViewModel extends AndroidViewModel {
                 )
         );
 
-        // Theme Auto
         disposables.add(
             dataStore.getThemeAuto()
                 .subscribeOn(Schedulers.io())
@@ -111,7 +76,6 @@ public class SettingsViewModel extends AndroidViewModel {
 
         
 
-        // Font Preview
         disposables.add(
             dataStore.getFontPreviewEnabled()
                 .subscribeOn(Schedulers.io())
@@ -122,7 +86,6 @@ public class SettingsViewModel extends AndroidViewModel {
                 )
         );
 
-        // Translation
         disposables.add(
             dataStore.getTranslationEnabled()
                 .subscribeOn(Schedulers.io())
@@ -133,7 +96,6 @@ public class SettingsViewModel extends AndroidViewModel {
                 )
         );
 
-        // Notifications
         disposables.add(
             dataStore.getNotificationsEnabled()
                 .subscribeOn(Schedulers.io())
@@ -144,7 +106,6 @@ public class SettingsViewModel extends AndroidViewModel {
                 )
         );
 
-        // Preview Text
         disposables.add(
             dataStore.getPreviewText()
                 .subscribeOn(Schedulers.io())
@@ -156,9 +117,6 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // Getters للـ LiveData (للمراقبة من Fragment)
-    // ═══════════════════════════════════════════════════════════════
 
     public LiveData<Integer> getLanguageMode() {
         return languageMode;
@@ -194,21 +152,7 @@ public class SettingsViewModel extends AndroidViewModel {
         return settingsEvent;
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // Methods لتحديث الإعدادات (الكتابة إلى DataStore)
-    // ═══════════════════════════════════════════════════════════════
 
-    /**
-     * تغيير وضع اللغة
-     *
-     * آلية العمل حسب إصدار النظام:
-     * - Android 13+: يُفوّض إلى LanguageHelper.applyLanguage() الذي يكتب في LocaleManager.
-     *   بما أن locale|layoutDirection مُضاف إلى configChanges لـ SettingsActivity فقط:
-     *   - SettingsActivity تتلقى onConfigurationChanged وتحدّث نصوصها بدون تدمير.
-     *   - MainActivity و HomeActivity يُعاد بناؤهما تلقائياً بالخلفية من قِبَل النظام.
-     *   لا نرسل RECREATE_ALL_ACTIVITIES هنا عمداً لأن النظام يتكفل بذلك.
-     * - ما دون Android 13: يُعيد إنشاء جميع الأنشطة ليعمل ContextWrapper في BaseActivity.
-     */
     public void setLanguageMode(int mode) {
         if (languageMode.getValue() != null && languageMode.getValue() == mode) {
             return;
@@ -252,18 +196,6 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    /**
-     * ★ مزامنة وضع اللغة من النظام إلى DataStore فقط ★
-     *
-     * تُستدعى من SettingsFragment.onResume() عند اكتشاف اختلاف بين
-     * قيمة LocaleManager (مصدر الحقيقة) وقيمة DataStore.
-     *
-     * الفرق عن setLanguageMode():
-     * - لا تُشغّل LanguageHelper (اللغة مُطبَّقة بالفعل من النظام)
-     * - لا ترسل RECREATE (الواجهة محدّثة بالفعل)
-     * - لا تتحقق من تطابق القيمة الحالية (المزامنة مطلوبة دائماً)
-     * - تكتب فقط إلى DataStore للحفاظ على التزامن الداخلي
-     */
     public void syncLanguageModeFromSystem(int mode) {
         disposables.add(
             dataStore.setLanguageMode(mode)
@@ -278,10 +210,6 @@ public class SettingsViewModel extends AndroidViewModel {
 
     
 
-    /**
-     * تغيير وضع الثيم
-     * يطبق الثيم فوراً ويعطل الوضع التلقائي
-     */
     public void setThemeMode(int mode) {
         if (themeMode.getValue() != null && themeMode.getValue() == mode) {
             return;
@@ -289,7 +217,6 @@ public class SettingsViewModel extends AndroidViewModel {
         
         Log.d(TAG, "Setting theme mode to: " + mode);
         
-        // تعطيل الوضع التلقائي أولاً عند اختيار ثيم يدوي
         disposables.add(
             dataStore.setThemeAuto(false)
                 .flatMap(prefs -> dataStore.setThemeMode(mode))
@@ -305,9 +232,6 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    /**
-     * تفعيل/تعطيل الوضع التلقائي للثيم
-     */
     public void setThemeAuto(boolean enabled) {
         if (themeAuto.getValue() != null && themeAuto.getValue() == enabled) {
             return;
@@ -331,9 +255,6 @@ public class SettingsViewModel extends AndroidViewModel {
 
     
 
-    /**
-     * تفعيل/تعطيل معاينة الخطوط
-     */
     public void setFontPreviewEnabled(boolean enabled) {
         if (fontPreviewEnabled.getValue() != null && fontPreviewEnabled.getValue() == enabled) {
             return;
@@ -349,9 +270,6 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    /**
-     * تفعيل/تعطيل الترجمة
-     */
     public void setTranslationEnabled(boolean enabled) {
         if (translationEnabled.getValue() != null && translationEnabled.getValue() == enabled) {
             return;
@@ -367,9 +285,6 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    /**
-     * تفعيل/تعطيل الإشعارات
-     */
     public void setNotificationsEnabled(boolean enabled) {
         if (notificationsEnabled.getValue() != null && notificationsEnabled.getValue() == enabled) {
             return;
@@ -385,9 +300,6 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    /**
-     * تحديث نص المعاينة
-     */
     public void setPreviewText(String text) {
         if (previewText.getValue() != null && previewText.getValue().equals(text)) {
             return;
@@ -410,9 +322,6 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    /**
-     * إعادة تعيين جميع الإعدادات إلى القيم الافتراضية
-     */
     public void resetAllSettings() {
         disposables.add(
             dataStore.clearAll()
@@ -437,9 +346,6 @@ public class SettingsViewModel extends AndroidViewModel {
         Log.d(TAG, "ViewModel cleared");
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // فئات داخلية للأحداث
-    // ═══════════════════════════════════════════════════════════════
 
     public static class SettingsEvent {
         private final SettingsEventType type;
@@ -477,4 +383,4 @@ public class SettingsViewModel extends AndroidViewModel {
         RECREATE_ACTIVITY,
         RECREATE_ALL_ACTIVITIES
     }
-                           }
+                    }
