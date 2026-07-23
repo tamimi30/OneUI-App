@@ -255,7 +255,7 @@
 <string name="action_unfavorite">Unfavorite</string>
 <string name="drawer_favorites">Favorites</string>
 
-<string name="no_fonts_found">No fonts</string>
+<string name="no_fonts_found"></string>
 
 <string name="drawer_trash">Trash</string>
 
