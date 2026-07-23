@@ -146,21 +146,7 @@ public class SettingsHelper {
         }
     }
 
-    /**
-     * ★ فحص إذا كان الثيم الشفاف (البطاقات المتباعدة) مفعّلاً ★
-     * يُستخدم في الـ Adapters والـ Fragments لاختيار الـ Layout المناسب
-     * ويُعطّل حسابات الزوايا الدائرية غير الضرورية لتوفير المعالجة
-     */
-    public static boolean isTransparentThemeEnabled(Context context) {
-        try {
-            return SettingsDataStore.getInstance(context)
-                    .getThemeTransparent()
-                    .blockingFirst();
-        } catch (Exception e) {
-            Log.e(TAG, "Error reading transparent theme", e);
-            return false;
-        }
-    }
+    
     
     /**
      * فحص إذا كانت معاينة الخطوط مفعّلة
