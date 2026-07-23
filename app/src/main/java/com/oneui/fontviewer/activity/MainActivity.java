@@ -48,10 +48,10 @@ import com.oneui.fontviewer.utils.notification.BatchOperationState;
 import com.oneui.fontviewer.utils.ExternalFontIntentHandler;
 
 public class MainActivity extends BaseActivity
-        implements LocalFontListFragment.OnFontSelectedListener,
-        SystemFontListFragment.OnFontSelectedListener,
-        FavoriteFontListFragment.OnFontSelectedListener,
-        NavManager.Host {
+    implements LocalFontListFragment.OnFontSelectedListener,
+    SystemFontListFragment.OnFontSelectedListener,
+    FavoriteFontListFragment.OnFontSelectedListener,
+    NavManager.Host {
 
     private boolean isUIReady = false;
     private long mSplashStartTime = 0L;
