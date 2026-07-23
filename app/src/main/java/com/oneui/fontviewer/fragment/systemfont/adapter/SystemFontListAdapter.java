@@ -77,9 +77,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     // ★ مرجع الـ RecyclerView لاستخدام post() في تأجيل الإشعارات ★
     private RecyclerView recyclerView;
 
-    // ★ حالة الثيم الشفاف — تُقرأ مرة واحدة عند إنشاء الـ Adapter
-    //   تُحدّد أي Layout يُستخدم لعناصر الخطوط وتُعطّل حسابات الزوايا والفواصل غير المطلوبة ★
-    private final boolean isTransparentTheme;
+    
 
     
 
@@ -199,10 +197,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.currentSortType      = SortByItemLayout.SortType.NAME;
         this.currentSortAscending = true;
 
-        // ★ قراءة حالة الثيم الشفاف مرة واحدة عند الإنشاء
-        //   إذا كان مفعّلاً سيتم استخدام layouts الـ MaterialCardView لعناصر الخطوط
-        //   وتعطيل حسابات الزوايا الدائرية لتوفير معالجة الـ CPU ★
-        this.isTransparentTheme = SettingsHelper.isTransparentThemeEnabled(context);
+        
 
         // ★ الإصلاح (مشكلة السكرول): اقرأ الإعداد مرة واحدة عند إنشاء الأدابتر
         //   بدلاً من قراءته من DataStore (عملية I/O) لكل عنصر أثناء السكرول ★
@@ -223,8 +218,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             @Override public void onItemRangeMoved(int f, int t, int c) { updateListEdges(); }
 
             private void updateListEdges() {
-                // ★ توفير معالجة: في الثيم الشفاف لا زوايا دائرية للحساب ★
-                if (isTransparentTheme || recyclerView == null) return;
+                if (recyclerView == null) return;
 
                 // ★ الإصلاح (المشكلة 1 — بقاء الزوايا الدائرية):
                 //   تأجيل التحديث حتى ينتهي RecyclerView من حسابات الأنيميشن،
@@ -481,13 +475,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             return new SpaceViewHolder(inf.inflate(R.layout.item_bottom_space, parent, false));
         }
 
-        // ★ اختيار Layout عنصر الخط بناءً على الثيم:
-        //   - الثيم الشفاف: MaterialCardView بزوايا دائرية كاملة وخلفية شفافة
-        //   - الثيم الافتراضي: RoundLinearLayout مع حسابات زوايا OneUI ★
-        int itemLayout = isTransparentTheme
-                ? R.layout.font_list_item_transparent
-                : R.layout.font_list_item;
-        return new SystemFontViewHolder(inf.inflate(itemLayout, parent, false));
+        return new SystemFontViewHolder(inf.inflate(R.layout.font_list_item, parent, false));
     }
 
     @Override
@@ -560,9 +548,6 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     //   • العناصر الوسطى بدون تدوير
     // ─────────────────────────────────────────────────────────
     private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
-        // ★ توفير معالجة: في الثيم الشفاف، MaterialCardView يدير الزوايا تلقائياً ★
-        if (isTransparentTheme) return;
-
         // ★ شريط الفرز أصبح شفافاً — لا يحتاج أي معالجة للزوايا أو الفواصل ★
         if (holder instanceof SortHeaderViewHolder) return;
 
