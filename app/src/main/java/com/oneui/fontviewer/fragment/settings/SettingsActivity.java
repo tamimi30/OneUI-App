@@ -14,12 +14,6 @@ import com.oneui.fontviewer.activity.BaseActivity;
 
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
 
-/**
- * SettingsActivity - شاشة الإعدادات المستقلة
- * 
- * تعرض SettingsFragment في شاشة منفصلة مع شريط أدوات علوي
- * يمكن الوصول إليها من أيقونة الإعدادات في درج التنقل في MainActivity
- */
 public class SettingsActivity extends BaseActivity {
 
     private ToolbarLayout mToolbarLayout;
@@ -31,7 +25,6 @@ public class SettingsActivity extends BaseActivity {
 
         initToolbar();
         
-        // إضافة SettingsFragment فقط عند الإنشاء الأول
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                 .beginTransaction()
@@ -56,7 +49,6 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        // معالجة زر الرجوع في شريط الأدوات
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
@@ -66,7 +58,6 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        // السماح بالرجوع بالطريقة العادية
         super.onBackPressed();
     }
 }
