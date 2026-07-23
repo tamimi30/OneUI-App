@@ -1,18 +1,5 @@
 package com.oneui.fontviewer.data.entity;
 
-/**
- * FontFileInfo - نموذج بيانات مشترك يمثّل ملف خط واحد
- *
- * تم فصل هذا الكلاس عن FontDirectoryManager (المُعاد تسميته LocalFontDirectoryManager)
- * ليكون نموذجاً مستقلاً قابلاً للاستخدام في كلٍّ من:
- *   - قائمة الخطوط المحلية  (LocalFontListAdapter, LocalFontRepository …)
- *   - قائمة خطوط النظام     (SystemFontListAdapter, SystemFontListFragment …)
- *   - محرك البحث             (FontSearchManager)
- *   - مدير الفرز             (FontSortManager)
- *
- * الفائدة: أي ملف يحتاج هذا النموذج لا يضطر إلى استيراد منطق
- * قراءة المجلدات (LocalFontDirectoryManager) دون حاجة حقيقية إليه.
- */
 public class FontFileInfo {
 
     private final String name;
