@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.oneui.fontviewer.activity.AppScreen;           // ★ الإصلاح الجوهري: استيراد AppScreen ★
+import com.oneui.fontviewer.activity.AppScreen;           
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
@@ -44,36 +44,6 @@ import com.oneui.fontviewer.fragment.systemfont.viewmodel.SystemFontListViewMode
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
 
-/**
- * SystemFontListFragment — محدث ليفوّض الفرز بالكامل إلى SortedList داخل SystemFontListAdapter.
- * ★ لم يعد هذا الـ Fragment يستدعي FontSortManager.sortFontsList() ★
- * ★ عند تغيير الفرز → mAdapter.setSortOptions() → أنيميشن مباشر ★
- * ★ عند وصول بيانات جديدة → mAdapter.updateFilteredFonts() → SortedList يرتبها تلقائياً ★
- *
- * ★ يستخدم FontSortManager(context, true) → مفاتيح DataStore خاصة بخطوط النظام فقط ★
- * هذا يضمن عدم تأثر هذا الـ Fragment بأي تغيير في فرز المجلد المحلي ويحل مشكلة التجمد نهائياً.
- *
- * ★ التعديل: تحديث OnFontSelectedListener ليشمل weightWidthLabel كمعامل خامس ★
- *   لتمريره مباشرةً إلى NavManager ثم FontViewerFragment دون إعادة استخراجه،
- *   إذ أن الوزن مستخرج مسبقاً وموجود في بيانات القائمة.
- *
- * ★ الإصلاح الجوهري (الخطوة الثالثة من خطة الإصلاح):
- *   استبدال الرقم المُشفَّر 3 بـ AppScreen.SYSTEM_FONTS في updateMainActivityFontsCount().
- *   يضمن تمييز هذا الفراجمنت بالاسم لا بالرقم، فلا يتأثر بتغيير ترتيب الشاشات
- *   أو بحذف HomeFragment أو إضافة شاشات جديدة. ★
- *
- * ★ المرحلة الأولى من خطة التحسين: اللامركزية في قوائم AppBar ★
- *   هذا الـ Fragment أصبح مسؤولاً عن أيقوناته الخاصة عبر:
- *   - setHasOptionsMenu(true) في onCreate()
- *   - onCreateOptionsMenu() لنفخ menu_font_list_search
- *   - onOptionsItemSelected() لمعالجة النقرات (يُحال لـ super — لا أيقونات إضافية)
- *   - setMenuVisibility(!hidden) في onHiddenChanged() للتبديل التلقائي
- *
- * ★ الإصلاح (خطة الإصلاح الشاملة — الخطوة الثالثة):
- *   إضافة onSearchStateChanged(boolean) لمزامنة SearchViewModel مع الحالة البصرية
- *   لحقل البحث فوراً عند تمدده أو طيّه، مما يُخفي/يُظهر زر الثلاث نقاط
- *   في نفس اللحظة بدلاً من انتظار كتابة أول حرف. ★
- */
 public class SystemFontListFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
     private static final String TAG = "SystemFontListFragment";
@@ -98,20 +68,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
     private boolean mIsFirstLoad = true;
 
-    // ★ علامة تضمن استعادة موضع التمرير فقط عند أول وصول للبيانات بعد إعادة البناء من الـ bundle ★
-    //
-    // السبب الجذري للمشكلة التي كانت قائمة:
-    //   كانت العلامة تُضبط أيضاً داخل onHiddenChanged(false) عند العودة من عارض الخطوط،
-    //   غير أن mMainHandler.post() الموجود هناك يُعيد موضع التمرير مباشرةً بشكل كافٍ،
-    //   ولا يحدث أي استدعاء لـ refreshAdapterData() بعده لاستهلاك العلامة وإعادتها إلى false،
-    //   لأن Room لا تُصدر قيمة جديدة في غياب تغيير في قاعدة البيانات.
-    //   فإذا ضغط المستخدم على Home وأعاد فتح التطبيق دون إنهاء العملية،
-    //   تبقى العلامة true، وعند النقر على أي خط لاحق يستدعي recordFontAccess كتابةً
-    //   في قاعدة البيانات فتُصدر Room LiveData قيمة وتجد refreshAdapterData العلامة true
-    //   فتقفز للموضع القديم.
-    //
-    // القاعدة الصارمة: لا تُضبط هذه العلامة إلا في restoreInstanceState() فقط.
-    // حالة onHiddenChanged(false) تعتمد على mMainHandler.post() المباشر ولا تحتاج للعلامة.
     private boolean mNeedsScrollRestore = false;
 
     public interface OnFontSelectedListener {
@@ -134,21 +90,16 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     private void initializeManagers() {
         mSearchManager = new FontSearchManager();
 
-        // ★ true = خطوط النظام → يقرأ/يكتب KEY_SYSTEM_SORT_TYPE و KEY_SYSTEM_SORT_ASCENDING ★
-        // هذا يمنع تماماً أن يتسبب تغيير فرز المجلد المحلي في إعادة فرز آلاف خطوط النظام
         mSortManager = new FontSortManager(mContext, true);
 
         mUIManager = new FontUIStateManager(mContext);
     }
 
     private void setupManagerListeners() {
-        // ★ المستمع يحدّث حالة الواجهة فقط — تحديث الـ Adapter يتم من المراقب ★
         mSearchManager.setSearchResultListener((count, empty) -> {
             mUIManager.updateEmptyView(empty, mSearchManager.isSearchActive());
         });
 
-        // ★ التغيير الجوهري: عند تغيير الفرز نستدعي setSortOptions مباشرة ★
-        // هذا يُشغّل أنيميشن SortedList بدلاً من إعادة تحميل البيانات كلها
         mSortManager.setSortChangeListener((type, asc) -> {
             if (mAdapter != null) {
                 mAdapter.setSortOptions(type, asc);
@@ -160,9 +111,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     public void onCreate(@Nullable Bundle state) {
         super.onCreate(state);
 
-        // ★ المرحلة الأولى: إعلام النظام أن هذا الـ Fragment يمتلك أيقونات AppBar خاصة به ★
-        // يضمن هذا استدعاء onCreateOptionsMenu() عند ظهور الـ Fragment
-        // وإخفاء الأيقونات تلقائياً عند إخفائه عبر setMenuVisibility() في onHiddenChanged()
         setHasOptionsMenu(true);
 
         mMainHandler = new Handler(Looper.getMainLooper());
@@ -176,21 +124,11 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         }
     }
 
-    /**
-     * ★ المرحلة الأولى: نفخ أيقونات هذا الـ Fragment في AppBar ★
-     *
-     * ينفخ قائمة البحث الخاصة بخطوط النظام،
-     * ثم يربط أيقونة البحث بـ SearchCoordinator الموجود في MainActivity.
-     * menu.clear() يضمن نظافة القائمة قبل كل نفخ جديد.
-     */
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear(); // تنظيف أي قوائم سابقة
-        // ★ نفخ قائمة البحث الخاصة بخطوط النظام ★
+        menu.clear(); 
         inflater.inflate(R.menu.menu_font_list_search, menu);
 
-        // ★ ربط أيقونة البحث بالـ Coordinator الموجود في MainActivity ★
-        // bindSearchMenuItem() يُعدّ SearchView ويضبط مستمعاته لتفعيل البحث
         MenuItem searchItem = menu.findItem(R.id.action_search_fonts);
         if (getActivity() instanceof MainActivity && searchItem != null) {
             ((MainActivity) getActivity()).getSearchCoordinator().bindSearchMenuItem(searchItem);
@@ -199,10 +137,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /**
-     * ★ المرحلة الأولى: معالجة نقرات أيقونات هذا الـ Fragment ★
-     * خطوط النظام لا تحتوي أيقونات إضافية غير البحث — يُحال لـ super.
-     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
@@ -216,7 +150,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         mViewModel.getFontsLiveData().observe(this, fonts -> {
             if (fonts != null) {
                 mCurrentFontsList = new ArrayList<>(fonts);
-                // ★ تحديث البيانات — SortedList يرتبها تلقائياً حسب معيار الفرز الحالي ★
                 refreshAdapterData();
                 updateMainActivityFontsCount(fonts.size());
             }
@@ -238,7 +171,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
         mSearchViewModel.getSearchQueryLiveData().observe(this, query -> {
             if (query != null) {
-                // فلترة ثم تحديث الـ Adapter مرة واحدة فقط
                 mSearchManager.filterFonts(query);
                 if (mAdapter != null) {
                     mAdapter.updateFilteredFonts(
@@ -249,16 +181,9 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
             }
         });
 
-        // ★ الإصلاح (مشكلة السكرول): استخدام setFontPreviewEnabled() بدلاً من smartUpdate() ★
-        // smartUpdate() كانت تستدعي notifyItemRangeChanged() مما يُعيد تشغيل onBindViewHolder
-        // لكل عنصر ويُقرأ الإعداد من DataStore مجدداً — وهو المصدر الأصلي للتقطيع.
-        // setFontPreviewEnabled() تُحدِّث المتغير المحفوظ في الذاكرة مرة واحدة فقط،
-        // ثم تستدعي smartUpdate() داخلياً للتحديث بعد التغيير — بدون قراءة DataStore.
-        // كما تم حذف mMainHandler.post() غير الضروري لأن setFontPreviewEnabled() آمنة
-        // للاستدعاء المباشر من الخيط الرئيسي. ★
         mSettingsViewModel.getFontPreviewEnabled().observe(this, enabled -> {
             if (mAdapter != null && isAdded()) {
-                mAdapter.setFontPreviewEnabled(enabled); // استخدام الدالة الجديدة
+                mAdapter.setFontPreviewEnabled(enabled); 
                 Log.d(TAG, "Font preview setting changed: " + enabled);
             }
         });
@@ -267,10 +192,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     private void restoreInstanceState(Bundle state) {
         mUIManager.setRecyclerViewState(state.getParcelable("recycler_state"));
 
-        // ★ تفعيل الاستعادة فقط إذا كانت هناك حالة تمرير محفوظة فعلاً ★
-        // هذا هو المكان الوحيد المسموح فيه بضبط mNeedsScrollRestore على true.
-        // عند وصول البيانات الأولى من LiveData بعد إعادة البناء، تستهلك refreshAdapterData()
-        // هذه العلامة وتُعيدها إلى false، ما يحول دون أي قفز لاحق ناتج عن recordFontAccess.
         if (mUIManager.getRecyclerViewState() != null) {
             mNeedsScrollRestore = true;
         }
@@ -302,12 +223,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         setupRecyclerView();
         setupAppBarLayout();
 
-        // ★ الإصلاح الجوهري: حُذف بلوك hasSavedSortState و mMainHandler.post ★
-        // السبب: كلاهما كان يعمل بعد وصول البيانات من LiveData، مما يُسبب "سباق زمني"
-        // يجعل الـ SortedList يرتب البيانات أولاً بالفرز الافتراضي (الاسم)، ثم يتلقى
-        // أمر الفرز الصحيح متأخراً فلا يُعيد ترتيب القائمة أمام المستخدم.
-        // الحل: تهيئة الفرز داخل setupRecyclerView() مباشرةً بعد setAdapter()
-        // لضمان جهوزية الـ Adapter قبل أي وصول للبيانات.
 
         if (mIsFirstLoad) {
             mViewModel.loadSystemFonts();
@@ -331,7 +246,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
         mAdapter = new SystemFontListAdapter(mContext, mExecutor);
 
-        // ★ التعديل: استقبال weightWidthLabel كمعامل خامس وتمريره إلى mFontSelectedListener ★
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
             mViewModel.recordFontAccess(fontPath);
 
@@ -344,24 +258,17 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         });
 
 
-        // ★ عند الضغط على شريط الفرز: حفظ التفضيل في DataStore عبر SortManager
-        // SortManager يُشعر مستمعه (setupManagerListeners) الذي يستدعي mAdapter.setSortOptions → أنيميشن ★
         mAdapter.setSortChangeListener((type, asc) -> {
             mSortManager.setSortOptions(type, asc);
         });
 
         mRecyclerView.setAdapter(mAdapter);
 
-        // ★★★ الإصلاح السحري: إخبار الـ Adapter بنوع الفرز المحفوظ قبل أن يستلم أي بيانات ★★★
-        // يضمن هذا أنه عندما تصل البيانات من LiveData (حتى لو وصلت قبل onViewCreated)،
-        // سيقوم الـ SortedList بترتيبها مباشرةً بالمعيار الصحيح بدون أي سباق زمني
         mAdapter.updateSortOptionsOnly(
             mSortManager.getCurrentSortType(),
             mSortManager.isSortAscending()
         );
 
-        // ★ استدعاء دالة الأنيميشن المركزية بدلاً من كتابة الكود هنا مباشرة ★
-        // هذا يسمح بإعادة تهيئة الأنيميشن بسهولة عند العودة للشاشة بعد إيقافه
         setupRecyclerViewAnimator();
 
         mRecyclerView.seslSetFillBottomEnabled(false);
@@ -372,11 +279,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         mRecyclerView.seslSetSmoothScrollEnabled(true);
     }
 
-    /**
-     * ★ دالة مركزية لتهيئة أنيميشن الـ RecyclerView ★
-     * تُستدعى عند الإنشاء الأول وعند العودة للشاشة بعد إيقاف الأنيميشن.
-     * سرعات متوازنة لتجنب العشوائية عند الكتابة السريعة في البحث.
-     */
     private void setupRecyclerViewAnimator() {
         if (mRecyclerView == null) return;
         androidx.recyclerview.widget.DefaultItemAnimator animator =
@@ -410,10 +312,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         if (mainContent != null)     mainContent.setVisibility(View.GONE);
     }
 
-    /**
-     * ★ يُغذّي الـ Adapter بالبيانات الخام بدون فرز مسبق.
-     * SortedList داخل الـ Adapter يتولى الترتيب وتوليد الأنيميشن المناسب.
-     */
     private void refreshAdapterData() {
         if (mCurrentFontsList.isEmpty()) {
             mSearchManager.updateFontsList(new ArrayList<>());
@@ -427,7 +325,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
             return;
         }
 
-        // بناء قائمة FontFileInfo — بدون استدعاء sortFontsList ★
         List<FontFileInfo> rawFonts = new ArrayList<>();
         for (FontEntity font : mCurrentFontsList) {
             rawFonts.add(new FontFileInfo(
@@ -443,27 +340,16 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         if (mAdapter != null) {
             mAdapter.setAllFontsInfo(convertEntitiesToSystemFontInfo(mCurrentFontsList));
 
-            // SortedList يرتب القائمة تلقائياً حسب currentSortType/currentSortAscending
             mAdapter.updateFilteredFonts(
                 mSearchManager.getFilteredFonts(),
                 mSearchManager.getCurrentSearchQuery()
             );
-            // تحديث الهيدر فقط ليعكس الحالة الحالية
             mAdapter.updateSortOptionsOnly(
                 mSortManager.getCurrentSortType(),
                 mSortManager.isSortAscending()
             );
         }
 
-        // ★ الإصلاح الجذري لمشكلة القفز: استعادة موضع التمرير فقط عند أول وصول للبيانات
-        // بعد إعادة البناء من الـ bundle (مثل إعادة الفتح بعد قتل العملية من النظام).
-        //
-        // هذه العلامة لا تُضبط إلا في restoreInstanceState()، وتُستهلك هنا مرة واحدة فقط.
-        // استدعاءات recordFontAccess التي تُشغّل Room LiveData لن تجد العلامة true
-        // لأنها تُستهلك قبل أن يتاح للمستخدم النقر على أي خط.
-        //
-        // حالة العودة من عارض الخطوط (onHiddenChanged → false) لا تحتاج هذه العلامة إطلاقاً؛
-        // يكفيها mMainHandler.post() المباشر الموجود في onHiddenChanged.
         if (mNeedsScrollRestore) {
             mNeedsScrollRestore = false;
             mMainHandler.post(() -> {
@@ -474,15 +360,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         }
     }
 
-    /**
-     * تحويل كيانات قاعدة البيانات إلى نماذج SystemFontInfo لاستخدامها في الـ Adapter.
-     *
-     * ★ التعديل: إضافة info.setWeightWidthLabel() لتمرير وصف الوزن والعرض
-     *   المخزَّن في قاعدة البيانات إلى SystemFontInfo، ومنه إلى SystemFontListAdapter
-     *   ثم إلى SystemFontViewHolder للعرض في السطر الثاني.
-     *   بدون هذا السطر يصل weightWidthLabel كـ null دائماً بغض النظر عن
-     *   القيم المحفوظة في قاعدة البيانات.
-     */
     private List<SystemFontInfo> convertEntitiesToSystemFontInfo(
             List<FontEntity> entities) {
         List<SystemFontInfo> result = new ArrayList<>();
@@ -501,23 +378,13 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
             if (entity.getRealName() != null && !entity.getRealName().isEmpty()) {
                 info.setRealName(entity.getRealName());
             }
-            // ★ تمرير وصف الوزن والعرض من FontEntity إلى SystemFontInfo ★
-            // هذا يضمن وصول القيمة المخزَّنة في قاعدة البيانات إلى المحوّل والـ ViewHolder
             info.setWeightWidthLabel(entity.getWeightWidthLabel());
             result.add(info);
         }
         return result;
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    // ★ دوال البحث — تُستدعى من SearchCoordinator
-    // ════════════════════════════════════════════════════════════════════════
 
-    /**
-     * ★ يُستدعى من MainActivity عند تمدد أو طي حقل البحث بصرياً.
-     * يضمن مزامنة SearchViewModel مع الحالة البصرية فوراً، مما يخفي/يظهر
-     * زر الثلاث نقاط في نفس اللحظة. ★
-     */
     public void onSearchStateChanged(boolean isExpanded) {
         if (mSearchViewModel != null) {
             if (isExpanded) {
@@ -563,8 +430,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     @Override
     public void onResume() {
         super.onResume();
-        // ★ الإصلاح: تحديث العدد فقط إذا كان هذا الـ Fragment ظاهراً للمستخدم
-        // هذا يمنع الكتابة فوق العدد الصحيح عند استئناف التطبيق ★
         if (!isHidden()) {
             updateMainActivityFontsCount(mCurrentFontsList.size());
         }
@@ -574,42 +439,26 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
 
-        // ★ المرحلة الأولى: إدارة ظهور أيقونات AppBar عند التنقل بين الشاشات ★
-        // setMenuVisibility يُخفي أيقونات هذا الـ Fragment عند إخفائه ويُظهرها عند عودته،
-        // وinvalidateOptionsMenu يُجبر الـ AppBar على إعادة رسم الأيقونات فور ظهور الشاشة
         setMenuVisibility(!hidden);
         if (!hidden && getActivity() != null) {
-            getActivity().invalidateOptionsMenu(); // إجبار الـ AppBar على التحديث
+            getActivity().invalidateOptionsMenu(); 
         }
 
         if (hidden) {
-            // ★ 1. حفظ موضع التمرير فوراً قبل إخفاء الشاشة وقبل أي تحديث للـ Adapter ★
             mUIManager.saveRecyclerViewState();
 
-            // ★ 2. إيقاف الأنيميشن فوراً لنزع قدرة القائمة على الحركة في الخلفية ★
-            // هذا يضمن أن أي تحديثات تحدث في الخلفية (مثل إعادة الترتيب عند إغلاق البحث)
-            // تُطبَّق بصمت تام دون أن يراها المستخدم عند العودة
             if (mRecyclerView != null) {
                 mRecyclerView.setItemAnimator(null);
             }
 
             mSearchViewModel.deactivateSearch();
         } else {
-            // ★ إعادة رسم القائمة عند العودة لإظهار تمييز آخر خط تم فتحه ★
             if (mAdapter != null) mAdapter.smartUpdate();
 
             updateMainActivityFontsCount(mCurrentFontsList.size());
 
-            // ★ 3. استعادة موضع التمرير بعد ظهور الشاشة مع تأجيل بـ post()
-            // لضمان اكتمال layout قبل تطبيق الاستعادة.
-            // ملاحظة: لا نضبط mNeedsScrollRestore هنا عمداً — هذا المسار يعتمد فقط
-            // على هذا الـ post() المباشر. ضبط العلامة هنا كان سبب المشكلة السابقة:
-            // كانت تبقى true حتى بعد Home ثم تُشغَّل خطأً عند أول recordFontAccess. ★
             mMainHandler.post(() -> mUIManager.restoreRecyclerViewState());
 
-            // ★ 4. الضربة القاضية للأنيميشن: تأخير إعادته 100 ملي ثانية ★
-            // هذا يضمن أن الـ RecyclerView قد رسم العناصر في مواضعها النهائية بدون حركة،
-            // وبعد ذلك فقط نعيد الأنيميشن للاستخدام الطبيعي
             if (mRecyclerView != null) {
                 mRecyclerView.postDelayed(() -> {
                     if (isAdded() && !isHidden()) {
@@ -620,21 +469,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         }
     }
 
-    /**
-     * يُحدّث عدد خطوط النظام في MainActivity.
-     *
-     * ★ الإصلاح الجوهري (الخطوة الثالثة من خطة الإصلاح):
-     *   تمرير AppScreen.SYSTEM_FONTS بدلاً من الرقم المُشفَّر 3.
-     *   يضمن تمييز هذا الفراجمنت بالاسم لا بالرقم، فلا يتأثر بتغيير ترتيب الشاشات
-     *   أو بحذف HomeFragment أو إضافة شاشات جديدة بين الشاشات الحالية.
-     *
-     * @param count عدد خطوط النظام الحالي
-     */
     private void updateMainActivityFontsCount(int count) {
-        // ★ الإصلاح الجوهري: AppScreen.SYSTEM_FONTS بدلاً من الرقم المُشفَّر 3 ★
-        // يمنع هذا الفراجمنت من الكتابة فوق عدد المجلد المحلي عند إعادة بناء النشاط،
-        // ويضمن تحديث العنوان الفرعي فقط عندما تكون قائمة النظام هي الظاهرة فعلاً.
-        // آمن ضد تغيير ترتيب الشاشات أو حذف HomeFragment أو إضافة شاشات جديدة.
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).updateFontsCount(AppScreen.SYSTEM_FONTS, count);
         }
@@ -669,4 +504,4 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
         if (mExecutor != null)    mExecutor.shutdown();
     }
-        }
+    }
