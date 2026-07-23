@@ -33,8 +33,7 @@ public class SettingsDataStore {
     private final Preferences.Key<String> KEY_LAST_OPENED_FONT_PATH;
     private final Preferences.Key<String> KEY_FOLDER_PATH;
 
-    // ★ مفتاح الثيم الشفاف (البطاقات المتباعدة ذات الزوايا الدائرية الكاملة) ★
-    private final Preferences.Key<Boolean> KEY_THEME_TRANSPARENT;
+    
     
     // FontList keys (Local Folder)
     private final Preferences.Key<String> KEY_SORT_TYPE;
@@ -73,8 +72,7 @@ public class SettingsDataStore {
             "# & ^ _ | ~ `";
     public static final float DEFAULT_VIEWER_FONT_SIZE = 18f;
     public static final float DEFAULT_VIEWER_FONT_WEIGHT = 400f;
-    // ★ القيمة الافتراضية للثيم الشفاف: معطّل ★
-    public static final boolean DEFAULT_THEME_TRANSPARENT = false;
+    
     
     private SettingsDataStore(Context context) {
         dataStore = new RxPreferenceDataStoreBuilder(
@@ -93,8 +91,7 @@ public class SettingsDataStore {
         KEY_LAST_OPENED_FONT_PATH = PreferencesKeys.stringKey("last_opened_font_path");
         KEY_FOLDER_PATH = PreferencesKeys.stringKey("folder_path");
 
-        // ★ تهيئة مفتاح الثيم الشفاف ★
-        KEY_THEME_TRANSPARENT = PreferencesKeys.booleanKey("theme_transparent");
+        
         
         // Initialize FontList (Local) keys
         KEY_SORT_TYPE = PreferencesKeys.stringKey("sort_type");
@@ -181,25 +178,7 @@ public class SettingsDataStore {
         });
     }
 
-    // ════════════════════════════════════════════════════════════
-    // ★ Transparent Theme — الثيم الشفاف ذو البطاقات المتباعدة ★
-    // منفصل تماماً عن الثيم الفاتح/الداكن ولا يؤثر عليه
-    // ════════════════════════════════════════════════════════════
-
-    public Flowable<Boolean> getThemeTransparent() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_THEME_TRANSPARENT) != null ?
-            prefs.get(KEY_THEME_TRANSPARENT) : DEFAULT_THEME_TRANSPARENT
-        );
-    }
-
-    public Single<Preferences> setThemeTransparent(boolean enabled) {
-        return dataStore.updateDataAsync(prefs -> {
-            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            mutablePrefs.set(KEY_THEME_TRANSPARENT, enabled);
-            return Single.just(mutablePrefs);
-        });
-    }
+    
     
     // ════════════════════════════════════════════════════════════
     // Font Preview
