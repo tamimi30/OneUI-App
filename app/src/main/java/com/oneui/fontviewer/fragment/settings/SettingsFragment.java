@@ -37,19 +37,6 @@ import com.oneui.fontviewer.fragment.settings.about.AboutActivity;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 
-/**
- * SettingsFragment - نسخة محدّثة تعتمد بالكامل على DataStore
- * تم إزالة كل استخدام مباشر لـ SharedPreferences
- *
- * ملاحظة مهمة: تم حذف جميع دوال فرض اتجاه النص والتنسيق يدوياً
- * (applyCorrectTextDirection وما يتبعها)، لأن النظام يتكفل بذلك
- * تلقائياً بناءً على الـ Locale الصحيح المضبوط في Context.
- * فرضها يدوياً كان يتعارض مع "خيارات المطورين" ويسبب خللاً في الاتجاهات.
- *
- * ★ مزامنة اللغة مع إعدادات النظام: ★
- * - onResume يقرأ اللغة الفعلية من LocaleManager في كل مرة يُستأنَم فيها الـ Fragment،
- *   مما يضمن تحديث الـ Dropdown ليعكس أي تغيير جرى من إعدادات النظام.
- */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private static final String TAG = "SettingsFragment";
@@ -57,7 +44,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private Context mContext;
     private SettingsViewModel viewModel;
 
-    // ── عناصر الواجهة الرئيسية ──
     private DropDownPreference languagePreference;
     private HorizontalRadioPreference themePreference;
     private SwitchPreferenceCompat themeAutoPreference;
@@ -65,13 +51,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private SwitchPreferenceCompat fontPreviewPreference;
     private SwitchPreferenceCompat translationPreference;
     private EditTextPreference previewTextPreference;
-    // ★ خيار الإبلاغ عن خطأ أو اقتراح تحسين — يفتح نافذة اختيار تطبيق بريد ★
     private Preference reportIssuePreference;
 
-    // ★ مراجع لأقسام الإعدادات — ضرورية لتحديث عناوينها يدوياً في onConfigurationChanged ★
-    
-
-    // ★ بطاقة الروابط ذات الصلة — تظهر أسفل الإعدادات وتضيف الفراغ السفلي تلقائياً ★
     private PreferenceRelatedCard mRelatedCard;
 
     @Override
@@ -96,14 +77,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         observeViewModel();
     }
 
-    /**
-     * ★ مزامنة قيمة اللغة مع ما هو مطبق فعلياً في النظام ★
-     *
-     * عند تغيير لغة التطبيق من إعدادات النظام (وليس من داخل التطبيق)
-     * ثم العودة للتطبيق وهو لا يزال في الذاكرة، كان الـ Dropdown يعرض
-     * القيمة القديمة. لذلك نستعلم هنا من LocaleManager عن اللغة الفعلية
-     * ونحدّث الـ Dropdown وDataStore معاً.
-     */
     @Override
     public void onResume() {
         super.onResume();
@@ -124,17 +97,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
 
     private void initPreferences() {
-        // ── تهيئة مراجع الأقسام (لتحديث عناوينها في onConfigurationChanged) ──
 
-        // ── تهيئة عناصر الإعدادات الفردية ──
         languagePreference = findPreference("language_mode");
         if (languagePreference != null) {
             languagePreference.seslSetSummaryColor(getColoredSummaryColor(true));
             languagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 int mode = Integer.parseInt((String) newValue);
-                // ★ تأخير 250ms قبل تطبيق اللغة ★
-                // يمنح DropDownPreference وقتاً كافياً لإغلاق نافذته بسلاسة
-                // قبل أن يبدأ النظام في تطبيق تغيير اللغة وتحديث الواجهة.
                 new android.os.Handler(android.os.Looper.getMainLooper())
                         .postDelayed(() -> viewModel.setLanguageMode(mode), 250);
                 return true;
@@ -190,13 +158,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             });
         }
 
-        // ★ خيار الإبلاغ عن خطأ أو اقتراح تحسين ★
-        // عند الضغط: يفتح نافذة اختيار تطبيق بريد إلكتروني مع موضوع جاهز
         reportIssuePreference = findPreference("report_issue");
         if (reportIssuePreference != null) {
             reportIssuePreference.setOnPreferenceClickListener(preference -> {
-                // بناء intent بريد إلكتروني بموضوع جاهز
-                // ★ غيّر قيمة feedback_email في strings.xml بعنوان بريدك الإلكتروني ★
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
                 emailIntent.setData(Uri.parse(
                         "mailto:" + mContext.getString(R.string.feedback_email)));
@@ -204,11 +168,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         Intent.EXTRA_SUBJECT,
                         mContext.getString(R.string.settings_report_issue_email_subject));
                 try {
-                    // createChooser يُجبر نافذة الاختيار على الظهور حتى لو كان
-                    // هناك تطبيق بريد افتراضي واحد فقط
                     startActivity(Intent.createChooser(emailIntent, null));
                 } catch (ActivityNotFoundException e) {
-                    // لا يوجد تطبيق بريد مثبت على الجهاز — نتجاهل الاستثناء بصمت
                 }
                 return true;
             });
@@ -221,14 +182,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 String value = (String) newValue;
                 int mode = Integer.parseInt(value);
 
-                // تطبيق الثيم مباشرة
                 if (mode == SettingsHelper.THEME_DARK) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }
 
-                // حفظ القيمة في ViewModel (الذي بدوره يحفظها في DataStore)
                 viewModel.setThemeMode(mode);
 
                 return true;
@@ -239,16 +198,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             themeAutoPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 boolean enabled = (Boolean) newValue;
 
-                // تعطيل/تفعيل اختيار الثيم اليدوي فوراً
                 if (themePreference != null) {
                     themePreference.setEnabled(!enabled);
                 }
 
-                // تطبيق الوضع التلقائي مباشرة
                 if (enabled) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                 } else {
-                    // عند تعطيل الوضع التلقائي، تطبيق الثيم المحفوظ
                     int savedMode = SettingsHelper.getThemeMode(mContext);
                     if (savedMode == SettingsHelper.THEME_DARK) {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -257,7 +213,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     }
                 }
 
-                // تحديث الإعدادات في ViewModel
                 viewModel.setThemeAuto(enabled);
 
                 return true;
@@ -348,51 +303,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         getListView().seslSetLastRoundedCorner(false);
     }
 
-    /**
-     * ★ تُستدعى لمرة واحدة لإنشاء البطاقة وعرضها في أسفل القائمة ★
-     *
-     * - البطاقة تُنشأ باستخدام requireContext() لضمان وراثة الثيم الصحيح.
-     * - بعد الإنشاء، تُطبَّق النصوص عليها عبر updateRelatedCardText().
-     * - null-check يمنع إنشاء بطاقة مكررة عند العودة من شاشة أخرى.
-     * - البطاقة تتكفل بإضافة الفراغ السفلي تلقائياً، لذا تم حذف footer_space
-     *   من preferences.xml لتجنب الفراغ المزدوج.
-     */
     private void setupRelatedCard() {
         if (mRelatedCard == null) {
-            // 1. إنشاء البطاقة باستخدام requireContext() لضمان وراثة الثيم الصحيح
             mRelatedCard = PreferenceUtils.createRelatedCard(requireContext());
 
-            // 2. تطبيق النصوص الحالية عليها
             updateRelatedCardText(mContext);
 
-            // 3. عرض البطاقة
             mRelatedCard.show(this);
         }
     }
 
-    /**
-     * ★ تقوم بمسح الأزرار القديمة وتحديث جميع نصوص البطاقة بالسياق الممرر ★
-     *
-     * تُستدعى في موضعين:
-     * - من setupRelatedCard() عند الإنشاء الأول لتعبئة البطاقة بالنصوص الابتدائية.
-     * - من onConfigurationChanged() بعد تغيير اللغة لتحديث النصوص فقط،
-     *   بينما تحتفظ البطاقة داخلياً بالثيم الصحيح الذي وُلدت به.
-     *
-     * ★ مهم: لا نلمس هيكل البطاقة ولا ثيمها ولا ألوانها — نصوص فقط. ★
-     *
-     * @param context سياق يحمل اللغة المطلوبة (mContext عند الإنشاء، freshContext عند التحديث)
-     */
     private void updateRelatedCardText(Context context) {
         if (mRelatedCard != null) {
-            // تحديث العنوان ("هل تبحث عن شيء آخر؟" / "Looking for something else?")
             mRelatedCard.setTitleText(context.getString(R.string.related_card_title));
 
-            // مسح الأزرار الموجودة حالياً (باللغة القديمة)
             mRelatedCard.removeCardButtons();
 
-            // إضافة الأزرار من جديد بالنصوص المترجمة (باللغة الجديدة)
             mRelatedCard.addButton(context.getString(R.string.share_app), v -> {
-                        // ★ مشاركة رابط التطبيق عبر تطبيقات الجهاز ★
                         Intent shareIntent = new Intent(Intent.ACTION_SEND);
                         shareIntent.setType("text/plain");
                         shareIntent.putExtra(
@@ -403,8 +330,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         startActivity(Intent.createChooser(shareIntent, null));
                     })
                     .addButton(context.getString(R.string.rate_app), v -> {
-                        // ★ فتح صفحة التطبيق في Play Store ★
-                        // إذا لم يكن تطبيق Play Store مثبتاً، يُفتح المتصفح بدلاً منه
                         try {
                             startActivity(new Intent(
                                     Intent.ACTION_VIEW,
@@ -451,4 +376,4 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     : dev.oneuiproject.oneui.design.R.color.sesl_secondary_text_dark);
         }
     }
-                                                          }
+    }
