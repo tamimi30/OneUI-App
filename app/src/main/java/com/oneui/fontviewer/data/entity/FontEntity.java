@@ -7,27 +7,15 @@ import androidx.room.Index;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-/**
- * FontEntity - الكيان الأساسي لتمثيل الخطوط في قاعدة البيانات
- * 
- * يخزن المعلومات الأساسية والوصفية لكل خط
- *
- * ★ الإصدار 2: إضافة حقل weight_width_label لتخزين وصف الوزن والعرض ★
- * مثال: "Bold, Condensed" أو "VF · Regular" أو "غير معروف"
- *
- * ★ الإصدار 3: إضافة حقل is_favorite لدعم قائمة المفضلة ★
- *
- * ★ الإصدار 4: إضافة حقول سلة المحذوفات (is_trashed, deleted_at, original_path) ★
- */
 @Entity(
     tableName = "fonts",
     indices = {
         @Index(value = "path", unique = true),
         @Index(value = "is_system_font"),
         @Index(value = "last_modified"),
-        @Index(value = "is_favorite"),  // ★ index للمفضلة لأداء أفضل عند الاستعلام ★
-        @Index(value = "is_trashed"),   // ★ index للسلة لأداء أفضل عند الاستعلام ★
-        @Index(value = "deleted_at")    // ★ index لتاريخ الحذف لحساب الـ 30 يوماً بكفاءة ★
+        @Index(value = "is_favorite"),  
+        @Index(value = "is_trashed"),   
+        @Index(value = "deleted_at")    
     }
 )
 public class FontEntity {
@@ -82,39 +70,20 @@ public class FontEntity {
     @ColumnInfo(name = "updated_at")
     private long updatedAt;
 
-    // ★ الحقل الجديد: وصف الوزن والعرض المُستخرج من جدول OS/2 ★
-    // أمثلة: "Bold, Condensed" / "VF · Regular" / "غير معروف"
-    // يُعبأ بواسطة FontWeightWidthExtractor عند المزامنة أو في الخلفية
     @Nullable
     @ColumnInfo(name = "weight_width_label")
     private String weightWidthLabel;
 
-    // ════════════════════════════════════════════════════════════
-    // ★ حقل المفضلة — الإصدار 3 ★
-    // القيمة الافتراضية false: الخط غير مفضل عند الإضافة
-    // يُستخدم لبناء قائمة المفضلة وعرض أيقونة النجمة بجانب العنصر
-    // ════════════════════════════════════════════════════════════
     @ColumnInfo(name = "is_favorite", defaultValue = "0")
     private boolean isFavorite;
 
-    // ════════════════════════════════════════════════════════════
-    // ★ حقول سلة المحذوفات — الإصدار 4 ★
-    // ════════════════════════════════════════════════════════════
 
-    // هل الملف موجود حالياً في سلة المحذوفات؟
-    // القيمة الافتراضية false: الخط ليس في السلة عند الإضافة
     @ColumnInfo(name = "is_trashed", defaultValue = "0")
     private boolean isTrashed;
 
-    // الطابع الزمني (Unix ms) للحظة نقل الملف إلى السلة
-    // يُستخدم لحساب الأيام المتبقية قبل الحذف النهائي (30 يوماً)
-    // القيمة 0 تعني أن الملف لم يُنقل إلى السلة بعد
     @ColumnInfo(name = "deleted_at", defaultValue = "0")
     private long deletedAt;
 
-    // المسار الأصلي للملف قبل نقله إلى مجلد .Trash
-    // يُستخدم عند استعادة الملف لإعادته إلى موقعه الصحيح
-    // القيمة null تعني أن الملف لم يُنقل إلى السلة بعد
     @Nullable
     @ColumnInfo(name = "original_path")
     private String originalPath;
@@ -132,10 +101,10 @@ public class FontEntity {
         this.accessCount = 0;
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
-        this.isFavorite = false;   // ★ القيمة الافتراضية للمفضلة ★
-        this.isTrashed = false;    // ★ القيمة الافتراضية: الخط ليس في السلة ★
-        this.deletedAt = 0;        // ★ القيمة الافتراضية: لم يُنقل إلى السلة بعد ★
-        this.originalPath = null;  // ★ القيمة الافتراضية: لا يوجد مسار أصلي محفوظ ★
+        this.isFavorite = false;   
+        this.isTrashed = false;    
+        this.deletedAt = 0;        
+        this.originalPath = null;  
     }
     
     public long getId() {
@@ -262,9 +231,6 @@ public class FontEntity {
         this.updatedAt = updatedAt;
     }
 
-    // ════════════════════════════════════════════════════════════
-    // ★ getter/setter للحقل الجديد weight_width_label ★
-    // ════════════════════════════════════════════════════════════
 
     @Nullable
     public String getWeightWidthLabel() {
@@ -275,9 +241,6 @@ public class FontEntity {
         this.weightWidthLabel = weightWidthLabel;
     }
 
-    // ════════════════════════════════════════════════════════════
-    // ★ getter/setter لحقل المفضلة — الإصدار 3 ★
-    // ════════════════════════════════════════════════════════════
 
     public boolean isFavorite() {
         return isFavorite;
@@ -287,9 +250,6 @@ public class FontEntity {
         isFavorite = favorite;
     }
 
-    // ════════════════════════════════════════════════════════════
-    // ★ getter/setter لحقول سلة المحذوفات — الإصدار 4 ★
-    // ════════════════════════════════════════════════════════════
 
     public boolean isTrashed() {
         return isTrashed;
