@@ -213,20 +213,11 @@ public class FontViewerFragment extends Fragment {
         }
     }
 
-    /**
-     * ★ اختيار Layout المناسب عند الإنشاء بناءً على حالة الثيم الشفاف ★
-     * - الثيم الشفاف: fragment_font_viewer_transparent.xml (بدون RoundLinearLayout الملوّن)
-     * - الثيم الافتراضي: fragment_font_viewer.xml (مع RoundLinearLayout وخلفية OneUI)
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                                 @Nullable Bundle savedInstanceState) {
-        boolean transparentTheme = SettingsHelper.isTransparentThemeEnabled(requireContext());
-        int layoutRes = transparentTheme
-                ? R.layout.fragment_font_viewer_transparent
-                : R.layout.fragment_font_viewer;
-        return inflater.inflate(layoutRes, container, false);
+        return inflater.inflate(R.layout.fragment_font_viewer, container, false);
     }
 
     @Override
