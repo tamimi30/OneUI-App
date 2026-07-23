@@ -61,8 +61,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private DropDownPreference languagePreference;
     private HorizontalRadioPreference themePreference;
     private SwitchPreferenceCompat themeAutoPreference;
-    // ★ الثيم الأسود: مستقل تماماً عن themePreference و themeAutoPreference ★
-    private SwitchPreferenceCompat themeTransparentPreference;
+    
     private SwitchPreferenceCompat fontPreviewPreference;
     private SwitchPreferenceCompat translationPreference;
     private EditTextPreference previewTextPreference;
@@ -150,21 +149,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         themeAutoPreference = findPreference("theme_auto");
 
-        // ★ تهيئة مفتاح الثيم الأسود ★
-        themeTransparentPreference = findPreference("theme_transparent");
-        if (themeTransparentPreference != null) {
-            themeTransparentPreference.seslSetSummaryColor(getColoredSummaryColor(false));
-            themeTransparentPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean enabled = (Boolean) newValue;
-                // ★ تفعيل/إلغاء الثيم الأسود لا يؤثر على خيار الثيم الفاتح/الداكن ★
-                // ★ تأخير قبل تطبيق الثيم الأسود ★
-                // يمنح السويتش وقتاً كافياً لإكمال أنيميشنه قبل أن تبدأ
-                // عملية إعادة تحميل الـ layouts المرتبطة بتغيير الثيم
-                new android.os.Handler(android.os.Looper.getMainLooper())
-                        .postDelayed(() -> viewModel.setThemeTransparent(enabled), 300);
-                return true;
-            });
-        }
+        
 
         fontPreviewPreference = findPreference("font_preview_enabled");
         if (fontPreviewPreference != null) {
@@ -303,12 +288,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         });
 
-        // ★ مراقبة حالة الثيم الأسود وتحديث الزر ★
-        viewModel.getThemeTransparent().observe(this, enabled -> {
-            if (themeTransparentPreference != null && enabled != null) {
-                themeTransparentPreference.setChecked(enabled);
-            }
-        });
+        
 
         viewModel.getFontPreviewEnabled().observe(this, enabled -> {
             if (fontPreviewPreference != null && enabled != null) {
