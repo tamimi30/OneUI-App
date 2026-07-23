@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 import com.oneui.fontviewer.dialog.FontSizeDialog;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.fontviewer.utils.VariableFontHelper;
@@ -47,23 +46,6 @@ import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
 import com.oneui.fontviewer.fragment.fontviewer.utils.BoldItalicFormatting;
 
-/**
- * FontViewerFragment - Clean DataStore version
- * All SharedPreferences removed, using SettingsViewModel for reactive updates
- * ★ يختار Layout المناسب بناءً على حالة الثيم الشفاف عند الإنشاء ★
- *
- * ★ التعديل: نقل عرض وزن الخط من FontSizeDialog إلى هذا الفراغمنت ★
- *   - الخطوط الثابتة: عرض weight_label_text بوصف الوزن/العرض القادم من القائمة
- *   - الخطوط المتغيرة: عرض weight_spinner لاختيار الوزن تفاعلياً
- *   يبدأ كلا العنصرين مخفياً (GONE) ويُظهره الفراغمنت بعد تحميل الخط.
- *
- * ★ المرحلة الأولى من خطة التحسين: اللامركزية في قوائم AppBar ★
- *   هذا الـ Fragment أصبح مسؤولاً عن أيقوناته الخاصة عبر:
- *   - setHasOptionsMenu(true) في onCreate()
- *   - onCreateOptionsMenu() لنفخ menu_main_font_meta
- *   - onOptionsItemSelected() لمعالجة action_font_meta → يستدعي showFontMetaFromFragment()
- *   - setMenuVisibility(!hidden) في onHiddenChanged() للتبديل التلقائي
- */
 public class FontViewerFragment extends Fragment {
 
     private static final String KEY_FONT_PATH          = "font_path";
@@ -75,7 +57,6 @@ public class FontViewerFragment extends Fragment {
     private static final String KEY_IS_VARIABLE_FONT   = "is_variable_font";
     private static final String KEY_TTC_INDEX          = "ttc_index";
     private static final String KEY_IS_SYSTEM_FONT     = "is_system_font";
-    // ★ مفتاح حفظ وصف الوزن/العرض في الـ Bundle لاستعادته عند إعادة البناء ★
     private static final String KEY_WEIGHT_WIDTH_LABEL = "weight_width_label";
     private static final String TAG = "FontViewerFragment";
 
@@ -84,12 +65,9 @@ public class FontViewerFragment extends Fragment {
     private static final float MAX_FONT_SIZE       = 99f;
     private static final float DEFAULT_FONT_WEIGHT = 400f;
 
-    // حجم الخط يُحفظ هنا فقط طالما التطبيق يعمل، ويُصفَّر تلقائياً عند إغلاقه من الأخيرة
     private static float sSessionFontSize = -1f;
 
-    // ★ مراجع واجهة المستخدم ★
     private TextView previewSentence;
-    // ★ الجديد: عنصرا عرض الوزن في أعلى الصفحة ★
     private TextView weightLabelText;
     private AppCompatSpinner weightSpinner;
 
@@ -104,10 +82,8 @@ public class FontViewerFragment extends Fragment {
     private int currentTtcIndex     = 0;
     private boolean isSystemFont    = false;
 
-    // ★ وصف الوزن/العرض القادم من قائمة الخطوط (مُستخرج مسبقاً، لا يُعاد استخراجه) ★
     private String currentWeightWidthLabel;
 
-    // ★ قائمة أوزان الخط المتغير — تُستخدم في setupWeightSpinner ★
     private List<VariableFontHelper.VariableInstance> currentVariableInstances;
 
     private OnFontChangedListener fontChangedListener;
@@ -147,40 +123,22 @@ public class FontViewerFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // ★ المرحلة الأولى: إعلام النظام أن هذا الـ Fragment يمتلك أيقونات AppBar خاصة به ★
-        // يضمن هذا استدعاء onCreateOptionsMenu() عند ظهور الـ Fragment
-        // وإخفاء الأيقونات تلقائياً عند إخفائه عبر setMenuVisibility() في onHiddenChanged()
         setHasOptionsMenu(true);
 
-        // Initialize ViewModel
         settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
         currentFontSize   = (sSessionFontSize > 0f) ? sSessionFontSize : DEFAULT_FONT_SIZE;
         currentFontWeight = preferenceManager.getFontWeight(DEFAULT_FONT_WEIGHT);
     }
 
-    /**
-     * ★ المرحلة الأولى: نفخ أيقونات هذا الـ Fragment في AppBar ★
-     *
-     * ينفخ قائمة معلومات الخط (menu_main_font_meta).
-     * menu.clear() يضمن نظافة القائمة قبل كل نفخ جديد.
-     */
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear(); // تنظيف أي قوائم سابقة
-        // ★ نفخ قائمة معلومات الخط الخاصة بعارض الخطوط ★
+        menu.clear(); 
         inflater.inflate(R.menu.menu_main_font_meta, menu);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /**
-     * ★ المرحلة الأولى: معالجة نقرات أيقونات هذا الـ Fragment ★
-     *
-     * عند الضغط على زر معلومات الخط (action_font_meta)،
-     * يُستدعى showFontMetaFromFragment() في MainActivity لعرض معلومات الخط.
-     * الدالة public في MainActivity لأنها أُنشئت خصيصاً لهذا الغرض.
-     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_font_meta) {
@@ -192,24 +150,13 @@ public class FontViewerFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * ★ المرحلة الأولى: إدارة ظهور أيقونات AppBar عند التنقل بين الشاشات ★
-     *
-     * setMenuVisibility يُخفي أيقونات هذا الـ Fragment عند إخفائه ويُظهرها عند عودته،
-     * وinvalidateOptionsMenu يُجبر الـ AppBar على إعادة رسم الأيقونات فور ظهور الشاشة.
-     *
-     * @param hidden true = الـ Fragment مخفي | false = الـ Fragment مرئي
-     */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
 
-        // ★ المرحلة الأولى: إدارة ظهور أيقونات AppBar عند التنقل بين الشاشات ★
-        // setMenuVisibility يُخفي أيقونات هذا الـ Fragment عند إخفائه ويُظهرها عند عودته،
-        // وinvalidateOptionsMenu يُجبر الـ AppBar على إعادة رسم الأيقونات فور ظهور الشاشة
         setMenuVisibility(!hidden);
         if (!hidden && getActivity() != null) {
-            getActivity().invalidateOptionsMenu(); // إجبار الـ AppBar على التحديث
+            getActivity().invalidateOptionsMenu(); 
         }
     }
 
@@ -225,7 +172,6 @@ public class FontViewerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
 
-        // ★ NEW: Observe preview text changes from SettingsViewModel ★
         settingsViewModel.getPreviewText().observe(getViewLifecycleOwner(), previewText -> {
             if (previewSentence != null && previewText != null) {
                 previewSentence.setText(previewText);
@@ -246,7 +192,6 @@ public class FontViewerFragment extends Fragment {
             isVariableFont         = savedInstanceState.getBoolean(KEY_IS_VARIABLE_FONT, false);
             currentTtcIndex        = savedInstanceState.getInt(KEY_TTC_INDEX, 0);
             isSystemFont           = savedInstanceState.getBoolean(KEY_IS_SYSTEM_FONT, false);
-            // ★ استعادة وصف الوزن/العرض (قد يكون null إذا لم يُحفظ) ★
             currentWeightWidthLabel = savedInstanceState.getString(KEY_WEIGHT_WIDTH_LABEL);
 
             if (currentFontPath != null && !currentFontPath.isEmpty()) {
@@ -275,7 +220,7 @@ public class FontViewerFragment extends Fragment {
         if (previewSentence != null) {
             previewSentence.getPaint().setFakeBoldText(isFakeBold);
             previewSentence.getPaint().setTextSkewX(isFakeItalic ? -0.25f : 0f);
-            previewSentence.invalidate(); // إجبار الشاشة على التحديث
+            previewSentence.invalidate(); 
         }
     });
     formattingHelper.restoreState(savedInstanceState);
@@ -287,14 +232,11 @@ public class FontViewerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Preview text is now handled by SettingsViewModel observer
-        // No manual SharedPreferences listener needed
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        // No SharedPreferences listener to unregister
     }
 
     @Override
@@ -302,7 +244,6 @@ public class FontViewerFragment extends Fragment {
     	formattingHelper.unbind();
         super.onDestroyView();
         previewSentence = null;
-        // ★ إلغاء ربط عناصر الوزن الجديدة عند تدمير الـ View ★
         weightLabelText = null;
         weightSpinner   = null;
     }
@@ -321,10 +262,6 @@ public class FontViewerFragment extends Fragment {
         }
     }
 
-    /**
-     * ★ يُستدعى من weight_spinner عند اختيار المستخدم وزناً جديداً ★
-     * يُطبّق الوزن الجديد على الخط المتغير ويُحدّث معاينة النص.
-     */
     private void onFontWeightChanged(VariableFontHelper.VariableInstance instance) {
         if (instance == null || currentFontPath == null) {
             return;
@@ -372,41 +309,23 @@ public class FontViewerFragment extends Fragment {
         applyFontSize();
     }
 
-    /**
-     * ★ التعديل: ربط عناصر واجهة الوزن الجديدة بجانب معاينة النص ★
-     */
     private void initViews(View view) {
         previewSentence = view.findViewById(R.id.preview_sentence);
-        // ★ ربط عنصري عرض الوزن في أعلى الصفحة ★
         weightLabelText = view.findViewById(R.id.weight_label_text);
         weightSpinner   = view.findViewById(R.id.weight_spinner);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // دوال loadFontFromPath — ترتيب التفويض يحافظ على تعيين currentWeightWidthLabel
-    // ─────────────────────────────────────────────────────────
 
-    /**
-     * ★ يُعيد تعيين currentWeightWidthLabel قبل التفويض — لا label متاح هنا ★
-     */
     public void loadFontFromPath(String path, String fileName, String realName) {
         currentWeightWidthLabel = null;
         loadFontFromPath(path, fileName, realName, 0, false);
     }
 
-    /**
-     * ★ يُعيد تعيين currentWeightWidthLabel قبل التفويض — لا label متاح هنا ★
-     */
     public void loadFontFromPath(String path, String fileName, String realName, int ttcIndex) {
         currentWeightWidthLabel = null;
         loadFontFromPath(path, fileName, realName, ttcIndex, false);
     }
 
-    /**
-     * Enhanced handling for real font name
-     * ★ هذه هي الدالة الأساسية — لا تُعيد تعيين currentWeightWidthLabel
-     *   لأن المُستدعي (سواء الـ 6-param أو غيره) مسؤول عن ضبطها مسبقاً ★
-     */
     public void loadFontFromPath(String path, String fileName, String realName, int ttcIndex, boolean isSystemFont) {
         Log.d(TAG, "loadFontFromPath - Received data:");
         Log.d(TAG, "  realName: " + realName);
@@ -424,31 +343,19 @@ public class FontViewerFragment extends Fragment {
             originalFontPath = extractRealPathFromUri(path);
         }
 
-        // ★ حفظ آخر خط تم فتحه لاستعادته عند فتح عارض الخطوط من الدرج ★
         preferenceManager.saveLastViewedFont(path, fileName, realName);
 
-        // Update title immediately (will show real name or "Unknown Font" as received)
         notifyFontChangedImmediate();
 
-        // الغاء تفعيل العريض والمائل عند اختيار خط جديد
         if (formattingHelper != null) {
             formattingHelper.reset();
         }
 
-        // Start loading font in background
         loadFontFromPathWithWeight(path, fileName, realName, DEFAULT_FONT_WEIGHT);
     }
 
-    /**
-     * ★ الدالة الجديدة: تُستدعى من NavManager مع weightWidthLabel القادم من القائمة ★
-     * تُعيّن currentWeightWidthLabel ثم تُفوّض للدالة الأساسية.
-     * هذا يُغني عن إعادة استخراج الوزن لأنه مستخرج مسبقاً في القائمة.
-     *
-     * @param weightWidthLabel وصف الوزن/العرض الجاهز من القائمة (مثل "Bold, Condensed" أو "VF · Regular")
-     */
     public void loadFontFromPath(String path, String fileName, String realName,
                                  int ttcIndex, boolean isSystemFont, String weightWidthLabel) {
-        // ★ تعيين الـ label قبل استدعاء الدالة الأساسية حتى يكون متاحاً عند عرض الخط ★
         currentWeightWidthLabel = weightWidthLabel;
         loadFontFromPath(path, fileName, realName, ttcIndex, isSystemFont);
     }
@@ -476,18 +383,12 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void performNotification() {
-        // ★ إزالة شرط (currentFontRealName) لكي يتم إشعار الواجهة حتى للخطوط غير المعروفة ★
         if (fontChangedListener != null && currentFontFileName != null) {
             fontChangedListener.onFontChanged(currentFontRealName, currentFontFileName);
             Log.d(TAG, "MainActivity notified with realName: " + currentFontRealName + ", fileName: " + currentFontFileName);
         }
     }
 
-    /**
-     * Enhanced handling for corrupted fonts
-     * ★ التعديل: إضافة استخراج أوزان الخط المتغير في الخيط الخلفي ★
-     *   وتحديث واجهة الوزن (spinner أو label) في الخيط الرئيسي بعد تحميل الخط.
-     */
     private void loadFontFromPathWithWeight(String path, String fileName, String realName, float weight) {
         bgExecutor.execute(() -> {
             try {
@@ -509,8 +410,6 @@ public class FontViewerFragment extends Fragment {
                     finalWeight = 0f;
                 }
 
-                // ★ استخراج قائمة أوزان الخط المتغير في الخيط الخلفي لتجنب تأخير الواجهة ★
-                // للخطوط الثابتة: لا داعي للاستخراج لأن الوزن موجود في currentWeightWidthLabel
                 List<VariableFontHelper.VariableInstance> variableInstances = null;
                 if (isVar) {
                     variableInstances = VariableFontHelper.extractVariableInstances(fontFile, currentTtcIndex);
@@ -527,29 +426,22 @@ public class FontViewerFragment extends Fragment {
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "★ Typeface creation failed - font might be corrupted", e);
-                    // ★★★ Solution: Immediate title update when corrupted font detected ★★★
                     mainHandler.post(() -> {
-                        // 1. Set name to null to support dynamic translation
                         currentFontRealName = null;
                         currentTypeface     = null;
 
-                        // 2. ★ Force MainActivity to update title immediately ★
                         if (fontChangedListener != null) {
-                            // Pass "Unknown Font" as real name and file name as subtitle
                             fontChangedListener.onFontChanged(currentFontRealName, currentFontFileName);
                             Log.d(TAG, "★ Updated title to 'Unknown Font' for corrupted font");
                         }
 
-                        // 3. إخفاء عناصر الوزن عند فشل تحميل الخط
                         hideWeightUI();
 
-                        // 4. Reset displayed typeface
                         Typeface defaultTypeface = Typeface.DEFAULT;
                         if (previewSentence != null) {
                             previewSentence.setTypeface(defaultTypeface);
                         }
 
-                        // 5. Show error message
                         Toast.makeText(requireContext(),
                             getString(R.string.font_viewer_error_loading_font) +
                             " (" + getString(R.string.unknown_font) + ")",
@@ -562,7 +454,6 @@ public class FontViewerFragment extends Fragment {
                     final Typeface finalTypeface             = typeface;
                     final float finalWeightForHandler        = finalWeight;
                     final boolean finalIsVariable            = isVar;
-                    // ★ تمرير القائمة إلى الخيط الرئيسي لإعداد الـ Spinner إن لزم ★
                     final List<VariableFontHelper.VariableInstance> finalInstances = variableInstances;
 
                     mainHandler.post(() -> {
@@ -570,9 +461,6 @@ public class FontViewerFragment extends Fragment {
                         currentFontWeight = finalWeightForHandler;
                         isVariableFont    = finalIsVariable;
 
-                        // ★ تحديث عرض الوزن بعد تحديد نوع الخط ★
-                        // الخط المتغير → Spinner لاختيار الوزن
-                        // الخط الثابت  → نص يعرض الوزن/العرض من القائمة
                         if (finalIsVariable && finalInstances != null && !finalInstances.isEmpty()) {
                             setupWeightSpinner(finalInstances);
                         } else {
@@ -587,30 +475,24 @@ public class FontViewerFragment extends Fragment {
                 }
 
             } catch (Exception e) {
-                // ★★★ General error handling ★★★
                 mainHandler.post(() -> {
                    
-                    // 1. Set name to null to support dynamic translation
                     currentFontRealName = null;
 
 
-                    // 2. Notify MainActivity of update
                     if (fontChangedListener != null) {
                         fontChangedListener.onFontChanged(currentFontRealName, currentFontFileName);
                         Log.d(TAG, "★ Updated title to 'Unknown Font' after general error");
                     }
 
-                    // 3. إخفاء عناصر الوزن عند الخطأ العام
                     hideWeightUI();
 
-                    // 4. Reset typeface
                     currentTypeface = null;
                     Typeface defaultTypeface = Typeface.DEFAULT;
                     if (previewSentence != null) {
                         previewSentence.setTypeface(defaultTypeface);
                     }
 
-                    // 5. Show error message
                     Toast.makeText(requireContext(),
                         getString(R.string.font_viewer_error_loading_font) +
                         " (" + getString(R.string.unknown_font) + ")",
@@ -622,21 +504,7 @@ public class FontViewerFragment extends Fragment {
         });
     }
 
-    // ─────────────────────────────────────────────────────────
-    // ★ دوال إدارة عرض الوزن ★
-    // ─────────────────────────────────────────────────────────
 
-    /**
-     * ★ يُعدّ weight_spinner للخطوط المتغيرة ويُظهره بدلاً من weight_label_text ★
-     *
-     * ترتيب العمليات المقصود:
-     * 1. ضبط الـ Adapter
-     * 2. ضبط الاختيار الأولي
-     * 3. تعيين المستمع في الـ post التالي — لتجنب تشغيل onFontWeightChanged أثناء التهيئة،
-     *    لأن setAdapter و setSelection يُشغّلان onItemSelected في دورة الرسم التالية.
-     *
-     * @param instances قائمة أوزان الخط المتغير المُستخرجة في الخيط الخلفي
-     */
     private void setupWeightSpinner(List<VariableFontHelper.VariableInstance> instances) {
         if (weightSpinner == null || weightLabelText == null || !isAdded()) return;
 
@@ -644,7 +512,6 @@ public class FontViewerFragment extends Fragment {
         weightLabelText.setVisibility(View.GONE);
         weightSpinner.setVisibility(View.VISIBLE);
 
-        // بناء قائمة أسماء الأوزان للـ Spinner
         List<String> instanceNames = new ArrayList<>();
         for (VariableFontHelper.VariableInstance inst : instances) {
             instanceNames.add(inst.name);
@@ -657,10 +524,8 @@ public class FontViewerFragment extends Fragment {
         );
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 
-        // ★ ضبط الـ Adapter والاختيار الأولي قبل تعيين المستمع ★
         weightSpinner.setAdapter(adapter);
 
-        // البحث عن الوزن الحالي في قائمة الأوزان للاختيار المبدئي الصحيح
         int selectedIndex = 0;
         for (int i = 0; i < instances.size(); i++) {
             if (Math.abs(instances.get(i).value - currentFontWeight) < 1f) {
@@ -670,9 +535,6 @@ public class FontViewerFragment extends Fragment {
         }
         weightSpinner.setSelection(selectedIndex);
 
-        // ★ تعيين المستمع في الـ post التالي بعد اكتمال دورة الرسم ★
-        // هذا يضمن أن onItemSelected الناتج عن setAdapter و setSelection لن يصل إلى المستمع،
-        // وأي تغيير لاحق من المستخدم سيُشغّل onFontWeightChanged بشكل صحيح.
         final List<VariableFontHelper.VariableInstance> finalInstances = instances;
         weightSpinner.post(() -> {
             if (weightSpinner == null || !isAdded()) return;
@@ -690,12 +552,6 @@ public class FontViewerFragment extends Fragment {
         });
     }
 
-    /**
-     * ★ يُظهر weight_label_text بوصف الوزن/العرض للخطوط الثابتة ★
-     * إذا كان الـ label فارغاً أو null يُخفي العنصر.
-     *
-     * @param label النص القادم من القائمة (مثل "Bold, Condensed") أو null
-     */
     private void showWeightLabel(String label) {
         if (weightLabelText == null || weightSpinner == null) return;
 
@@ -705,14 +561,10 @@ public class FontViewerFragment extends Fragment {
             weightLabelText.setText(label);
             weightLabelText.setVisibility(View.VISIBLE);
         } else {
-            // لا label متاح (خط محلي قديم أو خط مُحمَّل من URI) — نُخفي العنصر بهدوء
             weightLabelText.setVisibility(View.GONE);
         }
     }
 
-    /**
-     * ★ يُخفي كلا عنصري الوزن — يُستدعى عند خطأ تحميل الخط أو إعادة ضبط العارض ★
-     */
     private void hideWeightUI() {
         if (weightLabelText != null) weightLabelText.setVisibility(View.GONE);
         if (weightSpinner != null)   weightSpinner.setVisibility(View.GONE);
@@ -720,7 +572,6 @@ public class FontViewerFragment extends Fragment {
 
     public void loadFontFromUri(Uri uri, String fileName) {
         originalFontPath = storageManager.getRealPathFromUri(uri);
-        // حل مشكلة المسار: إذا فشل استخراج المسار، نستخدم الـ URI نفسه كمسار أصلي للعرض
         if (originalFontPath == null || originalFontPath.isEmpty()) {
             originalFontPath = android.net.Uri.decode(uri.toString());
         }
@@ -734,17 +585,14 @@ public class FontViewerFragment extends Fragment {
 
                 try {
                     realName = FontMetadataExtractor.extractFontName(copiedFont, 0);
-                    // حل مشكلة الوزن والعرض: نقوم باستخراجهما فوراً للخطوط المفتوحة من الخارج
                     currentWeightWidthLabel = FontWeightWidthExtractor.extract(copiedFont, 0);
                 } catch (Exception e) {
                     Log.e(TAG, "Failed to extract font metadata from URI", e);
                 }
 
-                // If name extraction failed
                 if (realName == null || realName.isEmpty() || "Unknown Font".equals(realName) || getString(R.string.unknown_font).equals(realName)) {
                     String finalFileName = fileName != null ? fileName : copiedFont.getName();
                     realName = null;
-                    // ★ حل مشكلة تعلق الخط الخارجي: منعنا حفظ الخط الخارجي كـ "آخر خط مستخدم" ★
 
                     final String finalRealName = realName;
                     mainHandler.post(() -> {
@@ -758,7 +606,6 @@ public class FontViewerFragment extends Fragment {
                     final String finalFileName = fileName != null ? fileName : copiedFont.getName();
                     final String finalRealName = realName;
 
-                    // ★ حل مشكلة تعلق الخط الخارجي: منعنا حفظ الخط الخارجي كـ "آخر خط مستخدم" ★
 
                     mainHandler.post(() -> {
                         loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
@@ -777,7 +624,6 @@ public class FontViewerFragment extends Fragment {
     private void applyFontToPreviewTexts() {
     if (currentTypeface != null && previewSentence != null) {
         previewSentence.setTypeface(currentTypeface);
-        // إعادة تطبيق التأثير البرمجي في حال تم تغيير الخط
         previewSentence.getPaint().setFakeBoldText(formattingHelper.isBoldActive());
         previewSentence.getPaint().setTextSkewX(formattingHelper.isItalicActive() ? -0.25f : 0f);
         }
@@ -791,11 +637,6 @@ public class FontViewerFragment extends Fragment {
         }
     }
 
-    /**
-     * ★ التعديل: حُذفت جميع استدعاءات الوزن من هذه الدالة ★
-     * يختص FontSizeDialog الآن بضبط حجم الخط فقط.
-     * وزن الخط يُدار مباشرةً عبر weight_spinner في هذا الفراغمنت.
-     */
     public void showFontSizeDialogPublic() {
         final float originalSize      = currentFontSize;
         final Typeface originalTypeface = currentTypeface;
@@ -810,13 +651,11 @@ public class FontViewerFragment extends Fragment {
         fontSizeDialog.setOnFontSizeChangedListener(this::onFontSizeChanged);
 
         fontSizeDialog.setOnDialogCancelledListener(() -> {
-            // ★ استعادة الحجم فقط عند الإلغاء — الوزن يُدار الآن بالـ Spinner ★
             currentFontSize   = originalSize;
             currentTypeface   = originalTypeface;
             applyFontToPreviewTexts();
             applyFontSize();
             
-            // تحديث زر الـ FAB ليعود للرقم القديم عند الإلغاء
             if (getActivity() instanceof FontViewerActivity) {
                 ((FontViewerActivity) getActivity()).updateFabFontSizeText(originalSize);
             }
@@ -835,14 +674,12 @@ public class FontViewerFragment extends Fragment {
         currentFontWeight       = DEFAULT_FONT_WEIGHT;
         currentTtcIndex         = 0;
         isSystemFont            = false;
-        // ★ إعادة ضبط الـ label عند مسح حالة العارض ★
         currentWeightWidthLabel  = null;
         currentVariableInstances = null;
 
         Typeface defaultTypeface = Typeface.DEFAULT;
         if (previewSentence != null) previewSentence.setTypeface(defaultTypeface);
 
-        // ★ إخفاء عناصر الوزن عند مسح الخط ★
         hideWeightUI();
 
         if (fontChangedListener != null) {
@@ -869,10 +706,8 @@ public class FontViewerFragment extends Fragment {
                 currentFontRealName = lastRealName;
                 currentTtcIndex     = 0;
                 isSystemFont        = false;
-                // ★ الإصلاح: استخراج وصف الوزن والعرض مباشرة من ملف الخط ★
                 currentWeightWidthLabel = FontWeightWidthExtractor.extract(localFile, 0);
 
-                // Check real name to wipe out old cached localized strings
                 if (currentFontRealName != null && (currentFontRealName.isEmpty() || currentFontRealName.equals(getString(R.string.unknown_font)))) {
                     currentFontRealName = null;
                 }
@@ -909,7 +744,6 @@ public class FontViewerFragment extends Fragment {
         metadata.put("Path", displayPath);
         metadata.put("FileName", currentFontFileName != null ? currentFontFileName : "");
 
-        // If font is corrupted or real name is unknown, add "Unknown Font" to metadata
         if (!metadata.containsKey("FullName")) {
             if (currentFontRealName == null || currentFontRealName.isEmpty() || currentFontRealName.equals(getString(R.string.unknown_font))) {
                 metadata.put("FullName", getString(R.string.unknown_font));
@@ -942,7 +776,6 @@ public class FontViewerFragment extends Fragment {
         if (originalFontPath != null) {
             outState.putString(KEY_ORIGINAL_FONT_PATH, originalFontPath);
         }
-        // ★ حفظ وصف الوزن/العرض لاستعادته عند إعادة البناء ★
         if (currentWeightWidthLabel != null) {
             outState.putString(KEY_WEIGHT_WIDTH_LABEL, currentWeightWidthLabel);
         }
@@ -964,4 +797,4 @@ public class FontViewerFragment extends Fragment {
     public boolean hasFontSelected() {
         return currentFontPath != null && !currentFontPath.isEmpty();
     }
-    }
+            }
