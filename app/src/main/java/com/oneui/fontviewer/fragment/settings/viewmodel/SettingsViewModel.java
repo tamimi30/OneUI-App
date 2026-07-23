@@ -55,8 +55,7 @@ public class SettingsViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> translationEnabled = new MutableLiveData<>();
     private final MutableLiveData<Boolean> notificationsEnabled = new MutableLiveData<>();
 
-    // ★ LiveData للثيم الشفاف — منفصل عن الثيم الفاتح/الداكن ★
-    private final MutableLiveData<Boolean> themeTransparent = new MutableLiveData<>();
+    
     
     // LiveData للنصوص
     private final MutableLiveData<String> previewText = new MutableLiveData<>();
@@ -110,16 +109,7 @@ public class SettingsViewModel extends AndroidViewModel {
                 )
         );
 
-        // ★ Transparent Theme — مراقبة الثيم الشفاف ★
-        disposables.add(
-            dataStore.getThemeTransparent()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    themeTransparent::setValue,
-                    error -> Log.e(TAG, "Error observing transparent theme", error)
-                )
-        );
+        
 
         // Font Preview
         disposables.add(
@@ -194,10 +184,7 @@ public class SettingsViewModel extends AndroidViewModel {
         return notificationsEnabled;
     }
 
-    // ★ Getter للثيم الشفاف ★
-    public LiveData<Boolean> getThemeTransparent() {
-        return themeTransparent;
-    }
+    
 
     public LiveData<String> getPreviewText() {
         return previewText;
@@ -342,34 +329,7 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    /**
-     * ★ تفعيل/تعطيل الثيم الشفاف ★
-     * هذا الثيم مستقل تماماً عن خيار الثيم الفاتح/الداكن:
-     * - لا يغير الثيم المحدد
-     * - يُعيد فقط بناء الأنشطة لتطبيق الـ Layouts الشفافة الجديدة
-     */
-    public void setThemeTransparent(boolean enabled) {
-        if (themeTransparent.getValue() != null && themeTransparent.getValue() == enabled) {
-            return;
-        }
-
-        Log.d(TAG, "Setting transparent theme to: " + enabled);
-
-        disposables.add(
-            dataStore.setThemeTransparent(enabled)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    preferences -> {
-                        Log.d(TAG, "Transparent theme updated to: " + enabled);
-                        // ★ إعادة بناء جميع الأنشطة لاختيار الـ Layouts الصحيحة ★
-                        settingsEvent.setValue(new SettingsEvent(
-                            SettingsEventType.RECREATE_ALL_ACTIVITIES));
-                    },
-                    error -> Log.e(TAG, "Error setting transparent theme", error)
-                )
-        );
-    }
+    
 
     /**
      * تفعيل/تعطيل معاينة الخطوط
