@@ -36,42 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-/**
- * LocalFontListAdapter — مبني على SortedList لأنيميشن الفرز الانسيابي
- * ★ SortedList يتولى الترتيب وتوليد onMoved/onInserted/onRemoved تلقائياً ★
- * ★ AdapterDataObserver يصحح زوايا OneUI عند كل تغيير ★
- * ★ isTransparentTheme يُعطّل حسابات الزوايا والفواصل غير الضرورية لتوفير المعالجة ★
- *
- * ★ التعديل: تمرير weightWidthLabel من FontFileInfoWithMetadata إلى LocalFontViewHolder ★
- * ★ التعديل: إضافة weightWidthLabel كمعامل خامس في OnFontClickListener
- *   لتمريره إلى NavManager ثم FontViewerFragment دون إعادة استخراجه ★
- *
- * ★ التعديل: إضافة FavoriteStatusProvider لفحص حالة المفضلة وعرض أيقونة ic_favorite
- *   بجانب العناصر المفضلة في قائمة الخطوط المحلية ★
- *
- * ★ الإصلاح (المشكلة 1 و 4): إضافة PAYLOAD_UPDATE_SELECTION لتحديث حالة الـ CheckBox
- *   فقط دون إعادة رسم العنصر كاملاً، مما يمنع وميض النجمة ويُبقي أنيميشن RTL سليماً ★
- *
- * ★ الإصلاح الجوهري (وميض النجمة عند العودة من عارض الخطوط):
- *   إضافة PAYLOAD_UPDATE_LAST_OPENED واستخدامه في smartUpdate() و saveLastOpenedAndUpdate().
- *
- *   السبب الجذري للوميض: كانت smartUpdate() تستدعي notifyItemRangeChanged(1, size) بدون payload،
- *   مما يُشغّل onBindViewHolder كاملاً. خلال هذا الربط، كانت bind() ذات 9 معاملات تُحيل
- *   إلى bind() الكاملة بـ isFavorite=false → setFavoriteIndicator(false) → نجمة مخفية →
- *   ثم setFavoriteIndicator(true) بعدها. إذا كان ItemAnimator نشطاً (قبل إبطاله في
- *   onHiddenChanged أو بعد إعادة تفعيله بعد 100ms)، كان يلتقط الحالة الوسيطة → وميض.
- *
- *   الحل: PAYLOAD_UPDATE_LAST_OPENED يُحدِّث لون نص اسم الخط فقط عبر
- *   updateLastOpenedHighlight() في LocalFontViewHolder، دون أي مساس بأيقونة النجمة.
- *   لا حالة وسيطة → لا وميض. ★
- *
- * ★ الإصلاح (الخطوة الرابعة من إصلاح مشكلة السكرول):
- *   تحديث areContentsTheSame في FontSortedListCallback ليشمل الاسم والحجم وتاريخ التعديل،
- *   لضمان عدم إعادة رسم العناصر بشكل عشوائي عند وصول تحديثات من LiveData. ★
- *
- * ملاحظة للمطوّر: بعد تحديث هذه الواجهة، يجب تحديث LocalFontListFragment ليعكس
- * التغيير في تنفيذه لـ onFontClick وليمرر weightWidthLabel إلى onFontSelected.
- */
 public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SectionIndexer {
 
     public static final int VIEW_TYPE_HEADER = 0;
@@ -81,18 +45,10 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final String PAYLOAD_UPDATE_CORNERS   = "UPDATE_CORNERS";
     private static final String PAYLOAD_UPDATE_HIGHLIGHT = "UPDATE_HIGHLIGHT";
 
-    // ★ Payload خاص بتحديث أيقونة المفضلة فقط دون إعادة رسم العنصر كاملاً ★
     private static final String PAYLOAD_UPDATE_FAVORITE  = "UPDATE_FAVORITE";
 
-    // ★ الإصلاح (المشكلة 1 و 4): Payload خاص بتحديث حالة الـ CheckBox فقط ★
-    // استخدامه بدلاً من notifyItemRangeChanged() العادية يمنع إعادة رسم العنصر كاملاً،
-    // مما يحفظ أنيميشن الانتقال في RTL (العربية) ويمنع وميض أيقونة النجمة
     private static final String PAYLOAD_UPDATE_SELECTION = "UPDATE_SELECTION";
 
-    // ★ الإصلاح الجوهري (وميض النجمة): Payload خاص بتحديث لون اسم الخط فقط ★
-    // يُستخدم في smartUpdate() و saveLastOpenedAndUpdate() بدلاً من notifyItemRangeChanged()
-    // بدون payload. يُحدِّث isLastOpened عبر updateLastOpenedHighlight() في LocalFontViewHolder
-    // دون أي مساس بأيقونة النجمة → لا حالة وسيطة → لا وميض.
     private static final String PAYLOAD_UPDATE_LAST_OPENED = "UPDATE_LAST_OPENED";
 
     private final Context context;
@@ -106,12 +62,8 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     
 
-    // ★ الإصلاح (مشكلة السكرول): إعداد معاينة الخط يُقرأ مرة واحدة فقط عند إنشاء الأدابتر
-    //   بدلاً من قراءته من DataStore لكل عنصر أثناء السكرول، مما يُسبب التقطيع.
-    //   يُحدَّث عبر setFontPreviewEnabled() عند تغيير الإعداد من الـ Fragment. ★
     private boolean mIsFontPreviewEnabled = true;
 
-    // ★ SortedList يحل محل List العادية — يرتب ويُنيم تلقائياً ★
     private final SortedList<FontFileInfo> mSortedList;
 
     private HashMap<String, LocalFontListViewModel.FontFileInfoWithMetadata> fontsMetadataMap;
@@ -131,14 +83,8 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private SortByItemLayout.OnSortChangeListener sortChangeListener;
     private OnSelectionListener selectionListener;
 
-    // ★ مزوّد حالة المفضلة — يُستدعى عند ربط كل عنصر لتحديد ظهور أيقونة ic_favorite ★
-    // يجب على Fragment تطبيق هذه الواجهة وتمريرها عبر setFavoriteStatusProvider()
     private FavoriteStatusProvider favoriteStatusProvider;
 
-    // ─────────────────────────────────────────────────────────
-    // ★ SortedList.Callback — يُترجم أحداث SortedList إلى إشعارات الـ Adapter ★
-    // الإزاحة +1 ضرورية لأن position=0 محجوزة للـ Header
-    // ─────────────────────────────────────────────────────────
     private class FontSortedListCallback extends SortedList.Callback<FontFileInfo> {
 
         @Override
@@ -151,21 +97,8 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             return a.getPath().equals(b.getPath());
         }
 
-        /**
-         * ★ الخطوة الرابعة من إصلاح مشكلة السكرول ★
-         *
-         * إضافة التحقق من تاريخ التعديل (getLastModified) إلى جانب الاسم والحجم.
-         * هذا يضمن عدم إعادة رسم العنصر عشوائياً عند وصول تحديثات من LiveData
-         * لا تتعلق بمحتوى الخط الفعلي (مثل تغيير is_cached أو last_access_time)،
-         * وهو ما كان يُسبب Over-emission Death Loop قبل تطبيق الإصلاح.
-         *
-         * ملاحظة: بعد تطبيق الخطوتين الأولى والثانية (تعطيل الكتابة في DB أثناء التمرير
-         * وتسجيل الاستخدام عند النقر فقط)، لن تعود هناك تحديثات متكررة أصلاً، لكن
-         * هذا الإصلاح يُضيف طبقة حماية إضافية لمنع إعادة الرسم غير الضرورية.
-         */
         @Override
         public boolean areContentsTheSame(FontFileInfo a, FontFileInfo b) {
-            // يكفي التحقق من الاسم والحجم وتاريخ التعديل لضمان عدم إعادة الرسم العشوائي
             return a.getName().equals(b.getName()) &&
                    a.getSize() == b.getSize() &&
                    a.getLastModified() == b.getLastModified();
@@ -183,7 +116,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Override
         public void onMoved(int fromPosition, int toPosition) {
-            // ★ هذا هو قلب أنيميشن الفرز — يُحرّك العنصر من موقعه إلى موقعه الجديد ★
             notifyItemMoved(fromPosition + 1, toPosition + 1);
         }
 
@@ -193,9 +125,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    // دالة المقارنة — تقرأ currentSortType و currentSortAscending مباشرة
-    // ─────────────────────────────────────────────────────────
     private int compareItems(FontFileInfo a, FontFileInfo b) {
         if (a == null) return 1;
         if (b == null) return -1;
@@ -216,9 +145,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         return currentSortAscending ? result : -result;
     }
 
-    // ─────────────────────────────────────────────────────────
-    // ★ ViewHolder للفراغ السفلي الوهمي ★
-    // ─────────────────────────────────────────────────────────
     public static class SpaceViewHolder extends RecyclerView.ViewHolder {
         public SpaceViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -227,17 +153,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    /**
-     * ★ التعديل: إضافة weightWidthLabel كمعامل خامس ★
-     * يحمل وصف الوزن والعرض الجاهز من القائمة (مثل "Bold, Condensed" أو "VF · Regular")
-     * مما يُغني عن إعادة استخراجه عند فتح شاشة العارض.
-     *
-     * تحديث مطلوب في LocalFontListFragment:
-     *   void onFontClick(String fontPath, String realName, String fileName,
-     *                    int ttcIndex, String weightWidthLabel) {
-     *       listener.onFontSelected(fontPath, realName, fileName, ttcIndex, weightWidthLabel);
-     *   }
-     */
     public interface OnFontClickListener {
         void onFontClick(String fontPath, String realName, String fileName,
                          int ttcIndex, String weightWidthLabel);
@@ -248,14 +163,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         void onToggleSelection(int position);
     }
 
-    /**
-     * ★ واجهة مزوّد حالة المفضلة ★
-     * يُنفّذها Fragment لتزويد الـ Adapter بحالة المفضلة لكل مسار خط،
-     * مما يُتيح عرض أيقونة ic_favorite بجانب العناصر المفضلة.
-     *
-     * ملاحظة للمطوّر: يجب على LocalFontListFragment تطبيق هذه الواجهة
-     * واستدعاء setFavoriteStatusProvider(this) بعد إنشاء الـ Adapter.
-     */
     public interface FavoriteStatusProvider {
         boolean isFavorited(String fontPath);
     }
@@ -279,8 +186,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         
 
-        // ★ الإصلاح (مشكلة السكرول): اقرأ الإعداد مرة واحدة عند إنشاء الأدابتر
-        //   بدلاً من قراءته من DataStore (عملية I/O) لكل عنصر أثناء السكرول ★
         this.mIsFontPreviewEnabled = SettingsHelper.isFontPreviewEnabled(context);
 
         this.mSortedList = new SortedList<>(
@@ -288,10 +193,8 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             new FontSortedListCallback()
         );
 
-        setHasStableIds(true); // ★ يضمن تتبع هوية العناصر لمنع إعادة رسمها عشوائياً ★
+        setHasStableIds(true); 
 
-        // ★★★ المراقب: يراقب كل تغيير ويصحح الزوايا فوراً ★★★
-        // ★ في الثيم الشفاف: لا حاجة لهذه الحسابات فيُتجاهل التنفيذ تماماً ★
         registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -311,18 +214,10 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             private void updateListEdges() {
                 if (recyclerView == null) return;
 
-                // ★ تأجيل التحديث حتى ينتهي RecyclerView من حسابات الأنيميشن ★
                 recyclerView.post(() -> {
                     if (recyclerView == null || recyclerView.isComputingLayout()) return;
                     int total = getItemCount();
                     if (total > 0) {
-                        // ★ الإصلاح (المشكلة 1): تحديث زوايا جميع العناصر عبر Payload ★
-                        // هذه العملية خفيفة جداً وتضمن إزالة الزوايا الدائرية عن العنصر
-                        // الذي كان أخيراً في نتائج البحث وأصبح في منتصف القائمة الكاملة.
-                        // السبب: العنصر الوسطي لا يصله PAYLOAD_UPDATE_CORNERS في المنطق
-                        // القديم (الذي يُحدّث الأوّل والأخيرين فقط)، فيحتفظ بزواياه الدائرية
-                        // حتى يُجبره السكرول على إعادة الرسم. notifyItemRangeChanged هنا
-                        // خفيفة لأنها تمرّ فقط على updateItemAppearance دون Full Bind. ★
                         notifyItemRangeChanged(0, total, PAYLOAD_UPDATE_CORNERS);
                     }
                 });
@@ -342,35 +237,20 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.recyclerView = null;
     }
 
-    // ─────────────────────────────────────────────────────────
-    // Setters
-    // ─────────────────────────────────────────────────────────
 
     public void setFontClickListener(OnFontClickListener listener)            { this.fontClickListener = listener; }
     public void setSortChangeListener(SortByItemLayout.OnSortChangeListener l) { this.sortChangeListener = l; }
     public void setSelectionListener(OnSelectionListener listener)             { this.selectionListener = listener; }
 
-    // ★ يُستدعى من Fragment لتزويد الـ Adapter بمزوّد حالة المفضلة ★
     public void setFavoriteStatusProvider(FavoriteStatusProvider provider) {
         this.favoriteStatusProvider = provider;
     }
 
     
 
-    /**
-     * ★ الإصلاح (مشكلة السكرول): تحديث متغير معاينة الخط عند تغيير الإعداد من الـ Fragment ★
-     *
-     * يُستدعى من Observer في LocalFontListFragment عوضاً عن smartUpdate()،
-     * فيُحدِّث المتغير مرة واحدة ثم يُحدِّث القائمة لتعكس التغيير.
-     * هذا يمنع قراءة DataStore لكل عنصر أثناء السكرول التي كانت تُسبب التقطيع.
-     *
-     * @param enabled true إذا كانت معاينة الخط مفعّلة
-     */
     public void setFontPreviewEnabled(boolean enabled) {
         if (this.mIsFontPreviewEnabled != enabled) {
             this.mIsFontPreviewEnabled = enabled;
-            // ★ الإصلاح: استدعاء notifyItemRangeChanged بالكامل (بدون payload)
-            // لإجبار جميع العناصر المرئية على سحب الـ Typeface الجديد فوراً ★
             if (recyclerView != null && !recyclerView.isComputingLayout()) {
                 notifyItemRangeChanged(1, mSortedList.size());
             } else {
@@ -381,36 +261,19 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public void saveLastOpenedAndUpdate(String path) {
         preferenceManager.saveLastOpenedFont(path);
-        // ★ الإصلاح: smartUpdate() تستخدم الآن PAYLOAD_UPDATE_LAST_OPENED ★
-        // لذا يكفي استدعاؤها مباشرةً — لون نص اسم الخط يُحدَّث بصمت دون وميض النجمة
         smartUpdate();
     }
 
-    // ─────────────────────────────────────────────────────────
-    // دوال التحديد المتعدد
-    // ─────────────────────────────────────────────────────────
 
-    /**
-     * ★ الإصلاح (المشكلة 1 و 4): استخدام PAYLOAD_UPDATE_SELECTION بدلاً من إعادة الرسم الكامل ★
-     * notifyItemRangeChanged() بدون Payload كانت تُعيد رسم كل عنصر من الصفر مما:
-     *   - يقتل أنيميشن الانتقال في RTL (العربية)
-     *   - يسبب وميض أيقونة النجمة للعناصر المفضلة
-     * مع PAYLOAD_UPDATE_SELECTION يُحدَّث الـ CheckBox فقط دون المساس بباقي العنصر.
-     */
     public void setSelectionMode(boolean enabled) {
         this.isSelectionMode = enabled;
         if (!enabled) selectedItems.clear();
-        // ★ الإصلاح: Payload يُحدّث الـ CheckBox فقط دون إعادة رسم العنصر كاملاً ★
         notifyItemRangeChanged(0, getItemCount(), PAYLOAD_UPDATE_SELECTION);
     }
 
-    /**
-     * ★ الإصلاح (المشكلة 1): استخدام PAYLOAD_UPDATE_SELECTION لتحديث عنصر واحد بصمت ★
-     */
     public void setItemSelected(int position, boolean selected) {
         if (selected) selectedItems.put(position, true);
         else selectedItems.delete(position);
-        // ★ الإصلاح: Payload يُحدّث الـ CheckBox فقط دون إعادة رسم العنصر كاملاً ★
         notifyItemChanged(position, PAYLOAD_UPDATE_SELECTION);
     }
 
@@ -431,37 +294,24 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         return -1;
     }
 
-    /**
-     * ★ تحديث أيقونة المفضلة لعنصر محدد عبر Payload لتفادي إعادة رسم العنصر كاملاً ★
-     * يُستدعى من Fragment بعد تغيير حالة مفضلة خط معين.
-     */
     public void notifyFavoriteChanged(String path) {
         int position = findPositionByPath(path);
         if (position != -1) notifyItemChanged(position, PAYLOAD_UPDATE_FAVORITE);
     }
 
-    /**
-     * ★ تحديث أيقونة المفضلة لجميع العناصر دفعةً واحدة عبر Payload ★
-     * يُستدعى من Fragment بعد عمليات المفضلة الجماعية (مثل حذف متعدد).
-     */
     public void notifyAllFavoritesChanged() {
         int size = mSortedList.size();
         if (size > 0) notifyItemRangeChanged(1, size, PAYLOAD_UPDATE_FAVORITE);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // ★ تحديث البيانات — SortedList.replaceAll يحسب الفرق ويولد الأنيميشن ★
-    // ─────────────────────────────────────────────────────────
     public void updateFilteredFonts(List<FontFileInfo> fonts, String searchQuery) {
         String oldQuery = this.currentSearchQuery;
         this.currentSearchQuery = searchQuery != null ? searchQuery : "";
         List<FontFileInfo> newList = fonts != null ? fonts : new ArrayList<>();
 
-        // 1. تطبيق الفلتر: SortedList يُخفي/يُحرّك العناصر تلقائياً بأنيميشن
         mSortedList.replaceAll(newList);
         buildSections();
 
-        // 2. ★ تحديث تظليل النص للعناصر المتبقية بصمت عبر Payload دون إعادة رسمها ★
         if (!this.currentSearchQuery.equals(oldQuery) && recyclerView != null) {
             recyclerView.post(() -> {
                 if (recyclerView != null && !recyclerView.isComputingLayout()) {
@@ -474,27 +324,17 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    /**
-     * ★ الدالة الجوهرية لأنيميشن الفرز ★
-     * عند تغيير معيار الفرز: تلتقط snapshot من العناصر الحالية، تحدّث حقول الفرز،
-     * ثم تُعيد الإدراج. SortedList يستخدم areItemsTheSame() لاكتشاف أن العناصر
-     * ذاتها تحركت فيولّد استدعاءات onMoved() → أنيميشن انزلاق حقيقي.
-     */
     public void setSortOptions(SortByItemLayout.SortType sortType, boolean ascending) {
         this.currentSortType = sortType;
         this.currentSortAscending = ascending;
 
-        // التقاط snapshot قبل إعادة الفرز
         final int size = mSortedList.size();
         List<FontFileInfo> snapshot = new ArrayList<>(size);
         for (int i = 0; i < size; i++) snapshot.add(mSortedList.get(i));
 
-        // replaceAll تستخدم الـ Comparator الجديد (الذي يقرأ الحقول المحدّثة)
-        // وتولد onMoved عند اكتشاف تغير الموضع
         mSortedList.replaceAll(snapshot);
         buildSections();
 
-        // ★ تحديث الهيدر بشكل غير متزامن لتجنب قطع أنيميشن العناصر ★
         if (recyclerView != null) {
             recyclerView.post(() -> {
                 if (recyclerView != null && !recyclerView.isComputingLayout()) {
@@ -504,9 +344,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    /**
-     * تحديث خيارات العرض في الهيدر فقط — بدون إعادة فرز (للتهيئة الأولية)
-     */
     public void updateSortOptionsOnly(SortByItemLayout.SortType sortType, boolean ascending) {
         this.currentSortType = sortType;
         this.currentSortAscending = ascending;
@@ -520,43 +357,18 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 fontsMetadataMap.put(item.getPath(), item);
     }
 
-    /**
-     * تفويض إلى updateFilteredFonts — SortedList يتولى الأنيميشن بدلاً من DiffUtil
-     */
     public void updateListWithAnimation(List<FontFileInfo> newFonts) {
         updateFilteredFonts(newFonts, currentSearchQuery);
     }
 
-    /**
-     * ★ الإصلاح الجوهري (وميض النجمة): تحديث لون اسم الخط فقط عبر PAYLOAD_UPDATE_LAST_OPENED ★
-     *
-     * المشكلة السابقة: كانت هذه الدالة تستدعي notifyItemRangeChanged(1, size) بدون payload،
-     * مما يُشغّل onBindViewHolder كاملاً لكل عنصر. خلال الربط الكامل:
-     *   - bind() ذات 9 معاملات تستدعي bind() الكاملة بـ isFavorite=false
-     *   - هذا يستدعي setFavoriteIndicator(false) → النجمة مخفية مؤقتاً
-     *   - ثم يستدعي الـ Adapter setFavoriteIndicator(true) → النجمة ظاهرة
-     *   إذا كان ItemAnimator نشطاً أثناء هذه العملية، يُنتج cross-fade يُظهر الحالة الوسيطة.
-     *
-     * الحل: PAYLOAD_UPDATE_LAST_OPENED يُحدِّث فقط لون نص اسم الخط عبر
-     * updateLastOpenedHighlight() في LocalFontViewHolder، دون أي مساس بأيقونة النجمة.
-     *
-     * ★ الإصلاح (المشكلة 2): تغليف إشعارات الـ Payload بـ recyclerView.post() ★
-     * يضمن هذا أن الإشعارات لا تُرسَل أثناء كون الـ RecyclerView مخفياً أو قيد البناء،
-     * مما يمنع تراكم الـ Payloads وتداخلها عند العودة إلى الـ Fragment.
-     * بالإضافة إلى إرسال PAYLOAD_UPDATE_HIGHLIGHT لمسح أي لون أزرق عالق في النصوص.
-     */
     public void smartUpdate() {
         buildSections();
         int size = mSortedList.size();
         if (size > 0) {
-            // ★ الإصلاح (المشكلة 2): تأجيل إرسال الـ Payloads عبر post ★
-            // يضمن هذا عدم ضياع الإشعارات أثناء كون الـ RecyclerView مخفياً أو قيد البناء
             if (recyclerView != null) {
                 recyclerView.post(() -> {
                     if (recyclerView != null && !recyclerView.isComputingLayout()) {
-                        // ★ PAYLOAD_UPDATE_LAST_OPENED: يُحدّث لون نص اسم الخط فقط — النجمة لا تُلمس ★
                         notifyItemRangeChanged(1, size, PAYLOAD_UPDATE_LAST_OPENED);
-                        // ★ PAYLOAD_UPDATE_HIGHLIGHT: يمسح أي لون أزرق عالق من بحث سابق ★
                         notifyItemRangeChanged(1, size, PAYLOAD_UPDATE_HIGHLIGHT);
                     }
                 });
@@ -569,9 +381,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    // بناء الـ Sections
-    // ─────────────────────────────────────────────────────────
 
     private void buildSections() {
         sections.clear();
@@ -595,9 +404,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         return fontsMetadataMap.get(path);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // RecyclerView.Adapter
-    // ─────────────────────────────────────────────────────────
 
     @Override
     public int getItemCount() { return mSortedList.size() + 2; }
@@ -615,8 +421,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         LayoutInflater inf = LayoutInflater.from(context);
 
         if (viewType == VIEW_TYPE_HEADER) {
-            // ★ الخطوة 3: نستخدم دائماً الملف الموحد لأن شريط الفرز
-            //   أصبح شفافاً في كلا الثيمين — لم تعد هناك حاجة للملف المنفصل ★
             return new SortHeaderViewHolder(inf.inflate(R.layout.sort_header_item, parent, false));
         }
 
@@ -627,7 +431,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         return new LocalFontViewHolder(inf.inflate(R.layout.font_list_item, parent, false));
     }
 
-    // ★ الربط الكامل
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof SortHeaderViewHolder) {
@@ -648,19 +451,12 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 updateItemAppearance(holder, position);
             }
 
-            // ★ الإصلاح السحري (المشكلة 2): إضافة (!isSearchActive) للشرط ★
-            // هذا يضمن أنه إذا استلم العنصر أي Payload (مثل الزوايا) وكان البحث مغلقاً،
-            // سيتم إجبار النص على التخلص من اللون الأزرق العالق دون الحاجة لربط كامل.
-            // السيناريو المُصلَح: انتقلت لـ Fragment آخر دون إغلاق البحث → عدت →
-            // smartUpdate() أرسل PAYLOAD_UPDATE_LAST_OPENED → هذا الشرط يرصد أن البحث
-            // مغلق الآن فيمسح اللون الأزرق العالق فوراً.
             boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
             if ((payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) || !isSearchActive)
                     && holder instanceof LocalFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 String displayName = FileUtils.removeExtension(fontInfo.getName());
 
-                // تحديث نص اسم الخط مع دعم تمييز نص البحث 
                 if (isSearchActive) {
                     android.text.Spannable highlighted = highlighter.highlightText(displayName, currentSearchQuery);
                     ((LocalFontViewHolder) holder).fontNameTextView.setText(highlighted);
@@ -671,14 +467,11 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             }
 
-                // ★ الإصلاح: تحديث لون آخر خط تم فتحه بالتزامن مع البحث ★
                 boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
-                if (isSearchActive) isLastOpened = false; // إلغاء التمييز مؤقتاً
+                if (isSearchActive) isLastOpened = false; 
                 ((LocalFontViewHolder) holder).updateLastOpenedHighlight(isLastOpened);
             }
 
-            // ★ تحديث أيقونة المفضلة بصمت دون إعادة رسم العنصر كاملاً ★
-            // يُستدعى من notifyFavoriteChanged() أو notifyAllFavoritesChanged()
             if (payloads.contains(PAYLOAD_UPDATE_FAVORITE) && holder instanceof LocalFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 boolean isFavorited = favoriteStatusProvider != null
@@ -686,10 +479,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 ((LocalFontViewHolder) holder).setFavoriteIndicator(isFavorited, true);
             }
 
-            // ★ الإصلاح (المشكلة 1 و 4): تحديث حالة الـ CheckBox فقط بصمت تام ★
-            // هذا يحفظ:
-            //   - أنيميشن انتقال العناصر في RTL (العربية) لأن العنصر لم يُعاد رسمه
-            //   - أيقونة النجمة من الوميض لأن setFavoriteIndicator() لم تُستدعَ
             if (payloads.contains(PAYLOAD_UPDATE_SELECTION)) {
                 if (holder instanceof LocalFontViewHolder) {
                     LocalFontViewHolder vh = (LocalFontViewHolder) holder;
@@ -697,34 +486,19 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                         vh.selectableLayout.setSelectionMode(isSelectionMode);
                         vh.selectableLayout.setSelectedAnimate(isItemSelected(position));
                         
-                        // ★ إصلاح النصوص المقصوصة: إجبار الـ TextView على إعادة قياس نفسه
-                        // بعد انتهاء أنيميشن انزلاق CheckBox (الذي يستغرق ~300ms) ★
-                     /**   if (!isSelectionMode && vh.fontNameTextView != null) {
-                            vh.fontNameTextView.postDelayed(() -> {
-                                vh.fontNameTextView.requestLayout();
-                                vh.fontNameTextView.invalidate();
-                            }, 250);
-                        } */
                     }
                 } else if (holder instanceof SortHeaderViewHolder) {
-                    // ★ تعطيل/تفعيل شريط الفرز حسب وضع التحديد ★
                     ((SortHeaderViewHolder) holder).setSortEnabled(!isSelectionMode);
                 }
             }
 
-            // ★ الإصلاح الجوهري (وميض النجمة): تحديث لون اسم الخط فقط بصمت تام ★
-            // يُستدعى من smartUpdate() و saveLastOpenedAndUpdate() عبر PAYLOAD_UPDATE_LAST_OPENED.
-            // updateLastOpenedHighlight() في LocalFontViewHolder لا تلمس favoriteIconView إطلاقاً،
-            // مما يضمن عدم وجود أي حالة وسيطة يلتقطها الـ ItemAnimator → لا وميض.
             if (payloads.contains(PAYLOAD_UPDATE_LAST_OPENED) && holder instanceof LocalFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
                 
-                // ★ إلغاء تمييز آخر خط تم فتحه مؤقتاً أثناء البحث ★
                 if (isSearchActive) isLastOpened = false;
                 
                 ((LocalFontViewHolder) holder).updateLastOpenedHighlight(isLastOpened);
-                // ★ لا setFavoriteIndicator — لا checkBox — لا وميض ★
             }
 
         } else {
@@ -732,18 +506,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    // ★ الخطوة 4: التعديل الجوهري لهندسة الزوايا (updateItemAppearance) ★
-    //
-    // المنطق الجديد:
-    //   • شريط الفرز أصبح شفافاً — نعود فوراً دون أي معالجة
-    //   • العنصر الأول الحقيقي (position==1) يأخذ الزوايا العلوية
-    //   • العنصر الأخير يأخذ الزوايا السفلية
-    //   • إذا كان عنصراً وحيداً يأخذ الزوايا الأربع
-    //   • العناصر الوسطى بدون تدوير
-    // ─────────────────────────────────────────────────────────
     private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
-        // ★ شريط الفرز أصبح شفافاً — لا يحتاج أي معالجة للزوايا أو الفواصل ★
         if (holder instanceof SortHeaderViewHolder) return;
 
         if (holder instanceof LocalFontViewHolder) {
@@ -754,30 +517,23 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             boolean isLast         = (position == getItemCount() - 2);
 
             if (totalFonts == 1) {
-                // ★ عنصر وحيد في القائمة: تدوير الزوايا الأربع وإخفاء الفاصل ★
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_ALL);
                 if (fh.dividerView != null) fh.dividerView.setVisibility(View.GONE);
             } else if (isFirst) {
-                // ★ العنصر الأول: يأخذ الزوايا العلوية الدائرية ويُظهر الفاصل ★
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
                                      | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
                 if (fh.dividerView != null) fh.dividerView.setVisibility(View.VISIBLE);
             } else if (isLast) {
-                // ★ العنصر الأخير: يأخذ الزوايا السفلية الدائرية ويخفي الفاصل ★
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
                                      | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
                 if (fh.dividerView != null) fh.dividerView.setVisibility(View.INVISIBLE);
             } else {
-                // ★ عنصر وسطي: بدون تدوير للزوايا ويُظهر الفاصل ★
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_NONE);
                 if (fh.dividerView != null) fh.dividerView.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    // ربط بيانات عنصر الخط
-    // ─────────────────────────────────────────────────────────
     private void bindLocalFontViewHolder(LocalFontViewHolder holder, FontFileInfo fontInfo, int position) {
         String fileName    = fontInfo.getName();
         String path        = fontInfo.getPath();
@@ -787,38 +543,24 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         String realName = (metadata != null) ? metadata.getRealName() : null;
         
 
-        // ★ استخراج وصف الوزن/العرض من البيانات الوصفية ★
-        // إذا لم يُستخرج بعد يُعرض "غير معروف" تلقائياً من الـ ViewHolder
         String weightWidthLabel = (metadata != null) ? metadata.getWeightWidthLabel() : null;
 
         boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
         boolean isLastOpened   = preferenceManager.isLastOpenedFont(path);
 
-        // ★ إلغاء تمييز آخر خط تم فتحه مؤقتاً أثناء البحث ★
         if (isSearchActive) isLastOpened = false;
 
-        // ★ تمرير weightWidthLabel إلى bind() ذات 9 معاملات ★
-        // ★ bind() ذات 9 معاملات تستدعي bindCore() التي لا تلمس setFavoriteIndicator ★
-        // ★ بذلك لا توجد حالة وسيطة بين السطرين التاليين → لا وميض للنجمة ★
         holder.bind(displayName, path, isSearchActive, currentSearchQuery,
                     isLastOpened, highlighter, isSelectionMode, isItemSelected(position),
                     weightWidthLabel);
 
-        // ★ عرض أيقونة ic_favorite بجانب العناصر المفضلة في قائمة الخطوط المحلية ★
-        // الأيقونة صفراء اللون وتظهر فقط للعناصر التي أضافها المستخدم إلى المفضلة
-        // ملاحظة للمطوّر: يجب أن يحتوي LocalFontViewHolder على setFavoriteIndicator(boolean)
         boolean isFavorited = favoriteStatusProvider != null && favoriteStatusProvider.isFavorited(path);
         holder.setFavoriteIndicator(isFavorited, false);
 
-        // ★ الإصلاح (مشكلة السكرول): استخدام المتغير المحفوظ في الذاكرة بدلاً من قراءة DataStore ★
-        // السطر القديم: if (SettingsHelper.isFontPreviewEnabled(context)) loadFontPreview(holder, path);
-        // كان يُسبب عملية I/O لكل عنصر يظهر على الشاشة أثناء السكرول → تقطيع.
-        // السطر الجديد: مقارنة boolean سريعة جداً من الذاكرة العشوائية → سكرول سلس. ★
         if (mIsFontPreviewEnabled) loadFontPreview(holder, path);
         else holder.setDefaultTypeface(null);
 
         final String finalRealName      = realName;
-        // ★ حفظ weightWidthLabel كـ final لاستخدامه في مستمع النقر ★
         final String finalWeightWidth   = weightWidthLabel;
 
         holder.itemView.setOnClickListener(v -> {
@@ -870,9 +612,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         return mSortedList.get(position - 1).getPath().hashCode();
     }
 
-    // ─────────────────────────────────────────────────────────
-    // SectionIndexer
-    // ─────────────────────────────────────────────────────────
 
     @Override public Object[] getSections() { return sections.toArray(); }
 
@@ -891,4 +630,4 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (adj < 0 || adj >= positionSections.size()) return 0;
         return positionSections.get(adj);
     }
-    }
+                        }
