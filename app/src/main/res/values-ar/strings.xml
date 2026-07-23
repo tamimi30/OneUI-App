@@ -252,7 +252,7 @@
 
     <string name="unknown_font">خط غير معروف</string>
 
-    <string name="no_fonts_found">لا توجد خطوط</string>
+    <string name="no_fonts_found"></string>
 
     <string name="drawer_trash">سلة المحذوفات</string>
 
