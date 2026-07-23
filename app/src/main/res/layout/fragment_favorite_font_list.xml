@@ -41,7 +41,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="20dp"
                     android:tint="#ffffcc00"
-                    android:src="@drawable/ic_favorite_outline" />
+                    android:src="@drawable/ic_oui_favorite_off" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/empty_title"
