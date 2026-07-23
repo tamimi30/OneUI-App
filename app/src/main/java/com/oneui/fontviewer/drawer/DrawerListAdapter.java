@@ -15,10 +15,8 @@ import com.oneui.fontviewer.activity.AppScreen;
 
 public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder> {
 
-
     private static final int VIEW_TYPE_SEPARATOR = 0;
     private static final int VIEW_TYPE_ITEM      = 1;
-
 
     private final Context mContext;
 
