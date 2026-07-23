@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!-- شريط الفرز -->
 <com.oneui.fontviewer.widget.sort.SortByItemLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
