@@ -8,17 +8,10 @@ import android.util.Log;
 import java.io.File;
 import java.io.RandomAccessFile;
 
-/**
- * FontTypefaceBuilder - مدير متخصص في إنشاء كائنات Typeface من ملفات الخطوط
- * محدّث لدعم ملفات TTC والخطوط المتغيرة بشكل كامل
- */
 public class FontTypefaceBuilder {
     
     private static final String TAG = "FontTypefaceBuilder";
     
-    /**
-     * فحص إذا كان الملف هو TTC
-     */
     private static boolean isTTCFile(File fontFile) {
         try (RandomAccessFile raf = new RandomAccessFile(fontFile, "r")) {
             byte[] header = new byte[4];
@@ -30,16 +23,10 @@ public class FontTypefaceBuilder {
         }
     }
     
-    /**
-     * إنشاء Typeface عادي من ملف خط دون تخصيص الوزن
-     */
     public static Typeface createTypeface(File fontFile) {
         return createTypeface(fontFile, 0);
     }
 
-    /**
-     * إنشاء Typeface عادي من ملف خط مع دعم TTC
-     */
     public static Typeface createTypeface(File fontFile, int ttcIndex) {
         if (fontFile == null || !fontFile.exists()) {
             Log.w(TAG, "Font file is null or does not exist");
@@ -63,16 +50,10 @@ public class FontTypefaceBuilder {
         return null;
     }
     
-    /**
-     * إنشاء Typeface مع وزن محدد (للخطوط المتغيرة) - النسخة القديمة للتوافق
-     */
     public static Typeface createTypefaceWithWeight(File fontFile, float weight) {
         return createTypefaceWithWeight(fontFile, weight, 0);
     }
 
-    /**
-     * إنشاء Typeface مع وزن محدد ودعم TTC - النسخة الجديدة المحسّنة
-     */
     public static Typeface createTypefaceWithWeight(File fontFile, float weight, int ttcIndex) {
         if (fontFile == null || !fontFile.exists()) {
             Log.w(TAG, "Font file is null or does not exist");
@@ -103,22 +84,16 @@ public class FontTypefaceBuilder {
         return createTypeface(fontFile, ttcIndex);
     }
     
-    /**
-     * إنشاء Typeface باستخدام Font.Builder (Android O وما بعده)
-     * مع دعم كامل لملفات TTC والخطوط المتغيرة
-     */
     private static Typeface createTypefaceUsingBuilder(File fontFile, float weight, int ttcIndex) {
         try {
             android.graphics.fonts.Font.Builder fontBuilder = 
                 new android.graphics.fonts.Font.Builder(fontFile);
             
-            // دعم TTC: تعيين رقم الخط داخل ملف TTC
             if (ttcIndex > 0) {
                 fontBuilder.setTtcIndex(ttcIndex);
                 Log.d(TAG, "Set TTC index: " + ttcIndex);
             }
             
-            // دعم الخطوط المتغيرة: تعيين الوزن
             if (weight > 0 && weight != 400) {
                 fontBuilder.setFontVariationSettings("'wght' " + weight);
                 Log.d(TAG, "Set font variation settings: wght=" + weight);
@@ -141,7 +116,6 @@ public class FontTypefaceBuilder {
                        " (TTC: " + ttcIndex + ", Weight: " + weight + "), error: " + e.getMessage());
         }
         
-        // Fallback: محاولة استخدام ParcelFileDescriptor
         try {
             ParcelFileDescriptor pfd = ParcelFileDescriptor.open(
                 fontFile, 
@@ -269,4 +243,4 @@ public class FontTypefaceBuilder {
         Log.w(TAG, "All attempts failed, returning default Typeface");
         return Typeface.DEFAULT;
     }
-                }
+}
