@@ -16,12 +16,6 @@ import com.oneui.fontviewer.fragment.trash.TrashFragment;
 import com.oneui.fontviewer.drawer.DrawerListAdapter;
 import com.oneui.fontviewer.widget.search.SearchCoordinator;
 
-/**
- * NavManager - نسخة مبسّطة بعد نقل عارض الخطوط إلى نشاط (Activity) مستقل.
- * لم تعد هناك حاجة لتأخير الريبل، أو تعطيل/تفعيل اللمس، أو مكدس التنقل،
- * أو أنيميشن الانتقال المخصص، لأن كل هذه المشاكل كانت ناتجة عن عرض
- * عارض الخطوط كفراغمنت ضمن نفس النشاط.
- */
 public class NavManager {
 
     public interface Host {
@@ -101,7 +95,6 @@ public class NavManager {
         }
     }
 
-    // ★ نسخة جديدة من navigateFromDrawer مع تأثير تلاشي (Fade) عند التنقل ★
     public void navigateFromDrawerAnimated(AppScreen screen) {
         mHost.setCurrentScreen(screen);
         showFragmentAnimated(screen);
@@ -109,7 +102,6 @@ public class NavManager {
         mHost.updateDrawerTitle(screen);
     }
 
-    // ★ نسخة أسرع: تختفي الشاشة الحالية بسرعة، ثم تظهر الشاشة الجديدة بسرعة ★
     public void showFragmentAnimated(AppScreen screen) {
         FragmentManager fm = mHost.getAppFragmentManager();
 
@@ -203,7 +195,6 @@ public class NavManager {
             return;
         }
 
-        // ★ نحن في الشاشة الجذر (الخطوط المحلية) — نُفوّض قرار الخروج لها ★
         Fragment localFrag = mHost.getFragment(AppScreen.LOCAL_FONTS);
         if (localFrag instanceof LocalFontListFragment) {
             if (((LocalFontListFragment) localFrag).handleExitBackPress()) {
