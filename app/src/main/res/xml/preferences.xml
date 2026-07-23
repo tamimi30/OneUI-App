@@ -28,25 +28,6 @@
     </PreferenceCategory>
 
     <!-- ═══════════════════════════════════════════════════════════════
-         قسم خلفية القوائم والمعاينة (List and Preview Background Section)
-         ═══════════════════════════════════════════════════════════════ -->
-    <PreferenceCategory
-        android:title="@string/settings_list_background_section">
-
-        <!-- ★ الثيم الأسود: خلفية سوداء للقوائم والمعاينة في الوضع الداكن ★
-             - مستقل تماماً عن خيار الثيم الفاتح/الداكن
-             - لا يعدّل الثيم المحدد، يُعيد فقط بناء الواجهة باستخدام layouts مختلفة
-             - القيمة الافتراضية: معطّل -->
-        <SwitchPreferenceCompat
-            android:key="theme_transparent"
-            android:defaultValue="false"
-            android:persistent="false"
-            android:title="@string/settings_theme_transparent"
-            android:summary="@string/settings_theme_transparent_description" />
-
-    </PreferenceCategory>
-
-    <!-- ═══════════════════════════════════════════════════════════════
          قسم عام (General Section)
          يضم: اللغة، نمط الخط، معاينة الخطوط، ترجمة معلومات الخط، نص المعاينة
          ═══════════════════════════════════════════════════════════════ -->
