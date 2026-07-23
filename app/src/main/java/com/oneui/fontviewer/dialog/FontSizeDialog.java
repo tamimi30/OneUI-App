@@ -13,14 +13,6 @@ import androidx.appcompat.widget.SeslSeekBar;
 
 import com.oneui.fontviewer.R;
 
-/**
- * FontSizeDialog - ديالوج ضبط حجم الخط
- *
- * ★ التعديل: حُذف كل ما يتعلق بمنتقي الوزن (Spinner) من هذا الديالوج بالكامل.
- *   انتقلت هذه الوظيفة إلى FontViewerFragment لتكون في متناول المستخدم
- *   مباشرةً على شاشة العارض دون الحاجة لفتح أي ديالوج.
- *   يختص هذا الكلاس الآن بضبط حجم الخط (Font Size) فقط.
- */
 public class FontSizeDialog {
 
     public interface OnFontSizeChangedListener {
@@ -67,11 +59,9 @@ public class FontSizeDialog {
         builder.setView(dialogView);
         fontSizeValue = dialogView.findViewById(R.id.font_size_value);
 
-        // ★ 1. إلغاء عمل المؤشر بين الأرقام وإجبار التظليل الكامل عند النقر ★
         fontSizeValue.setOnClickListener(v -> fontSizeValue.selectAll());
-        fontSizeValue.setLongClickable(false); // منع الضغط المطول
+        fontSizeValue.setLongClickable(false); 
 
-        // ★ 2. منع ظهور قائمة (نسخ/لصق) مع الإبقاء على التظليل الأزرق ★
         fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
             @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
             @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
@@ -79,7 +69,6 @@ public class FontSizeDialog {
             @Override public void onDestroyActionMode(android.view.ActionMode mode) {}
         });
 
-        // ★ 3. منع ظهور مؤشر الإدراج (القطرة) في النظام ★
         fontSizeValue.setCustomInsertionActionModeCallback(new android.view.ActionMode.Callback() {
             @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
             @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
@@ -122,7 +111,6 @@ public class FontSizeDialog {
         setupSeekBar();
 
         builder.setPositiveButton(R.string.ok, (dialog, which) -> {
-            // سحب الرقم المكتوب في الحقل قبل الإغلاق وتطبيقه
             String inputText = fontSizeValue.getText().toString();
             if (!inputText.isEmpty()) {
                 try {
@@ -137,7 +125,6 @@ public class FontSizeDialog {
                 sizeListener.onFontSizeChanged(tempSize);
             }
             
-            // إغلاق الكيبورد لمنعه من البقاء عالقاً في الشاشة
             fontSizeValue.clearFocus();
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
@@ -191,10 +178,8 @@ public class FontSizeDialog {
     private void updateFontSizeText(float size) {
         if (fontSizeValue != null) {
             String newText = String.format("%.0f", size);
-            // تحديث النص فقط إذا كان مختلفاً لمنع إعادة تعيين المؤشر (Cursor)
             if (!fontSizeValue.getText().toString().equals(newText)) {
                 fontSizeValue.setText(newText);
-                // وضع المؤشر في نهاية الرقم تلقائياً لراحة المستخدم
                 fontSizeValue.setSelection(newText.length());
             }
         }
