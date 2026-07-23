@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     app:expanded="false"
     app:navigationIcon="@drawable/ic_oui_back"
-    app:subtitle="@string/subtitle_settings"
+    app:subtitle="@string/app_name"
     app:title="@string/title_settings">
 
     <FrameLayout
