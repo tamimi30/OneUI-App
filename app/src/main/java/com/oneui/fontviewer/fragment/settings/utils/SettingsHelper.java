@@ -195,10 +195,7 @@ public class SettingsHelper {
         
         return context.createConfigurationContext(config);
     }
-
     
-
-
     public static void initializeFromSettings(Context context) {
         applyTheme(context);
     }
