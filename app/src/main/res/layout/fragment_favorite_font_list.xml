@@ -40,7 +40,7 @@
                     android:layout_height="80dp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="20dp"
-                    android:tint="#ffffcc00"
+                    android:tint="#D4AF37"
                     android:src="@drawable/ic_oui_favorite_off" />
 
                 <androidx.appcompat.widget.AppCompatTextView
