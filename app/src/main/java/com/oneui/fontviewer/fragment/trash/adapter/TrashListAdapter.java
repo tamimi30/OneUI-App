@@ -20,7 +20,6 @@ import dev.oneuiproject.oneui.widget.RoundLinearLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
-import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.widget.SelectableLinearLayout;
 
 import java.util.ArrayList;
@@ -79,7 +78,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final String PAYLOAD_UPDATE_CORNERS   = "UPDATE_CORNERS";
 
     private final Context context;
-    private final boolean isTransparentTheme;
     private List<FontEntity> mItems = new ArrayList<>();
 
     private boolean isSelectionMode = false;
@@ -112,15 +110,13 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public TrashListAdapter(@NonNull Context context) {
         this.context = context;
         setHasStableIds(true);
-        this.isTransparentTheme = SettingsHelper.isTransparentThemeEnabled(context);
-
         registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override public void onItemRangeInserted(int p, int c) { updateListEdges(); }
             @Override public void onItemRangeRemoved(int p, int c)  { updateListEdges(); }
             @Override public void onItemRangeMoved(int f, int t, int c) { updateListEdges(); }
 
             private void updateListEdges() {
-                if (isTransparentTheme || recyclerView == null) return;
+                if (recyclerView == null) return;
                 recyclerView.post(() -> {
                     if (recyclerView == null || recyclerView.isComputingLayout()) return;
                     int total = getItemCount();
@@ -216,10 +212,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 return new SpaceViewHolder(
                         inf.inflate(R.layout.item_bottom_space, parent, false));
             default:
-                int itemLayout = isTransparentTheme
-                        ? R.layout.trash_list_item_transparent
-                        : R.layout.trash_list_item;
-                return new TrashItemViewHolder(inf.inflate(itemLayout, parent, false));
+                return new TrashItemViewHolder(inf.inflate(R.layout.trash_list_item, parent, false));
         }
     }
     @Override
@@ -251,7 +244,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
-        if (isTransparentTheme) return;
         if (holder instanceof TrashHeaderViewHolder || holder instanceof SpaceViewHolder) return;
 
         if (holder instanceof TrashItemViewHolder) {
