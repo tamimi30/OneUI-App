@@ -28,7 +28,6 @@ public class FontInfoDialog {
         this.originalPath = originalPath;
     }
 
-    // للتوافق مع الكود القديم
     public FontInfoDialog(Context context, Map<String, String> metadata) {
         this(context, metadata, null, null);
     }
@@ -150,7 +149,6 @@ public class FontInfoDialog {
                     value = cleanVersionString(value);
                 }
                 
-                // تحديد النص الثابت لقيمة تحسين وضوح النص بناءً على لغة التطبيق الحالية
                 if ("Hinted".equals(key)) {
                     boolean isAr = java.util.Locale.getDefault().getLanguage().equals("ar");
                     if ("Improved".equalsIgnoreCase(value)) {
@@ -239,4 +237,4 @@ public class FontInfoDialog {
 
         return version;
     }
-          }
+    }
