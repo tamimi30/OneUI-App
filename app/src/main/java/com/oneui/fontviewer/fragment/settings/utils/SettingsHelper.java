@@ -15,28 +15,9 @@ import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 
 import java.util.Locale;
 
-/**
- * SettingsHelper - نسخة محدّثة تعتمد بالكامل على DataStore
- * تم إزالة كل استخدام لـ SharedPreferences
- *
- * ملاحظة مهمة: تم حذف دالتَي getLayoutDirection و getLayoutDirectionFromLocale،
- * لأن الاتجاه (RTL/LTR) يُحدَّد تلقائياً من النظام بناءً على الـ Locale المضبوط،
- * وفرضه يدوياً كان يتعارض مع "خيارات المطورين" ويسبب خللاً في الاتجاهات.
- *
- * ★ تغيير جوهري في آلية اللغة (Android 13+): ★
- * - getLanguageMode() و getSystemAssignedLanguage() يقرآن مباشرة من LocaleManager
- *   الذي يُمثّل "مصدر الحقيقة" الوحيد لإعدادات اللغة.
- * - DataStore يُستخدم كقيمة احتياطية فقط على الأجهزة الأقدم من Android 13.
- * - هذا يضمن أن أي تغيير في لغة التطبيق من إعدادات النظام ينعكس فوراً
- *   على كل أجزاء التطبيق دون الحاجة لإعادة تشغيله.
- */
 public class SettingsHelper {
 
     private static final String TAG = "SettingsHelper";
-
-    // ═══════════════════════════════════════════════════════════════
-    // الثوابت
-    // ═══════════════════════════════════════════════════════════════
     
     public static final int LANGUAGE_SYSTEM = 0;
     public static final int LANGUAGE_ARABIC = 1;
@@ -45,18 +26,7 @@ public class SettingsHelper {
     public static final int THEME_LIGHT = 0;
     public static final int THEME_DARK = 1;
 
-    // ═══════════════════════════════════════════════════════════════
-    // Getters (Static methods using DataStore)
-    // ═══════════════════════════════════════════════════════════════
 
-    /**
-     * ★ الدالة الرئيسية لقراءة اللغة — مصدر الحقيقة هو LocaleManager ★
-     *
-     * على Android 13+: تقرأ مباشرة من LocaleManager (إعدادات النظام)،
-     * مما يعني أن أي تغيير في لغة التطبيق من إعدادات النظام ينعكس فوراً.
-     *
-     * على ما دون Android 13: تقرأ من DataStore كالمعتاد.
-     */
     public static int getLanguageMode(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return getSystemAssignedLanguage(context);
@@ -71,18 +41,6 @@ public class SettingsHelper {
         }
     }
 
-    /**
-     * ★ قراءة اللغة الحقيقية المطبقة حالياً من LocaleManager (Android 13+) ★
-     *
-     * هذه الدالة هي "مصدر الحقيقة" لإعدادات اللغة على Android 13 فما فوق.
-     * تستعلم مباشرة من نظام التشغيل عن اللغة المعيّنة للتطبيق،
-     * سواء تم تعيينها من داخل التطبيق أو من إعدادات النظام.
-     *
-     * الفائدة: حتى لو كان التطبيق لا يزال في الـ RAM وتم تغيير اللغة من
-     * إعدادات النظام، ستعود هذه الدالة بالقيمة الصحيحة المحدّثة فوراً.
-     *
-     * على ما دون Android 13: تعود للقراءة من DataStore.
-     */
     public static int getSystemAssignedLanguage(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             try {
@@ -99,14 +57,12 @@ public class SettingsHelper {
                         }
                     }
                 }
-                // إذا لم تكن هناك لغة مخصصة (قائمة فارغة)، فالتطبيق يتبع لغة الجهاز
                 return LANGUAGE_SYSTEM;
             } catch (Exception e) {
                 Log.e(TAG, "Error reading locale from LocaleManager", e);
                 return LANGUAGE_SYSTEM;
             }
         }
-        // للأجهزة الأقدم من Android 13، نقرأ من DataStore
         try {
             return SettingsDataStore.getInstance(context)
                     .getLanguageMode()
@@ -117,10 +73,6 @@ public class SettingsHelper {
         }
     }
 
-    /**
-     * الحصول على وضع الثيم الحالي
-     * يستخدم blockingFirst للقراءة المتزامنة من DataStore
-     */
     public static int getThemeMode(Context context) {
         try {
             return SettingsDataStore.getInstance(context)
@@ -132,9 +84,6 @@ public class SettingsHelper {
         }
     }
 
-    /**
-     * فحص إذا كان الوضع التلقائي للثيم مفعّل
-     */
     public static boolean isThemeAuto(Context context) {
         try {
             return SettingsDataStore.getInstance(context)
@@ -148,9 +97,6 @@ public class SettingsHelper {
 
     
     
-    /**
-     * فحص إذا كانت معاينة الخطوط مفعّلة
-     */
     public static boolean isFontPreviewEnabled(Context context) {
         try {
             return SettingsDataStore.getInstance(context)
@@ -162,9 +108,6 @@ public class SettingsHelper {
         }
     }
     
-    /**
-     * فحص إذا كانت الترجمة مفعّلة
-     */
     public static boolean isTranslationEnabled(Context context) {
         try {
             return SettingsDataStore.getInstance(context)
@@ -176,9 +119,6 @@ public class SettingsHelper {
         }
     }
     
-    /**
-     * فحص إذا كانت الإشعارات مفعّلة
-     */
     public static boolean areNotificationsEnabled(Context context) {
         try {
             return SettingsDataStore.getInstance(context)
@@ -190,9 +130,6 @@ public class SettingsHelper {
         }
     }
     
-    /**
-     * الحصول على نص المعاينة
-     */
     public static String getPreviewText(Context context) {
         try {
             return SettingsDataStore.getInstance(context)
@@ -204,13 +141,7 @@ public class SettingsHelper {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // إدارة الثيم
-    // ═══════════════════════════════════════════════════════════════
 
-    /**
-     * تطبيق الثيم بناءً على الإعدادات الحالية
-     */
     public static void applyTheme(Context context) {
         boolean isAuto = isThemeAuto(context);
         
@@ -231,14 +162,7 @@ public class SettingsHelper {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // إدارة اللغة والـ Locale
-    // ═══════════════════════════════════════════════════════════════
 
-    /**
-     * الحصول على Locale بناءً على الإعدادات الحالية
-     * ★ على Android 13+: يقرأ من LocaleManager مباشرة (مصدر الحقيقة) ★
-     */
     public static Locale getLocale(Context context) {
         int mode = getLanguageMode(context);
         
@@ -253,19 +177,10 @@ public class SettingsHelper {
         }
     }
 
-    /**
-     * الحصول على Locale النظام
-     */    private static Locale getSystemLocale() {
+           private static Locale getSystemLocale() {
         return Resources.getSystem().getConfiguration().getLocales().get(0);
     }
 
-    /**
-     * إنشاء Context ملفوف (Wrapped) باللغة المحددة
-     *
-     * ملاحظة: تعيين الـ Locale عبر config.setLocale() يكفي تماماً،
-     * والنظام سيضبط اتجاه التنسيق (RTL/LTR) تلقائياً بناءً على اللغة.
-     * لا حاجة لاستدعاء config.setLayoutDirection() بشكل يدوي.
-     */
     @SuppressWarnings("deprecation")
     public static Context wrapContext(Context context) {
         Locale locale = getLocale(context);
@@ -274,7 +189,6 @@ public class SettingsHelper {
         Resources res = context.getResources();
         Configuration config = new Configuration(res.getConfiguration());
         
-        // تعيين الـ Locale فقط يكفي، وسيقوم النظام بضبط اتجاه التنسيق تلقائياً
         config.setLocale(locale);
         
         Log.d(TAG, "Context wrapped with locale: " + locale.getLanguage());
@@ -284,15 +198,8 @@ public class SettingsHelper {
 
     
 
-    // ═══════════════════════════════════════════════════════════════
-    // Initialization
-    // ═══════════════════════════════════════════════════════════════
 
-    /**
-     * تهيئة الإعدادات عند بدء التطبيق
-     */
     public static void initializeFromSettings(Context context) {
         applyTheme(context);
-        // اللغة تُطبّق تلقائياً عند استخدام wrapContext في BaseActivity
     }
-        }
+                 }
