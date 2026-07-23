@@ -26,54 +26,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * TrashListAdapter — محول عرض سلة المحذوفات
- *
- * ════════════════════════════════════════════════════════════
- * الميزات المطبَّقة:
- *
- * ★ (1) لا فرز — الترتيب يأتي من FontDao (الأحدث حذفاً أولاً)
- * ★ (2) لا بحث
- * ★ (3) الضغط العادي يُظهر Toast بدلاً من فتح الخط
- * ★ (4) لا تطبيق Typeface على أسماء الخطوط (لا معاينات)
- * ★ (5) بطاقات شفافة دائماً (trash_list_item.xml)
- * ★ (7) رسالة الـ 30 يوماً كـ VIEW_TYPE_HEADER داخل الـ Adapter
- *        لكي تتدفق وتتحرك مع القائمة بدلاً من أن تكون ثابتة
- *        (النهج الاحترافي المذكور في الملاحظة 27)
- * ★ (8) لا عرض لوزن وعرض الخط
- * ★ (9) عرض الأيام المتبقية على كل عنصر باستخدام Plurals
- * ★ (13) الضغط المطول يُشغّل وضع التحديد المتعدد
- * ════════════════════════════════════════════════════════════
- *
- * الملفات المطلوبة بجانب هذا الـ Adapter:
- *   - res/layout/trash_list_item.xml     : تصميم عنصر السلة
- *   - res/layout/trash_header_item.xml   : تصميم رسالة الـ 30 يوماً
- *   - res/values/strings.xml             : يجب أن يحتوي على:
- *       ● trash_items_expiry_info
- *       ● toast_prepare_file_to_open
- *
- * معرّفات Views المطلوبة في trash_list_item.xml:
- *   - @+id/checkbox
- *   - @+id/trash_item_font_name
- *   - @+id/trash_item_days_remaining
- *   - @+id/item_divider
- *
- * معرّف View المطلوب في trash_header_item.xml:
- *   - @+id/trash_header_message
- */
 public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    // ─────────────────────────────────────────────────────────
-    // أنواع العناصر
-    // ─────────────────────────────────────────────────────────
     public static final int VIEW_TYPE_HEADER = 0;
     public static final int VIEW_TYPE_ITEM   = 1;
     public static final int VIEW_TYPE_SPACE  = 2;
 
-    // مدة الاحتفاظ: 30 يوماً بالميلي ثانية
     private static final long DAYS_30_MS = 30L * 24L * 60L * 60L * 1000L;
 
-    // Payload للتحديث الجزئي لـ CheckBox دون إعادة رسم العنصر كاملاً
     private static final String PAYLOAD_UPDATE_SELECTION = "UPDATE_SELECTION";
     private static final String PAYLOAD_UPDATE_CORNERS   = "UPDATE_CORNERS";
 
@@ -82,30 +42,17 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private boolean isSelectionMode = false;
 
-    // المفتاح: موقع الـ Adapter (يشمل إزاحة الهيدر +1)
     private final SparseBooleanArray selectedItems = new SparseBooleanArray();
 
     private OnSelectionListener selectionListener;
     private RecyclerView recyclerView;
 
-    // ─────────────────────────────────────────────────────────
-    // Interfaces
-    // ─────────────────────────────────────────────────────────
 
-    /**
-     * مُستمع وضع التحديد المتعدد.
-     * يُنفَّذ بواسطة TrashFragment للتعامل مع أحداث بدء التحديد وتبديله.
-     */
     public interface OnSelectionListener {
-        /** يُستدعى عند بدء وضع التحديد عبر الضغط المطول */
         void onStartSelection(int adapterPosition);
-        /** يُستدعى عند النقر على عنصر أثناء وضع التحديد */
         void onToggleSelection(int adapterPosition);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // Constructor
-    // ─────────────────────────────────────────────────────────
 
     public TrashListAdapter(@NonNull Context context) {
         this.context = context;
@@ -126,27 +73,12 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         });
     }
 
-    // ─────────────────────────────────────────────────────────
-    // Setters
-    // ─────────────────────────────────────────────────────────
 
     public void setSelectionListener(@Nullable OnSelectionListener listener) {
         this.selectionListener = listener;
     }
 
-    // ─────────────────────────────────────────────────────────
-    // تحديث البيانات عبر DiffUtil
-    // ─────────────────────────────────────────────────────────
 
-    /**
-     * يُحدّث قائمة السلة بكفاءة عبر DiffUtil.
-     *
-     * يستخدم ListUpdateCallback مخصصاً لإضافة إزاحة +1 لجميع المواقع
-     * تعويضاً عن عنصر الهيدر الثابت في position=0.
-     *
-     * ملاحظة: يُنصح بمسح التحديد (setSelectionMode(false)) قبل تحديث
-     * البيانات لتجنب عدم تطابق مواقع SparseBooleanArray مع العناصر الجديدة.
-     */
     public void submitList(@Nullable List<FontEntity> newList) {
         List<FontEntity> safeNew = (newList != null) ? newList : Collections.emptyList();
 
@@ -154,7 +86,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 new TrashDiffCallback(mItems, safeNew));
         mItems = new ArrayList<>(safeNew);
 
-        // توزيع التحديثات مع إزاحة +1 لاستيعاب الهيدر في position=0
         result.dispatchUpdatesTo(new ListUpdateCallback() {
             @Override
             public void onInserted(int position, int count) {
@@ -175,13 +106,9 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         });
     }
 
-    // ─────────────────────────────────────────────────────────
-    // RecyclerView.Adapter — الأساسيات
-    // ─────────────────────────────────────────────────────────
 
     @Override
     public int getItemCount() {
-        // هيدر (1) + عناصر السلة (N) + فراغ سفلي (1)
         return mItems.size() + 2;
     }
 
@@ -194,9 +121,9 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public long getItemId(int position) {
-        if (position == 0) return Long.MIN_VALUE;              // HEADER — معرّف ثابت
-        if (position == getItemCount() - 1) return Long.MAX_VALUE; // SPACE — معرّف ثابت
-        return mItems.get(position - 1).getId();                // معرّف قاعدة البيانات
+        if (position == 0) return Long.MIN_VALUE;              
+        if (position == getItemCount() - 1) return Long.MAX_VALUE; 
+        return mItems.get(position - 1).getId();                
     }
 
 
@@ -225,10 +152,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         updateItemAppearance(holder, position);
     }
 
-    /**
-     * الربط الجزئي عبر Payload — يُحدّث CheckBox فقط دون إعادة رسم العنصر كاملاً.
-     * يحفظ هذا السلاسة البصرية ويمنع أي وميض أثناء تفعيل/تعطيل وضع التحديد.
-     */    @Override
+           @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position,
                                  @NonNull List<Object> payloads) {
         if (!payloads.isEmpty()) {
@@ -272,24 +196,16 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    // ربط بيانات عنصر السلة
-    // ─────────────────────────────────────────────────────────
 
     private void bindItem(@NonNull TrashItemViewHolder holder,
                           @NonNull FontEntity font,
                           int position) {
-        // ★ (8): اسم الخط فقط — بدون وزن/عرض
-        // ★ (4): بدون تطبيق Typeface (لا معاينة)
         holder.fontNameTextView.setText(font.getDisplayName());
 
-        // ★ (9): الأيام المتبقية حتى الحذف النهائي
         holder.daysRemainingTextView.setText(buildDaysRemainingText(font.getDeletedAt()));
 
-        // حالة CheckBox
         updateCheckBoxState(holder, position);
 
-        // ★ (3): النقر العادي يُظهر Toast بدلاً من فتح الخط
         holder.itemView.setOnClickListener(v -> {
             int pos = holder.getBindingAdapterPosition();
             if (pos == RecyclerView.NO_POSITION) return;
@@ -301,14 +217,12 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         });
 
-        // ★ (13): الضغط المطول يبدأ وضع التحديد المتعدد
         holder.itemView.setOnLongClickListener(v -> {
             int pos = holder.getBindingAdapterPosition();
             if (pos == RecyclerView.NO_POSITION) return false;
             if (!isSelectionMode && selectionListener != null) {
                 selectionListener.onStartSelection(pos);
             }
-            // تفعيل الـ rubber-band multi-selection الخاص بـ OneUI
             if (recyclerView != null) {
                 recyclerView.seslStartLongPressMultiSelection();
             }
@@ -316,9 +230,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         });
     }
 
-    /**
-     * تحديث حالة CheckBox للعنصر — مُستخدَم في الربط الكامل والجزئي على حدٍّ سواء.
-     */
 
     private void updateCheckBoxState(@NonNull TrashItemViewHolder holder, int position) {
         if (holder.selectableLayout != null) {
@@ -327,26 +238,10 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    // ★ (9): حساب نص الأيام المتبقية
-    // ─────────────────────────────────────────────────────────
 
-    /**
-     * يحسب نص الأيام المتبقية حتى الحذف النهائي باستخدام ملفات Plurals.
-     *
-     * المنطق (يتطابق مع ملف plurals الموجود):
-     *   ● 0 يوم  → quantity = 0  → "اليوم"     / "Today"
-     *   ● 1 يوم  → quantity = 1  → "يوم واحد"  / "1 day"
-     *   ● 2 يوم  → quantity = 2  → "يومان"     / "2 days"    (يُطبَّق في العربية)
-     *   ● 3–10   → quantity = few → "%d أيام"  / "%d days"
-     *   ● >10    → quantity = many → "%d يوماً" / "%d days"
-     *
-     * @param deletedAt الطابع الزمني (Unix ms) لوقت النقل إلى السلة
-     */
     @NonNull
     private String buildDaysRemainingText(long deletedAt) {
         if (deletedAt <= 0) {
-            // قيمة احتياطية: 30 يوماً كاملة إذا لم يُسجَّل تاريخ الحذف
             return context.getResources().getQuantityString(
                     R.plurals.trash_days_remaining, 30, 30);
         }
@@ -357,9 +252,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 R.plurals.trash_days_remaining, daysRemaining, daysRemaining);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // RecyclerView — الربط والفصل
-    // ─────────────────────────────────────────────────────────
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -373,47 +265,26 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.recyclerView = null;
     }
 
-    // ─────────────────────────────────────────────────────────
-    // إدارة وضع التحديد المتعدد
-    // ─────────────────────────────────────────────────────────
 
-    /**
-     * تفعيل أو تعطيل وضع التحديد.
-     * عند التعطيل يُمسح selectedItems تلقائياً.
-     * يستخدم PAYLOAD_UPDATE_SELECTION لتحديث CheckBox فقط دون وميض.
-     */
     public void setSelectionMode(boolean enabled) {
         this.isSelectionMode = enabled;
         if (!enabled) selectedItems.clear();
         notifyItemRangeChanged(1, mItems.size(), PAYLOAD_UPDATE_SELECTION);
     }
 
-    /**
-     * تحديد أو إلغاء تحديد عنصر واحد بموقعه في الـ Adapter.
-     * يستخدم Payload لتحديث CheckBox فقط دون إعادة رسم بقية العنصر.
-     *
-     * @param adapterPosition موقع العنصر في الـ Adapter (يشمل إزاحة الهيدر)
-     */
     public void setItemSelected(int adapterPosition, boolean selected) {
         if (selected) selectedItems.put(adapterPosition, true);
         else selectedItems.delete(adapterPosition);
         notifyItemChanged(adapterPosition, PAYLOAD_UPDATE_SELECTION);
     }
 
-    /**
-     * تحديد جميع العناصر (لزر "تحديد الكل" في Toolbar).
-     */
     public void selectAll() {
-        // المواقع 1..N تمثل العناصر (إزاحة الهيدر = 1)
         for (int i = 1; i <= mItems.size(); i++) {
             selectedItems.put(i, true);
         }
         notifyItemRangeChanged(1, mItems.size(), PAYLOAD_UPDATE_SELECTION);
     }
 
-    /**
-     * إلغاء تحديد جميع العناصر.
-     */
     public void clearSelection() {
         selectedItems.clear();
         notifyItemRangeChanged(1, mItems.size(), PAYLOAD_UPDATE_SELECTION);
@@ -427,9 +298,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return isSelectionMode;
     }
 
-    /**
-     * عدد العناصر المحددة حالياً.
-     */
     public int getSelectedCount() {
         int count = 0;
         for (int i = 0; i < selectedItems.size(); i++) {
@@ -438,34 +306,21 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return count;
     }
 
-    /**
-     * عدد العناصر الكلي في السلة (دون الهيدر والفراغ السفلي).
-     */
     public int getTotalItemCount() {
         return mItems.size();
     }
 
-    /**
-     * ★ (14): هل جميع العناصر محددة؟
-     * يُستخدم في TrashFragment لتحديد نص أزرار الـ bottom bar:
-     *   true  → "حذف الكل" / "استعادة الكل"
-     *   false → "حذف" / "استعاده"
-     */
     public boolean isAllSelected() {
         return !mItems.isEmpty() && getSelectedCount() == mItems.size();
     }
 
-    /**
-     * إرجاع قائمة بـ FontEntity للعناصر المحددة حالياً.
-     * يُستخدم لتمريرها إلى TrashViewModel لتنفيذ الاستعادة أو الحذف.
-     */
     @NonNull
     public List<FontEntity> getSelectedFonts() {
         List<FontEntity> selected = new ArrayList<>();
         for (int i = 0; i < selectedItems.size(); i++) {
             if (!selectedItems.valueAt(i)) continue;
             int adapterPos = selectedItems.keyAt(i);
-            int itemIndex  = adapterPos - 1; // تحويل موقع الـ Adapter إلى فهرس القائمة
+            int itemIndex  = adapterPos - 1; 
             if (itemIndex >= 0 && itemIndex < mItems.size()) {
                 selected.add(mItems.get(itemIndex));
             }
@@ -473,21 +328,11 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return selected;
     }
 
-    /**
-     * إرجاع جميع العناصر في السلة.
-     * يُستخدم لعملية "إفراغ السلة" التي تُمرر الكل إلى TrashViewModel.
-     */
     @NonNull
     public List<FontEntity> getAllFonts() {
         return new ArrayList<>(mItems);
     }
 
-    /**
-     * إرجاع FontEntity بموقعه في الـ Adapter.
-     *
-     * @param adapterPosition يشمل إزاحة الهيدر (position=1 هو العنصر الأول)
-     * @return الكيان المطابق، أو null إذا كان الموقع خارج النطاق
-     */
     @Nullable
     public FontEntity getItemAtAdapterPosition(int adapterPosition) {
         int itemIndex = adapterPosition - 1;
@@ -495,20 +340,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return mItems.get(itemIndex);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // ViewHolders
-    // ─────────────────────────────────────────────────────────
 
-    /**
-     * ★ (7) ViewHolder رسالة الـ 30 يوماً.
-     *
-     * يُضاف كـ VIEW_TYPE_HEADER ليكون جزءاً من القائمة ويتحرك معها
-     * بدلاً من أن يكون في NestedScrollView منفصل (الملاحظة 27).
-     * هذا يضمن الأداء الكامل لـ RecyclerView مع تمرير سلس.
-     *
-     * النص محدد في:
-     *   strings.xml → R.string.trash_items_expiry_info
-     */
     static class TrashHeaderViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView messageTextView;
@@ -519,31 +351,12 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         void bind() {
-            // النص ثابت ومحدد في strings.xml
-            // يمكن تعيينه هنا أو تركه محدداً كـ android:text في XML
             if (messageTextView != null) {
                 messageTextView.setText(R.string.trash_items_expiry_info);
             }
         }
     }
 
-    /**
-     * ViewHolder عنصر الخط في سلة المحذوفات.
-     *
-     * ★ (8): لا weightWidthTextView — لا عرض لوزن/عرض الخط.
-     * ★ (4): لا تطبيق Typeface — لا معاينة للخط.
-     * ★ (9): daysRemainingTextView لعرض الأيام المتبقية.
-     *
-     * يعتمد على trash_list_item.xml المبني على CardView الذي يتكفل
-     * بالزوايا الدائرية والحدود البصرية تلقائياً — لا كود جافا مطلوب.
-     *
-     * يجب أن يحتوي الـ XML على:
-     *   - @+id/checkbox                  (CheckBox)
-     *   - @+id/trash_item_font_name      (TextView — اللون الأساسي)
-     *   - @+id/trash_item_days_remaining (TextView — اللون الثانوي)
-     *
-     * لا حاجة لـ @+id/item_divider — CardView يفصل العناصر بصرياً.
-     */
     static class TrashItemViewHolder extends RecyclerView.ViewHolder {
 
         final SelectableLinearLayout selectableLayout;
@@ -560,10 +373,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    /**
-     * ViewHolder الفراغ السفلي الوهمي.
-     * يمنع اختباء آخر عنصر خلف شريط التنقل السفلي.
-     */
     static class SpaceViewHolder extends RecyclerView.ViewHolder {
         SpaceViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -572,15 +381,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    // DiffUtil Callback
-    // ─────────────────────────────────────────────────────────
 
-    /**
-     * يقارن قائمتي FontEntity لحساب الفرق بكفاءة.
-     * يعمل على القوائم الخام (بدون هيدر/فراغ) —
-     * الإزاحة +1 تُعالَج في ListUpdateCallback المخصص في submitList().
-     */
     private static class TrashDiffCallback extends DiffUtil.Callback {
 
         private final List<FontEntity> oldList;
@@ -595,18 +396,11 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         @Override public int getOldListSize() { return oldList.size(); }
         @Override public int getNewListSize() { return newList.size(); }
 
-        /**
-         * يتحقق من هوية العنصر عبر الـ ID في قاعدة البيانات (مستقر دائماً).
-         */
         @Override
         public boolean areItemsTheSame(int oldPos, int newPos) {
             return oldList.get(oldPos).getId() == newList.get(newPos).getId();
         }
 
-        /**
-         * يتحقق مما إذا كان محتوى العنصر تغيّر
-         * (اسم الملف أو تاريخ الحذف — الأيام المتبقية تتغير مع الوقت).
-         */
         @Override
         public boolean areContentsTheSame(int oldPos, int newPos) {
             FontEntity o = oldList.get(oldPos);
@@ -616,4 +410,4 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     && o.isTrashed() == n.isTrashed();
         }
     }
-                                  }
+            }
