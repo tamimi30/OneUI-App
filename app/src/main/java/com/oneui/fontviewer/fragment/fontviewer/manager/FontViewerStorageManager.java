@@ -14,11 +14,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.UUID;
 
-/**
- * FontViewerStorageManager - مدير متخصص في إدارة تخزين الخطوط المعروضة
- * يتولى نسخ ملفات الخطوط من URI إلى مساحة التطبيق الداخلية للعرض
- * منفصل عن FontImportManager الذي يتعامل مع استيراد مجموعات الخطوط
- */
 public class FontViewerStorageManager {
     
     private static final String TAG = "FontViewerStorageManager";
@@ -27,21 +22,10 @@ public class FontViewerStorageManager {
     
     private final Context context;
     
-    /**
-     * Constructor
-     * @param context السياق المطلوب للوصول إلى نظام الملفات
-     */
     public FontViewerStorageManager(Context context) {
         this.context = context.getApplicationContext();
     }
     
-    /**
-     * نسخ ملف خط من URI إلى مساحة التطبيق الداخلية للعرض
-     * 
-     * @param fontUri URI للخط المراد نسخه
-     * @param suggestedFileName اسم الملف المقترح (يمكن أن يكون null)
-     * @return File يمثل النسخة المحلية أو null إذا فشلت العملية
-     */
     public File copyFontForViewing(Uri fontUri, String suggestedFileName) {
         if (fontUri == null) {
             Log.w(TAG, "Font URI is null");
@@ -101,13 +85,6 @@ public class FontViewerStorageManager {
         }
     }
     
-    /**
-     * استخراج اسم الملف من URI
-     * يحاول عدة طرق لضمان الحصول على اسم مناسب
-     * 
-     * @param uri URI المراد استخراج اسم الملف منه
-     * @return اسم الملف أو null إذا فشلت جميع المحاولات
-     */
     public String getFileNameFromUri(Uri uri) {
         if (uri == null) {
             return null;
@@ -169,11 +146,6 @@ public class FontViewerStorageManager {
         return fileName;
     }
     
-    /**
-     * الحصول على مجلد الخطوط المعروضة أو إنشاؤه
-     * 
-     * @return مجلد الخطوط أو null إذا فشل الإنشاء
-     */
     public File getFontsDirectory() {
         File fontsDirectory = new File(context.getFilesDir(), VIEWER_FONTS_DIR);
         
@@ -187,13 +159,6 @@ public class FontViewerStorageManager {
         return fontsDirectory;
     }
     
-    /**
-     * تنظيف الملفات القديمة من مجلد الخطوط المعروضة
-     * يحذف جميع الملفات ماعدا الملف الحالي المستخدم
-     * 
-     * @param currentFontPath مسار الملف الحالي الذي يجب الاحتفاظ به
-     * @return عدد الملفات المحذوفة
-     */
     public int cleanupOldViewerFonts(String currentFontPath) {
         File fontsDirectory = getFontsDirectory();
         if (fontsDirectory == null || !fontsDirectory.exists()) {
@@ -224,12 +189,6 @@ public class FontViewerStorageManager {
         return deletedCount;
     }
     
-    /**
-     * حذف ملف خط معين
-     * 
-     * @param fontPath مسار الملف المراد حذفه
-     * @return true إذا تم الحذف بنجاح
-     */
     public boolean deleteFontFile(String fontPath) {
         if (fontPath == null) {
             return false;
@@ -248,11 +207,6 @@ public class FontViewerStorageManager {
         return false;
     }
     
-    /**
-     * الحصول على عدد ملفات الخطوط المعروضة
-     * 
-     * @return عدد الملفات في مجلد الخطوط المعروضة
-     */
     public int getViewerFontsCount() {
         File fontsDirectory = getFontsDirectory();
         if (fontsDirectory == null || !fontsDirectory.exists()) {
@@ -263,12 +217,6 @@ public class FontViewerStorageManager {
         return files != null ? files.length : 0;
     }
     
-    /**
-     * فحص ما إذا كان ملف موجود ويمكن قراءته
-     * 
-     * @param fontPath مسار الملف المراد فحصه
-     * @return true إذا كان الملف موجود وقابل للقراءة
-     */
     public boolean isFontFileValid(String fontPath) {
         if (fontPath == null) {
             return false;
@@ -282,9 +230,6 @@ public class FontViewerStorageManager {
             return false;
         }
     }
-    /**
-     * استخراج المسار الأصلي الكامل من URI (يعمل على Android 13+)
-     */
     public String getRealPathFromUri(Uri uri) {
         if (uri == null) return null;
 
@@ -297,7 +242,6 @@ public class FontViewerStorageManager {
             }
         }
 
-        // ★ حل مشكلة المسار الخارجي: استخراج المسار الحقيقي من مزود المحتوى ★
         if (realPath == null && "content".equalsIgnoreCase(uri.getScheme())) {
             try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
