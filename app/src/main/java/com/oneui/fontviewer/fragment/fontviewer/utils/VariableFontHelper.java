@@ -12,17 +12,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * VariableFontHelper - مساعد الخطوط المتغيرة مع دعم كامل لملفات TTC
- * 
- * الإصلاحات المطبقة:
- * 1. إضافة دعم كامل لملفات TTC في جميع الدوال
- * 2. إصلاح createTypefaceWithWeight لتطبيق الوزن بشكل صحيح مع TTC Index
- * 3. إصلاح extractVariableInstances لقراءة المعلومات من الفهرس الصحيح
- * 4. ★ إصلاح createTypefaceWithWeight: إزالة الاستثناء الخاص بالوزن 400
- *    لضمان تطبيق محور wght صراحةً دائماً، حتى لا يُرسَم الخط بقيمته الافتراضية
- *    الداخلية (في fvar) عندما تختلف عن 400 كما في بعض خطوط Samsung One VF ★
- */
 public class VariableFontHelper {
     
     private static final String TAG = "VariableFontHelper";
@@ -44,9 +33,6 @@ public class VariableFontHelper {
         }
     }
     
-    /**
-     * فحص إذا كان الخط متغيراً - مع دعم TTC Index
-     */
     public static boolean isVariableFont(File fontFile, int ttcIndex) {
         
         
@@ -60,22 +46,15 @@ public class VariableFontHelper {
                 return true;
             }
         } catch (Exception e) {
-            // Continue to fallback check
         }
         
         return fvarTableExists(fontFile, ttcIndex);
     }
     
-    /**
-     * نسخة للتوافق مع الكود القديم
-     */
     public static boolean isVariableFont(File fontFile) {
         return isVariableFont(fontFile, 0);
     }
     
-    /**
-     * الحصول على محاور التغيير من الخط مع دعم TTC Index
-     */
     private static FontVariationAxis[] getVariationAxes(File fontFile, int ttcIndex) {
         try {
             Font.Builder fontBuilder = new Font.Builder(fontFile);
@@ -89,9 +68,6 @@ public class VariableFontHelper {
         }
     }
     
-    /**
-     * فحص وجود جدول fvar في الخط مع دعم TTC Index
-     */
     private static boolean fvarTableExists(File fontFile, int ttcIndex) {
         try (RandomAccessFile raf = new RandomAccessFile(fontFile, "r")) {
             byte[] header = new byte[4];
@@ -99,19 +75,16 @@ public class VariableFontHelper {
             String tag = new String(header, "US-ASCII");
             
             if ("ttcf".equals(tag)) {
-                // ملف TTC - نقفز للفهرس المطلوب
                 raf.seek(8);
                 long numFonts = readUInt32(raf);
                 if (ttcIndex >= numFonts) {
                     return false;
                 }
                 
-                // القفز للفهرس المطلوب
                 raf.seek(12 + (ttcIndex * 4));
                 long fontOffset = readUInt32(raf);
                 return checkFvarAtOffset(raf, fontOffset);
             } else {
-                // ملف TTF/OTF عادي
                 raf.seek(4);
                 int numTables = readUInt16(raf);
                 
@@ -127,14 +100,10 @@ public class VariableFontHelper {
                 }
             }
         } catch (Exception e) {
-            // Failed to read file
         }
         return false;
     }
     
-    /**
-     * فحص وجود جدول fvar في موقع محدد
-     */
     private static boolean checkFvarAtOffset(RandomAccessFile raf, long fontOffset) {
         try {
             raf.seek(fontOffset + 4);
@@ -151,14 +120,10 @@ public class VariableFontHelper {
                 }
             }
         } catch (Exception e) {
-            // Failed
         }
         return false;
     }
     
-    /**
-     * استخراج حالات الخطوط المتغيرة مع دعم TTC Index
-     */
     public static List<VariableInstance> extractVariableInstances(File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
         
@@ -190,16 +155,10 @@ public class VariableFontHelper {
         return instances;
     }
     
-    /**
-     * نسخة للتوافق مع الكود القديم
-     */
     public static List<VariableInstance> extractVariableInstances(File fontFile) {
         return extractVariableInstances(fontFile, 0);
     }
     
-    /**
-     * قراءة نطاق الوزن من جدول fvar مع دعم TTC Index
-     */
     private static float[] readWeightRangeFromFvar(File fontFile, int ttcIndex) {
         float[] defaultRange = {100f, 900f};
         
@@ -211,7 +170,6 @@ public class VariableFontHelper {
             long fontOffset = 0;
             
             if ("ttcf".equals(tag)) {
-                // ملف TTC - القفز للفهرس المطلوب
                 raf.seek(8);
                 long numFonts = readUInt32(raf);
                 if (ttcIndex >= numFonts) {
@@ -222,7 +180,6 @@ public class VariableFontHelper {
                 fontOffset = readUInt32(raf);
             }
             
-            // البحث عن جدول fvar
             raf.seek(fontOffset + 4);
             int numTables = readUInt16(raf);
             
@@ -244,14 +201,12 @@ public class VariableFontHelper {
                 return defaultRange;
             }
             
-            // قراءة معلومات fvar
             raf.seek(fvarOffset + 4);
             int axesArrayOffset = readUInt16(raf);
             raf.seek(fvarOffset + 8);
             int axisCount = readUInt16(raf);
             int axisSize = readUInt16(raf);
             
-            // البحث عن محور wght
             for (int i = 0; i < axisCount; i++) {
                 long axisPos = fvarOffset + axesArrayOffset + (i * axisSize);
                 raf.seek(axisPos);
@@ -309,38 +264,21 @@ public class VariableFontHelper {
         }
     }
 
-    /**
-     * إنشاء Typeface مع وزن محدد - مع دعم TTC
-     */
     public static Typeface createTypefaceWithWeight(File fontFile, float weight) {
         return createTypefaceWithWeight(fontFile, weight, 0);
     }
 
-    /**
-     * إنشاء Typeface مع وزن محدد و TTC Index - النسخة المحدثة
-     *
-     * ★ الإصلاح: حُذف الاستثناء الخاص بالوزن 400 (weight != 400).
-     *   سابقاً كان الكود يتخطى تعيين محور wght عندما يكون الوزن المطلوب 400،
-     *   مما يجعل Android يُرسم الخط بقيمته الافتراضية الداخلية في جدول fvar.
-     *   بعض الخطوط المتغيرة (كـ Samsung One Extra Lite VF) تُعرّف قيمة افتراضية
-     *   مختلفة عن 400، فيظهر الخط بوزن خاطئ رغم اختيار Regular في المنتقي.
-     *   الإصلاح: تطبيق محور wght صراحةً لأي وزن موجب، بما فيه 400. ★
-     */
     public static Typeface createTypefaceWithWeight(File fontFile, float weight, int ttcIndex) {
         
         
         try {
             Font.Builder fontBuilder = new Font.Builder(fontFile);
             
-            // تعيين TTC Index
             if (ttcIndex > 0) {
                 fontBuilder.setTtcIndex(ttcIndex);
                 android.util.Log.d(TAG, "Set TTC index: " + ttcIndex);
             }
             
-            // ★ تطبيق الوزن صراحةً لأي قيمة موجبة دون استثناء 400 ★
-            // هذا يضمن أن الخط يُرسم بالوزن المطلوب تحديداً وليس بقيمته الافتراضية
-            // المدوّنة في جدول fvar، والتي قد تختلف عن 400 في بعض الخطوط.
             if (weight > 0) {
                 String variationSettings = "'wght' " + weight;
                 fontBuilder.setFontVariationSettings(variationSettings);
@@ -364,7 +302,6 @@ public class VariableFontHelper {
             android.util.Log.e(TAG, "Failed to create variable Typeface with weight: " + weight + 
                                     ", ttcIndex: " + ttcIndex, e);
             
-            // Fallback: محاولة إنشاء typeface عادي
             try {
                 return Typeface.createFromFile(fontFile);
             } catch (Exception ex) {
@@ -372,4 +309,4 @@ public class VariableFontHelper {
             }
         }
     }
-        }
+}
