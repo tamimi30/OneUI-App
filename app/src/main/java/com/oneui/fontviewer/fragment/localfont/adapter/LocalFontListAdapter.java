@@ -58,10 +58,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final ExecutorService executor;
     private RecyclerView recyclerView;
 
-    
-
-    
-
     private boolean mIsFontPreviewEnabled = true;
 
     private final SortedList<FontFileInfo> mSortedList;
