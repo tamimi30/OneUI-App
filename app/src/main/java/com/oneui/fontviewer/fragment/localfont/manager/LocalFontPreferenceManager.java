@@ -7,27 +7,16 @@ import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-/**
- * LocalFontPreferenceManager - نسخة DataStore
- * تم إزالة SharedPreferences بالكامل واستبدالها بـ SettingsDataStore
- * 
- * التحسينات:
- * - استخدام DataStore للتخزين الدائم
- * - كاش محلي للقراءة السريعة في RecyclerView
- * - عمليات الكتابة غير متزامنة (Async)
- */
 public class LocalFontPreferenceManager {
     
     private static final String TAG = "LocalFontPreferenceManager";
     private final SettingsDataStore dataStore;
     
-    // كاش محلي سريع لتجنب استدعاءات متعددة في RecyclerView
     private String cachedLastOpenedPath;
     
     public LocalFontPreferenceManager(Context context) {
         this.dataStore = SettingsDataStore.getInstance(context);
         
-        // تحميل أولي للكاش
         try {
             cachedLastOpenedPath = dataStore.getLastOpenedFontPath().blockingFirst();
         } catch (Exception e) {
@@ -36,20 +25,14 @@ public class LocalFontPreferenceManager {
         }
     }
     
-    /**
-     * حفظ مسار آخر خط تم فتحه
-     * @param fontPath مسار الخط
-     */
     public void saveLastOpenedFont(String fontPath) {
         if (fontPath == null) {
             Log.w(TAG, "Attempted to save null font path");
             return;
         }
         
-        // تحديث الكاش المحلي فوراً للسرعة
         cachedLastOpenedPath = fontPath;
         
-        // الحفظ في DataStore في الخلفية
         dataStore.setLastOpenedFontPath(fontPath)
                 .subscribeOn(Schedulers.io())
                 .subscribe(
@@ -58,13 +41,8 @@ public class LocalFontPreferenceManager {
                 );
     }
     
-    /**
-     * الحصول على مسار آخر خط تم فتحه
-     * @return مسار الخط أو null إذا لم يكن محفوظاً
-     */
     public String getLastOpenedFont() {
         try {
-            // تحديث من DataStore لضمان الدقة
             cachedLastOpenedPath = dataStore.getLastOpenedFontPath().blockingFirst();
             return cachedLastOpenedPath;
         } catch (Exception e) {
@@ -73,24 +51,14 @@ public class LocalFontPreferenceManager {
         }
     }
     
-    /**
-     * فحص ما إذا كان خط معين هو آخر خط تم فتحه
-     * يستخدم الكاش المحلي للسرعة (مناسب للاستخدام في RecyclerView)
-     * @param fontPath مسار الخط المراد فحصه
-     * @return true إذا كان هذا الخط هو آخر خط تم فتحه
-     */
     public boolean isLastOpenedFont(String fontPath) {
         if (fontPath == null) {
             return false;
         }
         
-        // استخدام الكاش للسرعة
         return cachedLastOpenedPath != null && cachedLastOpenedPath.equals(fontPath);
     }
     
-    /**
-     * مسح آخر خط تم فتحه من التفضيلات
-     */
     public void clearLastOpenedFont() {
         cachedLastOpenedPath = null;
         
@@ -102,10 +70,6 @@ public class LocalFontPreferenceManager {
                 );
     }
     
-    /**
-     * حفظ مسار مجلد الخطوط المختار
-     * @param folderPath المسار المباشر للمجلد
-     */
     public void saveFontFolderPath(String folderPath) {
         if (folderPath == null) {
             Log.w(TAG, "Attempted to save null folder path");
@@ -120,10 +84,6 @@ public class LocalFontPreferenceManager {
                 );
     }
     
-    /**
-     * الحصول على مسار مجلد الخطوط المختار
-     * @return المسار المباشر للمجلد أو null إذا لم يكن محفوظاً
-     */
     public String getFontFolderPath() {
         try {
             return dataStore.getFolderPath().blockingFirst();
@@ -133,17 +93,10 @@ public class LocalFontPreferenceManager {
         }
     }
     
-    /**
-     * فحص ما إذا كان مسار مجلد الخطوط محفوظاً
-     * @return true إذا كان المجلد محفوظاً
-     */
     public boolean hasFontFolderPath() {
         return getFontFolderPath() != null;
     }
     
-    /**
-     * مسح مسار مجلد الخطوط من التفضيلات
-     */
     public void clearFontFolderPath() {
         dataStore.setFolderPath(null)
                 .subscribeOn(Schedulers.io())
