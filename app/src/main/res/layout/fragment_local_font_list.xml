@@ -126,7 +126,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/font_fragment_select_folder_description"
+                android:text="@string/local_fonts_select_folder_description"
                 android:textSize="17sp"
                 android:lineSpacingExtra="5dp"
                 android:textColor="@color/drawer_icon_color"
@@ -136,7 +136,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/select_folder_button"
                 style="@style/OneUI.AppInfoButton"
-                android:text="@string/font_fragment_select_folder_button" />
+                android:text="@string/local_fonts_select_folder_button" />
 
         </LinearLayout>
 
