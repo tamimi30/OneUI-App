@@ -53,7 +53,7 @@ public class FontActionDialogs {
         builder.setTitle(R.string.rename_dialog_title);
         builder.setView(dialogView);
         builder.setPositiveButton(R.string.action_rename, null);
-        builder.setNegativeButton(R.string.action_cancel, null);
+        builder.setNegativeButton(android.R.string.cancel, null);
 
         final AlertDialog dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -157,7 +157,7 @@ public class FontActionDialogs {
         new AlertDialog.Builder(context)
                 .setMessage(message)
                 .setPositiveButton(R.string.action_delete, (dialog, which) -> listener.onDeleteConfirmed())
-                .setNegativeButton(R.string.action_cancel, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
