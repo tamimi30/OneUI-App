@@ -3,6 +3,11 @@ package com.oneui.fontviewer.fragment.localfont.data;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+
 import androidx.lifecycle.LiveData;
 
 import com.oneui.fontviewer.data.dao.FontDao;
@@ -11,49 +16,8 @@ import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.fragment.localfont.fontdirectory.LocalFontDirectory;
 import com.oneui.fontviewer.metadata.FontMetadataExtractor;
-import com.oneui.fontviewer.metadata.FontWeightWidthExtractor; // ★ جديد ★
+import com.oneui.fontviewer.metadata.FontWeightWidthExtractor; 
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-
-/**
- * LocalFontRepository - محدّث لتطبيق "Data Pre-fetching"
- *
- * التحسينات الرئيسية:
- * 1. استخراج فوري للأسماء الحقيقية عند المسح الأول
- * 2. استخراج موازي في الخلفية للخطوط الجديدة
- * 3. ضمان وجود البيانات جاهزة قبل العرض
- * 4. دعم إعادة التسمية والحذف للتحديد المتعدد
- * ★ الإضافة: استخراج فوري وخلفي لوصف الوزن والعرض (weight_width_label) ★
- * ★ الإضافة: دعم كامل لقائمة المفضلة (إضافة، إزالة، استعلام، بحث، ترتيب) ★
- *
- * ★ الإصلاح: توحيد أسماء دوال الفرز للمفضلة لتتطابق مع تعريفاتها في FontDao ★
- *   كانت: getFavoritesSortedByName() → الصحيح: getFavoriteFontsSortedByName()
- *   (نفس الإصلاح مُطبَّق على جميع دوال الفرز الست للمفضلة)
- *
- * ★ إصلاح الأنيميشن (خطة الإصلاح — الخطوة الثانية):
- *   تم نقل التحكم في BatchOperationState من updateFavoriteStatusBatch
- *   إلى LocalFontListViewModel.toggleFavoritesBatch() لضمان أن
- *   setProcessing(false) لا يُستدعى إلا بعد اكتمال الديالوج. ★
- *
- * ★ إصلاح اللاج (خطة الإصلاح — مشكلتا الاستخراج):
- *   استبدال الاستخراج المتوازي في الخلفية بنظام متسلسل مع إشعار الـ ViewModel
- *   عند اكتمال الاستخراج التام عبر OnSyncCompleteListener.onFullExtractionComplete().
- *   هذا يمنع Room من إرسال تحديثات متكررة للواجهة أثناء الاستخراج. ★
- *
- * ★ الإصلاح الجذري للاج والانهيار (خطة الإصلاح — الخطوات 1-4):
- *   تجميع تحديثات قاعدة البيانات في معاملة واحدة (Transaction) بدلاً من
- *   تنفيذ 1400 تحديث متتالي (700 للأسماء + 700 للأوزان)، مما كان يُغرق
- *   Invalidation Tracker في Room ويُنهار التطبيق (OOM Crash).
- *   الإصلاح: تجميع التحديثات في قوائم ثم تطبيقها دفعة واحدة عبر
- *   database.runInTransaction() فلا يُرسل Room سوى تحديثَين فقط. ★
- *
- * ★ إصلاح المجلد الفارغ (خطة الإصلاح — الخطوة 2):
- *   عند اختيار مجلد فارغ، كان الكود يتوقف دون حذف خطوط المجلد القديم.
- *   الإصلاح: حذف الخطوط الموجودة في قاعدة البيانات عند تفريغ المجلد. ★
- */
 public class LocalFontRepository {
 
     private static final String TAG = "LocalFontRepository";
@@ -61,7 +25,7 @@ public class LocalFontRepository {
 
     private final FontDao fontDao;
     private final ExecutorService executorService;
-    private final AppDatabase database; // ★ الإضافة: الاحتفاظ بمرجع لقاعدة البيانات
+    private final AppDatabase database; 
 
     public enum SortType {
         NAME,
@@ -70,7 +34,7 @@ public class LocalFontRepository {
     }
 
     private LocalFontRepository(Context context) {
-        database = AppDatabase.getInstance(context); // ★ حفظ المرجع
+        database = AppDatabase.getInstance(context); 
         fontDao = database.fontDao();
         executorService = AppDatabase.databaseWriteExecutor;
     }
@@ -134,31 +98,15 @@ public class LocalFontRepository {
         return fontDao.searchFonts(isSystem, query);
     }
 
-    // ════════════════════════════════════════════════════════════
-    // ★ Favorites — قائمة المفضلة ★
-    // جميع الدوال الخاصة بالمفضلة مجمّعة في قسم واحد
-    // ════════════════════════════════════════════════════════════
 
-    /**
-     * إرجاع جميع الخطوط المفضلة كـ LiveData لمراقبة التغييرات تلقائياً
-     */
     public LiveData<List<FontEntity>> getFavoriteFonts() {
         return fontDao.getFavoriteFonts();
     }
 
-    /**
-     * إرجاع عدد الخطوط المفضلة كـ LiveData
-     */
     public LiveData<Integer> getFavoriteFontsCount() {
         return fontDao.getFavoriteFontsCount();
     }
 
-    /**
-     * الخطوط المفضلة مرتبة حسب الاسم
-     *
-     * ★ الإصلاح: استخدام الاسم الصحيح للدالة في FontDao ★
-     * getFavoriteFontsSortedByName() بدلاً من getFavoritesSortedByName()
-     */
     public LiveData<List<FontEntity>> getFavoritesSortedByName(boolean ascending) {
         if (ascending) {
             return fontDao.getFavoriteFontsSortedByName();
@@ -167,12 +115,6 @@ public class LocalFontRepository {
         }
     }
 
-    /**
-     * الخطوط المفضلة مرتبة حسب التاريخ
-     *
-     * ★ الإصلاح: استخدام الاسم الصحيح للدالة في FontDao ★
-     * getFavoriteFontsSortedByDate() بدلاً من getFavoritesSortedByDate()
-     */
     public LiveData<List<FontEntity>> getFavoritesSortedByDate(boolean ascending) {
         if (ascending) {
             return fontDao.getFavoriteFontsSortedByDate();
@@ -181,12 +123,6 @@ public class LocalFontRepository {
         }
     }
 
-    /**
-     * الخطوط المفضلة مرتبة حسب الحجم
-     *
-     * ★ الإصلاح: استخدام الاسم الصحيح للدالة في FontDao ★
-     * getFavoriteFontsSortedBySize() بدلاً من getFavoritesSortedBySize()
-     */
     public LiveData<List<FontEntity>> getFavoritesSortedBySize(boolean ascending) {
         if (ascending) {
             return fontDao.getFavoriteFontsSortedBySize();
@@ -195,23 +131,10 @@ public class LocalFontRepository {
         }
     }
 
-    /**
-     * البحث في الخطوط المفضلة
-     */
     public LiveData<List<FontEntity>> searchFavoriteFonts(String query) {
         return fontDao.searchFavoriteFonts(query);
     }
 
-    /**
-     * ★ تحديث حالة المفضلة لخط واحد ★
-     *
-     * تُستخدم عند الضغط على أيقونة المفضلة في القائمة أو
-     * عند تحديد عنصر واحد فقط في وضع التحديد المتعدد
-     *
-     * @param path       مسار الخط المراد تعديل حالته
-     * @param isFavorite true للإضافة إلى المفضلة، false للإزالة
-     * @param listener   مستمع النتيجة (يعمل على خيط الخلفية)
-     */
     public void updateFavoriteStatus(String path, boolean isFavorite, OnCompleteListener listener) {
         executorService.execute(() -> {
             try {
@@ -229,24 +152,6 @@ public class LocalFontRepository {
         });
     }
 
-    /**
-     * ★ تحديث حالة المفضلة لمجموعة خطوط (التحديد المتعدد) ★
-     *
-     * المنطق المتبع (مطابق لـ Samsung Notes):
-     * - إذا كانت العناصر المحددة مزيجاً من مفضلة وغير مفضلة → إضافة الجميع
-     * - إذا كانت جميعها مفضلة → إزالة الجميع
-     * - إذا كانت جميعها غير مفضلة → إضافة الجميع
-     *
-     * ★ إصلاح الأنيميشن: تم نقل استدعاء BatchOperationState إلى
-     *   LocalFontListViewModel.toggleFavoritesBatch() لضمان أن
-     *   setProcessing(false) لا يُستدعى إلا بعد اكتمال الديالوج.
-     *   هذه الدالة مسؤولة فقط عن تحديث قاعدة البيانات وإخبار الـ ViewModel
-     *   بالنتيجة عبر OnCompleteListener. ★
-     *
-     * @param paths      قائمة مسارات الخطوط المراد تعديلها
-     * @param isFavorite true للإضافة إلى المفضلة، false للإزالة
-     * @param listener   مستمع النتيجة
-     */
     public void updateFavoriteStatusBatch(List<String> paths, boolean isFavorite,
                                           OnCompleteListener listener) {
         executorService.execute(() -> {
@@ -254,7 +159,6 @@ public class LocalFontRepository {
                 long now = System.currentTimeMillis();
                     final int[] totalRows = {0};
                     
-                    // ★ تجميع التحديثات في معاملة واحدة لمنع إرسال إشعارات متكررة للواجهة ★
                     database.runInTransaction(() -> {
                         for (String path : paths) {
                             totalRows[0] += fontDao.updateFavoriteStatus(path, isFavorite, now);
@@ -276,9 +180,6 @@ public class LocalFontRepository {
         });
     }
 
-    // ════════════════════════════════════════════════════════════
-    // CRUD Operations
-    // ════════════════════════════════════════════════════════════
 
     public void insert(FontEntity font, OnCompleteListener listener) {
         executorService.execute(() -> {
@@ -392,16 +293,6 @@ public class LocalFontRepository {
         });
     }
 
-    /**
-     * ★ تحديث مسار واسم الخط بعد إعادة التسمية ★
-     *
-     * هذه الدالة تُستخدم بعد إعادة تسمية الملف الفعلي لتحديث
-     * المسار واسم الملف في قاعدة البيانات
-     *
-     * @param oldPath     المسار القديم للملف
-     * @param newPath     المسار الجديد للملف
-     * @param newFileName اسم الملف الجديد
-     */
     public void updatePath(String oldPath, String newPath, String newFileName) {
         executorService.execute(() -> {
             try {
@@ -413,28 +304,13 @@ public class LocalFontRepository {
         });
     }
 
-    /**
-     * ★ التحسين الرئيسي: مزامنة الخطوط مع استخراج فوري للأسماء ★
-     *
-     * الخطوات:
-     * 1. مسح المجلد وإضافة الخطوط لقاعدة البيانات
-     * 2. استخراج الأسماء الحقيقية فوراً للخطوط الصغيرة (< 2MB)
-     * 3. استخراج وصف الوزن والعرض فوراً لجميع الخطوط الجديدة
-     * 4. استخراج متسلسل في الخلفية للخطوط المتبقية، يُشعر الـ ViewModel
-     *    عبر onFullExtractionComplete() عند الانتهاء التام
-     *
-     * النتيجة: البيانات جاهزة في الذاكرة عند فتح القائمة، والواجهة
-     * تُحدَّث دفعة واحدة فقط بعد اكتمال الاستخراج الكامل
-     */
     public void loadAndSyncLocalFonts(String folderPath, OnSyncCompleteListener listener) {
         executorService.execute(() -> {
             try {
-                // ★ استخدام LocalFontDirectory بدلاً من FontDirectoryManager ★
                 List<FontFileInfo> filesInFolder =
                     LocalFontDirectory.getFontsInDirectory(folderPath);
 
                 if (filesInFolder == null || filesInFolder.isEmpty()) {
-                    // ★ الإصلاح: حذف الخطوط القديمة من قاعدة البيانات إذا كان المجلد الجديد فارغاً ★
                     List<FontEntity> existingFonts = fontDao.getLocalFontsSync();
                     int deletedCount = 0;
                     if (existingFonts != null && !existingFonts.isEmpty()) {
@@ -462,8 +338,7 @@ public class LocalFontRepository {
                     if (existing == null) {
                         FontEntity newFont = createFontEntityFromFile(fileInfo, false);
 
-                        // ★ استخراج فوري للأسماء الحقيقية للخطوط الصغيرة ★
-                        if (fileInfo.getSize() < 2 * 1024 * 1024) { // أقل من 2MB
+                        if (fileInfo.getSize() < 2 * 1024 * 1024) { 
                             try {
                                 File fontFile = new File(fileInfo.getPath());
                                 String realName = FontMetadataExtractor.extractFontName(fontFile, 0);
@@ -477,9 +352,6 @@ public class LocalFontRepository {
                             }
                         }
 
-                        // ★ استخراج فوري لوصف الوزن والعرض لجميع الخطوط الجديدة ★
-                        // العملية سريعة لأنها تقرأ بضعة بايتات فقط من جدول OS/2
-                        // ولا تتأثر بحجم الخط، لذا تُطبَّق على جميع الخطوط وليس الصغيرة فحسب
                         try {
                             File fontFile = new File(fileInfo.getPath());
                             String weightWidthLabel = FontWeightWidthExtractor.extract(fontFile, 0);
@@ -514,11 +386,6 @@ public class LocalFontRepository {
                     listener.onSyncComplete(fontsToAdd.size(), updated, deleted);
                 }
 
-                // ★ تشغيل الاستخراج بشكل متسلسل وإخبار الـ ViewModel عند الانتهاء التام ★
-                // السبب: الاستخراج المتوازي كان يُرسل 700 تحديث متتالي للـ Room LiveData،
-                // كل تحديث يُعيد إرسال القائمة الكاملة للواجهة → Over-emission → لاج شديد.
-                // الحل: نُشغّل الاستخراجَين بشكل متسلسل في خيط واحد، ثم نُشعر الـ ViewModel
-                // عبر onFullExtractionComplete() الذي يرفع الحجز ويُرسل البيانات دفعة واحدة.
                 executorService.execute(() -> {
                     extractRealNamesSync();
                     extractWeightWidthSync();
@@ -575,19 +442,11 @@ public class LocalFontRepository {
         return false;
     }
 
-    /**
-     * ★ استخراج موازي ذكي مع أولوية للخطوط الصغيرة (الأسماء الحقيقية) ★
-     *
-     * ملاحظة: هذه الدالة لا تُستدعى من loadAndSyncLocalFonts بعد الإصلاح.
-     * تم استبدالها بـ extractRealNamesSync() لمنع Over-emission.
-     * محفوظة للاستخدام المستقل إن احتجنا لاستخراج خلفي منفصل.
-     */
     private void extractRealNamesInBackgroundPrioritized(String folderPath) {
         executorService.execute(() -> {
             try {
                 List<FontEntity> fontsWithoutNames = fontDao.getFontsWithoutRealName(500);
 
-                // ترتيب حسب الحجم (الأصغر أولاً)
                 fontsWithoutNames.sort((f1, f2) -> Long.compare(f1.getSize(), f2.getSize()));
 
                 int extracted = 0;
@@ -624,24 +483,11 @@ public class LocalFontRepository {
         });
     }
 
-    /**
-     * ★ استخراج وصف الوزن والعرض في الخلفية للخطوط المحلية التي لم تُعالَج بعد ★
-     *
-     * تُستدعى بعد كل مزامنة للتأكد من أن جميع الخطوط — بما فيها الموجودة مسبقاً
-     * في قاعدة البيانات قبل إضافة هذه الميزة — تحمل وصفاً لوزنها وعرضها.
-     * تستخدم getFontsWithoutWeightWidth() للعثور على الخطوط غير المعالَجة،
-     * وتُرتّبها من الأصغر إلى الأكبر للحصول على أسرع نتيجة أولى.
-     *
-     * ملاحظة: هذه الدالة لا تُستدعى من loadAndSyncLocalFonts بعد الإصلاح.
-     * تم استبدالها بـ extractWeightWidthSync() لمنع Over-emission.
-     * محفوظة للاستخدام المستقل إن احتجنا لاستخراج خلفي منفصل.
-     */
     private void extractWeightWidthInBackground() {
         executorService.execute(() -> {
             try {
                 List<FontEntity> fontsWithoutLabel = fontDao.getFontsWithoutWeightWidth(500);
 
-                // ترتيب حسب الحجم (الأصغر أولاً) لضمان أسرع استجابة
                 fontsWithoutLabel.sort((f1, f2) -> Long.compare(f1.getSize(), f2.getSize()));
 
                 int extracted = 0;
@@ -674,28 +520,12 @@ public class LocalFontRepository {
         });
     }
 
-    /**
-     * ★ دالة متزامنة لاستخراج الأسماء الحقيقية بتجميع التحديثات في معاملة واحدة ★
-     *
-     * تُستدعى من داخل خيط executorService في loadAndSyncLocalFonts،
-     * لذا لا تحتاج إلى إنشاء خيط إضافي. التنفيذ المتسلسل هنا هو
-     * الحل الجذري لمشكلة Over-emission: Room لا يُرسل تحديثات للواجهة
-     * إلا عند انتهاء هذه الدالة وانتهاء extractWeightWidthSync()،
-     * حينها يستدعي الـ ViewModel onFullExtractionComplete() ويرسل
-     * البيانات الكاملة للواجهة دفعة واحدة بدون لاج.
-     *
-     * ★ الإصلاح الجذري للاج: تجميع جميع التحديثات في قائمة أولاً ثم تطبيقها
-     *   دفعة واحدة عبر database.runInTransaction() بدلاً من تنفيذ 700 تحديث
-     *   منفرد يُغرق Invalidation Tracker في Room ويُنهار التطبيق (OOM Crash). ★
-     */
     private void extractRealNamesSync() {
         try {
             List<FontEntity> fontsWithoutNames = fontDao.getFontsWithoutRealName(500);
 
-            // ترتيب حسب الحجم (الأصغر أولاً)
             fontsWithoutNames.sort((f1, f2) -> Long.compare(f1.getSize(), f2.getSize()));
 
-            // ★ تجميع التحديثات بدلاً من تحديث قاعدة البيانات عنصراً تلو الآخر ★
             class NameUpdate {
                 String path; String realName;
                 NameUpdate(String path, String realName) { this.path = path; this.realName = realName; }
@@ -711,7 +541,6 @@ public class LocalFontRepository {
                                 fontFile, font.getTtcIndex());
                             if (realName != null && !realName.isEmpty() &&
                                 !realName.equals("Unknown Font")) {
-                                // ★ تخزين التحديث بدلاً من تنفيذه فوراً ★
                                 updates.add(new NameUpdate(font.getPath(), realName));
                             }
                         }
@@ -721,8 +550,6 @@ public class LocalFontRepository {
                 }
             }
 
-            // ★ تطبيق جميع التحديثات في معاملة واحدة (Transaction) ★
-            // هذا يمنع Room من إرسال مئات التحديثات ويحل مشكلة اختناق المعالج والانهيار كلياً
             if (!updates.isEmpty()) {
                 database.runInTransaction(() -> {
                     long now = System.currentTimeMillis();
@@ -739,26 +566,12 @@ public class LocalFontRepository {
         }
     }
 
-    /**
-     * ★ دالة متزامنة لاستخراج وصف الوزن والعرض بتجميع التحديثات في معاملة واحدة ★
-     *
-     * تُستدعى من داخل خيط executorService في loadAndSyncLocalFonts
-     * بعد انتهاء extractRealNamesSync()، لضمان التنفيذ المتسلسل الكامل.
-     * عند انتهائها يُستدعى listener.onFullExtractionComplete() فيرفع الـ ViewModel
-     * الحجز ويُرسل البيانات الكاملة للواجهة دفعة واحدة بدون لاج.
-     *
-     * ★ الإصلاح الجذري للاج: تجميع جميع التحديثات في قائمة أولاً ثم تطبيقها
-     *   دفعة واحدة عبر database.runInTransaction() بدلاً من تنفيذ 700 تحديث
-     *   منفرد يُغرق Invalidation Tracker في Room ويُنهار التطبيق (OOM Crash). ★
-     */
     private void extractWeightWidthSync() {
         try {
             List<FontEntity> fontsWithoutLabel = fontDao.getFontsWithoutWeightWidth(500);
 
-            // ترتيب حسب الحجم (الأصغر أولاً) لضمان أسرع استجابة
             fontsWithoutLabel.sort((f1, f2) -> Long.compare(f1.getSize(), f2.getSize()));
 
-            // ★ تجميع التحديثات ★
             class LabelUpdate {
                 String path; String label;
                 LabelUpdate(String path, String label) { this.path = path; this.label = label; }
@@ -780,7 +593,6 @@ public class LocalFontRepository {
                 }
             }
 
-            // ★ تنفيذ جميع التحديثات دفعة واحدة في معاملة واحدة ★
             if (!updates.isEmpty()) {
                 database.runInTransaction(() -> {
                     long now = System.currentTimeMillis();
@@ -803,6 +615,6 @@ public class LocalFontRepository {
 
     public interface OnSyncCompleteListener {
         void onSyncComplete(int added, int updated, int deleted);
-        void onFullExtractionComplete(); // ★ إضافة جديدة لمعرفة انتهاء استخراج الأسماء والأوزان
+        void onFullExtractionComplete(); 
     }
-                                }
+    }
