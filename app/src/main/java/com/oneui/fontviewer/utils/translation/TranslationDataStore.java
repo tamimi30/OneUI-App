@@ -12,10 +12,6 @@ import androidx.datastore.rxjava3.RxDataStore;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-/**
- * TranslationDataStore - Separate DataStore for translation cache
- * Stores translated text to avoid repeated API calls
- */
 public class TranslationDataStore {
     
     private static final String TAG = "TranslationDataStore";
@@ -45,12 +41,6 @@ public class TranslationDataStore {
         return INSTANCE;
     }
     
-    /**
-     * Get cached translation
-     * 
-     * @param key Cache key (generated from text + language)
-     * @return Single with translation text or empty string if not found
-     */
     public Single<String> getTranslation(String key) {
         if (key == null || key.isEmpty()) {
             return Single.just("");
@@ -66,12 +56,6 @@ public class TranslationDataStore {
                 .onErrorReturnItem("");
     }
     
-    /**
-     * Save translation to cache
-     * 
-     * @param key Cache key
-     * @param value Translated text
-     */
     public void saveTranslation(String key, String value) {
         if (key == null || key.isEmpty() || value == null || value.isEmpty()) {
             return;
@@ -93,9 +77,6 @@ public class TranslationDataStore {
         );
     }
     
-    /**
-     * Check cache size and clear if too large
-     */
     private void checkAndCleanCache() {
         dataStore.data()
                 .firstOrError()
@@ -112,9 +93,6 @@ public class TranslationDataStore {
                 );
     }
     
-    /**
-     * Clear all cached translations
-     */
     public void clearCache() {
         dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -128,11 +106,6 @@ public class TranslationDataStore {
         );
     }
     
-    /**
-     * Get current cache size
-     * 
-     * @return Single with number of cached items
-     */
     public Single<Integer> getCacheSize() {
         return dataStore.data()
                 .firstOrError()
