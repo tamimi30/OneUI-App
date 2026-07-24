@@ -16,11 +16,6 @@ import java.util.Set;
 
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
 
-/**
- * SystemFontManager - مدير خطوط النظام
- * يتعامل مع SystemFonts API للحصول على قائمة خطوط النظام المتاحة
- * يتطلب Android API 29 أو أعلى
- */
 public class SystemFontManager {
     
     private static final String TAG = "SystemFontManager";
@@ -36,16 +31,10 @@ public class SystemFontManager {
         return instance;
     }
     
-    /**
-     * التحقق من توفر واجهة SystemFonts
-     */
     public boolean isSystemFontsAvailable() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
     }
     
-    /**
-     * الحصول على قائمة جميع خطوط النظام المتاحة
-     */
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public List<SystemFontInfo> getSystemFonts() {
         if (!isSystemFontsAvailable()) {
@@ -130,9 +119,6 @@ public class SystemFontManager {
         return fontInfoList;
     }
     
-    /**
-     * استخراج معلومات المحاور للخطوط المتغيرة
-     */
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private String extractAxesInfo(Font font) {
         try {
@@ -151,9 +137,6 @@ public class SystemFontManager {
         return null;
     }
     
-    /**
-     * البحث عن خط معين بالاسم
-     */
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public SystemFontInfo findFontByName(String fontName) {
         if (fontName == null || fontName.isEmpty()) {
@@ -171,9 +154,6 @@ public class SystemFontManager {
         return null;
     }
     
-    /**
-     * البحث عن خط معين بالمسار
-     */
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public SystemFontInfo findFontByPath(String fontPath) {
         if (fontPath == null || fontPath.isEmpty()) {
@@ -191,9 +171,6 @@ public class SystemFontManager {
         return null;
     }
     
-    /**
-     * عد الخطوط المتغيرة في النظام
-     */
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public int countVariableFonts() {
         List<SystemFontInfo> allFonts = getSystemFonts();
@@ -208,9 +185,6 @@ public class SystemFontManager {
         return count;
     }
     
-    /**
-     * الحصول على قائمة الخطوط المتغيرة فقط
-     */
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public List<SystemFontInfo> getVariableFonts() {
         List<SystemFontInfo> allFonts = getSystemFonts();
@@ -225,9 +199,6 @@ public class SystemFontManager {
         return variableFonts;
     }
     
-    /**
-     * الحصول على معلومات إحصائية عن خطوط النظام
-     */
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public SystemFontStatistics getStatistics() {
         List<SystemFontInfo> allFonts = getSystemFonts();
@@ -254,9 +225,6 @@ public class SystemFontManager {
         );
     }
     
-    /**
-     * فئة لتخزين الإحصائيات
-     */
     public static class SystemFontStatistics {
         public final int totalFonts;
         public final int variableFonts;
@@ -280,4 +248,4 @@ public class SystemFontManager {
             }
         }
     }
-    }
+}
