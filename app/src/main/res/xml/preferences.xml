@@ -2,10 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- ═══════════════════════════════════════════════════════════════
-         قسم الثيم (Theme Section) - أول قسم في الإعدادات
-         يستخدم HorizontalRadioPreference لعرض الصور
-         ═══════════════════════════════════════════════════════════════ -->
     <PreferenceCategory
         android:title="@string/settings_theme">
 
@@ -27,10 +23,6 @@
 
     </PreferenceCategory>
 
-    <!-- ═══════════════════════════════════════════════════════════════
-         قسم عام (General Section)
-         يضم: اللغة، نمط الخط، معاينة الخطوط، ترجمة معلومات الخط، نص المعاينة
-         ═══════════════════════════════════════════════════════════════ -->
     <PreferenceCategory
         android:title="@string/settings_general">
 
@@ -68,9 +60,6 @@
 
     </PreferenceCategory>
 
-    <!-- ═══════════════════════════════════════════════════════════════
-         قسم حول التطبيق والتواصل (About Section) - بدون عنوان
-         ═══════════════════════════════════════════════════════════════ -->
     <PreferenceCategory>
 
         <Preference
@@ -78,18 +67,11 @@
             android:persistent="false"
             android:title="@string/about_title" />
 
-        <!-- ★ خيار الإبلاغ عن خطأ أو اقتراح تحسين ★
-             عند الضغط: يفتح نافذة اختيار تطبيق بريد إلكتروني
-             يتم التعامل مع الضغط في SettingsFragment.initPreferences() -->
         <Preference
             android:key="report_issue"
             android:persistent="false"
             android:title="@string/settings_report_issue" />
 
     </PreferenceCategory>
-
-    <!-- ★ تمّ حذف InsetPreferenceCategory (footer_space) ★
-         PreferenceRelatedCard تضيف الفراغ السفلي تلقائياً عند عرضها.
-         الإبقاء على footer_space يُسبّب فراغاً مزدوجاً غير مرغوب فيه. -->
 
 </PreferenceScreen>
