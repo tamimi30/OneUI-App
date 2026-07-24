@@ -69,12 +69,8 @@ public class TrashViewModel extends AndroidViewModel {
 
 
     private final MutableLiveData<OperationProgress> _operationProgress = new MutableLiveData<>();
-
     private final MutableLiveData<OperationResult> _operationResult = new MutableLiveData<>();
-
     private final MutableLiveData<Boolean> _isLoading = new MutableLiveData<>(false);
-
-
     private AtomicBoolean cancelFlag = new AtomicBoolean(false);
 
 
@@ -119,7 +115,7 @@ public class TrashViewModel extends AndroidViewModel {
         final long startTime = System.currentTimeMillis();
 
         String movingTitle = getApplication().getResources()
-                .getQuantityString(R.plurals.progress_moving_to_trash, fonts.size());
+        .getQuantityString(R.plurals.progress_moving_to_trash, fonts.size());
         Intent moveServiceIntent = new Intent(getApplication(), OperationForegroundService.class);
         moveServiceIntent.putExtra(OperationForegroundService.EXTRA_NOTIF_ID, TrashActionDialogs.NOTIF_ID_MOVE);
         moveServiceIntent.putExtra(OperationForegroundService.EXTRA_TITLE, movingTitle);
