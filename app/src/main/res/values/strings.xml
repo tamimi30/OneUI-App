@@ -133,4 +133,8 @@
     
     <string name="font_viewer_error_loading_font">Error loading font file</string>
 
+	<string name="settings_preview_text_summary">Edit the text shown in preview</string>
+
+	
+
 </resources>
