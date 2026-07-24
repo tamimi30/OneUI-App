@@ -30,6 +30,7 @@
     <string name="settings_report_issue_email_subject">Bug Report / Improvement Suggestion</string>
     <string name="feedback_email" translatable="false">feedback@example.com</string>
     <string name="about_button_licenses">Source licenses</string>
+	<string name="about_button_status">Status</string>
     
     <!-- الرئيسية -->
     <string name="drawer_home">Home</string>
