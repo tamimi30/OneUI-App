@@ -594,7 +594,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                     String newPath = oldPath.substring(0, oldPath.lastIndexOf("/") + 1) + newFileName;
                     int newPosition = mAdapter.findPositionByPath(newPath);
                     if (newPosition != -1 && mRecyclerView != null) {
-                        mRecyclerView.smoothScrollToPosition(newPosition);
+                        mRecyclerView.scrollToPosition(newPosition);
                     }
                 }, 300);
 
