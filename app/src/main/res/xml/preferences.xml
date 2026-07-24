@@ -19,7 +19,7 @@
             android:key="theme_auto"
             android:defaultValue="true"
             android:persistent="false"
-            android:title="@string/settings_theme_system" />
+            android:title="@string/settings_system_default" />
 
     </PreferenceCategory>
 
