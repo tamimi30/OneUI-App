@@ -624,7 +624,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         AlertDialog confirmDialog = new AlertDialog.Builder(mContext)
                 .setMessage(message)
                 .setPositiveButton(R.string.action_move_to_trash, null) 
-                .setNegativeButton(R.string.action_cancel, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .create();
 
         confirmDialog.setOnShowListener(d -> {
@@ -654,7 +654,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         mCurrentProgressDialog.setButton(
                 ProgressDialog.BUTTON_NEGATIVE,
-                getString(R.string.action_cancel),
+                getString(android.R.string.cancel),
                 (dialog, which) -> {
                     mViewModel.cancelTrashOperation();
                     BatchOperationState.requestCancel();
@@ -741,7 +741,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         mCurrentProgressDialog.setButton(
                 ProgressDialog.BUTTON_NEGATIVE,
-                getString(R.string.action_cancel),
+                getString(android.R.string.cancel),
                 (dialog, which) -> {
                     BatchOperationState.requestCancel();
                     mViewModel.cancelTrashOperation();
