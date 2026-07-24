@@ -63,6 +63,7 @@
     <string name="action_favorite">Favorite</string>
     <string name="action_unfavorite">Unfavorite</string>
     <string name="action_rename">Rename</string>
+    <string name="rename_dialog_title">Rename font</string>
     <string name="action_delete">Delete</string>
     <string name="action_delete_all">Delete all</string>
     <string name="error_rename_failed">The renaming failed</string>
@@ -115,5 +116,18 @@
     <string name="exit_on_double_back">Press again to exit</string>
     <string name="navigate_up">Navigate up</string>
     <string name="no_fonts_found"></string>
+    
+    
+    
+    
+    <string name="delete_single_confirmation">Do you want to delete 1 file?</string>
+    
+    <string name="delete_all_confirmation">Do you want to delete all files?</string>
+    
+    <string name="delete_multiple_confirmation">Do you want to delete %d files?</string>
+    
+    <string name="font_fragment_permission_denied">Storage permission is required to search for font files on your device.\n\nYou can grant this permission in Settings, or manually copy font files to Documents/FontViewer+ folder.</string>
+    
+    <string name="font_viewer_error_loading_font">Error loading font file</string>
 
 </resources>
