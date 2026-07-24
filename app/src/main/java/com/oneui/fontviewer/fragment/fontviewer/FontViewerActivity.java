@@ -9,8 +9,15 @@ import android.os.Looper;
 import android.widget.ImageView;
 import android.view.animation.OvershootInterpolator;
 
+import java.util.Map;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import dev.oneuiproject.oneui.dialog.ProgressDialog;
+import dev.oneuiproject.oneui.layout.ToolbarLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.BaseActivity;
@@ -19,13 +26,6 @@ import com.oneui.fontviewer.dialog.FontErrorDialog;
 import com.oneui.fontviewer.utils.translation.TranslationService;
 import com.oneui.fontviewer.utils.FileUtils;
 import com.oneui.fontviewer.widget.TextDrawable;
-
-import java.util.Map;
-
-import dev.oneuiproject.oneui.dialog.ProgressDialog;
-import dev.oneuiproject.oneui.layout.ToolbarLayout;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class FontViewerActivity extends BaseActivity
         implements FontViewerFragment.OnFontChangedListener {
