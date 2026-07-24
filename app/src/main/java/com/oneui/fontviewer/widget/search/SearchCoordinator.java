@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.widget.ActionMenuView;
-
+import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+
+import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.AppScreen;
@@ -24,7 +26,6 @@ import com.oneui.fontviewer.fragment.localfont.LocalFontListFragment;
 import com.oneui.fontviewer.fragment.systemfont.SystemFontListFragment;
 import com.oneui.fontviewer.fragment.trash.TrashFragment; 
 
-import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 public class SearchCoordinator {
 
@@ -387,13 +388,13 @@ public class SearchCoordinator {
         }
     }
 
-    private androidx.appcompat.widget.Toolbar findToolbar(ViewGroup root) {
+    private Toolbar findToolbar(ViewGroup root) {
         for (int i = 0; i < root.getChildCount(); i++) {
             View child = root.getChildAt(i);
-            if (child instanceof androidx.appcompat.widget.Toolbar) {
-                return (androidx.appcompat.widget.Toolbar) child;
+            if (child instanceof Toolbar) {
+                return (Toolbar) child;
             } else if (child instanceof ViewGroup) {
-                androidx.appcompat.widget.Toolbar found = findToolbar((ViewGroup) child);
+                Toolbar found = findToolbar((ViewGroup) child);
                 if (found != null) return found;
             }
         }
