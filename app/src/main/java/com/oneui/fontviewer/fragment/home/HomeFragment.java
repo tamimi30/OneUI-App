@@ -33,7 +33,6 @@ public class HomeFragment extends Fragment {
     private ViewGroup mBottomContainer;
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
-    // ★ الإصلاح: تعريف المستمع كمتغير على مستوى الكلاس لتجنب تكراره وتسرب الذاكرة ★
     private AppBarOffsetListener mOffsetListener;
 
     @Nullable
@@ -69,7 +68,6 @@ public class HomeFragment extends Fragment {
         mSwipeUpContainer = view.findViewById(R.id.swipe_up_container);
         mBottomContainer = view.findViewById(R.id.bottom_container);
 
-        // ★ تهيئة المستمع مرة واحدة فقط هنا ★
         mOffsetListener = new AppBarOffsetListener();
     }
 
@@ -94,7 +92,6 @@ public class HomeFragment extends Fragment {
             mAppBarLayout.seslSetCustomHeightProportion(true, 0.5f);
             mEnableBackToHeader = true;
 
-            // ★ الإصلاح: إزالة المستمع أولاً ثم إضافته لتجنب تكراره في كل تدوير ★
             if (mOffsetListener != null) {
                 mAppBarLayout.removeOnOffsetChangedListener(mOffsetListener);
                 mAppBarLayout.addOnOffsetChangedListener(mOffsetListener);
@@ -108,8 +105,6 @@ public class HomeFragment extends Fragment {
                 lp.height = getResources().getDisplayMetrics().heightPixels / 2;
             }
         } else {
-            // ★ الإصلاح الجوهري: إزالة المستمع في الوضع الأفقي حتى لا يحسب Alpha
-            // بقيم غير صالحة ويُخفي المحتوى بعد ضبط setAlpha(1f) ★
             if (mOffsetListener != null) {
                 mAppBarLayout.removeOnOffsetChangedListener(mOffsetListener);
             }
@@ -151,7 +146,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // ★ الإصلاح: إزالة المستمع بشكل نظيف لتجنب تسرب الذاكرة ★
         if (mAppBarLayout != null && mOffsetListener != null) {
             mAppBarLayout.removeOnOffsetChangedListener(mOffsetListener);
         }
