@@ -12,10 +12,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 
-/**
- * LocalFontPermissionManager - مدير الصلاحيات المحدث للوصول المباشر للملفات
- * يدعم جميع إصدارات Android من 6 إلى أحدث الإصدارات
- */
 public class LocalFontPermissionManager {
     
     private static final String TAG = "LocalFontPermissionManager";
@@ -46,29 +42,20 @@ public class LocalFontPermissionManager {
         this.listener = listener;
     }
     
-    /**
-     * فحص شامل للصلاحيات المطلوبة حسب إصدار Android
-     */
     public boolean hasRequiredPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // Android 11+: نحتاج MANAGE_EXTERNAL_STORAGE للوصول الكامل
             return Environment.isExternalStorageManager();
         } else {
-            // Android 8-10: نحتاج READ_EXTERNAL_STORAGE
             return ContextCompat.checkSelfPermission(context, 
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         }
     }
     
-    /**
-     * طلب الصلاحيات المناسبة حسب إصدار Android
-     */
     public void requestPermissions() {
         if (fragment == null) {
             throw new IllegalStateException("Fragment is required to request permissions");
         }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // Android 11+: طلب MANAGE_EXTERNAL_STORAGE
             if (!Environment.isExternalStorageManager()) {
                 if (listener != null) {
                     listener.onManageStoragePermissionRequired();
@@ -76,7 +63,6 @@ public class LocalFontPermissionManager {
                 requestManageStoragePermission();
             }
         } else {
-            // Android 8-10: طلب READ_EXTERNAL_STORAGE
             fragment.requestPermissions(
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                 STORAGE_PERMISSION_REQUEST_CODE
@@ -84,9 +70,6 @@ public class LocalFontPermissionManager {
         }
     }
     
-    /**
-     * طلب صلاحية MANAGE_EXTERNAL_STORAGE لـ Android 11+
-     */
     private void requestManageStoragePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {
@@ -97,7 +80,6 @@ public class LocalFontPermissionManager {
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Failed to open MANAGE_EXTERNAL_STORAGE settings", e);
-                // Fallback: فتح صفحة الإعدادات العامة
                 try {
                     Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
                     if (fragment != null) {
@@ -126,9 +108,6 @@ public class LocalFontPermissionManager {
         return false;
     }
     
-    /**
-     * معالجة نتيجة طلب MANAGE_EXTERNAL_STORAGE
-     */
     public boolean handleActivityResult(int requestCode) {
         if (requestCode == MANAGE_STORAGE_REQUEST_CODE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
