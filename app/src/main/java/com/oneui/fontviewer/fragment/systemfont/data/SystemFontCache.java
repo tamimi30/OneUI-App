@@ -12,23 +12,6 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * SystemFontCache - النسخة النهائية المحسّنة
- * 
- * التحسينات:
- * 1. استخدام Room Database بدلاً من SharedPreferences ✓
- * 2. استخدام resetSystemFontsCacheStatus() بدلاً من loop ✓
- * 3. تحميل ذكي مبني على الأولويات ✓
- * 4. أداء محسّن للغاية ✓
- *
- * ★ إصلاح مشكلة السكرول (توحيد الأداء):
- *   تم تهميش استدعاءات markAsCachedInDatabase و recordAccessInDatabase
- *   في دالتَي getTypeface و getTypefaceWithWeight.
- *   السبب: هذه الاستدعاءات كانت تكتب في قاعدة البيانات أثناء كل تمرير على الشاشة،
- *   مما يُرسل تحديثات LiveData متكررة ويُجبر الـ Adapter على إعادة الرسم
- *   (Over-emission) ويُسبب اللاج أثناء التمرير.
- *   تسجيل الاستخدام الحقيقي يتم الآن فقط عند النقر على الخط (recordFontAccess في ViewModel). ★
- */
 public class SystemFontCache {
     
     private static final String TAG = "SystemFontCache";
@@ -67,9 +50,6 @@ public class SystemFontCache {
         isInitialized = true;
     }
     
-    /**
-     * ★ تحميل ذكي: خطوط النظام الأكثر استخداماً أولاً ★
-     */
     private void preloadCachedFontsFromDatabase() {
         new Thread(() -> {
             try {
@@ -82,7 +62,6 @@ public class SystemFontCache {
                     return;
                 }
                 
-                // تصفية: خطوط النظام فقط
                 cachedSystemFonts.removeIf(font -> !font.isSystemFont());
                 
                 if (cachedSystemFonts.isEmpty()) {
@@ -94,7 +73,6 @@ public class SystemFontCache {
                 
                 int loadedCount = 0;
                 
-                // ترتيب ذكي: الأكثر استخداماً أولاً
                 cachedSystemFonts.sort((f1, f2) -> {
                     int countCompare = Integer.compare(f2.getAccessCount(), f1.getAccessCount());
                     if (countCompare != 0) return countCompare;
@@ -137,11 +115,6 @@ public class SystemFontCache {
         
         Typeface cachedTypeface = memoryCache.get(fontPath);
         if (cachedTypeface != null) {
-            // ❌ تم تهميشه: إيقاف الكتابة في قاعدة البيانات أثناء التمرير
-            // كانت هذه الاستدعاءات تُرسل تحديثات LiveData متكررة مما يُسبب
-            // Over-emission ويُجبر الـ Adapter على إعادة الرسم أثناء السكرول.
-            // تسجيل الاستخدام الحقيقي يتم الآن فقط عند النقر (recordFontAccess في ViewModel).
-            // recordAccessInDatabase(fontPath);
             return cachedTypeface;
         }
         
@@ -149,9 +122,6 @@ public class SystemFontCache {
         
         if (typeface != null) {
             memoryCache.put(fontPath, typeface);
-            // ❌ تم تهميشه: إيقاف الكتابة في قاعدة البيانات أثناء التمرير
-            // نفس السبب أعلاه — يُوقف Over-emission ويُحسّن سلاسة التمرير.
-            // markAsCachedInDatabase(fontPath);
         }
         
         return typeface;
@@ -168,9 +138,6 @@ public class SystemFontCache {
         
         if (typeface != null) {
             Log.d(TAG, "Successfully created typeface with weight: " + weight);
-            // ❌ تم تهميشه: إيقاف الكتابة في قاعدة البيانات أثناء التمرير
-            // نفس السبب — يُوقف Over-emission ويُحسّن سلاسة التمرير من المرة الأولى.
-            // markAsCachedInDatabase(fontPath);
         } else {
             Log.e(TAG, "Failed to create typeface with weight: " + weight);
         }
@@ -290,9 +257,6 @@ public class SystemFontCache {
         Log.d(TAG, "Memory cache cleared");
     }
     
-    /**
-     * ★ النسخة المحسّنة: عملية SQL واحدة بدلاً من loop ★
-     */
     public void clearCache() {
         memoryCache.clear();
         weightedCache.clear();
@@ -302,7 +266,6 @@ public class SystemFontCache {
                 try {
                     long timestamp = System.currentTimeMillis();
                     
-                    // ★ عملية واحدة فقط تحدث كل خطوط النظام دفعة واحدة ★
                     int rowsUpdated = database.fontDao().resetSystemFontsCacheStatus(timestamp);
                     
                     Log.d(TAG, "★ Full cache cleared efficiently: " + rowsUpdated + " rows updated");
@@ -353,4 +316,4 @@ public class SystemFontCache {
             Log.d(TAG, "Preloaded " + loadedCount + " system fonts into memory");
         }, "SystemFontCache-BackgroundPreload").start();
     }
-                        }
+}
