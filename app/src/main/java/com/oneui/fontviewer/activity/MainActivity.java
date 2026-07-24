@@ -278,7 +278,7 @@ public class MainActivity extends BaseActivity
     private void setupDrawerButton() {
         if (mDrawerLayout != null) {
             mDrawerLayout.setDrawerButtonIcon(getDrawable(dev.oneuiproject.oneui.R.drawable.ic_oui_settings_outline));
-            mDrawerLayout.setDrawerButtonTooltip(getText(R.string.title_settings));
+            mDrawerLayout.setDrawerButtonTooltip(getText(R.string.drawer_settings));
             mDrawerLayout.setDrawerButtonOnClickListener(v -> openSettingsActivity());
         }
     }
