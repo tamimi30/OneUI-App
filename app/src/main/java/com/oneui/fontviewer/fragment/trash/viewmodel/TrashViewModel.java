@@ -6,6 +6,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
@@ -19,18 +22,12 @@ import com.oneui.fontviewer.utils.notification.BatchOperationState;
 import com.oneui.fontviewer.utils.notification.OperationForegroundService; 
 import com.oneui.fontviewer.R;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class TrashViewModel extends AndroidViewModel {
 
     private static final String TAG = "TrashViewModel";
-
     private static final long MIN_DIALOG_DURATION_MS = 2500;
-
     private final TrashRepository repository;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-
 
     public enum OperationType {
         MOVE_TO_TRASH,       
@@ -38,7 +35,6 @@ public class TrashViewModel extends AndroidViewModel {
         DELETE_PERMANENTLY,  
         EMPTY_TRASH          
     }
-
 
     public static class OperationProgress {
         public final int           current;       
@@ -67,12 +63,10 @@ public class TrashViewModel extends AndroidViewModel {
         }
     }
 
-
     private final MutableLiveData<OperationProgress> _operationProgress = new MutableLiveData<>();
     private final MutableLiveData<OperationResult> _operationResult = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _isLoading = new MutableLiveData<>(false);
     private AtomicBoolean cancelFlag = new AtomicBoolean(false);
-
 
     public TrashViewModel(@NonNull Application application) {
         super(application);
@@ -80,7 +74,6 @@ public class TrashViewModel extends AndroidViewModel {
 
         repository.deleteExpiredItems(null);
     }
-
 
     public LiveData<List<FontEntity>> getTrashedFontsLiveData() {
         return repository.getTrashedFonts();
@@ -102,12 +95,10 @@ public class TrashViewModel extends AndroidViewModel {
         return _isLoading;
     }
 
-
     public void moveToTrash(@NonNull List<FontEntity> fonts) {
         if (fonts.isEmpty()) return;
 
         BatchOperationState.setProcessing(true);
-
         cancelFlag = new AtomicBoolean(false);
         BatchOperationState.setCancelFlag(cancelFlag);
         _isLoading.postValue(true);
@@ -159,16 +150,13 @@ public class TrashViewModel extends AndroidViewModel {
         );
     }
 
-
     public void restoreFonts(@NonNull List<FontEntity> fonts) {
         if (fonts.isEmpty()) return;
 
         BatchOperationState.setProcessing(true, 5);
-
         cancelFlag = new AtomicBoolean(false);
         BatchOperationState.setCancelFlag(cancelFlag);
         _isLoading.postValue(true);
-
         final long startTime = System.currentTimeMillis();
 
         String restoreTitle = getApplication().getResources()
@@ -219,7 +207,6 @@ public class TrashViewModel extends AndroidViewModel {
         );
     }
 
-
     public void deletePermanently(@NonNull List<FontEntity> fonts) {
         if (fonts.isEmpty()) return;
 
@@ -239,7 +226,6 @@ public class TrashViewModel extends AndroidViewModel {
         deleteServiceIntent.putExtra(OperationForegroundService.EXTRA_TOTAL, fonts.size());
         deleteServiceIntent.putExtra(OperationForegroundService.EXTRA_SOURCE_FRAGMENT, 5);
         ContextCompat.startForegroundService(getApplication(), deleteServiceIntent);
-
         TrashActionDialogs.showDeleteNotification(getApplication(), fonts.size());
 
         repository.deletePermanentlyBatch(
@@ -278,7 +264,6 @@ public class TrashViewModel extends AndroidViewModel {
                 }
         );
     }
-
 
     public void emptyTrash() {
         BatchOperationState.setProcessing(true, 5);
@@ -338,14 +323,12 @@ public class TrashViewModel extends AndroidViewModel {
         );
     }
 
-
     public void cancelCurrentOperation() {
         if (cancelFlag != null) {
             cancelFlag.set(true);
             Log.d(TAG, "Operation cancellation requested");
         }
     }
-
 
     public static int getDaysRemaining(@NonNull FontEntity entity) {
         if (entity.getDeletedAt() <= 0) {
