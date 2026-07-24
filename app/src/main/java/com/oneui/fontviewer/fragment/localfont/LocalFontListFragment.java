@@ -426,6 +426,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         mUIManager.setNoResultsTextView(view.findViewById(R.id.no_results_text));
 
+        mUIManager.setEmptyIconView(view.findViewById(R.id.empty_icon));
+
         mUIManager.setLoadingContainer(view.findViewById(R.id.loading_container));
 
         mUIManager.updateUIVisibility(mViewModel.hasSavedFolder());
