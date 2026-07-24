@@ -63,6 +63,7 @@
     <string name="action_favorite">إضافة الى المفضلة</string>
     <string name="action_unfavorite">إزالة من المفضلة</string>
     <string name="action_rename">إعادة تسمية</string>
+    <string name="rename_dialog_title">إعادة تسمية الخط</string>
     <string name="action_delete">حذف</string>
     <string name="action_delete_all">حذف الكل</string>
     <string name="error_rename_failed">فشلت إعادة التسمية</string>
@@ -115,5 +116,19 @@
     <string name="exit_on_double_back">اضغط مرة أخرى للخروج</string>
     <string name="navigate_up">الرجوع للخلف</string>
     <string name="no_fonts_found"></string>
+    
+    
+    
+    
+    
+    <string name="delete_single_confirmation">هل تريد حذف ملف واحد؟</string>
+    
+    <string name="delete_all_confirmation">هل تريد حذف جميع الملفات؟</string>
+    
+    <string name="delete_multiple_confirmation">هل تريد حذف %d ملفات؟</string>
+    
+    <string name="font_fragment_permission_denied">صلاحية الوصول للتخزين مطلوبة للبحث عن ملفات الخطوط في جهازك.\n\nيمكنك منح هذه الصلاحية من الإعدادات، أو نسخ ملفات الخطوط يدوياً إلى مجلد المستندات/FontViewer+</string>
+    
+    <string name="font_viewer_error_loading_font">حدث خطأ أثناء تحميل ملف الخط</string>
 
 </resources>
