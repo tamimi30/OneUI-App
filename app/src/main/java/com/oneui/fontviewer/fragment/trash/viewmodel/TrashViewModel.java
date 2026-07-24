@@ -176,7 +176,7 @@ public class TrashViewModel extends AndroidViewModel {
         final long startTime = System.currentTimeMillis();
 
         String restoreTitle = getApplication().getResources()
-                .getQuantityString(R.plurals.progress_restoring, fonts.size());
+        .getQuantityString(R.plurals.progress_restoring, fonts.size());
         Intent restoreServiceIntent = new Intent(getApplication(), OperationForegroundService.class);
         restoreServiceIntent.putExtra(OperationForegroundService.EXTRA_NOTIF_ID, TrashActionDialogs.NOTIF_ID_RESTORE);
         restoreServiceIntent.putExtra(OperationForegroundService.EXTRA_TITLE, restoreTitle);
@@ -236,7 +236,7 @@ public class TrashViewModel extends AndroidViewModel {
         final long startTime = System.currentTimeMillis();
 
         String deleteTitle = getApplication().getResources()
-                .getQuantityString(R.plurals.progress_deleting, fonts.size());
+        .getQuantityString(R.plurals.progress_deleting, fonts.size());
         Intent deleteServiceIntent = new Intent(getApplication(), OperationForegroundService.class);
         deleteServiceIntent.putExtra(OperationForegroundService.EXTRA_NOTIF_ID, TrashActionDialogs.NOTIF_ID_DELETE);
         deleteServiceIntent.putExtra(OperationForegroundService.EXTRA_TITLE, deleteTitle);
@@ -302,7 +302,7 @@ public class TrashViewModel extends AndroidViewModel {
                 (current, total) -> {
                     if (notifShownForEmpty.compareAndSet(false, true)) {
                         String emptyTitle = getApplication().getResources()
-                                .getQuantityString(R.plurals.progress_deleting, total);
+                        .getQuantityString(R.plurals.progress_deleting, total);
                         Intent emptyServiceIntent = new Intent(getApplication(), OperationForegroundService.class);
                         emptyServiceIntent.putExtra(OperationForegroundService.EXTRA_NOTIF_ID, TrashActionDialogs.NOTIF_ID_DELETE);
                         emptyServiceIntent.putExtra(OperationForegroundService.EXTRA_TITLE, emptyTitle);
@@ -316,7 +316,7 @@ public class TrashViewModel extends AndroidViewModel {
                             new OperationProgress(current, total, OperationType.EMPTY_TRASH));
 
                     String progressTitle = getApplication().getResources()
-                            .getQuantityString(R.plurals.progress_deleting, total);
+                    .getQuantityString(R.plurals.progress_deleting, total);
                     BatchOperationState.updateProgress(current, total, progressTitle, 3);
                 },
 
