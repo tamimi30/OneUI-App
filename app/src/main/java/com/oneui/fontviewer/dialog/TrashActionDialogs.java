@@ -61,7 +61,7 @@ public final class TrashActionDialogs {
                 .setMessage(message)
                 .setPositiveButton(R.string.action_move_to_trash,
                         (d, w) -> listener.onConfirmed())
-                .setNegativeButton(R.string.action_cancel, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
@@ -79,7 +79,7 @@ public final class TrashActionDialogs {
                 .setMessage(message)
                 .setPositiveButton(R.string.action_delete,
                         (d, w) -> listener.onConfirmed())
-                .setNegativeButton(R.string.action_cancel, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE)
@@ -144,7 +144,7 @@ public final class TrashActionDialogs {
 
         dialog.setButton(
                 ProgressDialog.BUTTON_NEGATIVE,
-                context.getString(R.string.action_cancel),
+                context.getString(android.R.string.cancel),
                 (d, which) -> {
                     cancelListener.onCancel();
                     d.dismiss();
@@ -217,7 +217,7 @@ public final class TrashActionDialogs {
                 .setOnlyAlertOnce(true)
                 .setContentIntent(buildContentIntent(context))
                 .addAction(0,
-                        context.getString(R.string.action_cancel),
+                        context.getString(android.R.string.cancel),
                         buildCancelIntent(context));
     }
 
