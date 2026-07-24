@@ -22,20 +22,6 @@ import java.util.List;
 
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
-/**
- * LocalFontSelectionManager - إدارة التحديد المتعدد للخطوط
- *
- * ★ التعديل: إضافة دعم المفضلة بمنطق Samsung Notes:
- *   - إذا كانت كل العناصر المحددة مفضلة  → عرض "إزاله من المفضله" فقط
- *   - إذا كانت كل العناصر المحددة غير مفضلة → عرض "إضافه إلى المفضله" فقط
- *   - إذا كانت العناصر مختلطة             → عرض "إضافه إلى المفضله" فقط
- *
- * ★ التعديل: يمكن استخدام هذا الملف مع قائمة المفضلة دون إنشاء ملف تحديد جديد،
- *   فقط يكفي تمرير FavoriteStatusChecker المناسب عبر setFavoriteStatusChecker() ★
- *
- * ملاحظة للمطوّر: يجب إضافة R.id.action_favorite إلى R.menu.menu_font_actions
- * مع الأيقونة الافتراضية ic_oui_favorite_on، ليتمكن هذا المدير من إدارتها ديناميكياً.
- */
 public class LocalFontSelectionManager {
 
     private final FragmentActivity activity;
@@ -52,16 +38,8 @@ public class LocalFontSelectionManager {
     private OnBackPressedCallback onBackPressedCallback;
     private OnBackInvokedCallback onBackInvokedCallback;
 
-    // ★ فاحص حالة المفضلة — يُستدعى لتحديد الإجراء المناسب (إضافة أو إزالة)
-    //   يجب على Fragment تطبيق هذه الواجهة وتمريرها عبر setFavoriteStatusChecker()
-    //   في قائمة المفضلة: كل العناصر مفضلة دائماً، فيُعرض "إزاله من المفضله" دائماً ★
     private FavoriteStatusChecker favoriteStatusChecker;
 
-    /**
-     * ★ واجهة فاحص حالة المفضلة ★
-     * يُنفّذها Fragment لتزويد المدير بحالة المفضلة لكل موضع محدد،
-     * مما يُتيح تطبيق منطق Samsung Notes في تحديد الإجراء المعروض.
-     */
     public interface FavoriteStatusChecker {
         boolean isFavorited(int position);
     }
@@ -70,11 +48,6 @@ public class LocalFontSelectionManager {
         void onRenameRequested(int position);
         void onDeleteRequested(List<Integer> positions);
 
-        /**
-         * ★ إجراء المفضلة — يُستدعى عند اختيار المستخدم إضافة أو إزالة العناصر من المفضلة ★
-         * @param positions     مواضع العناصر المحددة
-         * @param addToFavorites true = إضافة إلى المفضلة، false = إزالة من المفضلة
-         */
         void onFavoriteRequested(List<Integer> positions, boolean addToFavorites);
     }
 
@@ -97,7 +70,6 @@ public class LocalFontSelectionManager {
         this.actionListener = listener;
     }
 
-    // ★ يُستدعى من Fragment لتزويد المدير بفاحص حالة المفضلة ★
     public void setFavoriteStatusChecker(FavoriteStatusChecker checker) {
         this.favoriteStatusChecker = checker;
     }
@@ -160,7 +132,6 @@ public class LocalFontSelectionManager {
                 handleRenameAction();
                 return true;
             } else if (id == R.id.action_favorite) {
-                // ★ معالجة إجراء المفضلة — يُحدّد تلقائياً هل يُضيف أم يُزيل ★
                 handleFavoriteAction();
                 return true;
             }
@@ -182,18 +153,10 @@ public class LocalFontSelectionManager {
     }
 
     private void deactivateSelectionMode() {
-        // ★ التسلسل الحرفي لتطبيق المثال الرسمي:
-        // 1. تحديث الـ adapter فوراً (يخفي checkboxes في نفس الـ frame)
-        // 2. setActionModeAllSelector → يُخفي الشريط السفلي
-        // 3. dismissActionMode → يبدأ أنيميشن تلاشي الـ toolbar
-        // الثلاثة تحدث معاً فيُخفق عين المستخدم عن ملاحظة اختفاء الشريط ★
         selectedItems.clear();
         adapter.clearSelection();
         adapter.setSelectionMode(false);
 
-        // ★ حل المشكلة 3: تم حذف السطر التالي لأنه يسبق dismissActionMode 
-        // ويسبب التصفير والوميض قبل الأوان (المكتبة تقوم بذلك داخلياً في الوقت المناسب)
-        // drawerLayout.setActionModeAllSelector(0, true, false);
         
         drawerLayout.dismissActionMode();
 
@@ -220,8 +183,6 @@ public class LocalFontSelectionManager {
     private void toggleSelectAll(boolean selectAll) {
         selectedItems.clear();
         int itemCount = adapter.getItemCount();
-        // ★ الإصلاح: البدء من 1 لتخطي الـ Header، والانتهاء قبل itemCount - 1 لتخطي الـ Footer ★
-        // هذا يمنع احتساب عناصر الهيدر والفوتر ضمن عدد المحدد ويصحح الإجمالي المعروض
         for (int i = 1; i < itemCount - 1; i++) {
             if (selectAll) selectedItems.put(i, true);
             adapter.setItemSelected(i, selectAll);
@@ -233,15 +194,10 @@ public class LocalFontSelectionManager {
 
         int selectedCount = selectedItems.size();
 
-        // ★ الإصلاح: العدد الفعلي للخطوط هو الإجمالي ناقص 2 (الهيدر والفوتر) ★
-        // هذا يضمن أن شريط الـ DrawerLayout يعرض النسبة الصحيحة ويُفعّل "تحديد الكل" بدقة
         int totalCount = adapter.getItemCount() - 2;
 
-        // 1. نُحدّث شريط الـ DrawerLayout بالعدد الجديد (وهذا ما يُشغّل أنيميشن النزول إذا كان العدد 0)
         drawerLayout.setActionModeAllSelector(selectedCount, true, selectedCount == totalCount);
 
-        // 2. ★ الإصلاح الجوهري: نُحدّث الأيقونات والنصوص فقط إذا كان هناك عناصر محددة.
-        // أما إذا كان العدد 0، فنتجاهل التحديث لكي لا تختفي الأيقونات فجأة أثناء نزول الشريط! ★
         if (selectedCount > 0) {
             Menu bottomMenu  = drawerLayout.getActionModeBottomMenu();
             Menu toolbarMenu = drawerLayout.getActionModeToolbarMenu();
@@ -255,16 +211,12 @@ public class LocalFontSelectionManager {
 
             boolean isSingleSelection = (selectedCount == 1);
 
-            // ★ في الوضع العمودي يظهر Rename في البوتوم بار فقط،
-            // أما في الأفقي فيظهر في الـ toolbar عند التحديد الفردي فقط ★
             boolean isPortrait = activity.getResources().getConfiguration().orientation
                     == Configuration.ORIENTATION_PORTRAIT;
 
             if (renameItemBottom  != null) renameItemBottom.setVisible(isSingleSelection);
             if (renameItemToolbar != null) renameItemToolbar.setVisible(!isPortrait && isSingleSelection);
 
-            // ★ إصلاح: الشرط selectedCount == totalCount يكفي وحده لتحديد "الكل".
-            // حذف && selectedCount > 1 يضمن ظهور "حذف الكل" حتى مع عنصر واحد.
             String deleteText = (selectedCount == totalCount)
                     ? activity.getString(R.string.action_delete_all)
                     : activity.getString(R.string.action_delete);
@@ -272,9 +224,6 @@ public class LocalFontSelectionManager {
             if (deleteItemBottom  != null) deleteItemBottom.setTitle(deleteText);
             if (deleteItemToolbar != null) deleteItemToolbar.setTitle(deleteText);
 
-            // ★ منطق المفضلة بأسلوب Samsung Notes ★
-            // - إذا كانت كل العناصر المحددة مفضلة  → عرض "إزاله من المفضله" (ic_oui_favorite_off)
-            // - إذا كانت مختلطة أو كلها غير مفضلة  → عرض "إضافه إلى المفضله" (ic_oui_favorite_on)
             boolean allFavorited = resolveFavoriteAction();
 
             String favoriteText = allFavorited
@@ -290,22 +239,12 @@ public class LocalFontSelectionManager {
             }
             if (favoriteItemToolbar != null) {
                 favoriteItemToolbar.setTitle(favoriteText);
-            //  favoriteItemToolbar.setIcon(favoriteIcon);
             }
         }
 
         checkAllListening = true;
     }
 
-    /**
-     * ★ يحدد هل يجب عرض "إزاله من المفضله" أم "إضافه إلى المفضله" ★
-     *
-     * المنطق: تُعيد true (أي كل محدد مفضل) فقط إذا كانت جميع العناصر المحددة
-     * مفضلة بالفعل. أي عنصر غير مفضل ضمن التحديد يكفي لعرض "إضافه إلى المفضله".
-     *
-     * @return true  إذا كانت كل العناصر المحددة مفضلة → نعرض "إزاله من المفضله"
-     *         false إذا كانت مختلطة أو كلها غير مفضلة → نعرض "إضافه إلى المفضله"
-     */
     private boolean resolveFavoriteAction() {
         if (favoriteStatusChecker == null || selectedItems.size() == 0) return false;
         for (int i = 0; i < selectedItems.size(); i++) {
@@ -318,8 +257,6 @@ public class LocalFontSelectionManager {
 
     public void refreshActionMode() {
         if (isSelecting) {
-            // ★ تأجيل بـ post() لضمان تطبيق updateActionModeUI() بعد أن تُعيد
-            // DrawerLayout بناء قائمة الـ action mode عند دوران الجهاز ★
             recyclerView.post(this::updateActionModeUI);
         }
     }
@@ -336,15 +273,9 @@ public class LocalFontSelectionManager {
         actionListener.onDeleteRequested(positions);
     }
 
-    /**
-     * ★ معالجة إجراء المفضلة ★
-     * يُحدّد تلقائياً هل العملية إضافة أم إزالة عبر resolveFavoriteAction()،
-     * ثم يُخطر الـ Fragment بالمواضع المحددة ونوع العملية.
-     */
     private void handleFavoriteAction() {
         if (selectedItems.size() == 0 || actionListener == null) return;
 
-        // ★ true = كل المحدد مفضل → نُزيل | false = مختلط أو غير مفضل → نُضيف ★
         boolean allFavorited = resolveFavoriteAction();
         boolean addToFavorites = !allFavorited;
 
@@ -395,4 +326,4 @@ public class LocalFontSelectionManager {
         actionListener = null;
         favoriteStatusChecker = null;
     }
-                }
+    }
