@@ -7,55 +7,23 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 
-import io.reactivex.rxjava3.schedulers.Schedulers;
-
-/**
- * FontSortManager — مسؤول عن حفظ تفضيلات الفرز في DataStore وإشعار المستمعين.
- *
- * ★ ملاحظة معمارية مهمة ★
- * منطق الفرز الفعلي (المقارنة وترتيب العناصر) انتقل بالكامل إلى FontSortedListCallback
- * داخل كل من FontListAdapter و SystemFontListAdapter. هذا يعني أن SortedList
- * يتولى إنتاج أنيميشن الانزلاق عند تغيير ترتيب العناصر.
- *
- * دور هذا الكلاس الآن:
- *   1. حفظ نوع الفرز واتجاهه في DataStore (في مفاتيح منفصلة لكل نوع قائمة)
- *   2. إشعار المستمع (Fragment) بالتغيير ليستدعي mAdapter.setSortOptions()
- *
- * ★ isSystemFont يضمن أن خطوط النظام والمجلد المحلي لا يتشاركان نفس مفاتيح DataStore
- *   وهذا هو الحل الجذري لمشكلة التجمد عند التنقل بين الـ Fragments ★
- *
- * ★ الإضافة: دعم معرّف نصي "FAVORITES" عبر مُنشئ ثانٍ (String listType) ★
- *   يتيح لـ FavoriteFontListFragment استخدام مفاتيح DataStore المستقلة:
- *   KEY_FAVORITES_SORT_TYPE و KEY_FAVORITES_SORT_ASCENDING
- *   دون المساس بمفاتيح القائمتين الأخريين.
- *
- * الدالة sortFontsList() محتفظ بها لأغراض التوافق مع الإصدارات السابقة،
- * لكنها لم تعد تُستدعى من الـ Fragments.
- */
 public class FontSortManager {
 
     private static final String TAG = "FontSortManager";
 
-    // ════════════════════════════════════════════════════════════
-    // ★ أنواع القوائم المدعومة ★
-    // ════════════════════════════════════════════════════════════
-
-    /** معرّف قائمة الخطوط المحلية (المجلد) */
     private static final String LIST_TYPE_LOCAL     = "LOCAL";
-    /** معرّف قائمة خطوط النظام */
     private static final String LIST_TYPE_SYSTEM    = "SYSTEM";
-    /** معرّف قائمة المفضلة */
     private static final String LIST_TYPE_FAVORITES = "FAVORITES";
 
     private final SettingsDataStore dataStore;
 
-    // ★ نوع القائمة — يحدد مجموعة مفاتيح DataStore التي تُستخدم للقراءة والكتابة ★
     private final String listType;
 
-    // ★ isSystemFont محتفظ به للتوافق مع المُنشئ الأصلي (boolean) ★
     private final boolean isSystemFont;
 
     private SortByItemLayout.SortType currentSortType;
@@ -66,17 +34,7 @@ public class FontSortManager {
         void onSortChanged(SortByItemLayout.SortType sortType, boolean ascending);
     }
 
-    // ════════════════════════════════════════════════════════════
-    // المُنشئون
-    // ════════════════════════════════════════════════════════════
 
-    /**
-     * ★ المُنشئ الأصلي (للتوافق مع الإصدارات السابقة) ★
-     *
-     * @param context     السياق المطلوب للوصول إلى DataStore
-     * @param isSystemFont true لخطوط النظام، false للمجلد المحلي
-     *                     يضمن قراءة/كتابة المفتاح الصحيح ومنع التداخل بين القائمتين
-     */
     public FontSortManager(Context context, boolean isSystemFont) {
         this.dataStore    = SettingsDataStore.getInstance(context);
         this.isSystemFont = isSystemFont;
@@ -84,20 +42,6 @@ public class FontSortManager {
         loadSortPreferences();
     }
 
-    /**
-     * ★ المُنشئ الجديد للدعم الموسّع (قائمة المفضلة وما قد يُضاف مستقبلاً) ★
-     *
-     * الاستخدام في FavoriteFontListFragment:
-     *   mSortManager = new FontSortManager(mContext, "FAVORITES");
-     *
-     * القيم المقبولة لـ listType:
-     *   "LOCAL"     → مفاتيح المجلد المحلي  (KEY_SORT_TYPE / KEY_SORT_ASCENDING)
-     *   "SYSTEM"    → مفاتيح خطوط النظام   (KEY_SYSTEM_SORT_TYPE / KEY_SYSTEM_SORT_ASCENDING)
-     *   "FAVORITES" → مفاتيح قائمة المفضلة (KEY_FAVORITES_SORT_TYPE / KEY_FAVORITES_SORT_ASCENDING)
-     *
-     * @param context  السياق المطلوب للوصول إلى DataStore
-     * @param listType معرّف نوع القائمة ("LOCAL" | "SYSTEM" | "FAVORITES")
-     */
     public FontSortManager(Context context, String listType) {
         this.dataStore    = SettingsDataStore.getInstance(context);
         this.listType     = (listType != null) ? listType.toUpperCase() : LIST_TYPE_LOCAL;
@@ -109,17 +53,7 @@ public class FontSortManager {
         this.listener = listener;
     }
 
-    // ════════════════════════════════════════════════════════════
-    // قراءة وحفظ التفضيلات
-    // ════════════════════════════════════════════════════════════
 
-    /**
-     * يقرأ تفضيلات الفرز من المفتاح الصحيح بناءً على نوع القائمة.
-     *
-     * LOCAL     → KEY_SORT_TYPE / KEY_SORT_ASCENDING
-     * SYSTEM    → KEY_SYSTEM_SORT_TYPE / KEY_SYSTEM_SORT_ASCENDING
-     * FAVORITES → KEY_FAVORITES_SORT_TYPE / KEY_FAVORITES_SORT_ASCENDING
-     */
     private void loadSortPreferences() {
         try {
             String sortTypeName;
@@ -163,12 +97,6 @@ public class FontSortManager {
                 + "type=" + currentSortType + ", ascending=" + isSortAscending);
     }
 
-    /**
-     * يحفظ في المفتاح الصحيح بناءً على نوع القائمة.
-     *
-     * هذا هو الحل الجذري لمنع التداخل:
-     * تغيير فرز أي قائمة لا يلمس مفاتيح القوائم الأخرى أبداً.
-     */
     private void saveSortPreferences() {
         switch (listType) {
 
@@ -188,7 +116,6 @@ public class FontSortManager {
                 break;
 
             case LIST_TYPE_FAVORITES:
-                // ★ مفاتيح قائمة المفضلة المستقلة — لا تؤثر على أي قائمة أخرى ★
                 dataStore.setFavoritesSortType(currentSortType.name())
                         .subscribeOn(Schedulers.io())
                         .subscribe(
@@ -221,14 +148,7 @@ public class FontSortManager {
         }
     }
 
-    // ════════════════════════════════════════════════════════════
-    // واجهة عامة
-    // ════════════════════════════════════════════════════════════
 
-    /**
-     * يحفظ خيارات الفرز ويُشعر المستمع بالتغيير.
-     * المستمع (Fragment) يستدعي بدوره mAdapter.setSortOptions() لتشغيل أنيميشن SortedList.
-     */
     public void setSortOptions(SortByItemLayout.SortType sortType, boolean ascending) {
         boolean changed = (this.currentSortType != sortType) || (this.isSortAscending != ascending);
 
@@ -253,10 +173,6 @@ public class FontSortManager {
         setSortAscending(!isSortAscending);
     }
 
-    /**
-     * @deprecated منطق الفرز الفعلي انتقل إلى SortedList.Callback داخل الـ Adapters.
-     * هذه الدالة محتفظ بها للتوافق مع الإصدارات السابقة فقط.
-     */
     @Deprecated
     public void sortFontsList(List<FontFileInfo> fontsToSort) {
         if (fontsToSort == null || fontsToSort.isEmpty()) return;
@@ -322,4 +238,4 @@ public class FontSortManager {
         return typeName + " (" + (isSortAscending ? "Ascending" : "Descending") + ")"
                 + " [" + listType + "]";
     }
-}
+                            }
