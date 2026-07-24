@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AlertDialog;
 
 import com.oneui.fontviewer.R;
