@@ -105,7 +105,7 @@ public class TranslationService {
         }).start();
     }
 
-    //Translate text using Google Translate API
+    // Translate text using Google Translate API
     private String translateText(String text, String sourceLang, String targetLang) {
         HttpURLConnection connection = null;
         try {
