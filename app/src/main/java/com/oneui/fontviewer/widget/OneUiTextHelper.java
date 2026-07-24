@@ -11,7 +11,7 @@ import com.oneui.fontviewer.R;
 public class OneUiTextHelper {
 
     public static void applyFontLevel(TextView textView, Context context, AttributeSet attrs) {
-        // 1. استخراج الرقم المجرد لحجم الخط من XML
+        
         int[] textSizeAttr = new int[]{android.R.attr.textSize};
         TypedArray aText = context.obtainStyledAttributes(attrs, textSizeAttr);
         float rawTextSize = -1f;
@@ -21,7 +21,6 @@ public class OneUiTextHelper {
         }
         aText.recycle();
 
-        // 2. استخراج حد التكبير والحد الأدنى من الخواص المخصصة
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.OneUiTextView);
         int maxLevel = a.getInt(R.styleable.OneUiTextView_maxFontLevel, -1);
         int minLevel = a.getInt(R.styleable.OneUiTextView_minFontLevel, -1);
@@ -30,23 +29,19 @@ public class OneUiTextHelper {
         if (rawTextSize != -1f) {
             float fontScale = context.getResources().getConfiguration().fontScale;
             
-            // جلب النسب المئوية بناءً على القيم المدخلة
             float maxScale = maxLevel != -1 ? getFontScale(maxLevel) : -1f;
             float minScale = minLevel != -1 ? getFontScale(minLevel) : -1f;
 
             float finalScale = fontScale;
 
-            // 3. تطبيق الحد الأدنى (يمنع الخط من أن يصغر أكثر من اللازم)
             if (minScale != -1f && finalScale < minScale) {
                 finalScale = minScale;
             }
 
-            // 4. تطبيق الحد الأقصى (يمنع الخط من أن يكبر أكثر من اللازم)
             if (maxScale != -1f && finalScale > maxScale) {
                 finalScale = maxScale;
             }
 
-            // 5. تطبيق الخط بوحدة DIP مع المقياس النهائي المضبوط
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, rawTextSize * finalScale);
         }
     }
