@@ -101,7 +101,7 @@ public class OperationForegroundService extends Service {
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setContentIntent(contentIntent)
-                .addAction(0, getString(R.string.action_cancel), cancelPendingIntent)
+                .addAction(0, getString(android.R.string.cancel), cancelPendingIntent)
                 .build();
     }
 
