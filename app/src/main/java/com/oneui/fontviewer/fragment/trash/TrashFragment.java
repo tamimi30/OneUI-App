@@ -518,7 +518,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mCurrentProgressDialog.setProgress(lastProgress.current);
 
         mCurrentProgressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE,
-                getString(R.string.action_cancel), (dialog, which) -> {
+                getString(android.R.string.cancel), (dialog, which) -> {
                     BatchOperationState.requestCancel();
                     mViewModel.cancelCurrentOperation();
                     dialog.dismiss();
