@@ -41,6 +41,7 @@
     <string name="feature3">Consistent UI elements for better experience</string>
     <string name="feature4">Supports dark mode for viewing comfort</string>
     <string name="about_text">This is a demo app to showcase the OneUI design</string>
+	<string name="title_about">About</string>
 
     <!-- عارض الخط -->
     <string name="drawer_font_viewer">Font Viewer</string>
