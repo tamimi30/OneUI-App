@@ -13,13 +13,13 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import dev.oneuiproject.oneui.dialog.ProgressDialog;
+
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
 import com.oneui.fontviewer.utils.notification.NotificationActionReceiver;
-
-import dev.oneuiproject.oneui.dialog.ProgressDialog;
 
 public final class TrashActionDialogs {
 
