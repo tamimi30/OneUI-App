@@ -122,13 +122,6 @@
             android:paddingStart="33dp"
             android:paddingEnd="33dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/ic_device"
-                android:layout_gravity="center"
-                android:layout_marginBottom="17dp"/>
-
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
