@@ -1,14 +1,6 @@
 package com.oneui.fontviewer.fragment.systemfont.data;
 
 
-/**
- * SystemFontInfo - Fixed version
- * ★ الحل: إضافة دالة للحصول على الاسم الحقيقي فقط (بدون fallback لاسم الملف) ★
- *
- * ★ التعديل: إضافة حقل weightWidthLabel لتمرير وصف الوزن والعرض
- *   من SystemFontRepository إلى SystemFontListAdapter ومنه إلى SystemFontViewHolder.
- *   أمثلة: "Bold, Condensed" | "VF · Regular" | "غير معروف"
- */
 public class SystemFontInfo {
     
     private final String name;
@@ -20,7 +12,6 @@ public class SystemFontInfo {
     private final int ttcIndex;
     private final String axes;
     private String realName;
-    // ★ حقل جديد: وصف الوزن والعرض المُستخرج من جدول OS/2 ★
     private String weightWidthLabel;
     
     public SystemFontInfo(String name, String path, long size, long lastModified,
@@ -34,7 +25,7 @@ public class SystemFontInfo {
         this.ttcIndex = ttcIndex;
         this.axes = axes;
         this.realName = null;
-        this.weightWidthLabel = null; // ★ يُملأ لاحقاً من FontEntity ★
+        this.weightWidthLabel = null; 
     }
     
     public String getName() {
@@ -77,29 +68,15 @@ public class SystemFontInfo {
         this.realName = realName;
     }
     
-    /**
-     * ★ الدالة الصحيحة: ترجع الاسم الحقيقي فقط (أو null) ★
-     */
     public String getRealName() {
         return realName;
     }
 
-    // ════════════════════════════════════════════════════════════
-    // ★ getter/setter لوصف الوزن والعرض ★
-    // ════════════════════════════════════════════════════════════
 
-    /**
-     * تعيين وصف الوزن والعرض المُستخرج من قاعدة البيانات.
-     * يُستدعى في SystemFontListFragment.convertEntitiesToSystemFontInfo().
-     */
     public void setWeightWidthLabel(String weightWidthLabel) {
         this.weightWidthLabel = weightWidthLabel;
     }
 
-    /**
-     * الحصول على وصف الوزن والعرض.
-     * يُستخدم في SystemFontListAdapter لتمريره إلى SystemFontViewHolder.
-     */
     public String getWeightWidthLabel() {
         return weightWidthLabel;
     }
