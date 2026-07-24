@@ -3,6 +3,11 @@ package com.oneui.fontviewer.fragment.systemfont.data;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+
 import androidx.lifecycle.LiveData;
 
 import com.oneui.fontviewer.data.dao.FontDao;
@@ -11,18 +16,8 @@ import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
 import com.oneui.fontviewer.fragment.systemfont.manager.SystemFontManager;
 import com.oneui.fontviewer.metadata.FontMetadataExtractor;
-import com.oneui.fontviewer.metadata.FontWeightWidthExtractor; // ★ جديد ★
+import com.oneui.fontviewer.metadata.FontWeightWidthExtractor; 
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-
-/**
- * SystemFontRepository - Fixed version
- * ★ الحل: عدم حفظ اسم الملف كاسم حقيقي في قاعدة البيانات ★
- * ★ الإضافة: استخراج فوري وخلفي لوصف الوزن والعرض (weight_width_label) ★
- */
 public class SystemFontRepository {
 
     private static final String TAG = "SystemFontRepository";
@@ -105,7 +100,6 @@ public class SystemFontRepository {
                             needsUpdate = true;
                         }
 
-                        // ★ الحل: التحقق من الاسم الحقيقي بشكل صحيح ★
                         String infoRealName = fontInfo.getRealName();
                         if (infoRealName != null && !infoRealName.isEmpty()) {
                             String currentRealName = existing.getRealName();
@@ -132,10 +126,8 @@ public class SystemFontRepository {
                     listener.onSyncComplete(fontsToAdd.size(), updated, 0);
                 }
 
-                // ★ استخراج موازي في الخلفية للأسماء الحقيقية لخطوط النظام ★
                 extractSystemFontsRealNamesInBackgroundPrioritized();
 
-                // ★ استخراج موازي في الخلفية لوصف الوزن والعرض لخطوط النظام ★
                 extractSystemFontsWeightWidthInBackground();
 
             } catch (Exception e) {
@@ -147,11 +139,6 @@ public class SystemFontRepository {
         });
     }
 
-    /**
-     * ★★★ الحل الأساسي: عدم حفظ اسم الملف كاسم حقيقي ★★★
-     *
-     * يستخرج الاسم الحقيقي ووصف الوزن/العرض فورياً عند إنشاء الكيان الجديد.
-     */
     private FontEntity createFontEntityFromSystemFont(SystemFontInfo fontInfo) {
         FontEntity entity = new FontEntity(fontInfo.getPath(), fontInfo.getName());
         entity.setSize(fontInfo.getSize());
@@ -160,15 +147,11 @@ public class SystemFontRepository {
         entity.setTtcIndex(fontInfo.getTtcIndex());
         entity.setVariableFont(fontInfo.isVariableFont());
 
-        // ★ الحل: getRealName() الآن ترجع null إذا لم يوجد اسم حقيقي ★
-        // لن نحفظ اسم الملف كاسم حقيقي أبداً
         String realName = fontInfo.getRealName();
         if (realName != null && !realName.isEmpty()) {
             entity.setRealName(realName);
         }
-        // إذا كان null، لن نحفظ شيء (ستبقى القيمة null في قاعدة البيانات)
 
-        // ★ محاولة استخراج الاسم الحقيقي فوراً للخطوط الصغيرة ★
         if (realName == null || realName.isEmpty()) {
             try {
                 File fontFile = new File(fontInfo.getPath());
@@ -187,8 +170,6 @@ public class SystemFontRepository {
             }
         }
 
-        // ★ استخراج فوري لوصف الوزن والعرض ★
-        // العملية سريعة لأنها تقرأ بضعة بايتات فقط من جدول OS/2
         try {
             File fontFile = new File(fontInfo.getPath());
             if (fontFile.exists()) {
@@ -267,20 +248,11 @@ public class SystemFontRepository {
         });
     }
 
-    /**
-     * ★ استخراج وصف الوزن والعرض في الخلفية لخطوط النظام التي لم تُعالَج بعد ★
-     *
-     * تُستدعى بعد كل مزامنة للتأكد من أن جميع خطوط النظام — بما فيها الموجودة مسبقاً
-     * في قاعدة البيانات قبل إضافة هذه الميزة — تحمل وصفاً لوزنها وعرضها.
-     * تستخدم getFontsWithoutWeightWidth() للعثور على الخطوط غير المعالَجة،
-     * وتُرتّبها من الأصغر إلى الأكبر للحصول على أسرع نتيجة أولى.
-     */
     private void extractSystemFontsWeightWidthInBackground() {
         executorService.execute(() -> {
             try {
                 List<FontEntity> fontsWithoutLabel = fontDao.getFontsWithoutWeightWidth(500);
 
-                // ترتيب حسب الحجم (الأصغر أولاً) لضمان أسرع استجابة
                 fontsWithoutLabel.sort((f1, f2) -> Long.compare(f1.getSize(), f2.getSize()));
 
                 int extracted = 0;
