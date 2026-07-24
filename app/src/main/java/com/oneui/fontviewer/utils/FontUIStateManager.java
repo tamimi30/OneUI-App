@@ -38,7 +38,7 @@ public class FontUIStateManager {
     private SortByItemLayout.SortType savedSortType;
     private boolean savedSortAscending;
 
-    private int defaultEmptyMessageResId = R.string.local_font_empty_message;
+    private int defaultEmptyMessageResId = R.string.local_fonts_empty_message;
     
     public FontUIStateManager(Context context) {
         this.context = context;
