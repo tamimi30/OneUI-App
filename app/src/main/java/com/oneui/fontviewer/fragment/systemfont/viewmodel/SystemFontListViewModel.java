@@ -14,10 +14,6 @@ import com.oneui.fontviewer.fragment.systemfont.data.SystemFontRepository;
 
 import java.util.List;
 
-/**
- * SystemFontListViewModel - Fixed version
- * Smart loading: only shows spinner when data is initially empty
- */
 public class SystemFontListViewModel extends AndroidViewModel {
     
     private static final String TAG = "SystemFontListViewModel";
@@ -62,9 +58,6 @@ public class SystemFontListViewModel extends AndroidViewModel {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
     }
     
-    /**
-     * FIXED: Smart loading - only show spinner when data is initially empty
-     */
     public void loadSystemFonts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             errorMessageLiveData.postValue("SystemFonts API requires Android 10 (API 29) or higher");
@@ -72,10 +65,8 @@ public class SystemFontListViewModel extends AndroidViewModel {
             return;
         }
         
-        // Check if we have existing data
         boolean hasExistingData = fontsLiveData.getValue() != null && !fontsLiveData.getValue().isEmpty();
         
-        // Only show loading spinner if data is empty (first load)
         if (!hasExistingData) {
             isLoadingLiveData.postValue(true);
         }
@@ -83,7 +74,6 @@ public class SystemFontListViewModel extends AndroidViewModel {
         repository.loadAndSyncSystemFonts(new SystemFontRepository.OnSyncCompleteListener() {
             @Override
             public void onSyncComplete(int added, int updated, int deleted) {
-                // Only hide spinner if we showed it (when data was empty)
                 if (!hasExistingData) {
                     isLoadingLiveData.postValue(false);
                 }
