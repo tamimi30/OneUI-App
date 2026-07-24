@@ -3,9 +3,6 @@ package com.oneui.fontviewer.utils.translation;
 import android.content.Context;
 import android.util.Log;
 
-import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
-import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
-
 import org.json.JSONArray;
 
 import java.io.BufferedReader;
@@ -17,10 +14,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * TranslationService - DataStore version
- * Completely removed SharedPreferences, now uses TranslationDataStore for caching
- */
+import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
+import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
+
 public class TranslationService {
     
     private static final String TAG = "TranslationService";
@@ -39,11 +35,7 @@ public class TranslationService {
         this.settingsDataStore = SettingsDataStore.getInstance(context);
     }
     
-    /**
-     * Translate metadata fields based on user language preference
-     */
     public void translateMetadata(Map<String, String> metadata, TranslationCallback callback) {
-        // Check if translation is enabled
         if (!isTranslationEnabled()) {
             callback.onTranslationComplete(metadata);
             return;
@@ -79,7 +71,6 @@ public class TranslationService {
                                 continue;
                             }
                             
-                            // Try to get from cache (blocking is acceptable here as we're in background thread)
                             String cachedTranslation = "";
                             try {
                                 cachedTranslation = translationCache.getTranslation(cacheKey).blockingGet();
@@ -88,11 +79,9 @@ public class TranslationService {
                             }
                             
                             if (cachedTranslation != null && !cachedTranslation.isEmpty()) {
-                                // Use cached translation
                                 translatedData.put(field, cachedTranslation);
                                 Log.d(TAG, "Using cached translation for field: " + field);
                             } else {
-                                // Translate and cache
                                 String translatedText = translateText(originalText, "en", targetLanguage);
                                 
                                 if (translatedText != null && !translatedText.isEmpty()) {
@@ -101,7 +90,6 @@ public class TranslationService {
                                     Log.d(TAG, "Translated and cached field: " + field);
                                 }
                                 
-                                // Small delay to avoid rate limiting
                                 Thread.sleep(100);
                             }
                         }
@@ -116,10 +104,8 @@ public class TranslationService {
             }
         }).start();
     }
-    
-    /**
-     * Translate text using Google Translate API
-     */
+
+    //Translate text using Google Translate API
     private String translateText(String text, String sourceLang, String targetLang) {
         HttpURLConnection connection = null;
         try {
@@ -173,9 +159,6 @@ public class TranslationService {
         }
     }
     
-    /**
-     * Get current language from settings
-     */
     private String getCurrentLanguage() {
         try {
             Locale currentLocale = SettingsHelper.getLocale(context);
@@ -192,9 +175,6 @@ public class TranslationService {
         }
     }
     
-    /**
-     * Generate cache key from text and target language
-     */
     private String generateCacheKey(String text, String targetLang) {
         try {
             String combined = text.substring(0, Math.min(text.length(), 100)) + "_" + targetLang;
@@ -205,17 +185,11 @@ public class TranslationService {
         }
     }
     
-    /**
-     * Clear translation cache
-     */
     public void clearCache() {
         translationCache.clearCache();
         Log.i(TAG, "Translation cache cleared by user request");
     }
     
-    /**
-     * Check if translation is enabled in settings
-     */
     public boolean isTranslationEnabled() {
         try {
             return settingsDataStore.getTranslationEnabled().blockingFirst();
@@ -224,4 +198,4 @@ public class TranslationService {
             return false;
         }
     }
-}
+    }
