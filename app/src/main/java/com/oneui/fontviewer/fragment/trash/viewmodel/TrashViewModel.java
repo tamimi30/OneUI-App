@@ -125,7 +125,7 @@ public class TrashViewModel extends AndroidViewModel {
         moveServiceIntent.putExtra(OperationForegroundService.EXTRA_TITLE, movingTitle);
         moveServiceIntent.putExtra(OperationForegroundService.EXTRA_TOTAL, fonts.size());
         moveServiceIntent.putExtra(OperationForegroundService.EXTRA_SOURCE_FRAGMENT,
-                BatchOperationState.getSourceFragmentIndex());
+        BatchOperationState.getSourceFragmentIndex());
         ContextCompat.startForegroundService(getApplication(), moveServiceIntent);
 
         TrashActionDialogs.showMoveToTrashNotification(getApplication(), fonts.size());
