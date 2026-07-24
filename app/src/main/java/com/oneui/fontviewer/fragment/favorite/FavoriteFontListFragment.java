@@ -393,7 +393,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
                     String newPath = oldPath.substring(0, oldPath.lastIndexOf("/") + 1) + newFileName;
                     int newPosition = mAdapter.findPositionByPath(newPath);
                     if (newPosition != -1 && mRecyclerView != null) {
-                        mRecyclerView.smoothScrollToPosition(newPosition);
+                        mRecyclerView.scrollToPosition(newPosition);
                     }
                 }, 300);
 
