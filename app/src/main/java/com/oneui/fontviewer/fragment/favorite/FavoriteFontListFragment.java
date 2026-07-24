@@ -261,6 +261,8 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         mUIManager.setNoResultsTextView(view.findViewById(R.id.no_results_text));
 
+        mUIManager.setEmptyIconView(view.findViewById(R.id.empty_icon));
+
         mUIManager.updateUIVisibility(true);
     }
 
