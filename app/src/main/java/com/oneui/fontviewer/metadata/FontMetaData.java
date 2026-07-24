@@ -12,10 +12,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * FontMetaData - Enhanced version
- * ★ تحسينات: استخراج أفضل للأسماء الحقيقية من الخطوط ★
- */
 public class FontMetaData {
     
     private static final String TAG = "FontMetaData";
@@ -70,47 +66,37 @@ public class FontMetaData {
         return extractMetaDataWithTtcIndex(fontFile, 0);
     }
     
-    /**
-     * ★★★ تحسين: محاولة استخراج الاسم من حقول متعددة بترتيب أفضل ★★★
-     */
     public static String extractFontName(File fontFile, int ttcIndex) {
-        // المحاولة 1: Full Name (nameId 4) - الاسم الكامل
         String directName = getFontNameDirectWithTtc(fontFile, 4, ttcIndex);
         if (directName != null && !directName.isEmpty() && isValidFontName(directName)) {
             Log.d(TAG, "Extracted from nameId 4 (Full Name): " + directName);
             return directName;
         }
         
-        // المحاولة 2: Family Name (nameId 1) - اسم العائلة
         directName = getFontNameDirectWithTtc(fontFile, 1, ttcIndex);
         if (directName != null && !directName.isEmpty() && isValidFontName(directName)) {
             Log.d(TAG, "Extracted from nameId 1 (Family): " + directName);
             return directName;
         }
         
-        // المحاولة 3: PostScript Name (nameId 6)
         directName = getFontNameDirectWithTtc(fontFile, 6, ttcIndex);
         if (directName != null && !directName.isEmpty() && isValidFontName(directName)) {
             Log.d(TAG, "Extracted from nameId 6 (PostScript): " + directName);
             return directName;
         }
         
-        // المحاولة 4: Unique Font Identifier (nameId 3) - معرف فريد
         directName = getFontNameDirectWithTtc(fontFile, 3, ttcIndex);
         if (directName != null && !directName.isEmpty() && isValidFontName(directName)) {
             Log.d(TAG, "Extracted from nameId 3 (Unique ID): " + directName);
             return directName;
         }
         
-        // المحاولة 5: Subfamily Name (nameId 2) - قد يكون مفيداً
         directName = getFontNameDirectWithTtc(fontFile, 2, ttcIndex);
         if (directName != null && !directName.isEmpty() && isValidFontName(directName)) {
             Log.d(TAG, "Extracted from nameId 2 (SubFamily): " + directName);
             return directName;
         }
         
-        // ★ تحسين: إذا فشلت جميع المحاولات، نرجع "Unknown Font" ★
-        // هذا يضمن أن الخطوط التالفة لن تعرض اسم الملف
         Log.w(TAG, "Failed to extract font name from: " + fontFile.getName());
         return "Unknown Font";
     }
@@ -596,23 +582,17 @@ public class FontMetaData {
         return 10;
     }
     
-    /**
-     * ★ تحسين: تخفيف شروط التحقق من صحة الاسم ★
-     */
     private static boolean isValidFontName(String name) {
         if (name == null || name.trim().isEmpty()) {
             return false;
         }
         
-        // إزالة المسافات الزائدة
         name = name.trim();
         
-        // رفض الأسماء القصيرة جداً
         if (name.length() < 2) {
             return false;
         }
         
-        // رفض الأسماء التي تحتوي على أحرف تحكم فقط
         int controlChars = 0;
         int validChars = 0;
         int totalChars = name.length();
@@ -620,13 +600,11 @@ public class FontMetaData {
         for (int i = 0; i < totalChars; i++) {
             char c = name.charAt(i);
             
-            // أحرف التحكم
             if (c < 32 || (c >= 127 && c < 160)) {
                 controlChars++;
                 continue;
             }
             
-            // أحرف صالحة
             if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || 
                 (c >= '0' && c <= '9') || c == ' ' || c == '-' || c == '_' || 
                 c == '.' || c == '\'' || c == ',' || c >= 128) {
@@ -634,13 +612,10 @@ public class FontMetaData {
             }
         }
         
-        // رفض إذا كانت كل الأحرف تحكم
         if (controlChars == totalChars) {
             return false;
         }
         
-        // ★ تخفيف الشرط: نقبل إذا كان 30% على الأقل من الأحرف صالحة ★
-        // (بدلاً من 50% في الكود القديم)
         return validChars > 0 && (validChars * 100 / totalChars) >= 30;
     }
     
@@ -673,4 +648,4 @@ public class FontMetaData {
             default: return "Width " + widthClass;
         }
     }
-                    }
+                            }
