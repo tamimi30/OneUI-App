@@ -12,6 +12,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.content.res.Configuration;
+import android.util.TypedValue;
 
 import java.io.File;
 
@@ -19,9 +21,6 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
-
-import android.content.res.Configuration;
-import android.util.TypedValue;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.utils.FileUtils;
