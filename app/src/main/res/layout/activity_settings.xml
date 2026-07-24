@@ -7,7 +7,7 @@
     app:expanded="false"
     app:navigationIcon="@drawable/ic_oui_back"
     app:subtitle="@string/app_name"
-    app:title="@string/title_settings">
+    app:title="@string/drawer_settings">
 
     <FrameLayout
         android:id="@+id/settings_container"
