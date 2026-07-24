@@ -27,6 +27,8 @@ public class FontUIStateManager {
 
     private TextView noResultsTextView;
 
+    private View emptyIconView;
+
     private RecyclerView recyclerView;
     private AppBarLayout appBarLayout;
 
@@ -63,6 +65,10 @@ public class FontUIStateManager {
 
     public void setNoResultsTextView(TextView noResultsTextView) {
         this.noResultsTextView = noResultsTextView;
+    }
+
+    public void setEmptyIconView(View emptyIconView) {
+        this.emptyIconView = emptyIconView;
     }
 
     public void setLoadingContainer(View loadingContainer) {
@@ -110,6 +116,10 @@ public class FontUIStateManager {
             if (appBarLayout != null) {
                 updateEmptyViewPosition(Math.abs(appBarLayout.getTop()));
             }
+        }
+
+        if (emptyIconView != null) {
+            emptyIconView.setVisibility(isSearchActive ? View.VISIBLE : View.GONE);
         }
 
         if (noResultsTextView != null) {
