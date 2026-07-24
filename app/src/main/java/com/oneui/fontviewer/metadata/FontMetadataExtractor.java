@@ -6,17 +6,10 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * FontMetadataExtractor - Enhanced version
- * ★ تحسينات: منطق أفضل لاستخراج الأسماء الحقيقية ★
- */
 public class FontMetadataExtractor {
     
     private static final String TAG = "FontMetadataExtractor";
     
-    /**
-     * استخراج الاسم الحقيقي من الخط
-     */
     public static String extractFontName(File fontFile, int ttcIndex) {
         if (fontFile == null || !fontFile.exists()) {
             Log.w(TAG, "Font file is null or does not exist");
@@ -38,16 +31,10 @@ public class FontMetadataExtractor {
         return "Unknown Font";
     }
     
-    /**
-     * استخراج اسم الخط بدون TTC Index (للتوافق)
-     */
     public static String extractFontName(File fontFile) {
         return extractFontName(fontFile, 0);
     }
     
-    /**
-     * استخراج البيانات الوصفية مع دعم TTC Index
-     */
     public static Map<String, String> extractMetadataWithTtcIndex(File fontFile, int ttcIndex) {
         if (fontFile == null || !fontFile.exists()) {
             Log.w(TAG, "Font file is null or does not exist");
@@ -66,7 +53,6 @@ public class FontMetadataExtractor {
             Log.w(TAG, "Failed to extract metadata with TTC index: " + e.getMessage());
         }
         
-        // Fallback: محاولة بدون TTC Index
         try {
             Map<String, String> metadata = FontMetaData.extractMetaData(fontFile);
             
@@ -83,16 +69,10 @@ public class FontMetadataExtractor {
         return new HashMap<>();
     }
     
-    /**
-     * استخراج البيانات الوصفية بدون TTC Index (للتوافق)
-     */
     public static Map<String, String> extractMetadata(File fontFile) {
         return extractMetadataWithTtcIndex(fontFile, 0);
     }
     
-    /**
-     * فحص توفر البيانات الوصفية
-     */
     public static boolean isMetadataAvailable(File fontFile) {
         if (fontFile == null || !fontFile.exists()) {
             return false;
@@ -106,9 +86,6 @@ public class FontMetadataExtractor {
         }
     }
     
-    /**
-     * استخراج حقل معين من البيانات الوصفية
-     */
     public static String extractSpecificMetadata(File fontFile, String key) {
         if (fontFile == null || !fontFile.exists() || key == null) {
             return null;
@@ -118,17 +95,11 @@ public class FontMetadataExtractor {
         return metadata.get(key);
     }
     
-    /**
-     * فحص وجود حقل معين
-     */
     public static boolean hasMetadata(File fontFile, String key) {
         String value = extractSpecificMetadata(fontFile, key);
         return value != null && !value.isEmpty();
     }
     
-    /**
-     * استخراج المعلومات الأساسية فقط
-     */
     public static Map<String, String> extractBasicInfo(File fontFile) {
         Map<String, String> basicInfo = new HashMap<>();
         
@@ -156,4 +127,4 @@ public class FontMetadataExtractor {
         
         return basicInfo;
     }
-    }
+                }
