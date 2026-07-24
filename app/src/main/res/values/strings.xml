@@ -65,6 +65,7 @@
     <string name="action_unfavorite">Unfavorite</string>
     <string name="action_rename">Rename</string>
     <string name="rename_dialog_title">Rename font</string>
+	<string name="rename_dialog_hint">Enter new name</string>
     <string name="action_delete">Delete</string>
     <string name="action_delete_all">Delete all</string>
     <string name="error_rename_failed">The renaming failed</string>
