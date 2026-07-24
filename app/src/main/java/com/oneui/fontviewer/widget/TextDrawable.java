@@ -8,6 +8,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -15,14 +16,12 @@ public class TextDrawable extends Drawable {
     private final String text;
     private final Paint paint;
 
-    // لاحظ أننا أضفنا Context هنا لنتمكن من تحويل المقاسات
     public TextDrawable(Context context, String text, float textSizeInDp, int textColor) {
         this.text = text;
         this.paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         this.paint.setColor(textColor);
         this.paint.setTextAlign(Paint.Align.CENTER);
 
-        // عملية التحويل الذكية من dp إلى بكسل (px) تتم هنا داخلياً
         float textSizeInPx = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 textSizeInDp,
