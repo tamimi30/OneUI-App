@@ -6,14 +6,16 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.Log;
+import android.os.LocaleList;
+import android.app.LocaleManager;
+
+import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
-
-import java.util.Locale;
 
 public class SettingsHelper {
 
@@ -44,10 +46,10 @@ public class SettingsHelper {
     public static int getSystemAssignedLanguage(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             try {
-                android.app.LocaleManager localeManager =
-                        context.getSystemService(android.app.LocaleManager.class);
+                LocaleManager localeManager =
+                        context.getSystemService(LocaleManager.class);
                 if (localeManager != null) {
-                    android.os.LocaleList locales = localeManager.getApplicationLocales();
+                    LocaleList locales = localeManager.getApplicationLocales();
                     if (!locales.isEmpty()) {
                         String lang = locales.get(0).getLanguage();
                         if (lang.equals("ar")) {
