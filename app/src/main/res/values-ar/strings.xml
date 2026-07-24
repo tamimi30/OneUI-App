@@ -41,6 +41,7 @@
     <string name="feature3">عناصر واجهة مستخدم متناسقة لتجربة أفضل</string>
     <string name="feature4">يدعم الوضع الداكن لراحة العين</string>
     <string name="about_text">هذا تطبيق تجريبي لعرض تصميم OneUI</string>
+	<string name="title_about">حول</string>
 
     <!-- عارض الخط -->
     <string name="drawer_font_viewer">معاينة الخط</string>
