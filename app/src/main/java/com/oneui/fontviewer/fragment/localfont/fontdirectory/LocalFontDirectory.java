@@ -8,24 +8,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * LocalFontDirectory - مدير قراءة الخطوط من المجلدات المحلية
- * محدّث لدعم ملفات TTC بالكامل
- *
- * ملاحظة معمارية:
- * نموذج البيانات FontFileInfo تم فصله إلى ملف مستقل في حزمة fontlist
- * ليكون قابلاً للاستخدام من قِبَل قائمة النظام وقائمة المجلد المحلي دون
- * الحاجة لاستيراد منطق قراءة المجلدات.
- */
 public class LocalFontDirectory {
 
     private static final String TAG = "LocalFontDirectory";
 
-    /**
-     * الحصول على قائمة الخطوط من مجلد محلي مباشر
-     * @param directoryPath المسار المباشر للمجلد
-     * @return قائمة بمعلومات ملفات الخطوط
-     */
     public static List<FontFileInfo> getFontsInDirectory(String directoryPath) {
         List<FontFileInfo> fontFiles = new ArrayList<>();
 
@@ -59,7 +45,6 @@ public class LocalFontDirectory {
                     String name      = file.getName();
                     String nameLower = name.toLowerCase();
 
-                    // ★★★ الإصلاح: إضافة دعم TTC ★★★
                     if (nameLower.endsWith(".ttf") || nameLower.endsWith(".otf") || nameLower.endsWith(".ttc")) {
                         fontFiles.add(new FontFileInfo(
                             name,
@@ -82,11 +67,6 @@ public class LocalFontDirectory {
         return fontFiles;
     }
 
-    /**
-     * فحص ما إذا كان المجلد موجوداً وقابلاً للقراءة
-     * @param directoryPath المسار المراد فحصه
-     * @return true إذا كان المجلد موجوداً وقابلاً للقراءة
-     */
     public static boolean isDirectoryAccessible(String directoryPath) {
         if (directoryPath == null || directoryPath.isEmpty()) {
             return false;
@@ -101,11 +81,6 @@ public class LocalFontDirectory {
         }
     }
 
-    /**
-     * عدّ ملفات الخطوط في مجلد دون قراءتها بالكامل
-     * @param directoryPath المسار المراد فحصه
-     * @return عدد ملفات الخطوط
-     */
     public static int countFontsInDirectory(String directoryPath) {
         if (directoryPath == null || directoryPath.isEmpty()) {
             return 0;
@@ -127,7 +102,6 @@ public class LocalFontDirectory {
             for (File file : files) {
                 if (file.isFile()) {
                     String name = file.getName().toLowerCase();
-                    // ★★★ الإصلاح: إضافة دعم TTC ★★★
                     if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".ttc")) {
                         count++;
                     }
