@@ -1,6 +1,5 @@
 package com.oneui.fontviewer.fragment.systemfont.data;
 
-
 public class SystemFontInfo {
     
     private final String name;
