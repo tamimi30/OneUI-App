@@ -11,24 +11,6 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * LocalFontCache - النسخة النهائية المحسّنة
- * 
- * التحسينات:
- * 1. استخدام Room Database بدلاً من SharedPreferences ✓
- * 2. استخدام resetAllCacheStatus() بدلاً من loop ✓
- * 3. تحميل ذكي مبني على الأولويات (most accessed first) ✓
- * 4. أداء محسّن للغاية ✓
- *
- * ★ إصلاح مشكلة السكرول (Over-emission Death Loop):
- *   تم تعطيل استدعاءات markAsCachedInDatabase و recordAccessInDatabase
- *   من داخل getTypeface لمنع الكتابة في قاعدة البيانات أثناء التمرير.
- *   الكتابة في DB أثناء التمرير كانت تُرسل القائمة الكاملة (مثلاً 700 خط)
- *   مرةً أخرى إلى ViewModel عبر LiveData، مما يُجبر SortedList على إعادة
- *   حساب الفروقات على الـ Main Thread لكل خط يظهر على الشاشة.
- *   تسجيل الاستخدام الحقيقي أصبح يتم عند النقر الفعلي على الخط فقط
- *   عبر LocalFontListFragment → mViewModel.recordFontAccess(). ★
- */
 public class LocalFontCache {
     
     private static final String TAG = "LocalFontCache";
@@ -39,9 +21,6 @@ public class LocalFontCache {
     private AppDatabase database;
     private volatile boolean isInitialized = false;
 
-    // ★ الخطوة الثالثة: ExecutorService مستقل لتحميل الخطوط في الخلفية ★
-    // يمنع احتلال خيوط databaseWriteExecutor المخصصة لقاعدة البيانات (4 خيوط فقط)
-    // بعمليات تحميل الخطوط، مما يُحسّن الأداء العام للتطبيق.
     private final java.util.concurrent.ExecutorService fontLoaderExecutor =
         java.util.concurrent.Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -56,9 +35,6 @@ public class LocalFontCache {
         return instance;
     }
     
-    /**
-     * التهيئة مع Room Database
-     */
     public void initialize(Context context) {
         if (isInitialized) {
             return;
@@ -69,21 +45,16 @@ public class LocalFontCache {
         
         Log.d(TAG, "LocalFontCache initializing with Room Database");
         
-        // تحميل الخطوط المحفوظة من Room Database في الخلفية
         preloadCachedFontsFromDatabase();
         
         isInitialized = true;
     }
     
-    /**
-     * ★ تحميل ذكي: الأكثر استخداماً أولاً ★
-     */
     private void preloadCachedFontsFromDatabase() {
         new Thread(() -> {
             try {
                 long startTime = System.currentTimeMillis();
                 
-                // قراءة الخطوط المحفوظة من Room Database
                 List<FontEntity> cachedFonts = database.fontDao().getCachedFonts();
                 
                 if (cachedFonts == null || cachedFonts.isEmpty()) {
@@ -91,7 +62,6 @@ public class LocalFontCache {
                     return;
                 }
                 
-                // تصفية: خطوط محلية فقط (ليست من النظام)
                 cachedFonts.removeIf(FontEntity::isSystemFont);
                 
                 if (cachedFonts.isEmpty()) {
@@ -103,20 +73,16 @@ public class LocalFontCache {
                 
                 int loadedCount = 0;
                 
-                // ترتيب ذكي: الأكثر استخداماً أولاً
                 cachedFonts.sort((f1, f2) -> {
-                    // الأولوية الأولى: عدد مرات الاستخدام
                     int countCompare = Integer.compare(f2.getAccessCount(), f1.getAccessCount());
                     if (countCompare != 0) return countCompare;
                     
-                    // الأولوية الثانية: آخر استخدام
                     return Long.compare(f2.getLastAccessTime(), f1.getLastAccessTime());
                 });
                 
                 for (FontEntity font : cachedFonts) {
                     String path = font.getPath();
                     
-                    // تحميل الخط إلى الذاكرة
                     Typeface typeface = loadTypefaceFromFile(path);
                     
                     if (typeface != null) {
@@ -143,43 +109,20 @@ public class LocalFontCache {
         return memoryCache.get(fontPath);
     }
     
-    /**
-     * ★ الخطوة الأولى من إصلاح مشكلة السكرول ★
-     *
-     * تم تعطيل استدعاءات markAsCachedInDatabase و recordAccessInDatabase
-     * من داخل هذه الدالة لقطع حلقة Over-emission Death Loop.
-     *
-     * السبب: كل مرة يظهر فيها خط جديد على الشاشة أثناء التمرير كانت هذه الدالة
-     * تكتب في قاعدة البيانات (Room)، مما يُنبّه LiveData بتغيير في جدول fonts،
-     * فتُرسَل القائمة الكاملة مرةً أخرى إلى ViewModel → الـ Adapter يُعيد حساب
-     * الفروقات على الـ Main Thread لكل عنصر يظهر → تقطيع شديد في التمرير الأول.
-     *
-     * الظهور على الشاشة ليس استخداماً حقيقياً للخط؛ التسجيل الحقيقي يتم الآن
-     * فقط عند النقر الفعلي في LocalFontListFragment عبر mViewModel.recordFontAccess().
-     *
-     * ملاحظة: الدالتان markAsCachedInDatabase و recordAccessInDatabase لا تزالان
-     * موجودتين في الملف ويمكن استدعاؤهما من أماكن أخرى عند الحاجة.
-     */
     public Typeface getTypeface(String fontPath) {
         if (fontPath == null || fontPath.isEmpty()) {
             return null;
         }
         
-        // فحص الذاكرة أولاً
         Typeface cachedTypeface = memoryCache.get(fontPath);
         if (cachedTypeface != null) {
-            // ❌ تم تعطيل هذا السطر لمنع الكتابة في DB أثناء التمرير (إصلاح Over-emission)
-            // recordAccessInDatabase(fontPath);
             return cachedTypeface;
         }
         
-        // تحميل من الملف
         Typeface typeface = loadTypefaceFromFile(fontPath);
         
         if (typeface != null) {
             memoryCache.put(fontPath, typeface);
-            // ❌ تم تعطيل هذا السطر لمنع الكتابة في DB أثناء التمرير (إصلاح Over-emission)
-            // markAsCachedInDatabase(fontPath);
         }
         
         return typeface;
@@ -257,9 +200,6 @@ public class LocalFontCache {
         Log.d(TAG, "Memory cache cleared");
     }
     
-    /**
-     * ★ النسخة المحسّنة: عملية SQL واحدة بدلاً من loop ★
-     */
     public void clearCache() {
         memoryCache.clear();
         
@@ -268,8 +208,6 @@ public class LocalFontCache {
                 try {
                     long timestamp = System.currentTimeMillis();
                     
-                    // ★ عملية واحدة فقط تحدث كل الصفوف دفعة واحدة ★
-                    // بدلاً من loop يعمل 300 عملية كتابة منفصلة
                     int rowsUpdated = database.fontDao().resetLocalFontsCacheStatus(timestamp);
                     
                     Log.d(TAG, "★ Full cache cleared efficiently: " + rowsUpdated + " rows updated");
@@ -300,11 +238,6 @@ public class LocalFontCache {
         }
     }
     
-    /**
-     * ★ الخطوة الثالثة: تحميل الخطوط عبر fontLoaderExecutor بدلاً من new Thread ★
-     * يُعطي عمليات تحميل الخطوط معالجاً خاصاً بها، بدلاً من مشاركة خيوط
-     * databaseWriteExecutor المخصصة لعمليات قاعدة البيانات.
-     */
     public void preloadFonts(List<String> fontPaths) {
         if (fontPaths == null || fontPaths.isEmpty()) {
             return;
@@ -325,9 +258,6 @@ public class LocalFontCache {
         });
     }
     
-    /**
-     * تحميل الخطوط الأكثر استخداماً
-     */
     public void preloadMostUsedFonts(int limit) {
         if (database == null) return;
         
@@ -337,7 +267,7 @@ public class LocalFontCache {
                 
                 int loadedCount = 0;
                 for (FontEntity font : mostUsed) {
-                    if (font.isSystemFont()) continue; // تخطي خطوط النظام
+                    if (font.isSystemFont()) continue; 
                     
                     String path = font.getPath();
                     if (getIfCached(path) == null) {
@@ -354,4 +284,4 @@ public class LocalFontCache {
             }
         }, "LocalFontCache-MostUsedPreload").start();
     }
-                    }
+                }
