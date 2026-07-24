@@ -65,6 +65,7 @@
     <string name="action_unfavorite">إزالة من المفضلة</string>
     <string name="action_rename">إعادة تسمية</string>
     <string name="rename_dialog_title">إعادة تسمية الخط</string>
+	<string name="rename_dialog_hint">أدخل اسماً جديداً</string>
     <string name="action_delete">حذف</string>
     <string name="action_delete_all">حذف الكل</string>
     <string name="error_rename_failed">فشلت إعادة التسمية</string>
