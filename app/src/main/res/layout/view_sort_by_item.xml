@@ -15,7 +15,7 @@
         android:background="@drawable/sort_btn_ripple"
         android:gravity="center_vertical">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:layout_width="19dp"
             android:layout_height="19dp"
             android:tint="@color/sort_bar_text_color"
@@ -32,13 +32,13 @@
      </LinearLayout>
 
      <View
-         android:layout_height="20dp"
+         android:layout_height="22dp"
          android:layout_width="2dp"
          android:layout_marginStart="7dp"
          android:layout_marginEnd="10dp"
          android:background="@color/oui_list_divider_color" />
 
-     <androidx.appcompat.widget.AppCompatImageView
+     <ImageView
          android:id="@+id/sort_order_icon"
          android:layout_width="34dp"
          android:layout_height="34dp"
