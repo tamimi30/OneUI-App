@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -21,23 +21,16 @@ public class FontUIStateManager {
     private View selectFolderContainer;
     private View mainContentLayout;
     private View emptyView;
-    private TextView emptyTextView;
-
-    private TextView emptyTitleView;
-
-    private TextView noResultsTextView;
-
+    private AppCompatTextView emptyTextView;
+    private AppCompatTextView emptyTitleView;
+    private AppCompatTextView noResultsTextView;
     private View emptyIconView;
-
     private RecyclerView recyclerView;
     private AppBarLayout appBarLayout;
-
     private View loadingContainer;
-    
     private Parcelable recyclerViewState;
     private SortByItemLayout.SortType savedSortType;
     private boolean savedSortAscending;
-
     private int defaultEmptyMessageResId = R.string.local_fonts_empty_message;
     
     public FontUIStateManager(Context context) {
@@ -45,7 +38,7 @@ public class FontUIStateManager {
     }
     
     public void setViews(View selectFolderContainer, View mainContentLayout, 
-                        View emptyView, TextView emptyTextView, RecyclerView recyclerView) {
+                        View emptyView, AppCompatTextView emptyTextView, RecyclerView recyclerView) {
         this.selectFolderContainer = selectFolderContainer;
         this.mainContentLayout = mainContentLayout;
         this.emptyView = emptyView;
@@ -53,17 +46,17 @@ public class FontUIStateManager {
         this.recyclerView = recyclerView;
     }
 
-    public void setViews(View emptyView, TextView emptyTextView, RecyclerView recyclerView) {
+    public void setViews(View emptyView, AppCompatTextView emptyTextView, RecyclerView recyclerView) {
         this.emptyView = emptyView;
         this.emptyTextView = emptyTextView;
         this.recyclerView = recyclerView;
     }
 
-    public void setEmptyTitleView(TextView emptyTitleView) {
+    public void setEmptyTitleView(AppCompatTextView emptyTitleView) {
         this.emptyTitleView = emptyTitleView;
     }
 
-    public void setNoResultsTextView(TextView noResultsTextView) {
+    public void setNoResultsTextView(AppCompatTextView noResultsTextView) {
         this.noResultsTextView = noResultsTextView;
     }
 
