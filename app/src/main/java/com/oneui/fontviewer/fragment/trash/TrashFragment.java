@@ -11,8 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;                          
+import android.view.ViewGroup;                        
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -152,8 +152,8 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mMainContentLayout = view.findViewById(R.id.main_content_layout);
         mEmptyView         = view.findViewById(R.id.empty_view);
 
-        TextView emptyTitleView = view.findViewById(R.id.empty_title);
-        TextView emptyTextView  = view.findViewById(R.id.empty_text);
+        AppCompatTextView emptyTitleView = view.findViewById(R.id.empty_title);
+        AppCompatTextView emptyTextView  = view.findViewById(R.id.empty_text);
 
         mUIManager.setViews(mEmptyView, emptyTextView, mRecyclerView);
         mUIManager.setEmptyTitleView(emptyTitleView);
