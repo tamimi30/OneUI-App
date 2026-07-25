@@ -110,7 +110,7 @@ public class FontSizeDialog {
 
         setupSeekBar();
 
-        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
             String inputText = fontSizeValue.getText().toString();
             if (!inputText.isEmpty()) {
                 try {
@@ -132,7 +132,7 @@ public class FontSizeDialog {
             }
         });
 
-        builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
+        builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> {
             if (cancelListener != null) {
                 cancelListener.onDialogCancelled();
             }
