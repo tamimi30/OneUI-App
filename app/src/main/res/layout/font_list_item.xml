@@ -59,7 +59,7 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     tools:text="Bold, Condensed" />
                     
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/font_item_favorite_icon"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
