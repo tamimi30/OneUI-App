@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
-    <!-- النصوص الأساسية للتطبيق -->
-    <string name="app_name">Font Viewer Plus</string>
+    <string name="app_name">fontviewer Plus</string>
     <string name="app_subtitle">Modern One UI Experience</string>
     
     <!-- الإعدادات -->
@@ -43,8 +42,8 @@
     <string name="about_text">This is a demo app to showcase the OneUI design</string>
 	<string name="title_about">About</string>
 
-    <!-- عارض الخط -->
-    <string name="drawer_font_viewer">Font Viewer</string>
+    <!-- معاينة الخط -->
+    <string name="drawer_font_viewer">Font Preview</string>
     <string name="font_viewer_select_description">Select font file from storage (.ttf or .otf)</string>
     <string name="font_viewer_select_font">Select font file</string>
     <string name="font_viewer_no_font_selected">No font selected</string>
@@ -59,21 +58,9 @@
     <!-- الخطوط المحلية -->
     <string name="drawer_local_fonts">Local Fonts</string>
     <string name="local_fonts_empty_title">No fonts in this folder</string>
-    <string name="local_fonts_empty_message">Copy the fonts to this folder to display them here.</string>
+    <string name="local_fonts_empty_message">Copy the fonts to this folder to display them here, or click on the three-dot icon at the top and choose another folder.</string>
     <string name="local_fonts_select_folder_button">Select Folder</string>
     <string name="local_fonts_select_folder_description">Select the fonts folder</string>
-    <string name="action_favorite">Favorite</string>
-    <string name="action_unfavorite">Unfavorite</string>
-    <string name="action_rename">Rename</string>
-    <string name="rename_dialog_title">Rename font</string>
-	<string name="rename_dialog_hint">Enter new name</string>
-    <string name="action_delete">Delete</string>
-    <string name="action_delete_all">Delete all</string>
-    <string name="error_rename_failed">The renaming failed</string>
-    <string name="error_delete_failed">Deletion failed</string>
-    <string name="error_file_exists">The file name already in use</string>
-    <string name="error_invalid_name">Invalid name</string>
-    <string name="success_renamed">Renamed successfully</string>
     <string name="loading_fonts">Loading…</string>
     <string name="action_change_folder">Change fonts folder</string>
     
@@ -94,12 +81,29 @@
     <string name="trash_items_expiry_info">The items are displayed with the remaining days to be permanently deleted.</string>
     <string name="trash_empty_title">No files</string>
     <string name="trash_empty_description">Any files you delete will stay in the Trash for 30 days before being permanently deleted.</string>
+    <string name="action_empty_trash">Empty</string>
+    
+    <!-- شريط الاجراءات -->
+    <string name="action_favorite">Add to favorites</string>
+    <string name="action_unfavorite">Remove from favorites</string>
+    <string name="action_rename">Rename</string>
+    <string name="rename_dialog_title">Rename font</string>
+	<string name="rename_dialog_hint">Enter new name</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_delete_all">Delete all</string>
+    <string name="error_rename_failed">The renaming failed</string>
+    <string name="error_delete_failed">Deletion failed</string>
+    <string name="error_file_exists">The file name already in use</string>
+    <string name="error_invalid_name">Invalid name</string>
+    <string name="success_renamed">Renamed successfully</string>
     <string name="action_restore">Restore</string>
     <string name="action_restore_all">Restore All</string>
     <string name="action_move_to_trash">Move to Trash</string>
+    <string name="action_hide_dialog">Hide pop-up</string>
+    
+    <!-- الإشعارات -->
     <string name="trash_notif_channel_name">Trash</string>
     <string name="trash_notif_channel_desc">Trash operation notifications</string>
-    <string name="action_empty_trash">Empty</string>
     
      <!-- البحث -->
     <string name="search_font">Search</string>
@@ -112,10 +116,7 @@
     <string name="sort_ascending">Ascending</string>
     <string name="sort_descending">Descending</string>
 
-    <string name="action_hide_dialog">Hide pop-up</string>
     <string name="more_options">More options</string>
-    <string name="cancel">Cancel</string>
-    <string name="ok">OK</string>
     <string name="exit_on_double_back">Press again to exit</string>
     <string name="navigate_up">Navigate up</string>
     <string name="no_fonts_found"></string>
