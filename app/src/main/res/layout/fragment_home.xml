@@ -46,7 +46,7 @@
                     android:textColor="@color/oui_primary_text_color"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/header_app_subtitle"
+                    android:id="@+id/about_header_app_version"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
