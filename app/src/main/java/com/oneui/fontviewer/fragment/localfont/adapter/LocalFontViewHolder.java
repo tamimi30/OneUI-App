@@ -8,12 +8,12 @@ import android.text.Spanned;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.AppCompatImageView;
 
 import com.google.android.material.color.MaterialColors;
 
@@ -28,7 +28,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     public final TextView weightWidthTextView;
     public final SelectableLinearLayout selectableLayout;
     public final View dividerView; 
-    public final AppCompatImageView favoriteIconView;
+    public final ImageView favoriteIconView;
     private String currentPath;
 
     public LocalFontViewHolder(@NonNull View itemView) {
@@ -188,4 +188,4 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     public String getTag() {
         return currentPath;
     }
-    }
+                }
