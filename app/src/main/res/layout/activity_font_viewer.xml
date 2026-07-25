@@ -42,7 +42,7 @@
             android:paddingVertical="4dp"
             android:paddingHorizontal="15dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/btn_bold"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -55,7 +55,7 @@
                 android:tooltipText="@string/btn_bold"
                 android:foreground="@drawable/drawer_item_list_ripple" />
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/btn_italic"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
