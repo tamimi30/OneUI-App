@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.ImageView;
 import android.view.animation.OvershootInterpolator;
 
 import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatImageView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -42,8 +42,8 @@ public class FontViewerActivity extends BaseActivity
 
     private FloatingActionButton fabFontSize;
     private View formatBar;
-    private AppCompatImageView btnBold;
-    private AppCompatImageView btnItalic;
+    private ImageView btnBold;
+    private ImageView btnItalic;
 
     private String currentFontRealName;
     private String currentFontFileName;
@@ -143,8 +143,8 @@ public class FontViewerActivity extends BaseActivity
         }
     }
 
-    public AppCompatImageView getBtnBold() { return btnBold; }
-    public AppCompatImageView getBtnItalic() { return btnItalic; }
+    public ImageView getBtnBold() { return btnBold; }
+    public ImageView getBtnItalic() { return btnItalic; }
 
     public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
