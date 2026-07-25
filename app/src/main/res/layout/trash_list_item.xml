@@ -30,7 +30,7 @@
             android:gravity="center_vertical"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/trash_item_font_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Cairo Regular" />
                 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/trash_item_days_remaining"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
