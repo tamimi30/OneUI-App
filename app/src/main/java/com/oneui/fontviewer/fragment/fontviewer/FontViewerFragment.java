@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,7 +26,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.appcompat.widget.AppCompatTextView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,8 +67,8 @@ public class FontViewerFragment extends Fragment {
 
     private static float sSessionFontSize = -1f;
 
-    private AppCompatTextView previewSentence;
-    private AppCompatTextView weightLabelText;
+    private TextView previewSentence;
+    private TextView weightLabelText;
     private AppCompatSpinner weightSpinner;
 
     private String currentFontPath;
@@ -797,4 +797,4 @@ public class FontViewerFragment extends Fragment {
     public boolean hasFontSelected() {
         return currentFontPath != null && !currentFontPath.isEmpty();
     }
-            }
+}
