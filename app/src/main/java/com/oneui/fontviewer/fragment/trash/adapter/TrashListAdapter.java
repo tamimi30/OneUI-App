@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,6 +14,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.util.SeslRoundedCorner;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import dev.oneuiproject.oneui.widget.RoundLinearLayout;
 
@@ -343,7 +343,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     static class TrashHeaderViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView messageTextView;
+        private final AppCompatTextView messageTextView;
 
         TrashHeaderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -360,8 +360,8 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     static class TrashItemViewHolder extends RecyclerView.ViewHolder {
 
         final SelectableLinearLayout selectableLayout;
-        final TextView fontNameTextView;
-        final TextView daysRemainingTextView;
+        final AppCompatTextView fontNameTextView;
+        final AppCompatTextView daysRemainingTextView;
         final View dividerView;
 
         TrashItemViewHolder(@NonNull View itemView) {
