@@ -2,11 +2,11 @@ package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
 import android.view.Gravity;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.oneui.fontviewer.R;
 
@@ -18,7 +18,7 @@ public class FontErrorDialog {
         layout.setGravity(Gravity.CENTER);
         layout.setPadding(50, 80, 50, 50);
 
-        ImageView errorIcon = new ImageView(context);
+        AppCompatImageView errorIcon = new AppCompatImageView(context);
         try {
             errorIcon.setImageResource(dev.oneuiproject.oneui.R.drawable.ic_oui_error);
         } catch (Exception e) {
