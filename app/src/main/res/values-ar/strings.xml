@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
-    <!-- النصوص الأساسية للتطبيق -->
-    <string name="app_name">Font Viewer Plus</string>
+    <string name="app_name">fontviewer Plus</string>
     <string name="app_subtitle">تجربة One UI الحديثة</string>
     
     <!-- الإعدادات -->
@@ -45,7 +44,7 @@
 
     <!-- عارض الخط -->
     <string name="drawer_font_viewer">معاينة الخط</string>
-    <string name="font_viewer_select_description">ختر ملف خط من جهازك (‎.ttf‎ أو ‎.otf‎)</string>
+    <string name="font_viewer_select_description">إختر ملف خط من الذاكرة الداخلية (ttf. او otf.)</string>
     <string name="font_viewer_select_font">إختر ملف خط</string>
     <string name="font_viewer_no_font_selected">لم يتم اختيار أي خط</string>
     <string name="font_info">البيانات الوصفية للخط</string>
@@ -59,21 +58,9 @@
     <!-- الخطوط المحلية -->
     <string name="drawer_local_fonts">الخطوط المحلية</string>
     <string name="local_fonts_empty_title">لا توجد خطوط في هذا المجلد</string>
-    <string name="local_fonts_empty_message">انسخ الخطوط إلفى هذا المجلد لعرضها هنا، او اضغط على ايقونة الثلاث نقاط في الاعلى وإختر مجلد آخر.</string>
+    <string name="local_fonts_empty_message">إنسخ الخطوط إلى هذا المجلد لعرضها هنا، او اضغط على ايقونة الثلاث نقاط في الاعلى وإختر مجلداً آخر.</string>
     <string name="local_fonts_select_folder_button">إختيار مجلد</string>
     <string name="local_fonts_select_folder_description">إختر مجلد الخطوط</string>
-    <string name="action_favorite">إضافة الى المفضلة</string>
-    <string name="action_unfavorite">إزالة من المفضلة</string>
-    <string name="action_rename">إعادة تسمية</string>
-    <string name="rename_dialog_title">إعادة تسمية الخط</string>
-	<string name="rename_dialog_hint">أدخل اسماً جديداً</string>
-    <string name="action_delete">حذف</string>
-    <string name="action_delete_all">حذف الكل</string>
-    <string name="error_rename_failed">فشلت إعادة التسمية</string>
-    <string name="error_delete_failed">فشل الحذف</string>
-    <string name="error_file_exists">اسم الملف مستخدم مسبقاً</string>
-    <string name="error_invalid_name">اسم غير صالح</string>
-    <string name="success_renamed">تمت إعادة التسمية بنجاح</string>
     <string name="loading_fonts">جارٍ التحميل...</string>
     <string name="action_change_folder">تغيير مجلد الخطوط</string>
     
@@ -94,12 +81,29 @@
     <string name="trash_items_expiry_info">تظهر العناصر الأيام المتبقية حتى يتم حذفها نهائياً.</string>
     <string name="trash_empty_title">لا توجد ملفات</string>
     <string name="trash_empty_description">ستبقى الملفات التي تقوم بحذفها في سلة المحذوفات لمدة ٣٠ يوماً قبل حذفها نهائياً.</string>
+    <string name="action_empty_trash">إفراغ</string>
+    
+    <!-- شريط الاجراءات -->
+    <string name="action_favorite">إضافة الى المفضلة</string>
+    <string name="action_unfavorite">إزالة من المفضلة</string>
+    <string name="action_rename">إعادة تسمية</string>
+    <string name="rename_dialog_title">إعادة تسمية الخط</string>
+	<string name="rename_dialog_hint">أدخل اسماً جديداً</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_delete_all">حذف الكل</string>
+    <string name="error_rename_failed">فشلت إعادة التسمية</string>
+    <string name="error_delete_failed">فشل الحذف</string>
+    <string name="error_file_exists">اسم الملف مستخدم مسبقاً</string>
+    <string name="error_invalid_name">اسم غير صالح</string>
+    <string name="success_renamed">تمت إعادة التسمية بنجاح</string>
     <string name="action_restore">استعادة</string>
     <string name="action_restore_all">استعادة الكل</string>
     <string name="action_move_to_trash">نقل إلى سلة المحذوفات</string>
+    <string name="action_hide_dialog">إخفاء الإطار المنبثق</string>
+    
+    <!-- الإشعارات -->
     <string name="trash_notif_channel_name">سلة المحذوفات</string>
     <string name="trash_notif_channel_desc">إشعارات عمليات سلة المحذوفات</string>
-    <string name="action_empty_trash">إفراغ</string>
     
      <!-- البحث -->
     <string name="search_font">بحث</string>
@@ -112,14 +116,10 @@
     <string name="sort_ascending">تصاعدي</string>
     <string name="sort_descending">تنازلي</string>
 
-    <string name="action_hide_dialog">إخفاء الإطار المنبثق</string>
     <string name="more_options">مزيد من الخيارات</string>
-    <string name="cancel">إلغاء</string>
-    <string name="ok">حسنًا</string>
     <string name="exit_on_double_back">اضغط مرة أخرى للخروج</string>
     <string name="navigate_up">الرجوع للخلف</string>
     <string name="no_fonts_found"></string>
-    
     
     
     
@@ -137,6 +137,5 @@
 	<string name="settings_preview_text_summary">عدّل النص المعروض في المعاينة</string>
 
 
-	
 
 </resources>
