@@ -42,7 +42,7 @@
     <string name="about_text">هذا تطبيق تجريبي لعرض تصميم OneUI</string>
 	<string name="title_about">حول</string>
 
-    <!-- عارض الخط -->
+    <!-- معاينة الخط -->
     <string name="drawer_font_viewer">معاينة الخط</string>
     <string name="font_viewer_select_description">إختر ملف خط من الذاكرة الداخلية (ttf. او otf.)</string>
     <string name="font_viewer_select_font">إختر ملف خط</string>
