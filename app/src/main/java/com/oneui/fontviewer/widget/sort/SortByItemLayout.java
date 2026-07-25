@@ -6,13 +6,13 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.TooltipCompat;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.oneui.fontviewer.R;
 
@@ -20,7 +20,7 @@ public class SortByItemLayout extends LinearLayout {
 
     private TextView mSortTextView;
     private View mTextContainer;
-    private ImageView mOrderIcon;
+    private AppCompatImageView mOrderIcon;
     private OnSortChangeListener mListener;
 
     public enum SortType {
