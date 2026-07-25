@@ -13,7 +13,7 @@
     android:paddingTop="12dp"
     android:paddingBottom="14dp">
     
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/trash_header_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
