@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,19 +48,38 @@ public class HomeFragment extends Fragment {
         initViews(view);
         setupToolbar();
         setupAppBar(getResources().getConfiguration());
+        initContent(view);
+    }
 
-        TextView versionText = view.findViewById(R.id.bottom_app_version);
-        if (versionText != null) {
-            try {
-                String versionName = requireContext().getPackageManager()
-                        .getPackageInfo(requireContext().getPackageName(), 0).versionName;
-                versionText.setText("Version " + versionName);
-            } catch (Exception e) {
-                e.printStackTrace();
+    private void initContent(View view) {
+        ImageView headerIcon = view.findViewById(R.id.header_app_icon);
+        if (headerIcon != null) {
+            headerIcon.setImageResource(R.drawable.ic_launcher);
+        }
+
+        ImageView bottomIcon = view.findViewById(R.id.bottom_app_icon);
+        if (bottomIcon != null) {
+            bottomIcon.setImageResource(R.drawable.ic_launcher);
+        }
+
+        try {
+            String versionName = requireContext().getPackageManager()
+                    .getPackageInfo(requireContext().getPackageName(), 0).versionName;
+            String versionText = "Version " + versionName;
+
+            TextView headerVersion = view.findViewById(R.id.about_header_app_version);
+            if (headerVersion != null) {
+                headerVersion.setText(versionText);
             }
-        }
 
+            TextView bottomVersion = view.findViewById(R.id.bottom_app_version);
+            if (bottomVersion != null) {
+                bottomVersion.setText(versionText);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
     private void initViews(View view) {
         mAppBarLayout = view.findViewById(R.id.app_bar);
