@@ -50,7 +50,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    
                     android:textSize="14sp"
                     android:textColor="@color/about_page_secondary_text_color" />
 
