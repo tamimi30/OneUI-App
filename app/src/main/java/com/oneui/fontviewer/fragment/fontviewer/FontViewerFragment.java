@@ -344,6 +344,7 @@ public class FontViewerFragment extends Fragment {
         }
 
         preferenceManager.saveLastViewedFont(path, fileName, realName);
+preferenceManager.saveLastViewedFontOriginalPath(originalFontPath);
 
         notifyFontChangedImmediate();
 
@@ -713,8 +714,13 @@ public class FontViewerFragment extends Fragment {
                 }
 
                 if (originalFontPath == null || originalFontPath.isEmpty()) {
-                    originalFontPath = extractRealPathFromUri(lastPath);
-                }
+                    String lastOriginalPath = preferenceManager.getLastViewedFontOriginalPath();
+                    if (lastOriginalPath != null && !lastOriginalPath.isEmpty()) {
+                        originalFontPath = lastOriginalPath;
+            } else {
+                        originalFontPath = extractRealPathFromUri(lastPath);
+            }
+        }
 
                 notifyFontChangedImmediate();
                 loadFontFromPathWithWeight(lastPath, lastFileName, lastRealName, lastWeight);
