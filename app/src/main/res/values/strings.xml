@@ -24,7 +24,6 @@
     <string name="about_title">About Font Viewer Plus</string>
     <string name="share_app">Share app</string>
     <string name="rate_app">Rate app in Play Store</string>
-    <string name="related_card_title">Looking for something else?</string>
     <string name="settings_report_issue">Report bug or improvement</string>
     <string name="settings_report_issue_email_subject">Bug Report / Improvement Suggestion</string>
     <string name="feedback_email" translatable="false">feedback@example.com</string>
