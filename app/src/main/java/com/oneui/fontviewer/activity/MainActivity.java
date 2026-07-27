@@ -155,6 +155,9 @@ public class MainActivity extends BaseActivity
                 viewerIntent.putExtra(FontViewerActivity.EXTRA_FONT_PATH, fontUri.toString());
                 viewerIntent.putExtra(FontViewerActivity.EXTRA_FONT_FILE_NAME, fileName);
                 startActivity(viewerIntent);
+
+                intent.setAction(null);
+                intent.setData(null);
                 return;
             }
 
