@@ -81,48 +81,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
-        </activity>
-
-        <activity
-            android:name=".fragment.home.HomeActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
-
-        <activity
-            android:name=".fragment.fontviewer.FontViewerActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
-
-        <activity
-            android:name=".fragment.settings.about.AboutActivity" />
-
-        <activity
-            android:name=".fragment.settings.about.LicensesActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
-
-        <activity
-            android:name=".fragment.settings.SettingsActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
-
-        <service
-            android:name=".utils.notification.OperationForegroundService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
-            
-        <receiver
-            android:name=".utils.notification.NotificationActionReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.oneui.fontviewer.ACTION_CANCEL_OPERATION" />
-            </intent-filter>
-        </receiver>
-
-        <!-- هذه البوابة المخفية لاستقبال الخطوط من متصفح الملفات الخارجي دون تكرار التطبيق -->
-        <activity-alias
-            android:name=".FontViewAlias"
-            android:targetActivity=".activity.MainActivity"
-            android:taskAffinity=".FontViewerTask"
-            android:excludeFromRecents="false"
-            android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -149,7 +107,41 @@
                 <data android:pathPattern=".*\\.OTF" />
                 <data android:pathPattern=".*\\.TTC" />
             </intent-filter>
-        </activity-alias>
+        </activity>
+
+        <activity
+            android:name=".fragment.home.HomeActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+
+        <activity
+            android:name=".fragment.fontviewer.FontViewerActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+
+        <activity
+            android:name=".fragment.settings.about.AboutActivity" />
+
+        <activity
+            android:name=".fragment.settings.about.LicensesActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+
+        <activity
+            android:name=".fragment.settings.SettingsActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+
+        <service
+            android:name=".utils.notification.OperationForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+            
+        <receiver
+            android:name=".utils.notification.NotificationActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.oneui.fontviewer.ACTION_CANCEL_OPERATION" />
+            </intent-filter>
+        </receiver>
 
     </application>
 </manifest>
