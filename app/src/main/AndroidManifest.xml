@@ -120,7 +120,7 @@
             android:name=".FontViewAlias"
             android:targetActivity=".activity.MainActivity"
             android:taskAffinity=".FontViewerTask"
-            
+            android:excludeFromRecents="false"
             android:exported="true">
 
             <intent-filter>
