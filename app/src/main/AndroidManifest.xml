@@ -60,7 +60,7 @@
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
             android:exported="true"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.Starting">
 
             <meta-data
@@ -115,6 +115,7 @@
 
         <activity
             android:name=".fragment.fontviewer.FontViewerActivity"
+            android:launchMode="singleInstance"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
         <activity
