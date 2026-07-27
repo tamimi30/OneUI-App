@@ -344,7 +344,7 @@ public class FontViewerFragment extends Fragment {
         }
 
         preferenceManager.saveLastViewedFont(path, fileName, realName);
-preferenceManager.saveLastViewedFontOriginalPath(originalFontPath);
+        preferenceManager.saveLastViewedFontOriginalPath(originalFontPath);
 
         notifyFontChangedImmediate();
 
