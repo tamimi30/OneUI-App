@@ -242,6 +242,10 @@ public class FontViewerStorageManager {
             }
         }
 
+        if (realPath == null && "com.sec.android.app.myfiles.FileProvider".equals(uri.getAuthority())) {
+            realPath = resolveSamsungMyFilesPath(uri);
+        }
+
         if (realPath == null && "content".equalsIgnoreCase(uri.getScheme())) {
             try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
@@ -262,5 +266,29 @@ public class FontViewerStorageManager {
         }
 
         return null;
+    }
+
+    private String resolveSamsungMyFilesPath(Uri uri) {
+        java.util.List<String> segments = uri.getPathSegments();
+        if (segments.size() < 2) return null;
+
+        String storageType = segments.get(0);
+        String storageId    = segments.get(1);
+
+        StringBuilder relativePath = new StringBuilder();
+        for (int i = 2; i < segments.size(); i++) {
+            relativePath.append("/").append(segments.get(i));
+        }
+
+        String basePath;
+        if ("device_storage".equals(storageType)) {
+            basePath = "/storage/emulated/" + storageId;
+        } else if ("external_storage".equals(storageType)) {
+            basePath = "/storage/" + storageId;
+        } else {
+            return null;
+        }
+
+        return basePath + relativePath.toString();
     }
 }
