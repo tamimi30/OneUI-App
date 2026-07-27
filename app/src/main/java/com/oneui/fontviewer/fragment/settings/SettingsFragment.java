@@ -315,7 +315,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private void updateRelatedCardText(Context context) {
         if (mRelatedCard != null) {
-            mRelatedCard.setTitleText(context.getString(R.string.related_card_title));
+            mRelatedCard.setTitleText(context.getString(R.string.oui_relative_description));
 
             mRelatedCard.removeCardButtons();
 
