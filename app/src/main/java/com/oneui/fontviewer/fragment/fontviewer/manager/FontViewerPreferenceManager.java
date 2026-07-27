@@ -1,6 +1,7 @@
 package com.oneui.fontviewer.fragment.fontviewer.manager;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -11,9 +12,20 @@ public class FontViewerPreferenceManager {
     
     private static final String TAG = "FontViewerPrefManager";
     private final SettingsDataStore dataStore;
+    private final SharedPreferences originalPathPrefs;
     
     public FontViewerPreferenceManager(Context context) {
         this.dataStore = SettingsDataStore.getInstance(context);
+        this.originalPathPrefs = context.getApplicationContext()
+                .getSharedPreferences("font_viewer_original_path", Context.MODE_PRIVATE);
+    }
+    
+    public void saveLastViewedFontOriginalPath(String originalPath) {
+        originalPathPrefs.edit().putString("original_path", originalPath).apply();
+    }
+    
+    public String getLastViewedFontOriginalPath() {
+        return originalPathPrefs.getString("original_path", null);
     }
     
     public void saveLastViewedFont(String fontPath, String fileName, String realName) {
