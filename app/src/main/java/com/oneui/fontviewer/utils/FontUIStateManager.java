@@ -45,7 +45,7 @@ public class FontUIStateManager {
     }
     
     public void setViews(View selectFolderContainer, View mainContentLayout, 
-                        View emptyView, TextView emptyTextView, RecyclerView recyclerView) {
+        View emptyView, TextView emptyTextView, RecyclerView recyclerView) {
         this.selectFolderContainer = selectFolderContainer;
         this.mainContentLayout = mainContentLayout;
         this.emptyView = emptyView;
