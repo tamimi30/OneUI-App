@@ -24,7 +24,6 @@
     <string name="about_title">حول Font Viewer Plus</string>
     <string name="share_app">مشاركة التطبيق</string>
     <string name="rate_app">تقييم التطبيق في متجر Play</string>
-    <string name="related_card_title">هل تبحث عن شيء آخر؟</string>
     <string name="settings_report_issue">الإبلاغ عن الأخطاء أو اقتراح تحسين</string>
     <string name="settings_report_issue_email_subject">إبلاغ عن خطأ / اقتراح تحسين</string>
     <string name="feedback_email" translatable="false">feedback@example.com</string>
