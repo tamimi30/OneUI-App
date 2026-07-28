@@ -60,8 +60,7 @@
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
             android:exported="true"
-            android:launchMode="singleTask"
-            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.Starting">
 
             <meta-data
@@ -81,6 +80,15 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
+            </activity>
+
+        <activity
+            android:name=".activity.FontOpenTriggerActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:noHistory="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
