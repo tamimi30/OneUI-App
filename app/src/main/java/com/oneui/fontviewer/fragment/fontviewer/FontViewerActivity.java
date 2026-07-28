@@ -30,6 +30,13 @@ import com.oneui.fontviewer.widget.TextDrawable;
 public class FontViewerActivity extends BaseActivity
         implements FontViewerFragment.OnFontChangedListener {
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        loadFontFromIntent(intent);
+    }
+
     public static final String EXTRA_FONT_PATH          = "extra_font_path";
     public static final String EXTRA_FONT_REAL_NAME     = "extra_font_real_name";
     public static final String EXTRA_FONT_FILE_NAME     = "extra_font_file_name";
