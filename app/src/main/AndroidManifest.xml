@@ -60,6 +60,7 @@
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
             android:exported="true"
+            android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Starting">
 
