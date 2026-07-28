@@ -60,7 +60,8 @@
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
             android:exported="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
             android:theme="@style/AppTheme.Starting">
 
             <meta-data
