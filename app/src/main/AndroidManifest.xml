@@ -80,6 +80,15 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activity.FontOpenTriggerActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity="com.oneui.fontviewer.trigger">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
