@@ -60,7 +60,8 @@
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
             android:exported="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
             android:theme="@style/AppTheme.Starting">
 
             <meta-data
@@ -80,14 +81,6 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".activity.FontOpenTriggerActivity"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:exported="true"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
-            android:taskAffinity="com.oneui.fontviewer.trigger">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
