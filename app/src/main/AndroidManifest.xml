@@ -115,7 +115,6 @@
 
         <activity
             android:name=".fragment.fontviewer.FontViewerActivity"
-            android:launchMode="singleTop"
             android:taskAffinity="com.oneui.fontviewer.openTrigger"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
