@@ -86,7 +86,7 @@
         <activity
             android:name=".activity.FontOpenTriggerActivity"
             android:exported="true"
-            
+            android:launchMode="singleTask"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
 
             <intent-filter>
