@@ -86,8 +86,7 @@
             android:name=".activity.FontOpenTriggerActivity"
             android:theme="@android:style/Theme.NoDisplay"
             android:exported="true"
-            android:excludeFromRecents="true"
-            android:noHistory="true"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:taskAffinity="com.oneui.fontviewer.trigger">
 
             <intent-filter>
@@ -124,6 +123,7 @@
 
         <activity
             android:name=".fragment.fontviewer.FontViewerActivity"
+            android:launchMode="singleTop"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
         <activity
