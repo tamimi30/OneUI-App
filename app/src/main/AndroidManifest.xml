@@ -86,6 +86,7 @@
         <activity
             android:name=".activity.FontOpenTriggerActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:excludeFromRecents="true"
             android:noHistory="true">
