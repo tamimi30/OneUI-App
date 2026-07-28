@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     app:expanded="false"
     app:navigationIcon="@drawable/ic_oui_back"
+    android:tooltipText="@string/navigate_up"
     app:title="@string/drawer_font_viewer"
     app:subtitle="@string/font_viewer_select_description">
 
