@@ -88,8 +88,8 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="true"
+            android:alwaysRetainTaskState="true"
             android:launchMode="singleTask"
-            android:excludeFromRecents="true"
             android:noHistory="true">
             
             <intent-filter>
