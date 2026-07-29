@@ -8,8 +8,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_vertical"
-    android:foreground="@drawable/list_ripple"
-    android:background="@drawable/bg_format_toggle">
+    android:background="@drawable/drawer_item_selector"
+    android:foreground="@drawable/drawer_item_list_ripple">
     
     <com.oneui.fontviewer.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
