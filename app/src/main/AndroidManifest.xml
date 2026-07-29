@@ -87,6 +87,7 @@
             android:name=".activity.FontOpenTriggerActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="true"
+            android:noHistory="true"
             android:taskAffinity="com.oneui.fontviewer.trigger">
             
             <intent-filter>
