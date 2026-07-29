@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
-import android.net.Uri;
 import android.os.Looper;
 import android.os.Handler;
 
@@ -45,7 +44,6 @@ import com.oneui.fontviewer.widget.TextDrawable;
 import com.oneui.fontviewer.fragment.settings.SettingsActivity;
 import com.oneui.fontviewer.fragment.home.HomeActivity;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
-import com.oneui.fontviewer.utils.ExternalFontIntentHandler;
 
 public class MainActivity extends BaseActivity
     implements LocalFontListFragment.OnFontSelectedListener,
@@ -137,29 +135,17 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    protected void onNewIntent(android.content.Intent intent) {
+    protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
         handleIntent(intent);
     }
 
-    private void handleIntent(android.content.Intent intent) {
+    private void handleIntent(Intent intent) {
         mSearchCoordinator.handleSearchIntent(intent);
 
         if (intent != null) {
-            if (ExternalFontIntentHandler.isFontViewIntent(intent)) {
-                Uri fontUri = intent.getData();
-                String fileName = ExternalFontIntentHandler.getFileName(this, fontUri);
-
-                Intent viewerIntent = new Intent(this, FontViewerActivity.class);
-                viewerIntent.putExtra(FontViewerActivity.EXTRA_FONT_PATH, fontUri.toString());
-                viewerIntent.putExtra(FontViewerActivity.EXTRA_FONT_FILE_NAME, fileName);
-                startActivity(viewerIntent);
-
-                intent.setAction(null);
-                intent.setData(null);
-                return;
-            }
+            
 
             boolean fromNotif = intent.getBooleanExtra("from_notification", false);
             if (fromNotif) {
