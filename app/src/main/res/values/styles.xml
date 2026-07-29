@@ -11,7 +11,7 @@
         <item name="fabSize">normal</item>
         <item name="elevation">4dp</item>
         <item name="borderWidth">1dp</item>
-        <item name="rippleColor">#55777777</item>
+        <item name="rippleColor">ripple_color</item>
     </style>
 
 </resources>
