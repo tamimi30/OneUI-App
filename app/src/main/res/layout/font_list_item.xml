@@ -23,6 +23,7 @@
         app:checkableButtonSpacing="24.0dip"
         android:animateLayoutChanges="true"
         android:gravity="center_vertical"
+        app:selectedHighlightColor="?attr/colorControlHighlight"
         app:checkMode="checkBox">
         
         <LinearLayout
