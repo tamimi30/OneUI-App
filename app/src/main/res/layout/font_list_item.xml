@@ -8,7 +8,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_vertical"
-    android:background="@drawable/list_ripple">
+    android:foreground="@drawable/font_list_ripple"
+    android:background="@drawable/drawer_item_selector">
     
     <com.oneui.fontviewer.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
@@ -23,7 +24,6 @@
         app:checkableButtonSpacing="24.0dip"
         android:animateLayoutChanges="true"
         android:gravity="center_vertical"
-        app:selectedHighlightColor="?attr/colorControlHighlight"
         app:checkMode="checkBox">
         
         <LinearLayout
