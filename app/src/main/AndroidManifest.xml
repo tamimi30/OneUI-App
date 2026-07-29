@@ -86,11 +86,9 @@
         <activity
             android:name=".activity.FontOpenTriggerActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="true"
-            android:alwaysRetainTaskState="true"
-            android:launchMode="singleTask"
-            android:noHistory="true">
+            android:taskAffinity="com.oneui.fontviewer.trigger"
+            android:launchMode="singleTask">
             
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
