@@ -7,10 +7,10 @@
     <!-- الإعدادات -->
     <string name="drawer_settings">Settings</string>
     <string name="settings_general">General</string>
-    <string name="settings_font_preview">Font Preview</string>
+    <string name="settings_font_preview">Font preview</string>
     <string name="settings_font_preview_description">Display font names using their own fonts in the font list</string>
-    <string name="settings_preview_text">Preview Text</string>
-    <string name="settings_preview_text_dialog_title">Edit Preview Text</string>
+    <string name="settings_preview_text">Preview text</string>
+    <string name="settings_preview_text_dialog_title">Edit preview text</string>
     <string name="settings_preview_text_dialog_message">Enter the text you want to display in the preview</string>
     <string name="settings_system_default">System default</string>
     <string name="settings_language">Language</string>
@@ -20,19 +20,19 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_translation">Translation font info</string>
-    <string name="settings_translation_description">Translate font information automatically</string>
+    <string name="settings_translation_description">Translate font info automatically</string>
     <string name="about_title">About Font Viewer Plus</string>
     <string name="share_app">Share app</string>
     <string name="rate_app">Rate app in Play Store</string>
     <string name="settings_report_issue">Report bug or improvement</string>
-    <string name="settings_report_issue_email_subject">Bug Report / Improvement Suggestion</string>
+    <string name="settings_report_issue_email_subject">Bug report / Improvement suggestion</string>
     <string name="feedback_email" translatable="false">feedback@example.com</string>
     <string name="about_button_licenses">Source licenses</string>
 	<string name="about_button_status">Status</string>
     
     <!-- الرئيسية -->
     <string name="drawer_home">Home</string>
-    <string name="title_features">Main Features</string>
+    <string name="title_features">Main features</string>
     <string name="swipe_up">Swipe up</string>
     <string name="feature1">Content is displayed and controlled easily</string>
     <string name="feature2">Simple and easy to use design</string>
@@ -42,29 +42,29 @@
 	<string name="title_about">About</string>
 
     <!-- معاينة الخط -->
-    <string name="drawer_font_viewer">Font Preview</string>
+    <string name="drawer_font_viewer">Font preview</string>
     <string name="font_viewer_select_description">Select font file from storage (.ttf or .otf)</string>
     <string name="font_viewer_select_font">Select font file</string>
     <string name="font_viewer_no_font_selected">No font selected</string>
     <string name="font_info">Font metadata</string>
-    <string name="font_size_dialog_title">Font Size</string>
-    <string name="unknown_font">Unknown Font</string>
+    <string name="font_size_dialog_title">Font size</string>
+    <string name="unknown_font">Unknown font</string>
     <string name="btn_bold">Bold</string>
     <string name="btn_italic">Italic</string>
     <string name="translating">Translating...</string>
     <string name="font_metadata_error">The font metadata cannot be displayed, the font file may be corrupted or lack metadata.</string>
     
     <!-- الخطوط المحلية -->
-    <string name="drawer_local_fonts">Local Fonts</string>
+    <string name="drawer_local_fonts">Local fonts</string>
     <string name="local_fonts_empty_title">No fonts in this folder</string>
     <string name="local_fonts_empty_message">Copy the fonts to this folder to display them here, or click on the three-dot icon at the top and choose another folder.</string>
-    <string name="local_fonts_select_folder_button">Select Folder</string>
+    <string name="local_fonts_select_folder_button">Select folder</string>
     <string name="local_fonts_select_folder_description">Select the fonts folder</string>
     <string name="loading_fonts">Loading…</string>
     <string name="action_change_folder">Change fonts folder</string>
     
     <!-- خطوط النظام -->
-    <string name="drawer_system_fonts">System Fonts</string>
+    <string name="drawer_system_fonts">System fonts</string>
     <string name="system_fonts_empty">No system fonts found</string>
     <string name="system_fonts_api_unavailable">System Fonts API is not available</string>
     <string name="system_fonts_requires_api_29">This feature requires Android 10 (API 29) or higher</string>
