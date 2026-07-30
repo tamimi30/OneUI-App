@@ -179,6 +179,12 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
                 refreshAdapterData();
                 updateMainActivityFontsCount(favorites.size());
+
+                List<String> pathsToPreload = new ArrayList<>();
+                for (LocalFontListViewModel.FontFileInfoWithMetadata font : favorites) {
+                    pathsToPreload.add(font.getPath());
+                }
+                LocalFontCache.getInstance().preloadFonts(pathsToPreload);
             }
         });
 
