@@ -21,13 +21,15 @@
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_translation">Translation font info</string>
     <string name="settings_translation_description">Translate font info automatically</string>
-    <string name="about_title">About Font Viewer Plus</string>
     <string name="share_app">Share app</string>
     <string name="rate_app">Rate app in Play Store</string>
     <string name="settings_report_issue">Report bug or improvement</string>
     <string name="settings_report_issue_email_subject">Bug report / Improvement suggestion</string>
     <string name="feedback_email" translatable="false">feedback@example.com</string>
-    <string name="about_button_licenses">Source licenses</string>
+	
+	<!-- حول التطبيق -->
+	<string name="about_title">About Font Viewer Plus</string>
+	<string name="about_button_licenses">Source licenses</string>
 	<string name="about_button_status">Status</string>
     
     <!-- الرئيسية -->
