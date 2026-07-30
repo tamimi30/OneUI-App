@@ -84,7 +84,7 @@ public final class TrashActionDialogs {
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 .setTextColor(ContextCompat.getColor(context,
-                        androidx.appcompat.R.color.sesl_functional_red_dark));
+                        R.color.sesl_functional_red_dark));
     }
 
     @NonNull
@@ -209,7 +209,7 @@ public final class TrashActionDialogs {
             int total) {
 
         return new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(dev.oneuiproject.oneui.R.drawable.ic_oui_delete)
+                .setSmallIcon(R.drawable.ic_oui_delete)
                 .setContentTitle(title)
                 .setContentText(progress + "/" + total)
                 .setProgress(total, progress, false)
