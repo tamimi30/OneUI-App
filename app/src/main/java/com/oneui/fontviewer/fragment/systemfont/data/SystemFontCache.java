@@ -113,18 +113,7 @@ public class SystemFontCache {
             return null;
         }
         
-        Typeface cachedTypeface = memoryCache.get(fontPath);
-        if (cachedTypeface != null) {
-            return cachedTypeface;
-        }
-        
-        Typeface typeface = loadTypefaceInternal(fontPath, 0, 0);
-        
-        if (typeface != null) {
-            memoryCache.put(fontPath, typeface);
-        }
-        
-        return typeface;
+        return memoryCache.computeIfAbsent(fontPath, path -> loadTypefaceInternal(path, 0, 0));
     }
     
     public Typeface getTypefaceWithWeight(String fontPath, float weight, int ttcIndex) {
