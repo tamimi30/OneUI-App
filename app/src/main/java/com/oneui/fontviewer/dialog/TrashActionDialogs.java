@@ -84,7 +84,7 @@ public final class TrashActionDialogs {
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 .setTextColor(ContextCompat.getColor(context,
-                        R.color.sesl_functional_red_dark));
+                        R.color.oui_functional_red_color));
     }
 
     @NonNull
