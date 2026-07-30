@@ -101,7 +101,7 @@ public class SelectableLinearLayout extends LinearLayout {
             // بداية الحل: إضافة استثناء للـ CheckBox لمنع مشكلة التطاير بعد تدوير الشاشة
             android.transition.TransitionSet transitionSet = new android.transition.TransitionSet();
             transitionSet.setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER);
-            transitionSet.setDuration(300);
+            transitionSet.setDuration(275);
 
             // 1. أنيميشن الانزلاق للنصوص والأيقونات
             android.transition.ChangeBounds slideTransition = new android.transition.ChangeBounds();
