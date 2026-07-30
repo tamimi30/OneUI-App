@@ -72,7 +72,7 @@
     <!-- المفضلة -->
     <string name="drawer_favorites">Favorites</string>
     <string name="favorites_empty_title">No fonts in Favorites yet</string>
-    <string name="favorites_empty_message">Long-press on any font in the Local Fonts to add it here.</string>
+    <string name="favorites_empty_message">Long-press on any font in the Local fonts to add it here.</string>
     
     <!-- سلة المحذوفات -->
     <string name="drawer_trash">Trash</string>
