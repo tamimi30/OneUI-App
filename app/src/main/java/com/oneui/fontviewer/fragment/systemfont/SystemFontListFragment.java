@@ -43,6 +43,7 @@ import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.systemfont.viewmodel.SystemFontListViewModel;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
+import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
 
 public class SystemFontListFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
@@ -152,6 +153,12 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
                 mCurrentFontsList = new ArrayList<>(fonts);
                 refreshAdapterData();
                 updateMainActivityFontsCount(fonts.size());
+
+                List<String> pathsToPreload = new ArrayList<>();
+                for (FontEntity font : fonts) {
+                    pathsToPreload.add(font.getPath());
+                }
+                SystemFontCache.getInstance().preloadFonts(pathsToPreload);
             }
         });
 
