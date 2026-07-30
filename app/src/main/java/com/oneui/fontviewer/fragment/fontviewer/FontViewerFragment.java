@@ -60,8 +60,8 @@ public class FontViewerFragment extends Fragment {
     private static final String KEY_WEIGHT_WIDTH_LABEL = "weight_width_label";
     private static final String TAG = "FontViewerFragment";
 
-    private static final float DEFAULT_FONT_SIZE   = 18f;
-    private static final float MIN_FONT_SIZE       = 11f;
+    private static final float DEFAULT_FONT_SIZE   = 34f;
+    private static final float MIN_FONT_SIZE       = 12f;
     private static final float MAX_FONT_SIZE       = 99f;
     private static final float DEFAULT_FONT_WEIGHT = 400f;
 
