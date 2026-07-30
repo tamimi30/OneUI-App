@@ -70,7 +70,7 @@ public class FontActionDialogs {
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             positiveButton.setEnabled(false);
 
-            int redColor   = ContextCompat.getColor(context, androidx.appcompat.R.color.sesl_functional_red_dark);
+            int redColor   = ContextCompat.getColor(context, dev.oneuiproject.oneui.design.R.color.oui_functional_red_color);
             ColorStateList redTint = ColorStateList.valueOf(redColor);
 
             boolean isDarkMode = (context.getResources().getConfiguration().uiMode
