@@ -35,12 +35,12 @@ public class SettingsDataStore {
 
     
     
-    // FontList keys (Local Folder)
+    // Local fonts keys (Local fonts)
     private final Preferences.Key<String> KEY_SORT_TYPE;
     private final Preferences.Key<Boolean> KEY_SORT_ASCENDING;
     private final Preferences.Key<String> KEY_LAST_OPENED_SYSTEM_FONT_PATH;
 
-    // ★ System Font sort keys — منفصلة تماماً عن مفاتيح المجلد المحلي ★
+    // ★ System fonts sort keys — منفصلة تماماً عن مفاتيح المجلد المحلي ★
     private final Preferences.Key<String> KEY_SYSTEM_SORT_TYPE;
     private final Preferences.Key<Boolean> KEY_SYSTEM_SORT_ASCENDING;
 
@@ -48,7 +48,7 @@ public class SettingsDataStore {
     private final Preferences.Key<String> KEY_FAVORITES_SORT_TYPE;
     private final Preferences.Key<Boolean> KEY_FAVORITES_SORT_ASCENDING;
     
-    // Font Viewer keys
+    // Font viewer keys
     private final Preferences.Key<String> KEY_VIEWER_FONT_PATH;
     private final Preferences.Key<String> KEY_VIEWER_FILE_NAME;
     private final Preferences.Key<String> KEY_VIEWER_REAL_NAME;
