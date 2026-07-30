@@ -114,18 +114,7 @@ public class LocalFontCache {
             return null;
         }
         
-        Typeface cachedTypeface = memoryCache.get(fontPath);
-        if (cachedTypeface != null) {
-            return cachedTypeface;
-        }
-        
-        Typeface typeface = loadTypefaceFromFile(fontPath);
-        
-        if (typeface != null) {
-            memoryCache.put(fontPath, typeface);
-        }
-        
-        return typeface;
+        return memoryCache.computeIfAbsent(fontPath, this::loadTypefaceFromFile);
     }
     
     private void markAsCachedInDatabase(String fontPath) {
