@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.Log;
-import android.os.Process;
 
 import com.oneui.fontviewer.data.database.AppDatabase;
 import com.oneui.fontviewer.data.entity.FontEntity;
@@ -53,7 +52,7 @@ public class SystemFontCache {
     
     private void preloadCachedFontsFromDatabase() {
         new Thread(() -> {
-            setThreadPriority(THREAD_PRIORITY_BACKGROUND);
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             try {
                 long startTime = System.currentTimeMillis();
                 
