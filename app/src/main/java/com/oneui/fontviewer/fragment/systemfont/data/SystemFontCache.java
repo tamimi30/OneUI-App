@@ -52,6 +52,7 @@ public class SystemFontCache {
     
     private void preloadCachedFontsFromDatabase() {
         new Thread(() -> {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             try {
                 long startTime = System.currentTimeMillis();
                 
