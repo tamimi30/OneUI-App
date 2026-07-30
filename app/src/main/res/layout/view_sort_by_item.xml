@@ -13,11 +13,12 @@
         android:paddingHorizontal="10dp"
         android:paddingVertical="4dp"
         android:background="@drawable/sort_btn_ripple"
-        android:gravity="center_vertical">
+        android:layout_gravity="center_vertical">
 
         <ImageView
             android:layout_width="19dp"
             android:layout_height="19dp"
+            android:layout_gravity="center_vertical"
             android:tint="@color/sort_bar_text_color"
             android:src="@drawable/ic_oui_list_sort" />
 
@@ -26,7 +27,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
+            android:layout_gravity="center_vertical"
             android:textColor="@color/sort_bar_text_color"
+            android:fontFamily="sec-roboto-light"
+            android:textStyle="normal"
             android:textSize="15dp" />
             
      </LinearLayout>
@@ -34,6 +38,9 @@
      <View
          android:layout_height="22dp"
          android:layout_width="2dp"
+         android:layout_gravity="center_vertical"
+         android:focusable="false"
+         android:clickable="false"
          android:layout_marginStart="7dp"
          android:layout_marginEnd="10dp"
          android:background="@color/oui_list_divider_color" />
@@ -42,6 +49,7 @@
          android:id="@+id/sort_order_icon"
          android:layout_width="34dp"
          android:layout_height="34dp"
+         android:layout_gravity="center_vertical"
          android:padding="8dp"
          android:layout_marginEnd="9dp"
          android:tint="@color/sort_bar_text_color"
