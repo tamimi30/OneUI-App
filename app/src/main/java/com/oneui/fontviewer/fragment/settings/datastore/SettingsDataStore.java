@@ -64,12 +64,7 @@ public class SettingsDataStore {
     public static final boolean DEFAULT_NOTIFICATIONS_ENABLED = true;
     public static final String DEFAULT_PREVIEW_TEXT = 
             "The quick brown fox jumps over the lazy dog.\n\n" +
-            "0123456789\n\n" +
-            "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z\n\n" +
-            "a b c d e f g h i j k l m n o p q r s t u v w x y z\n\n" +
-            ". , ; : ! ? ' \" ( ) - [ ] { } < > / \\\n\n" +
-            "$ € £ ¥ % @ © ® ™ + - × ÷ = *\n\n" +
-            "# & ^ _ | ~ `";
+            "0123456789";
     public static final float DEFAULT_VIEWER_FONT_SIZE = 18f;
     public static final float DEFAULT_VIEWER_FONT_WEIGHT = 400f;
     
