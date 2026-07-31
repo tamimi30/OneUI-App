@@ -117,6 +117,7 @@ public class MainActivity extends BaseActivity
             addAllFragments();
             mCurrentScreen = AppScreen.LOCAL_FONTS;
             mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
+            warmUpOtherScreens();
         }
 
         setupDrawer();
@@ -326,6 +327,22 @@ public class MainActivity extends BaseActivity
         }
 
         transaction.commitNow();
+    }
+
+    private void warmUpOtherScreens() {
+        Handler warmupHandler = new Handler(getMainLooper());
+        warmupHandler.postDelayed(() -> {
+            if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
+            mNavManager.showFragmentFast(AppScreen.SYSTEM_FONTS);
+            warmupHandler.postDelayed(() -> {
+                if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
+                mNavManager.showFragmentFast(AppScreen.FAVORITES);
+                warmupHandler.postDelayed(() -> {
+                    if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
+                    mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
+                }, 60);
+            }, 60);
+        }, 60);
     }
 
     private void setupDrawer() {
