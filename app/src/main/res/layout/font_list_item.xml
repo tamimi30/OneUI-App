@@ -41,7 +41,6 @@
                 android:includeFontPadding="false"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:fontFamily="sans-serif-monospace"
-                android:textStyle="bold"
                 tools:text="Font Name Example" />
                 
             <LinearLayout
