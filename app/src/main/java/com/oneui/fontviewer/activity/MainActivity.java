@@ -367,6 +367,13 @@ public class MainActivity extends BaseActivity
         }
 
         transaction.commitNow();
+
+        if (screenToShow != null) {
+            Fragment warmedFrag = mFragmentsMap.get(screenToShow);
+            if (warmedFrag != null && warmedFrag.getView() != null) {
+                warmedFrag.getView().setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     private void setupDrawer() {
