@@ -22,12 +22,14 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
     private final TextView nameView;
     private final TextView weightWidthView;
     public final View dividerView; 
+    private final Typeface originalTypeface;
 
     public SystemFontViewHolder(@NonNull View itemView) {
         super(itemView);
         nameView        = itemView.findViewById(R.id.font_item_name);
         weightWidthView = itemView.findViewById(R.id.font_item_weight_width); 
         dividerView     = itemView.findViewById(R.id.item_divider); 
+        originalTypeface = nameView.getTypeface();
     }
 
     public void bind(String displayName, String path, boolean isSearchActive,
@@ -77,7 +79,7 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
 
     public void setDefaultTypeface(Typeface defaultTypeface) {
         if (nameView != null) {
-            nameView.setTypeface(defaultTypeface != null ? defaultTypeface : Typeface.DEFAULT);
+            nameView.setTypeface(defaultTypeface != null ? defaultTypeface : originalTypeface);
         }
     }
 
