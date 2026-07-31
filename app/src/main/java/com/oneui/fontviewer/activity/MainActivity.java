@@ -333,16 +333,40 @@ public class MainActivity extends BaseActivity
         Handler warmupHandler = new Handler(getMainLooper());
         warmupHandler.postDelayed(() -> {
             if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
-            mNavManager.showFragmentFast(AppScreen.SYSTEM_FONTS);
+            warmUpScreenSilently(AppScreen.SYSTEM_FONTS);
             warmupHandler.postDelayed(() -> {
                 if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
-                mNavManager.showFragmentFast(AppScreen.FAVORITES);
+                warmUpScreenSilently(AppScreen.FAVORITES);
                 warmupHandler.postDelayed(() -> {
                     if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
-                    mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
+                    warmUpScreenSilently(AppScreen.TRASH);
+                    warmupHandler.postDelayed(() -> {
+                        if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
+                        warmUpScreenSilently(null);
+                    }, 60);
                 }, 60);
             }, 60);
         }, 60);
+    }
+
+    private void warmUpScreenSilently(AppScreen screenToShow) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        for (AppScreen s : AppScreen.values()) {
+            if (s == mCurrentScreen) continue;
+
+            Fragment frag = mFragmentsMap.get(s);
+            if (frag == null || !frag.isAdded()) continue;
+
+            if (s == screenToShow) {
+                transaction.show(frag);
+            } else {
+                transaction.hide(frag);
+            }
+            frag.setMenuVisibility(false);
+        }
+
+        transaction.commitNow();
     }
 
     private void setupDrawer() {
