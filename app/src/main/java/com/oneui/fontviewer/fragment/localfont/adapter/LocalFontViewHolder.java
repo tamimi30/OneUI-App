@@ -30,6 +30,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     public final View dividerView; 
     public final ImageView favoriteIconView;
     private String currentPath;
+    private final Typeface originalTypeface;
 
     public LocalFontViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -38,6 +39,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         selectableLayout = itemView.findViewById(R.id.selectable_layout);
         dividerView         = itemView.findViewById(R.id.item_divider);           
         favoriteIconView    = itemView.findViewById(R.id.font_item_favorite_icon); 
+        originalTypeface    = fontNameTextView.getTypeface();
     }
 
     private void bindCore(String displayName,
@@ -178,11 +180,11 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
 
 
     public void setTypeface(Typeface typeface) {
-        fontNameTextView.setTypeface(typeface != null ? typeface : Typeface.DEFAULT);
+        fontNameTextView.setTypeface(typeface != null ? typeface : originalTypeface);
     }
 
     public void setDefaultTypeface(Typeface typeface) {
-        fontNameTextView.setTypeface(typeface != null ? typeface : Typeface.DEFAULT);
+        fontNameTextView.setTypeface(typeface != null ? typeface : originalTypeface);
     }
 
     public String getTag() {
