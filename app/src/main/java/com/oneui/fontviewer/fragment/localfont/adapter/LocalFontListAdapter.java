@@ -573,7 +573,13 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         holder.itemView.setOnLongClickListener(v -> {
             int pos = holder.getBindingAdapterPosition();
             if (pos == RecyclerView.NO_POSITION) return false;
-            if (!isSelectionMode && selectionListener != null) selectionListener.onStartSelection(pos);
+            if (selectionListener != null) {
+                if (!isSelectionMode) {
+                    selectionListener.onStartSelection(pos);
+                } else {
+                    selectionListener.onToggleSelection(pos);
+                }
+            }
             if (recyclerView != null) recyclerView.seslStartLongPressMultiSelection();
             return true;
         });
