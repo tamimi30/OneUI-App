@@ -40,6 +40,7 @@
                 android:paddingBottom="4sp"
                 android:includeFontPadding="false"
                 android:textAppearance="?attr/textAppearanceListItem"
+                android:textStyle="bold"
                 tools:text="Font Name Example" />
                 
             <LinearLayout
