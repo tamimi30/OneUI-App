@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:lineSpacingExtra="7dp"
-                android:textSize="18sp"
+                android:textSize="34dp"
                 android:textColor="@color/font_preview_text_color" />
         
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
