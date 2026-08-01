@@ -37,7 +37,7 @@ public class LicensesActivity extends BaseActivity {
         mLicenseTextView = findViewById(R.id.license_text_view);
 
         if (mToolbarLayout != null) {
-            mToolbarLayout.setNavigationButtonTooltip(getString(R.string.navigate_up));
+            mToolbarLayout.setNavigationButtonTooltip(getString(R.string.sesl_action_bar_up_description));
             mToolbarLayout.setNavigationButtonOnClickListener(v -> onBackPressed());
         }
 
