@@ -36,7 +36,7 @@ public class SettingsActivity extends BaseActivity {
     private void initToolbar() {
         mToolbarLayout = findViewById(R.id.toolbar_layout);
         if (mToolbarLayout != null) {
-            mToolbarLayout.setNavigationButtonTooltip(getString(R.string.navigate_up));
+            mToolbarLayout.setNavigationButtonTooltip(getString(R.string.sesl_action_bar_up_description));
             mToolbarLayout.setNavigationButtonOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
