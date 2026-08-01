@@ -559,6 +559,11 @@ public class MainActivity extends BaseActivity
     public void onFontSelected(String fontPath, String realName, String fileName,
                                int ttcIndex, String weightWidthLabel) {
         boolean isSystemFont = mCurrentScreen == AppScreen.SYSTEM_FONTS;
+
+        if (mSearchCoordinator != null) {
+            mSearchCoordinator.clearSearchFocus();
+        }
+
         Intent intent = new Intent(this, FontViewerActivity.class);
         intent.putExtra(FontViewerActivity.EXTRA_FONT_PATH, fontPath);
         intent.putExtra(FontViewerActivity.EXTRA_FONT_REAL_NAME, realName);
