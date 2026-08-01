@@ -7,6 +7,7 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.widget.TextView;
+import android.graphics.Typeface;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -203,6 +204,9 @@ public class FontInfoDialog {
         TextView messageView = dialog.findViewById(android.R.id.message);
         if (messageView != null) {
             messageView.setTextSize(17);
+            // إضافة الخط المخصص (sec-roboto-light) بنمط عادي (NORMAL)
+            Typeface customTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
+            messageView.setTypeface(customTypeface);
             messageView.setMovementMethod(LinkMovementMethod.getInstance());
             Linkify.addLinks(messageView, Linkify.WEB_URLS | Linkify.EMAIL_ADDRESSES);
             messageView.setLinkTextColor(context.getResources().getColor(R.color.sesl_primary_color_light, context.getTheme()));
