@@ -164,8 +164,12 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public LocalFontListAdapter(Context context, ExecutorService executor) {
+        this(context, executor, false);
+    }
+
+    public LocalFontListAdapter(Context context, ExecutorService executor, boolean isFavoritesList) {
         this.context = context;
-        this.preferenceManager = new LocalFontPreferenceManager(context);
+        this.preferenceManager = new LocalFontPreferenceManager(context, isFavoritesList);
         this.highlighter = new FontTextHighlighter(context);
         this.mainHandler = new Handler(Looper.getMainLooper());
         this.executor = executor;
