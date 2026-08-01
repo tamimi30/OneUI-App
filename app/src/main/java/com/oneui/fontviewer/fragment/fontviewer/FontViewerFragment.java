@@ -62,7 +62,7 @@ public class FontViewerFragment extends Fragment {
 
     private static final float DEFAULT_FONT_SIZE   = 34f;
     private static final float MIN_FONT_SIZE       = 12f;
-    private static final float MAX_FONT_SIZE       = 99f;
+    private static final float MAX_FONT_SIZE       = 150f;
     private static final float DEFAULT_FONT_WEIGHT = 400f;
 
     private static float sSessionFontSize = -1f;
