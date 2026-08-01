@@ -47,6 +47,9 @@ public class SettingsDataStore {
     // ★ Favorites sort keys — منفصلة تماماً لتجنب أي تعارض مع القوائم الأخرى ★
     private final Preferences.Key<String> KEY_FAVORITES_SORT_TYPE;
     private final Preferences.Key<Boolean> KEY_FAVORITES_SORT_ASCENDING;
+
+    // ★ Favorites last opened font key — منفصل تماماً عن مفتاح الخطوط المحلية ★
+    private final Preferences.Key<String> KEY_LAST_OPENED_FAVORITE_FONT_PATH;
     
     // Font viewer keys
     private final Preferences.Key<String> KEY_VIEWER_FONT_PATH;
@@ -100,6 +103,9 @@ public class SettingsDataStore {
         // ★ Initialize Favorites sort keys ★
         KEY_FAVORITES_SORT_TYPE = PreferencesKeys.stringKey("favorites_sort_type");
         KEY_FAVORITES_SORT_ASCENDING = PreferencesKeys.booleanKey("favorites_sort_ascending");
+
+        // ★ Initialize Favorites last opened font key ★
+        KEY_LAST_OPENED_FAVORITE_FONT_PATH = PreferencesKeys.stringKey("last_opened_favorite_font_path");
         
         // Initialize Font Viewer keys
         KEY_VIEWER_FONT_PATH = PreferencesKeys.stringKey("viewer_font_path");
@@ -268,6 +274,28 @@ public class SettingsDataStore {
                 mutablePrefs.set(KEY_LAST_OPENED_FONT_PATH, path);
             } else {
                 mutablePrefs.remove(KEY_LAST_OPENED_FONT_PATH);
+            }
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Last Opened Font (Favorites)
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<String> getLastOpenedFavoriteFontPath() {
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_LAST_OPENED_FAVORITE_FONT_PATH)
+        );
+    }
+    
+    public Single<Preferences> setLastOpenedFavoriteFontPath(String path) {
+        return dataStore.updateDataAsync(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            if (path != null) {
+                mutablePrefs.set(KEY_LAST_OPENED_FAVORITE_FONT_PATH, path);
+            } else {
+                mutablePrefs.remove(KEY_LAST_OPENED_FAVORITE_FONT_PATH);
             }
             return Single.just(mutablePrefs);
         });
