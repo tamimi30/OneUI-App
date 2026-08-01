@@ -131,6 +131,8 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.mainHandler       = new Handler(Looper.getMainLooper());
         this.executor          = executor;
 
+        this.mCurrentLastOpenedPath = preferenceManager.getLastOpenedFont();
+
         this.allFontsInfo       = new ArrayList<>();
         this.currentSearchQuery = "";
 
