@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.graphics.Typeface;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -37,7 +38,11 @@ public class FontErrorDialog {
         errorMessage.setGravity(Gravity.CENTER);
         errorMessage.setTextSize(16f);
         errorMessage.setTextColor(context.getColor(R.color.sort_bar_text_color));
-
+         
+        // إضافة الخط المخصص (sec-roboto-light) بنمط عادي (NORMAL)
+        Typeface customTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
+        errorMessage.setTypeface(customTypeface); 
+       
         layout.addView(errorIcon);
         layout.addView(errorMessage);
 
