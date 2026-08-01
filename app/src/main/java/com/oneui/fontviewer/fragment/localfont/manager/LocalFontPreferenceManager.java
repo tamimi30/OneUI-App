@@ -11,14 +11,22 @@ public class LocalFontPreferenceManager {
     
     private static final String TAG = "LocalFontPreferenceManager";
     private final SettingsDataStore dataStore;
+    private final boolean isFavoritesList;
     
     private String cachedLastOpenedPath;
     
     public LocalFontPreferenceManager(Context context) {
+        this(context, false);
+    }
+
+    public LocalFontPreferenceManager(Context context, boolean isFavoritesList) {
         this.dataStore = SettingsDataStore.getInstance(context);
+        this.isFavoritesList = isFavoritesList;
         
         try {
-            cachedLastOpenedPath = dataStore.getLastOpenedFontPath().blockingFirst();
+            cachedLastOpenedPath = isFavoritesList
+                    ? dataStore.getLastOpenedFavoriteFontPath().blockingFirst()
+                    : dataStore.getLastOpenedFontPath().blockingFirst();
         } catch (Exception e) {
             cachedLastOpenedPath = null;
             Log.d(TAG, "No cached last opened font");
@@ -33,7 +41,9 @@ public class LocalFontPreferenceManager {
         
         cachedLastOpenedPath = fontPath;
         
-        dataStore.setLastOpenedFontPath(fontPath)
+        (isFavoritesList
+                ? dataStore.setLastOpenedFavoriteFontPath(fontPath)
+                : dataStore.setLastOpenedFontPath(fontPath))
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                     prefs -> Log.d(TAG, "Saved last opened font: " + fontPath),
@@ -43,7 +53,9 @@ public class LocalFontPreferenceManager {
     
     public String getLastOpenedFont() {
         try {
-            cachedLastOpenedPath = dataStore.getLastOpenedFontPath().blockingFirst();
+            cachedLastOpenedPath = isFavoritesList
+                    ? dataStore.getLastOpenedFavoriteFontPath().blockingFirst()
+                    : dataStore.getLastOpenedFontPath().blockingFirst();
             return cachedLastOpenedPath;
         } catch (Exception e) {
             Log.d(TAG, "No last opened font found");
@@ -62,7 +74,9 @@ public class LocalFontPreferenceManager {
     public void clearLastOpenedFont() {
         cachedLastOpenedPath = null;
         
-        dataStore.setLastOpenedFontPath(null)
+        (isFavoritesList
+                ? dataStore.setLastOpenedFavoriteFontPath(null)
+                : dataStore.setLastOpenedFontPath(null))
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                     prefs -> Log.d(TAG, "Cleared last opened font"),
