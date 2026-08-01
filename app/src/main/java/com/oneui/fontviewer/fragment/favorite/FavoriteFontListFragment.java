@@ -289,7 +289,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        mAdapter = new LocalFontListAdapter(mContext, mExecutor);
+        mAdapter = new LocalFontListAdapter(mContext, mExecutor, true);
 
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
 
