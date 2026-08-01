@@ -68,7 +68,7 @@ public class SettingsDataStore {
     public static final String DEFAULT_PREVIEW_TEXT = 
             "The quick brown fox jumps over the lazy dog.\n\n" +
             "0123456789";
-    public static final float DEFAULT_VIEWER_FONT_SIZE = 18f;
+    public static final float DEFAULT_VIEWER_FONT_SIZE = 34f;
     public static final float DEFAULT_VIEWER_FONT_WEIGHT = 400f;
     
     
