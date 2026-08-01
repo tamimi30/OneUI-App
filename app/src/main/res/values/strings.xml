@@ -119,7 +119,7 @@
 
     <string name="more_options">More options</string>
     <string name="exit_on_double_back">Press again to exit</string>
-    <string name="navigate_up">Navigate up</string>
+   <!-- <string name="navigate_up">Navigate up</string>-->
     <string name="no_fonts_found"></string>
     
     
