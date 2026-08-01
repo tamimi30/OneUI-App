@@ -47,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:lineSpacingExtra="7dp"
+                android:includeFontPadding="false"
                 android:textSize="34dp"
                 android:textColor="@color/font_preview_text_color" />
         
