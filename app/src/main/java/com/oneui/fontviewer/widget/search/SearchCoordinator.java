@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
@@ -305,6 +306,17 @@ public class SearchCoordinator {
     public void expandSearch() {
         if (drawerLayout != null && !drawerLayout.isSearchMode()) {
             drawerLayout.showSearchMode(); 
+        }
+    }
+
+    public void clearSearchFocus() {
+        if (searchView == null) return;
+
+        searchView.clearFocus();
+
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
         }
     }
 
