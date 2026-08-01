@@ -149,10 +149,12 @@ public class FontViewerActivity extends BaseActivity
     public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
             int textColor = getColor(dev.oneuiproject.oneui.design.R.color.oui_primary_text_color);
+            String sizeText = String.valueOf(Math.round(size));
+            float fabTextSizeDp = sizeText.length() >= 3 ? 16f : 24f;
             fabFontSize.setImageDrawable(new TextDrawable(
                     this,
-                    String.valueOf(Math.round(size)),
-                    24f,
+                    sizeText,
+                    fabTextSizeDp,
                     textColor
             ));
         }
