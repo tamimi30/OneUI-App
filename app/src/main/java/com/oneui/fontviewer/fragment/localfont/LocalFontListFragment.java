@@ -874,9 +874,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (!mLocalFontDirectoryPicker.handleActivityResult(requestCode, resultCode, data)) {
-            if (mLocalFontPermissionManager.handleActivityResult(requestCode)) {
-                mLocalFontDirectoryPicker.openDirectoryPicker();
-            }
+            mLocalFontPermissionManager.handleActivityResult(requestCode);
         }
     }
 
