@@ -31,9 +31,7 @@ public class FontActionDialogs {
         void onRename(String oldPath, String newFileName);
     }
 
-    public interface OnDeleteListener {
-        void onDeleteConfirmed();
-    }
+    
 
     public static void showRenameDialog(Context context, String currentPath, OnRenameListener listener) {
         if (context == null || currentPath == null || listener == null) return;
@@ -142,24 +140,7 @@ public class FontActionDialogs {
         errorText.setVisibility(View.VISIBLE);
     }
 
-    public static void showDeleteDialog(Context context, int count, int totalCount, OnDeleteListener listener) {
-        if (context == null || listener == null || count <= 0) return;
-
-        String message;
-        if (count == 1) {
-            message = context.getString(R.string.delete_single_confirmation);
-        } else if (count == totalCount && count > 1) {
-            message = context.getString(R.string.delete_all_confirmation);
-        } else {
-            message = context.getString(R.string.delete_multiple_confirmation, count);
-        }
-
-        new AlertDialog.Builder(context)
-                .setMessage(message)
-                .setPositiveButton(R.string.action_delete, (dialog, which) -> listener.onDeleteConfirmed())
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
-    }
+    
 
     private static boolean isValidFileName(String name) {
         if (name == null || name.trim().isEmpty()) return false;
