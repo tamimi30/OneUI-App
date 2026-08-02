@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="38dp"
+    android:paddingTop="30dp"
     android:paddingHorizontal="20dp"
     android:orientation="vertical">
             
@@ -20,9 +20,9 @@
         
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:paddingHorizontal="5dp"
-        android:paddingTop="7dp"
+        android:layout_height="34dp"
+        android:paddingHorizontal="6dp"
+        android:paddingTop="8dp"
         android:orientation="vertical">
            	
         <!-- ★ رسالة الخطأ تحت حقل الإدخال — مخفية بالافتراضي ★ -->
