@@ -21,7 +21,7 @@
         android:layout_marginBottom="21dp"
         android:background="@null"
         android:inputType="number"
-        android:imeOptions="flagNoExtractUi"
+        android:imeOptions="flagNoExtractUi|actionDone"
         android:selectAllOnFocus="true"
         android:maxLength="3"
         android:cursorVisible="false"
