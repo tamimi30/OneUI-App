@@ -14,10 +14,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.content.res.Configuration;
 import android.util.TypedValue;
+import android.widget.EditText;
 
 import java.io.File;
 
-import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
@@ -44,7 +44,7 @@ public class FontActionDialogs {
         String extension       = FileUtils.getExtension(currentFileName);
 
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_rename_font, null);
-        final AppCompatEditText input     = dialogView.findViewById(R.id.rename_edit_text);
+        final EditText input     = dialogView.findViewById(R.id.rename_edit_text);
         final TextView          errorText = dialogView.findViewById(R.id.rename_error_text);
 
         input.setText(nameWithoutExt);
