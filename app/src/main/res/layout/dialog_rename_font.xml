@@ -4,14 +4,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="20dp"
-    android:layout_marginTop="34dp"
-    android:layout_marginBottom="34dp"
     android:overScrollMode="ifContentScrolls">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginBottom="34dp"
         android:orientation="vertical">
             
         <EditText
