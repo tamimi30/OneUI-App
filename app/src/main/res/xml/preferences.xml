@@ -52,7 +52,6 @@
         <EditTextPreference
             android:key="preview_text"
             android:title="@string/settings_preview_text"
-            android:summary="@string/settings_preview_text_summary"
             android:dialogTitle="@string/settings_preview_text_dialog_title"
             android:dialogMessage="@string/settings_preview_text_dialog_message"
             android:persistent="false"
