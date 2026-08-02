@@ -15,24 +15,24 @@
         android:inputType="text"
         android:imeOptions="flagNoExtractUi"
         android:singleLine="true" />
-  
-</LinearLayout>
         
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:paddingHorizontal="24dp"
-    android:paddingTop="7dp"
-    android:orientation="vertical">
-
-    <!-- ★ رسالة الخطأ تحت حقل الإدخال — مخفية بالافتراضي ★ -->
-    <TextView
-        android:id="@+id/rename_error_text"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:attr/textAppearanceSmall"
-        android:textSize="12sp"
-        android:textColor="@color/oui_functional_red_color"
-        android:visibility="gone"/>
+        android:layout_height="48dp"
+        android:paddingHorizontal="4dp"
+        android:paddingTop="7dp"
+        android:orientation="vertical">
+           	
+        <!-- ★ رسالة الخطأ تحت حقل الإدخال — مخفية بالافتراضي ★ -->
+        <TextView
+            android:id="@+id/rename_error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/textAppearanceSmall"
+            android:textSize="12sp"
+            android:textColor="@color/oui_functional_red_color"
+            android:visibility="gone"/>
+               
+    </LinearLayout>
               
 </LinearLayout>
