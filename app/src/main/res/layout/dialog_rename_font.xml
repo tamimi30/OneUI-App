@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="30dp"
+    android:paddingBottom="33dp"
     android:paddingHorizontal="20dp"
     android:orientation="vertical">
             
@@ -17,24 +18,17 @@
         android:selectAllOnFocus="true"
         android:imeOptions="flagNoExtractUi"
         android:singleLine="true" />
-        
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="33dp"
-        android:paddingHorizontal="7dp"
-        android:paddingTop="8dp"
-        android:orientation="vertical">
            	
         <!-- ★ رسالة الخطأ تحت حقل الإدخال — مخفية بالافتراضي ★ -->
         <TextView
             android:id="@+id/rename_error_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:layout_marginHorizontal="12dp"
             style="?android:attr/textAppearanceSmall"
             android:textSize="12sp"
             android:textColor="@color/oui_functional_red_color"
             android:visibility="gone"/>
-               
-    </LinearLayout>
               
 </LinearLayout>
