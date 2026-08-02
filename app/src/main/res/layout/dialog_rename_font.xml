@@ -18,8 +18,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rename_edit_text"
+			android:layout_gravity="center_vertical"
             android:hint="@string/rename_dialog_hint"
             android:inputType="textCapSentences"
+			android:textColorHighlight="@color/sesl_number_picker_text_highlight_color"
             android:imeOptions="flagNoExtractUi|actionDone"
             android:singleLine="true" />
            	
