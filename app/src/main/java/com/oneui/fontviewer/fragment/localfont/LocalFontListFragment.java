@@ -274,6 +274,12 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
 
                 updateMainActivityFontsCount(fonts.size());
+
+                List<String> pathsToPreload = new ArrayList<>();
+                for (LocalFontListViewModel.FontFileInfoWithMetadata font : fonts) {
+                    pathsToPreload.add(font.getPath());
+                }
+                LocalFontCache.getInstance().preloadFonts(pathsToPreload);
             }
         });
 
