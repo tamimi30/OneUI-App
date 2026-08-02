@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="20dp"
-        android:layout_marginTop="34dp"
-        android:layout_marginBottom="34dp"
+        android:paddingTop="34dp"
         android:orientation="vertical">
             
         <EditText
@@ -23,17 +22,24 @@
 			android:textColorHighlight="@color/sesl_number_picker_text_highlight_color"
             android:imeOptions="flagNoExtractUi|actionDone"
             android:singleLine="true" />
-           	
-        <TextView
-            android:id="@+id/rename_error_text"
+            
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:layout_marginHorizontal="12dp"
-            style="?android:attr/textAppearanceSmall"
-            android:textSize="12sp"
-            android:textColor="@color/oui_functional_red_color"
-            android:visibility="gone"/>
+            android:layout_height="34dp"
+            android:paddingTop="7dp"
+            android:paddingHoizontal="12dp"
+            android:orientation="vertical">    
+  	
+            <TextView
+                android:id="@+id/rename_error_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceSmall"
+                android:textSize="12sp"
+                android:textColor="@color/oui_functional_red_color"
+                android:visibility="gone"/>
+                    
+        </LinearLayout>
               
     </LinearLayout>
     
