@@ -483,7 +483,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                                                      ttcIndex, weightWidthLabel);
             }
 
-            mMainHandler.postDelayed(() -> mAdapter.saveLastOpenedAndUpdate(fontPath), 100);
+            mMainHandler.postDelayed(() -> mAdapter.saveLastOpenedAndUpdate(fontPath), 400);
         });
 
 
