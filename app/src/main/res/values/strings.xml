@@ -55,6 +55,7 @@
     <string name="btn_italic">Italic</string>
     <string name="translating">Translating...</string>
     <string name="font_metadata_error">The font metadata cannot be displayed, the font file may be corrupted or lack metadata.</string>
+	<string name="font_viewer_error_loading_font">Error loading font file</string>
     
     <!-- الخطوط المحلية -->
     <string name="drawer_local_fonts">Local fonts</string>
@@ -64,6 +65,7 @@
     <string name="local_fonts_select_folder_description">Select the fonts folder</string>
     <string name="loading_fonts">Loading…</string>
     <string name="action_change_folder">Change fonts folder</string>
+	<string name="font_fragment_permission_denied">Storage permission is required to search for font files on your device.\n\nYou can grant this permission in Settings, or manually copy font files to Documents/FontViewer+ folder.</string>
     
     <!-- خطوط النظام -->
     <string name="drawer_system_fonts">System fonts</string>
@@ -119,22 +121,5 @@
 
     <string name="exit_on_double_back">Press again to exit</string>
     <string name="no_fonts_found"></string>
-    
-    
-    
-    
-    <string name="delete_single_confirmation">Do you want to delete 1 file?</string>
-    
-    <string name="delete_all_confirmation">Do you want to delete all files?</string>
-    
-    <string name="delete_multiple_confirmation">Do you want to delete %d files?</string>
-    
-    <string name="font_fragment_permission_denied">Storage permission is required to search for font files on your device.\n\nYou can grant this permission in Settings, or manually copy font files to Documents/FontViewer+ folder.</string>
-    
-    <string name="font_viewer_error_loading_font">Error loading font file</string>
-
-	<string name="settings_preview_text_summary">Edit the text shown in preview</string>
-
-	
 
 </resources>
