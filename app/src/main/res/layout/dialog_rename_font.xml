@@ -14,7 +14,7 @@
         android:paddingHorizontal="20dp"
         android:orientation="vertical">
             
-        <androidx.appcompat.widget.AppCompatEditText
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rename_edit_text"
