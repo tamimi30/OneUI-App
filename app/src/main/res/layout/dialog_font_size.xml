@@ -21,10 +21,9 @@
         android:layout_marginBottom="21dp"
         android:background="@null"
         android:inputType="number"
-        android:imeOptions="actionDone"
+        android:imeOptions="flagNoExtractUi"
         android:selectAllOnFocus="true"
         android:maxLength="3"
-        android:imeOptions="flagNoExtractUi"
         android:cursorVisible="false"
         android:textColorHighlight="@color/sesl_number_picker_text_highlight_color"
         android:gravity="center" />
