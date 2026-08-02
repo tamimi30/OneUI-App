@@ -55,6 +55,7 @@
     <string name="btn_italic">مائل</string>
     <string name="translating">جارٍ الترجمة...</string>
     <string name="font_metadata_error">لا يمكن عرض البيانات الوصفية للخط، ربما ملف الخط تالف أو لا يحتوي على بيانات وصفية</string>
+	<string name="font_viewer_error_loading_font">حدث خطأ أثناء تحميل ملف الخط</string>
     
     <!-- الخطوط المحلية -->
     <string name="drawer_local_fonts">الخطوط المحلية</string>
@@ -64,6 +65,7 @@
     <string name="local_fonts_select_folder_description">إختر مجلد الخطوط</string>
     <string name="loading_fonts">جارٍ التحميل...</string>
     <string name="action_change_folder">تغيير مجلد الخطوط</string>
+	<string name="font_fragment_permission_denied">صلاحية الوصول للتخزين مطلوبة للبحث عن ملفات الخطوط في جهازك.\n\nيمكنك منح هذه الصلاحية من الإعدادات، أو نسخ ملفات الخطوط يدوياً إلى مجلد المستندات/FontViewer+</string>
     
     <!-- خطوط النظام -->
     <string name="drawer_system_fonts">خطوط النظام</string>
@@ -120,21 +122,4 @@
     <string name="exit_on_double_back">اضغط مرة أخرى للخروج</string>
     <string name="no_fonts_found"></string>
     
-    
-    
-    
-    <string name="delete_single_confirmation">هل تريد حذف ملف واحد؟</string>
-    
-    <string name="delete_all_confirmation">هل تريد حذف جميع الملفات؟</string>
-    
-    <string name="delete_multiple_confirmation">هل تريد حذف %d ملفات؟</string>
-    
-    <string name="font_fragment_permission_denied">صلاحية الوصول للتخزين مطلوبة للبحث عن ملفات الخطوط في جهازك.\n\nيمكنك منح هذه الصلاحية من الإعدادات، أو نسخ ملفات الخطوط يدوياً إلى مجلد المستندات/FontViewer+</string>
-    
-    <string name="font_viewer_error_loading_font">حدث خطأ أثناء تحميل ملف الخط</string>
-
-	<string name="settings_preview_text_summary">عدّل النص المعروض في المعاينة</string>
-
-
-
 </resources>
