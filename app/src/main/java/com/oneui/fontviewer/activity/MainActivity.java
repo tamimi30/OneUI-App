@@ -539,22 +539,8 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    @Deprecated
-    public void updateFontsCount(int fromFragmentIndex, int count) {
-        AppScreen screen;
-        switch (fromFragmentIndex) {
-            case 2:  screen = AppScreen.LOCAL_FONTS;  break;
-            case 3:  screen = AppScreen.SYSTEM_FONTS; break;
-            case 4:  screen = AppScreen.FAVORITES;    break;
-            case 5:  screen = AppScreen.TRASH;        break;
-            default: return; 
-        }
-        updateFontsCount(screen, count);
-    }
-
     
-
-
+    
     @Override
     public void onFontSelected(String fontPath, String realName, String fileName,
                                int ttcIndex, String weightWidthLabel) {
