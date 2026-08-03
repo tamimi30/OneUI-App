@@ -509,7 +509,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         setupRecyclerViewAnimator();
 
-        mRecyclerView.seslSetFillBottomEnabled(true);
+        mRecyclerView.seslSetFillBottomEnabled(false);
         mRecyclerView.seslSetLastRoundedCorner(false);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
