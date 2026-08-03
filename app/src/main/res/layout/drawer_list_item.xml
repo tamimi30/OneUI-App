@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="12dp"
     android:layout_marginEnd="12dp"
-    android:background="@drawable/drawer_item_selector"
+    android:background="@android:color/transparent"
     tools:viewBindingIgnore="true">
 
     <LinearLayout
