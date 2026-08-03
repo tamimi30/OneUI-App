@@ -219,24 +219,7 @@ public class FontUIStateManager {
         Log.d(TAG, "Sort state saved: type=" + sortType + ", ascending=" + ascending);
     }
     
-    public SortByItemLayout.SortType getSavedSortType() {
-        return savedSortType;
-    }
     
-    public boolean isSavedSortAscending() {
-        return savedSortAscending;
-    }
-    
-    public boolean hasSavedSortState() {
-        return savedSortType != null;
-    }
-    
-    public void clearSavedStates() {
-        recyclerViewState = null;
-        savedSortType = null;
-        savedSortAscending = true;
-        Log.d(TAG, "All saved states cleared");
-    }
     
     public void showLoadingState() {
         if (recyclerView != null) recyclerView.setVisibility(View.GONE);
