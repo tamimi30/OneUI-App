@@ -31,9 +31,7 @@ public class FontMetadataExtractor {
         return "Unknown Font";
     }
     
-    public static String extractFontName(File fontFile) {
-        return extractFontName(fontFile, 0);
-    }
+    
     
     public static Map<String, String> extractMetadataWithTtcIndex(File fontFile, int ttcIndex) {
         if (fontFile == null || !fontFile.exists()) {
@@ -69,62 +67,5 @@ public class FontMetadataExtractor {
         return new HashMap<>();
     }
     
-    public static Map<String, String> extractMetadata(File fontFile) {
-        return extractMetadataWithTtcIndex(fontFile, 0);
-    }
     
-    public static boolean isMetadataAvailable(File fontFile) {
-        if (fontFile == null || !fontFile.exists()) {
-            return false;
-        }
-        
-        try {
-            String fontName = FontMetaData.extractFontName(fontFile);
-            return fontName != null && !fontName.isEmpty() && !fontName.equals("Unknown Font");
-        } catch (Exception e) {
-            return false;
-        }
-    }
-    
-    public static String extractSpecificMetadata(File fontFile, String key) {
-        if (fontFile == null || !fontFile.exists() || key == null) {
-            return null;
-        }
-        
-        Map<String, String> metadata = extractMetadata(fontFile);
-        return metadata.get(key);
-    }
-    
-    public static boolean hasMetadata(File fontFile, String key) {
-        String value = extractSpecificMetadata(fontFile, key);
-        return value != null && !value.isEmpty();
-    }
-    
-    public static Map<String, String> extractBasicInfo(File fontFile) {
-        Map<String, String> basicInfo = new HashMap<>();
-        
-        if (fontFile == null || !fontFile.exists()) {
-            return basicInfo;
-        }
-        
-        Map<String, String> fullMetadata = extractMetadata(fontFile);
-        
-        if (fullMetadata.containsKey("FullName")) {
-            basicInfo.put("FullName", fullMetadata.get("FullName"));
-        }
-        
-        if (fullMetadata.containsKey("Family")) {
-            basicInfo.put("Family", fullMetadata.get("Family"));
-        }
-        
-        if (fullMetadata.containsKey("Version")) {
-            basicInfo.put("Version", fullMetadata.get("Version"));
-        }
-        
-        if (fullMetadata.containsKey("FontType")) {
-            basicInfo.put("FontType", fullMetadata.get("FontType"));
-        }
-        
-        return basicInfo;
-    }
                 }
