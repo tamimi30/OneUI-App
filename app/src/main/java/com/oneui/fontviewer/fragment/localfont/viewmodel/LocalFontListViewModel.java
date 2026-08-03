@@ -196,25 +196,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
         });
     }
 
-    public boolean shouldAddToFavorites(List<String> selectedPaths) {
-        if (selectedPaths == null || selectedPaths.isEmpty()) return true;
-
-        List<FontEntity> currentList = fontsLiveData.getValue();
-        if (currentList == null) return true;
-
-        int favoriteCount = 0;
-        for (FontEntity entity : currentList) {
-            if (selectedPaths.contains(entity.getPath()) && entity.isFavorite()) {
-                favoriteCount++;
-            }
-        }
-
-        return favoriteCount < selectedPaths.size();
-    }
-
-    public boolean shouldAddToFavoritesFromFavoritesList(List<String> selectedPaths) {
-        return false;
-    }
+    
 
     public LiveData<List<FontEntity>> searchFavorites(String query) {
         if (query == null || query.trim().isEmpty()) {
@@ -437,35 +419,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
     }
 
     
-    public int findFontPositionByPath(String path) {
-        List<FontEntity> currentList = fontsLiveData.getValue();
-        if (currentList == null || path == null) {
-            return -1;
-        }
-        
-        for (int i = 0; i < currentList.size(); i++) {
-            if (currentList.get(i).getPath().equals(path)) {
-                return i;
-            }
-        }
-        
-        return -1;
-    }
-
-    public int findFavoritePositionByPath(String path) {
-        List<FontEntity> currentFavorites = favoritesLiveData.getValue();
-        if (currentFavorites == null || path == null) {
-            return -1;
-        }
-
-        for (int i = 0; i < currentFavorites.size(); i++) {
-            if (currentFavorites.get(i).getPath().equals(path)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
+    
     
     public LiveData<Integer> getFontsCountLiveData() {
         return repository.getLocalFontsCount();
