@@ -161,81 +161,17 @@ public class FontSortManager {
         }
     }
 
-    public void setSortType(SortByItemLayout.SortType sortType) {
-        setSortOptions(sortType, this.isSortAscending);
-    }
-
-    public void setSortAscending(boolean ascending) {
-        setSortOptions(this.currentSortType, ascending);
-    }
-
-    public void toggleSortDirection() {
-        setSortAscending(!isSortAscending);
-    }
-
-    @Deprecated
-    public void sortFontsList(List<FontFileInfo> fontsToSort) {
-        if (fontsToSort == null || fontsToSort.isEmpty()) return;
-        Comparator<FontFileInfo> comparator = getComparatorForCurrentSort();
-        Collections.sort(fontsToSort, comparator);
-    }
-
-    private Comparator<FontFileInfo> getComparatorForCurrentSort() {
-        Comparator<FontFileInfo> comparator;
-
-        switch (currentSortType) {
-            case DATE:
-                comparator = (f1, f2) -> {
-                    if (f1 == null || f2 == null) return f1 == null ? 1 : -1;
-                    return Long.compare(f1.getLastModified(), f2.getLastModified());
-                };
-                break;
-            case SIZE:
-                comparator = (f1, f2) -> {
-                    if (f1 == null || f2 == null) return f1 == null ? 1 : -1;
-                    return Long.compare(f1.getSize(), f2.getSize());
-                };
-                break;
-            case NAME:
-            default:
-                comparator = (f1, f2) -> {
-                    if (f1 == null || f1.getName() == null) return 1;
-                    if (f2 == null || f2.getName() == null) return -1;
-                    return f1.getName().compareToIgnoreCase(f2.getName());
-                };
-                break;
-        }
-
-        if (!isSortAscending) comparator = Collections.reverseOrder(comparator);
-        return comparator;
-    }
+    
 
     public SortByItemLayout.SortType getCurrentSortType() { return currentSortType; }
 
     public boolean isSortAscending() { return isSortAscending; }
 
-    public void reloadPreferences() {
-        loadSortPreferences();
-        notifySortChanged();
-    }
-
-    public void resetToDefaults() {
-        setSortOptions(SortByItemLayout.SortType.NAME, true);
-    }
+    
 
     private void notifySortChanged() {
         if (listener != null) listener.onSortChanged(currentSortType, isSortAscending);
     }
 
-    public String getSortDescription() {
-        String typeName;
-        switch (currentSortType) {
-            case DATE:  typeName = "Date";  break;
-            case SIZE:  typeName = "Size";  break;
-            case NAME:
-            default:    typeName = "Name";  break;
-        }
-        return typeName + " (" + (isSortAscending ? "Ascending" : "Descending") + ")"
-                + " [" + listType + "]";
-    }
+    
                             }
