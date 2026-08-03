@@ -159,77 +159,7 @@ public class FontViewerStorageManager {
         return fontsDirectory;
     }
     
-    public int cleanupOldViewerFonts(String currentFontPath) {
-        File fontsDirectory = getFontsDirectory();
-        if (fontsDirectory == null || !fontsDirectory.exists()) {
-            return 0;
-        }
-        
-        File[] files = fontsDirectory.listFiles();
-        if (files == null) {
-            return 0;
-        }
-        
-        int deletedCount = 0;
-        
-        for (File file : files) {
-            if (file.isFile()) {
-                if (currentFontPath != null && file.getAbsolutePath().equals(currentFontPath)) {
-                    continue;
-                }
-                
-                if (file.delete()) {
-                    deletedCount++;
-                    Log.d(TAG, "Deleted old viewer font: " + file.getName());
-                }
-            }
-        }
-        
-        Log.d(TAG, "Cleaned up " + deletedCount + " old viewer font files");
-        return deletedCount;
-    }
     
-    public boolean deleteFontFile(String fontPath) {
-        if (fontPath == null) {
-            return false;
-        }
-        
-        try {
-            File fontFile = new File(fontPath);
-            if (fontFile.exists() && fontFile.delete()) {
-                Log.d(TAG, "Deleted font file: " + fontPath);
-                return true;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error deleting font file: " + fontPath, e);
-        }
-        
-        return false;
-    }
-    
-    public int getViewerFontsCount() {
-        File fontsDirectory = getFontsDirectory();
-        if (fontsDirectory == null || !fontsDirectory.exists()) {
-            return 0;
-        }
-        
-        File[] files = fontsDirectory.listFiles();
-        return files != null ? files.length : 0;
-    }
-    
-    public boolean isFontFileValid(String fontPath) {
-        if (fontPath == null) {
-            return false;
-        }
-        
-        try {
-            File fontFile = new File(fontPath);
-            return fontFile.exists() && fontFile.isFile() && fontFile.canRead();
-        } catch (Exception e) {
-            Log.e(TAG, "Error checking font file validity: " + fontPath, e);
-            return false;
-        }
-    }
     public String getRealPathFromUri(Uri uri) {
         if (uri == null) return null;
 
