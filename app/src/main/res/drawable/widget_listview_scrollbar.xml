@@ -3,6 +3,7 @@
     <item
         android:right="0dp"
         android:left="10dp"
+        android:top="20dp"
         android:bottom="20dp">
         <shape>
             <corners android:radius="28dp"/>
