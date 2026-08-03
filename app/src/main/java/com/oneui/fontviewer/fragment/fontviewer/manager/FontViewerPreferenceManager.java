@@ -69,9 +69,7 @@ public class FontViewerPreferenceManager {
         }
     }
     
-    public boolean hasLastViewedFont() {
-        return getLastViewedFontPath() != null;
-    }
+    
     
     public void clearLastViewedFont() {
         dataStore.clearLastViewedFont()
@@ -82,28 +80,7 @@ public class FontViewerPreferenceManager {
                 );
     }
     
-    public void saveFontSize(float fontSize) {
-        dataStore.setViewerFontSize(fontSize)
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                    prefs -> Log.d(TAG, "Saved font size: " + fontSize),
-                    error -> Log.e(TAG, "Error saving font size: " + error.getMessage())
-                );
-    }
     
-    public float getFontSize() {
-        return getFontSize(SettingsDataStore.DEFAULT_VIEWER_FONT_SIZE);
-    }
-    
-    public float getFontSize(float defaultSize) {
-        try {
-            Float value = dataStore.getViewerFontSize().blockingFirst();
-            return value != null ? value : defaultSize;
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting font size: " + e.getMessage());
-            return defaultSize;
-        }
-    }
     
     public void saveFontWeight(float fontWeight) {
         dataStore.setViewerFontWeight(fontWeight)
@@ -128,11 +105,5 @@ public class FontViewerPreferenceManager {
         }
     }
     
-    public void resetFontSize() {
-        saveFontSize(SettingsDataStore.DEFAULT_VIEWER_FONT_SIZE);
-    }
     
-    public void resetFontWeight() {
-        saveFontWeight(SettingsDataStore.DEFAULT_VIEWER_FONT_WEIGHT);
-    }
 }
