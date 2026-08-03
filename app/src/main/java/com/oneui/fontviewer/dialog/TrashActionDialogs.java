@@ -47,23 +47,7 @@ public final class TrashActionDialogs {
         void onHide();
     }
 
-    public static void showMoveToTrashDialog(
-            @NonNull Context context,
-            int count,
-            @NonNull OnConfirmListener listener) {
-
-        if (count <= 0) return;
-
-        String message = context.getResources()
-                .getQuantityString(R.plurals.dialog_move_to_trash_question, count, count);
-
-        new AlertDialog.Builder(context)
-                .setMessage(message)
-                .setPositiveButton(R.string.action_move_to_trash,
-                        (d, w) -> listener.onConfirmed())
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
-    }
+    
 
     public static void showDeletePermanentlyDialog(
             @NonNull Context context,
