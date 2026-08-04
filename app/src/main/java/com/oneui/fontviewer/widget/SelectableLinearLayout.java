@@ -98,7 +98,7 @@ public class SelectableLinearLayout extends LinearLayout {
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
             
-         /**  // بداية الحل: إضافة استثناء للـ CheckBox لمنع مشكلة التطاير بعد تدوير الشاشة
+            // بداية الحل: إضافة استثناء للـ CheckBox لمنع مشكلة التطاير بعد تدوير الشاشة
             android.transition.TransitionSet transitionSet = new android.transition.TransitionSet();
             transitionSet.setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER);
             transitionSet.setDuration(275);
@@ -114,7 +114,7 @@ public class SelectableLinearLayout extends LinearLayout {
             transitionSet.addTransition(fadeTransition);
 
             android.transition.TransitionManager.beginDelayedTransition(this, transitionSet);
-            // نهاية الحل. */
+            // نهاية الحل.
 
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
