@@ -27,7 +27,6 @@ public class NavManager {
         DrawerListAdapter getDrawerAdapter();
         SearchCoordinator getSearchCoordinator();
         void updateDrawerTitle(AppScreen screen);
-        void updateMenuVisibility(AppScreen screen);
         void performExit();
     }
 
