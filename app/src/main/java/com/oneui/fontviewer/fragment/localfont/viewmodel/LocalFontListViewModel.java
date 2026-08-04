@@ -66,17 +66,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
             this.isFavorite       = entity.isFavorite();          
         }
         
-        public FontFileInfoWithMetadata(String name, String path, long size,
-                                        long lastModified, String realName,
-                                        String weightWidthLabel, boolean isFavorite) {
-            this.name             = name;
-            this.path             = path;
-            this.size             = size;
-            this.lastModified     = lastModified;
-            this.realName         = realName;
-            this.weightWidthLabel = weightWidthLabel; 
-            this.isFavorite       = isFavorite;       
-        }
+        
         
         public String  getName()             { return name; }
         public String  getPath()             { return path; }
@@ -86,18 +76,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
         public String  getWeightWidthLabel() { return weightWidthLabel; }
         public boolean isFavorite()          { return isFavorite; }
         
-        private String getDisplayName() {
-            String displayName = name;
-            if (displayName.toLowerCase().endsWith(".ttf") || 
-                displayName.toLowerCase().endsWith(".otf") ||
-                displayName.toLowerCase().endsWith(".ttc")) {
-                int extensionPos = displayName.lastIndexOf('.');
-                if (extensionPos > 0) {
-                    displayName = displayName.substring(0, extensionPos);
-                }
-            }
-            return displayName;
-        }
+        
     }
     
     public LocalFontListViewModel(@NonNull Application application) {
