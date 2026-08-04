@@ -47,17 +47,11 @@ public class SystemFontInfo {
         return weight;
     }
     
-    public int getSlant() {
-        return slant;
-    }
     
     public int getTtcIndex() {
         return ttcIndex;
     }
     
-    public String getAxes() {
-        return axes;
-    }
     
     public boolean isVariableFont() {
         return axes != null && !axes.isEmpty();
@@ -80,48 +74,5 @@ public class SystemFontInfo {
         return weightWidthLabel;
     }
     
-    public String getDisplayName() {
-        if (realName != null && !realName.isEmpty()) {
-            return realName;
-        }
-        
-        String displayName = name;
-        if (displayName.toLowerCase().endsWith(".ttf") || displayName.toLowerCase().endsWith(".otf")) {
-            displayName = displayName.substring(0, displayName.length() - 4);
-        }
-        return displayName;
-    }
     
-    public String getWeightName() {
-        switch (weight) {
-            case 100: return "Thin";
-            case 200: return "Extra Light";
-            case 300: return "Light";
-            case 400: return "Normal";
-            case 500: return "Medium";
-            case 600: return "Semi Bold";
-            case 700: return "Bold";
-            case 800: return "Extra Bold";
-            case 900: return "Black";
-            default: return "Weight " + weight;
-        }
-    }
-    
-    public String getSlantName() {
-        switch (slant) {
-            case 0: return "Upright";
-            case 1: return "Italic";
-            default: return "Slant " + slant;
-        }
-    }
-    
-    public String getFormattedSize() {
-        if (size < 1024) {
-            return size + " B";
-        } else if (size < 1024 * 1024) {
-            return String.format("%.2f KB", size / 1024.0);
-        } else {
-            return String.format("%.2f MB", size / (1024.0 * 1024.0));
-        }
-    }
 }
