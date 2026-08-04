@@ -22,10 +22,6 @@ public class DrawerListViewHolder extends RecyclerView.ViewHolder {
     private final Typeface mNormalTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
     private final Typeface mSelectedTypeface = Typeface.create("sec-roboto-light", Typeface.BOLD);
 
-    public DrawerListViewHolder(@NonNull View itemView) {
-        this(itemView, false);
-    }
-
     public DrawerListViewHolder(@NonNull View itemView, boolean isSeparator) {
         super(itemView);
         mIsSeparator = isSeparator;
