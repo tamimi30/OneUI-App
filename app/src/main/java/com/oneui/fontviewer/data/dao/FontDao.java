@@ -105,12 +105,6 @@ public interface FontDao {
     @Query("SELECT * FROM fonts WHERE is_cached = 1 ORDER BY last_access_time DESC")
     List<FontEntity> getCachedFonts();
     
-    @Query("SELECT * FROM fonts ORDER BY access_count DESC LIMIT :limit")
-    List<FontEntity> getMostAccessedFonts(int limit);
-    
-    @Query("SELECT * FROM fonts ORDER BY last_access_time DESC LIMIT :limit")
-    List<FontEntity> getRecentlyAccessedFonts(int limit);
-    
     @Query("UPDATE fonts SET is_cached = 0, updated_at = :timestamp")
     int resetAllCacheStatus(long timestamp);
     
