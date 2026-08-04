@@ -234,21 +234,5 @@ public class FontUIStateManager {
 
     }
     
-    public void scrollToTop() {
-        if (recyclerView != null) {
-            recyclerView.scrollToPosition(0);
-        }
-    }
     
-    public void scrollToPosition(int position) {
-        if (recyclerView != null && position >= 0) {
-            recyclerView.scrollToPosition(position);
-        }
-    }
-    
-    public void smoothScrollToPosition(int position) {
-        if (recyclerView != null && position >= 0) {
-            recyclerView.smoothScrollToPosition(position);
-        }
-    }
 }
