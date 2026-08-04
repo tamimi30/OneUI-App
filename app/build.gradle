@@ -4,9 +4,7 @@ plugins {
 }
 
 rewrite {
-    activeRecipe 'org.openrewrite.staticanalysis.RemoveUnusedLocalVariables',
-                 'org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods',
-                 'org.openrewrite.staticanalysis.CommonStaticAnalysis'
+    activeRecipe 'org.openrewrite.staticanalysis.CommonStaticAnalysis',
                  'org.openrewrite.java.RemoveUnusedImports'
     
     failOnDryRunResults = false
