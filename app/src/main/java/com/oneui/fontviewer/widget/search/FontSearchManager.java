@@ -70,17 +70,13 @@ public class FontSearchManager {
         notifySearchResultsChanged();
     }
     
-    public void reapplyFilter() {
-        applyCurrentFilter();
-    }
+    
     
     public List<FontFileInfo> getFilteredFonts() {
         return new ArrayList<>(filteredFonts);
     }
     
-    public List<FontFileInfo> getAllFonts() {
-        return new ArrayList<>(allFonts);
-    }
+    
     
     public String getCurrentSearchQuery() {
         return currentSearchQuery;
@@ -90,24 +86,7 @@ public class FontSearchManager {
         return !currentSearchQuery.isEmpty();
     }
     
-    public boolean isFilteredListEmpty() {
-        return filteredFonts.isEmpty();
-    }
     
-    public int getFilteredCount() {
-        return filteredFonts.size();
-    }
-    
-    public int getTotalCount() {
-        return allFonts.size();
-    }
-    
-    public void clear() {
-        allFonts.clear();
-        filteredFonts.clear();
-        currentSearchQuery = "";
-        notifySearchResultsChanged();
-    }
     
     private void notifySearchResultsChanged() {
         if (listener != null) {
@@ -115,19 +94,5 @@ public class FontSearchManager {
         }
     }
     
-    public boolean matchesCurrentQuery(FontFileInfo fontInfo) {
-        if (currentSearchQuery.isEmpty()) {
-            return true;
-        }
-        
-        if (fontInfo == null || fontInfo.getName() == null) {
-            return false;
-        }
-
-        String nameWithoutExtension = FileUtils.removeExtension(fontInfo.getName());
-        String lowerFontName = nameWithoutExtension.toLowerCase(Locale.getDefault());
-        String lowerQuery    = currentSearchQuery.toLowerCase(Locale.getDefault());
-        
-        return lowerFontName.contains(lowerQuery);
-    }
+    
             }
