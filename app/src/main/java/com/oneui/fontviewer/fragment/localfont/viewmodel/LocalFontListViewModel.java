@@ -567,14 +567,5 @@ public class LocalFontListViewModel extends AndroidViewModel {
         }
     }
     
-    public void deleteAllLocalFonts(LocalFontRepository.OnCompleteListener listener) {
-        repository.deleteByPath(null, success -> {
-            if (listener != null) {
-                listener.onComplete(success);
-            }
-            if (success) {
-                Log.d(TAG, "All local fonts deleted");
-            }
-        });
-    }
+    
                 }
