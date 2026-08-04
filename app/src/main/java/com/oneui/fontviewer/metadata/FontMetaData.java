@@ -207,9 +207,7 @@ public class FontMetaData {
         }
     }
     
-    private static String getFontNameDirect(File fontFile, int nameId) {
-        return getFontNameDirectWithTtc(fontFile, nameId, 0);
-    }
+    
     
     private static Map<String, String> extractTechnicalDataDirectWithTtc(File fontFile, int ttcIndex) {
         Map<String, String> data = new HashMap<>();
@@ -385,9 +383,7 @@ public class FontMetaData {
         return data;
     }
     
-    private static Map<String, String> extractTechnicalDataDirect(File fontFile) {
-        return extractTechnicalDataDirectWithTtc(fontFile, 0);
-    }
+    
     
     private static long readUInt32(RandomAccessFile raf) throws Exception {
         byte[] bytes = new byte[4];
