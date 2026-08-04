@@ -51,9 +51,7 @@ public class VariableFontHelper {
         return fvarTableExists(fontFile, ttcIndex);
     }
     
-    public static boolean isVariableFont(File fontFile) {
-        return isVariableFont(fontFile, 0);
-    }
+    
     
     private static FontVariationAxis[] getVariationAxes(File fontFile, int ttcIndex) {
         try {
@@ -155,9 +153,7 @@ public class VariableFontHelper {
         return instances;
     }
     
-    public static List<VariableInstance> extractVariableInstances(File fontFile) {
-        return extractVariableInstances(fontFile, 0);
-    }
+    
     
     private static float[] readWeightRangeFromFvar(File fontFile, int ttcIndex) {
         float[] defaultRange = {100f, 900f};
@@ -264,9 +260,7 @@ public class VariableFontHelper {
         }
     }
 
-    public static Typeface createTypefaceWithWeight(File fontFile, float weight) {
-        return createTypefaceWithWeight(fontFile, weight, 0);
-    }
+    
 
     public static Typeface createTypefaceWithWeight(File fontFile, float weight, int ttcIndex) {
         
