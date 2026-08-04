@@ -67,52 +67,5 @@ public class LocalFontDirectory {
         return fontFiles;
     }
 
-    public static boolean isDirectoryAccessible(String directoryPath) {
-        if (directoryPath == null || directoryPath.isEmpty()) {
-            return false;
-        }
-
-        try {
-            File directory = new File(directoryPath);
-            return directory.exists() && directory.isDirectory() && directory.canRead();
-        } catch (Exception e) {
-            Log.e(TAG, "Error checking directory accessibility: " + directoryPath, e);
-            return false;
-        }
-    }
-
-    public static int countFontsInDirectory(String directoryPath) {
-        if (directoryPath == null || directoryPath.isEmpty()) {
-            return 0;
-        }
-
-        try {
-            File directory = new File(directoryPath);
-
-            if (!directory.exists() || !directory.isDirectory()) {
-                return 0;
-            }
-
-            File[] files = directory.listFiles();
-            if (files == null) {
-                return 0;
-            }
-
-            int count = 0;
-            for (File file : files) {
-                if (file.isFile()) {
-                    String name = file.getName().toLowerCase();
-                    if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".ttc")) {
-                        count++;
-                    }
-                }
-            }
-
-            return count;
-
-        } catch (Exception e) {
-            Log.e(TAG, "Error counting fonts in directory: " + directoryPath, e);
-            return 0;
-        }
-    }
+    
 }
