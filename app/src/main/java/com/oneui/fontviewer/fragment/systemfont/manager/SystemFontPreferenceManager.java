@@ -43,6 +43,16 @@ public class SystemFontPreferenceManager {
     
     
     
+    public String getLastOpenedFont() {
+        try {
+            cachedLastOpenedPath = dataStore.getLastOpenedSystemFontPath().blockingFirst();
+            return cachedLastOpenedPath;
+        } catch (Exception e) {
+            Log.d(TAG, "No last opened system font found");
+            return null;
+        }
+    }
+    
     public boolean isLastOpenedFont(String fontPath) {
         if (fontPath == null) {
             return false;
