@@ -11,6 +11,8 @@ import android.app.LocaleManager;
 
 import java.util.Locale;
 
+import androidx.appcompat.app.AlertDialog;
+
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.res.ResourcesCompat;
 
