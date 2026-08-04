@@ -632,14 +632,6 @@ public class MainActivity extends BaseActivity
     }
 
 
-    public void updateDrawerSelection(int position) {
-        if (position < 0 || position >= AppScreen.values().length) return;
-        AppScreen screen = AppScreen.values()[position];
-        mCurrentScreen = screen;
-        if (mDrawerAdapter != null) {
-            mDrawerAdapter.setSelectedItem(screen);
-        }
-        updateDrawerTitle(screen);
-    }
+    
     
                                        }
