@@ -194,33 +194,7 @@ public class App extends Application {
         return sInstance;
     }
     
-    public AppDatabase getDatabase() {
-        if (database == null) {
-            database = AppDatabase.getInstance(this);
-        }
-        return database;
-    }
     
-    public SettingsDataStore getSettingsDataStore() {
-        if (settingsDataStore == null) {
-            settingsDataStore = SettingsDataStore.getInstance(this);
-        }
-        return settingsDataStore;
-    }
-    
-    public LocalFontRepository getLocalFontRepository() {
-        if (localFontRepository == null) {
-            localFontRepository = LocalFontRepository.getInstance(this);
-        }
-        return localFontRepository;
-    }
-    
-    public SystemFontRepository getSystemFontRepository() {
-        if (systemFontRepository == null) {
-            systemFontRepository = SystemFontRepository.getInstance(this);
-        }
-        return systemFontRepository;
-    }
 
     /**
      * إعادة بناء جميع الأنشطة الحية
