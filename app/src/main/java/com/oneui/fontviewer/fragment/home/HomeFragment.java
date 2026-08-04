@@ -151,10 +151,7 @@ public class HomeFragment extends Fragment {
         return false;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
+    
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
