@@ -322,22 +322,7 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    public void resetAllSettings() {
-        disposables.add(
-            dataStore.clearAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    preferences -> {
-                        Log.d(TAG, "All settings reset to defaults");
-                        SettingsHelper.applyTheme(getApplication());
-                        settingsEvent.setValue(new SettingsEvent(
-                            SettingsEventType.RECREATE_ALL_ACTIVITIES));
-                    },
-                    error -> Log.e(TAG, "Error resetting settings", error)
-                )
-        );
-    }
+    
 
     @Override
     protected void onCleared() {
