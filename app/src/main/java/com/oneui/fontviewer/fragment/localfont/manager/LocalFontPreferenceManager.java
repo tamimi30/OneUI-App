@@ -88,14 +88,6 @@ public class LocalFontPreferenceManager {
     
     public boolean hasFontFolderPath() {
         return getFontFolderPath() != null;
-    }
+    }  
     
-    public void clearFontFolderPath() {
-        dataStore.setFolderPath(null)
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                    prefs -> Log.d(TAG, "Cleared font folder path"),
-                    error -> Log.e(TAG, "Error clearing folder path", error)
-                );
-    }
 }
