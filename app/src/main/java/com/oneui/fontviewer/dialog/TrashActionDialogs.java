@@ -71,18 +71,7 @@ public final class TrashActionDialogs {
                         R.color.oui_functional_red_color));
     }
 
-    @NonNull
-    public static ProgressDialog createMoveToTrashProgressDialog(
-            @NonNull Context context,
-            int total,
-            @NonNull OnProgressCancelListener cancelListener,
-            @NonNull OnProgressHideListener hideListener) {
-
-        String title = context.getResources()
-                .getQuantityString(R.plurals.progress_moving_to_trash, total);
-
-        return buildProgressDialog(context, title, total, cancelListener, hideListener);
-    }
+    
 
     @NonNull
     public static ProgressDialog createDeleteProgressDialog(
