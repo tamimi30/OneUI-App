@@ -290,9 +290,5 @@ public class FontEntity {
         return name;
     }
     
-    public void recordAccess() {
-        this.lastAccessTime = System.currentTimeMillis();
-        this.accessCount++;
-        this.updatedAt = System.currentTimeMillis();
-    }
+    
 }
