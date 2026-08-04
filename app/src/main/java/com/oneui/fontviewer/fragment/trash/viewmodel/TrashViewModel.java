@@ -95,60 +95,7 @@ public class TrashViewModel extends AndroidViewModel {
         return _isLoading;
     }
 
-    public void moveToTrash(@NonNull List<FontEntity> fonts) {
-        if (fonts.isEmpty()) return;
-
-        BatchOperationState.setProcessing(true);
-        cancelFlag = new AtomicBoolean(false);
-        BatchOperationState.setCancelFlag(cancelFlag);
-        _isLoading.postValue(true);
-
-        final long startTime = System.currentTimeMillis();
-
-        String movingTitle = getApplication().getResources()
-        .getQuantityString(R.plurals.progress_moving_to_trash, fonts.size());
-        Intent moveServiceIntent = new Intent(getApplication(), OperationForegroundService.class);
-        moveServiceIntent.putExtra(OperationForegroundService.EXTRA_NOTIF_ID, TrashActionDialogs.NOTIF_ID_MOVE);
-        moveServiceIntent.putExtra(OperationForegroundService.EXTRA_TITLE, movingTitle);
-        moveServiceIntent.putExtra(OperationForegroundService.EXTRA_TOTAL, fonts.size());
-        moveServiceIntent.putExtra(OperationForegroundService.EXTRA_SOURCE_FRAGMENT,
-        BatchOperationState.getSourceFragmentIndex());
-        ContextCompat.startForegroundService(getApplication(), moveServiceIntent);
-
-        TrashActionDialogs.showMoveToTrashNotification(getApplication(), fonts.size());
-
-        repository.moveToTrashBatch(
-                getApplication(),
-                fonts,
-                cancelFlag,
-
-                (current, total) -> {
-                    TrashActionDialogs.updateMoveToTrashNotification(getApplication(), current, total);
-                    _operationProgress.postValue(
-                            new OperationProgress(current, total, OperationType.MOVE_TO_TRASH));
-                },
-
-                (succeeded, failed) -> {
-                    long elapsedTime = System.currentTimeMillis() - startTime;
-                    long delay = Math.max(0, MIN_DIALOG_DURATION_MS - elapsedTime);
-
-                    mainHandler.postDelayed(() -> {
-                        getApplication().stopService(
-                                new Intent(getApplication(), OperationForegroundService.class));
-                        TrashActionDialogs.dismissMoveToTrashNotification(getApplication());
-                        _isLoading.postValue(false);
-                        _operationResult.postValue(new OperationResult(
-                                succeeded, failed,
-                                OperationType.MOVE_TO_TRASH,
-                                cancelFlag.get()
-                        ));
-                        BatchOperationState.setProcessing(false);
-                        Log.d(TAG, "moveToTrash complete — succeeded: " + succeeded
-                                + ", failed: " + failed);
-                    }, delay);
-                }
-        );
-    }
+    
 
     public void restoreFonts(@NonNull List<FontEntity> fonts) {
         if (fonts.isEmpty()) return;
@@ -329,10 +276,6 @@ public class TrashViewModel extends AndroidViewModel {
             Log.d(TAG, "Operation cancellation requested");
         }
     }
-
-    
-
-    
 
     public void clearOperationResult() {
         _operationResult.postValue(null);
