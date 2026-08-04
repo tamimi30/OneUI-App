@@ -152,11 +152,5 @@ public class LocalFontDirectoryPicker {
         return null;
     }
     
-    public String getDefaultFontsFolder() {
-        File defaultDir = new File(Environment.getExternalStorageDirectory(), "Fonts");
-        if (!defaultDir.exists()) {
-            defaultDir.mkdirs();
-        }
-        return defaultDir.getAbsolutePath();
-    }
+    
                     }
