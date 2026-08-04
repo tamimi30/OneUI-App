@@ -229,15 +229,6 @@ public class FontViewerFragment extends Fragment {
 
         }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
 
     @Override
     public void onDestroyView() {
