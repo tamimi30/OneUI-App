@@ -27,7 +27,7 @@ public class SelectableAnimatedDrawable extends AnimatedStateListDrawableCompat 
 
     private static final String LOG_TAG = "SelectableAnimDrawable";
     private float radius = -1f;
-    private int selectedColor = -1;
+    private final int selectedColor = -1;
     private final Paint backgroundPaint;
     private final RectF shapeBounds = new RectF();
     private ValueAnimator backgroundAnimator;
