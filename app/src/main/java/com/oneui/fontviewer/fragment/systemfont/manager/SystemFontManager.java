@@ -16,7 +16,7 @@ import java.util.Set;
 
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
 
-public class SystemFontManager {
+public final class SystemFontManager {
     
     private static final String TAG = "SystemFontManager";
     private static SystemFontManager instance;
@@ -126,7 +126,9 @@ public class SystemFontManager {
             if (axes != null && axes.length > 0) {
                 StringBuilder axesInfo = new StringBuilder();
                 for (int i = 0; i < axes.length; i++) {
-                    if (i > 0) axesInfo.append(", ");
+                    if (i > 0) {
+                        axesInfo.append(", ");
+                    }
                     axesInfo.append(axes[i].getTag());
                 }
                 return axesInfo.toString();

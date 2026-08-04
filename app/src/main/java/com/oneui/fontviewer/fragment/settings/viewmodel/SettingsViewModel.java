@@ -3,15 +3,14 @@ package com.oneui.fontviewer.fragment.settings.viewmodel;
 import android.app.Application;
 import android.os.Build;
 import android.util.Log;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
@@ -335,7 +334,7 @@ public class SettingsViewModel extends AndroidViewModel {
     public static class SettingsEvent {
         private final SettingsEventType type;
         private final String message;
-        private boolean handled = false;
+        private boolean handled;
 
         public SettingsEvent(SettingsEventType type) {
             this(type, null);

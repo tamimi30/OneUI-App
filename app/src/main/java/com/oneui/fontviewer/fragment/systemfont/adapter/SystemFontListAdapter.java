@@ -14,23 +14,24 @@ import androidx.appcompat.util.SeslRoundedCorner;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+
+
+import dev.oneuiproject.oneui.widget.RoundLinearLayout;
+
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
-import com.oneui.fontviewer.widget.search.FontTextHighlighter;
+import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.systemfont.adapter.SystemFontViewHolder;
-import com.oneui.fontviewer.widget.sort.SortHeaderViewHolder;
-import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
 import com.oneui.fontviewer.fragment.systemfont.manager.SystemFontPreferenceManager;
 import com.oneui.fontviewer.utils.FileUtils;
-import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
-
-import dev.oneuiproject.oneui.widget.RoundLinearLayout;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
+import com.oneui.fontviewer.widget.search.FontTextHighlighter;
+import com.oneui.fontviewer.widget.sort.SortByItemLayout;
+import com.oneui.fontviewer.widget.sort.SortHeaderViewHolder;
 
 public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SectionIndexer {
 
@@ -52,16 +53,16 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private boolean mIsFontPreviewEnabled = true;
 
-    private String mCurrentLastOpenedPath = null;
+    private String mCurrentLastOpenedPath;
 
     private final SortedList<FontFileInfo> mSortedList;
 
     private List<SystemFontInfo> allFontsInfo;
     private String currentSearchQuery;
 
-    private List<String> sections;
-    private List<Integer> sectionPositions;
-    private List<Integer> positionSections;
+    private final List<String> sections;
+    private final List<Integer> sectionPositions;
+    private final List<Integer> positionSections;
 
     private SortByItemLayout.SortType currentSortType;
     private boolean currentSortAscending;
@@ -95,8 +96,12 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private int compareItems(FontFileInfo a, FontFileInfo b) {
-        if (a == null) return 1;
-        if (b == null) return -1;
+        if (a == null) {
+            return 1;
+        }
+        if (b == null) {
+            return -1;
+        }
         int result;
         switch (currentSortType) {
             case DATE:  result = Long.compare(a.getLastModified(), b.getLastModified()); break;
@@ -159,10 +164,14 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             @Override public void onItemRangeMoved(int f, int t, int c) { updateListEdges(); }
 
             private void updateListEdges() {
-                if (recyclerView == null) return;
+                if (recyclerView == null) {
+                    return;
+                }
 
                 recyclerView.post(() -> {
-                    if (recyclerView == null || recyclerView.isComputingLayout()) return;
+                    if (recyclerView == null || recyclerView.isComputingLayout()) {
+                        return;
+                    }
                     int total = getItemCount();
                     if (total > 0) {
                         notifyItemRangeChanged(0, total, PAYLOAD_UPDATE_CORNERS);
@@ -209,14 +218,18 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private void notifyLastOpenedChanged(String prevPath, String newPath) {
-        if (recyclerView == null) return;
+        if (recyclerView == null) {
+            return;
+        }
         recyclerView.post(() -> {
-            if (recyclerView == null || recyclerView.isComputingLayout()) return;
+            if (recyclerView == null || recyclerView.isComputingLayout()) {
+                return;
+            }
             int size = mSortedList.size();
             for (int i = 0; i < size; i++) {
                 String p = mSortedList.get(i).getPath();
-                if ((newPath != null && p.equals(newPath))
-                        || (prevPath != null && p.equals(prevPath))) {
+                if ((p.equals(newPath))
+                        || (p.equals(prevPath))) {
                     notifyItemChanged(i + 1, PAYLOAD_UPDATE_LAST_OPENED);
                 }
             }
@@ -239,7 +252,9 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             recyclerView.post(() -> {
                 if (recyclerView != null && !recyclerView.isComputingLayout()) {
                     int size = mSortedList.size();
-                    if (size > 0) notifyItemRangeChanged(1, size, PAYLOAD_UPDATE_HIGHLIGHT);
+                    if (size > 0) {
+                        notifyItemRangeChanged(1, size, PAYLOAD_UPDATE_HIGHLIGHT);
+                    }
                 }
             });
         }
@@ -251,7 +266,9 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         final int size = mSortedList.size();
         List<FontFileInfo> snapshot = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) snapshot.add(mSortedList.get(i));
+        for (int i = 0; i < size; i++) {
+            snapshot.add(mSortedList.get(i));
+        }
 
         mSortedList.replaceAll(snapshot);
         buildSections();
@@ -298,8 +315,10 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         for (int i = 0; i < mSortedList.size(); i++) {
             String name   = mSortedList.get(i).getName();
-            String letter = (name != null && !name.isEmpty()) ? name.substring(0, 1).toUpperCase() : "#";
-            if (!Character.isLetter(letter.charAt(0))) letter = "#";
+            String letter = name != null && !name.isEmpty() ? name.substring(0, 1).toUpperCase() : "#";
+            if (!Character.isLetter(letter.charAt(0))) {
+                letter = "#";
+            }
 
             if (sections.isEmpty() || !sections.get(sections.size() - 1).equals(letter)) {
                 sections.add(letter);
@@ -310,8 +329,11 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private SystemFontInfo getFontInfoForPath(String path) {
-        for (SystemFontInfo font : allFontsInfo)
-            if (font.getPath().equals(path)) return font;
+        for (SystemFontInfo font : allFontsInfo) {
+            if (font.getPath().equals(path)) {
+                return font;
+            }
+        }
         return null;
     }
 
@@ -319,15 +341,23 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) return VIEW_TYPE_HEADER;
-        if (position == getItemCount() - 1) return VIEW_TYPE_SPACE;
+        if (position == 0) {
+            return VIEW_TYPE_HEADER;
+        }
+        if (position == getItemCount() - 1) {
+            return VIEW_TYPE_SPACE;
+        }
         return VIEW_TYPE_FONT;
     }
 
     @Override
     public long getItemId(int position) {
-        if (position == 0) return "HEADER".hashCode();
-        if (position == getItemCount() - 1) return "SPACE".hashCode();
+        if (position == 0) {
+            return "HEADER".hashCode();
+        }
+        if (position == getItemCount() - 1) {
+            return "SPACE".hashCode();
+        }
         return mSortedList.get(position - 1).getPath().hashCode();
     }
 
@@ -370,11 +400,13 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 FontFileInfo fontInfo      = mSortedList.get(position - 1);
                 String displayName         = FileUtils.removeExtension(fontInfo.getName());
                 boolean isLastOpened       = preferenceManager.isLastOpenedFont(fontInfo.getPath());
-                
-                if (isSearchActive) isLastOpened = false;
+
+                if (isSearchActive) {
+                    isLastOpened = false;
+                }
                 
                 SystemFontInfo sfi         = getFontInfoForPath(fontInfo.getPath());
-                String weightWidthLabel    = (sfi != null) ? sfi.getWeightWidthLabel() : null;
+                String weightWidthLabel    = sfi != null ? sfi.getWeightWidthLabel() : null;
                 ((SystemFontViewHolder) holder).bind(
                     displayName, fontInfo.getPath(), isSearchActive,
                     currentSearchQuery, isLastOpened, highlighter, weightWidthLabel
@@ -384,8 +416,10 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if (payloads.contains(PAYLOAD_UPDATE_LAST_OPENED) && holder instanceof SystemFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 boolean isLastOpened  = preferenceManager.isLastOpenedFont(fontInfo.getPath());
-                
-                if (isSearchActive) isLastOpened = false;
+
+                if (isSearchActive) {
+                    isLastOpened = false;
+                }
                 
                 ((SystemFontViewHolder) holder).bindLastOpened(isLastOpened);
             }
@@ -395,29 +429,39 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof SortHeaderViewHolder) return;
+        if (holder instanceof SortHeaderViewHolder) {
+            return;
+        }
 
         if (holder instanceof SystemFontViewHolder) {
             SystemFontViewHolder sfh = (SystemFontViewHolder) holder;
             RoundLinearLayout root   = (RoundLinearLayout) sfh.itemView;
             int totalFonts           = mSortedList.size();
-            boolean isFirst          = (position == 1);
-            boolean isLast           = (position == getItemCount() - 2);
+            boolean isFirst          = position == 1;
+            boolean isLast           = position == getItemCount() - 2;
 
             if (totalFonts == 1) {
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_ALL);
-                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.GONE);
+                if (sfh.dividerView != null) {
+                    sfh.dividerView.setVisibility(View.GONE);
+                }
             } else if (isFirst) {
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
                                      | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
-                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.VISIBLE);
+                if (sfh.dividerView != null) {
+                    sfh.dividerView.setVisibility(View.VISIBLE);
+                }
             } else if (isLast) {
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
                                      | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
-                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.INVISIBLE);
+                if (sfh.dividerView != null) {
+                    sfh.dividerView.setVisibility(View.INVISIBLE);
+                }
             } else {
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_NONE);
-                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.VISIBLE);
+                if (sfh.dividerView != null) {
+                    sfh.dividerView.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -428,31 +472,37 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         String displayName = FileUtils.removeExtension(fileName);
 
         SystemFontInfo sfi = getFontInfoForPath(path);
-        String realName    = (sfi != null) ? sfi.getRealName() : null;
-        int ttcIndex       = (sfi != null) ? sfi.getTtcIndex() : 0;
+        String realName    = sfi != null ? sfi.getRealName() : null;
+        int ttcIndex       = sfi != null ? sfi.getTtcIndex() : 0;
 
        
 
-        String weightWidthLabel = (sfi != null) ? sfi.getWeightWidthLabel() : null;
+        String weightWidthLabel = sfi != null ? sfi.getWeightWidthLabel() : null;
 
         boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
         boolean isLastOpened   = preferenceManager.isLastOpenedFont(path);
 
-        if (isSearchActive) isLastOpened = false;
+        if (isSearchActive) {
+            isLastOpened = false;
+        }
 
         holder.bind(displayName, path, isSearchActive, currentSearchQuery,
                     isLastOpened, highlighter, weightWidthLabel);
 
-        if (mIsFontPreviewEnabled) loadFontPreview(holder, path);
-        else holder.setDefaultTypeface(null);
+        if (mIsFontPreviewEnabled) {
+            loadFontPreview(holder, path);
+        } else {
+            holder.setDefaultTypeface(null);
+        }
 
         final String finalRealName    = realName;
         final int    finalTtcIndex    = ttcIndex;
         final String finalWeightWidth = weightWidthLabel;
 
         holder.setOnClickListener(v -> {
-            if (fontClickListener != null)
+            if (fontClickListener != null) {
                 fontClickListener.onFontClick(path, finalRealName, fileName, finalTtcIndex, finalWeightWidth);
+            }
         });
     }
 
@@ -469,7 +519,9 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     Typeface loaded = cache.getTypeface(path);
                     if (loaded != null) {
                         mainHandler.post(() -> {
-                            if (path.equals(holder.getTag())) holder.setTypeface(loaded);
+                            if (path.equals(holder.getTag())) {
+                                holder.setTypeface(loaded);
+                            }
                         });
                     }
                 });
@@ -481,17 +533,24 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getPositionForSection(int sectionIndex) {
-        if (sectionIndex < 0 || sectionIndex >= sectionPositions.size()) return 0;
+        if (sectionIndex < 0 || sectionIndex >= sectionPositions.size()) {
+            return 0;
+        }
         return sectionPositions.get(sectionIndex);
     }
 
     @Override
     public int getSectionForPosition(int position) {
-        if (position <= 0) return 0;
-        if (position >= getItemCount() - 1)
+        if (position <= 0) {
+            return 0;
+        }
+        if (position >= getItemCount() - 1) {
             return positionSections.isEmpty() ? 0 : positionSections.get(positionSections.size() - 1);
+        }
         int adj = position - 1;
-        if (adj < 0 || adj >= positionSections.size()) return 0;
+        if (adj < 0 || adj >= positionSections.size()) {
+            return 0;
+        }
         return positionSections.get(adj);
     }
 }

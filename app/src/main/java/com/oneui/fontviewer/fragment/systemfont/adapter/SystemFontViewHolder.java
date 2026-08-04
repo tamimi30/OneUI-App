@@ -3,15 +3,15 @@ package com.oneui.fontviewer.fragment.systemfont.adapter;
 import android.graphics.Typeface;
 import android.view.View;
 import android.widget.TextView;
+import androidx.core.content.ContextCompat;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.color.MaterialColors;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.widget.search.FontTextHighlighter;
-
-import com.google.android.material.color.MaterialColors;
 
 public class SystemFontViewHolder extends RecyclerView.ViewHolder {
 
@@ -41,7 +41,7 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
         bindLastOpened(isLastOpened);
 
         if (weightWidthView != null) {
-            String label = (weightWidthLabel != null && !weightWidthLabel.isEmpty())
+            String label = weightWidthLabel != null && !weightWidthLabel.isEmpty()
                     ? weightWidthLabel
                     : itemView.getContext().getString(R.string.unknown_font);
             weightWidthView.setText(label);
@@ -51,7 +51,9 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindLastOpened(boolean isLastOpened) {
-        if (nameView == null) return;
+        if (nameView == null) {
+            return;
+        }
 
         if (isLastOpened) {
             int primaryColor = MaterialColors.getColor(

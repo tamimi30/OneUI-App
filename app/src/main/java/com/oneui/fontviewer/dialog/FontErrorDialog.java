@@ -1,11 +1,11 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.graphics.Typeface;
 
 import androidx.appcompat.app.AlertDialog;
 

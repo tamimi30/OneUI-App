@@ -8,9 +8,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import android.util.Log;
+import androidx.core.content.ContextCompat;
+
+import androidx.fragment.app.Fragment;
 
 public class LocalFontPermissionManager {
     

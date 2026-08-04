@@ -3,28 +3,29 @@ package com.oneui.fontviewer.fragment.fontviewer;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.ImageView;
+import android.view.View;
 import android.view.animation.OvershootInterpolator;
-
-import java.util.Map;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Map;
+
+
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.BaseActivity;
-import com.oneui.fontviewer.dialog.FontInfoDialog;
 import com.oneui.fontviewer.dialog.FontErrorDialog;
-import com.oneui.fontviewer.utils.translation.TranslationService;
+import com.oneui.fontviewer.dialog.FontInfoDialog;
 import com.oneui.fontviewer.utils.FileUtils;
+import com.oneui.fontviewer.utils.translation.TranslationService;
 import com.oneui.fontviewer.widget.TextDrawable;
 
 public class FontViewerActivity extends BaseActivity
@@ -125,10 +126,14 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void loadFontFromIntent(Intent intent) {
-        if (intent == null || mFontViewerFragment == null) return;
+        if (intent == null || mFontViewerFragment == null) {
+            return;
+        }
 
         String path = intent.getStringExtra(EXTRA_FONT_PATH);
-        if (path == null || path.isEmpty()) return;
+        if (path == null || path.isEmpty()) {
+            return;
+        }
 
         if (path.startsWith("content://")) {
             String fileName = intent.getStringExtra(EXTRA_FONT_FILE_NAME);
@@ -175,7 +180,9 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void updateTitle() {
-        if (mToolbarLayout == null) return;
+        if (mToolbarLayout == null) {
+            return;
+        }
 
         String title;
         if (currentFontRealName != null && !currentFontRealName.isEmpty()) {
@@ -186,7 +193,7 @@ public class FontViewerActivity extends BaseActivity
             title = getString(R.string.drawer_font_viewer);
         }
 
-        String subtitle = (currentFontFileName != null && !currentFontFileName.isEmpty())
+        String subtitle = currentFontFileName != null && !currentFontFileName.isEmpty()
                 ? FileUtils.removeExtension(currentFontFileName)
                 : getString(R.string.font_viewer_select_description);
 
@@ -207,7 +214,9 @@ public class FontViewerActivity extends BaseActivity
             boolean[] isFinished = {false};
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (!isFinished[0]) showLoadingDialog();
+                if (!isFinished[0]) {
+                    showLoadingDialog();
+                }
             }, 250);
 
             translationService.translateMetadata(meta, new TranslationService.TranslationCallback() {
@@ -235,7 +244,9 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void showFontInfoDialog(Map<String, String> metadata) {
-        if (mFontViewerFragment == null) return;
+        if (mFontViewerFragment == null) {
+            return;
+        }
 
         if (currentFontRealName == null || currentFontRealName.isEmpty()
                 || metadata == null || metadata.isEmpty()) {

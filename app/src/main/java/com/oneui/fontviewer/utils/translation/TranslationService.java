@@ -2,7 +2,6 @@ package com.oneui.fontviewer.utils.translation;
 
 import android.content.Context;
 import android.util.Log;
-
 import org.json.JSONArray;
 
 import java.io.BufferedReader;
@@ -43,7 +42,7 @@ public class TranslationService {
         
         String targetLanguage = getCurrentLanguage();
         
-        if (targetLanguage.equals("en")) {
+        if ("en".equals(targetLanguage)) {
             callback.onTranslationComplete(metadata);
             return;
         }
@@ -164,7 +163,7 @@ public class TranslationService {
             Locale currentLocale = SettingsHelper.getLocale(context);
             String language = currentLocale.getLanguage();
             
-            if (language.equals("ar")) {
+            if ("ar".equals(language)) {
                 return "ar";
             } else {
                 return "en";

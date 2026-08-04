@@ -29,26 +29,27 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.activity.AppScreen;           
+import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.activity.MainActivity;
-import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
-import com.oneui.fontviewer.dialog.FontActionDialogs;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
-import com.oneui.fontviewer.widget.sort.FontSortManager;
-import com.oneui.fontviewer.widget.sort.SortByItemLayout;
-import com.oneui.fontviewer.utils.FontUIStateManager;
+import com.oneui.fontviewer.dialog.FontActionDialogs;
 import com.oneui.fontviewer.fragment.localfont.adapter.LocalFontListAdapter;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontSelectionManager;
-import com.oneui.fontviewer.widget.search.FontSearchManager;
-import com.oneui.fontviewer.widget.search.SearchViewModel;
 import com.oneui.fontviewer.fragment.localfont.viewmodel.LocalFontListViewModel;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
+import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
+import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
+import com.oneui.fontviewer.widget.search.FontSearchManager;
+import com.oneui.fontviewer.widget.search.SearchViewModel;
+import com.oneui.fontviewer.widget.sort.FontSortManager;
+import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 
 public class FavoriteFontListFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
@@ -74,10 +75,10 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
     private List<LocalFontListViewModel.FontFileInfoWithMetadata> mCurrentFavoritesList = new ArrayList<>();
 
-    private boolean mIsBatchOperationRunning = false;
+    private boolean mIsBatchOperationRunning;
 
     @Nullable
-    private List<LocalFontListViewModel.FontFileInfoWithMetadata> mPendingFavoritesUpdate = null;
+    private List<LocalFontListViewModel.FontFileInfoWithMetadata> mPendingFavoritesUpdate;
 
     @Nullable
     private ProgressDialog mCurrentProgressDialog;
@@ -110,9 +111,8 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     }
 
     private void setupSearchListener() {
-        mSearchManager.setSearchResultListener((count, empty) -> {
-            mUIManager.updateEmptyView(empty, mSearchManager.isSearchActive());
-        });
+        mSearchManager.setSearchResultListener((count, empty) ->
+            mUIManager.updateEmptyView(empty, mSearchManager.isSearchActive()));
     }
 
     private void setupSortListener() {
@@ -298,9 +298,8 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
             mMainHandler.postDelayed(() -> mAdapter.saveLastOpenedAndUpdate(fontPath), 400);
         });
 
-        mAdapter.setSortChangeListener((type, asc) -> {
-            mSortManager.setSortOptions(type, asc);
-        });
+        mAdapter.setSortChangeListener((type, asc) ->
+            mSortManager.setSortOptions(type, asc));
 
         mAdapter.setFavoriteStatusProvider(fontPath -> true);
 
@@ -322,7 +321,9 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     }
 
     private void setupRecyclerViewAnimator() {
-        if (mRecyclerView == null) return;
+        if (mRecyclerView == null) {
+            return;
+        }
         androidx.recyclerview.widget.DefaultItemAnimator animator =
             new androidx.recyclerview.widget.DefaultItemAnimator();
         animator.setAddDuration(150);
@@ -333,7 +334,9 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     }
 
     private void initializeSelectionManager() {
-        if (mDrawerLayout == null || mAdapter == null || mRecyclerView == null) return;
+        if (mDrawerLayout == null || mAdapter == null || mRecyclerView == null) {
+            return;
+        }
 
         mSelectionManager = new LocalFontSelectionManager(
             requireActivity(),
@@ -384,7 +387,9 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
     private void handleRename(int position) {
         String path = mAdapter.getFilePath(position);
-        if (path == null) return;
+        if (path == null) {
+            return;
+        }
 
         FontActionDialogs.showRenameDialog(mContext, path, (oldPath, newFileName) -> {
             boolean success = mViewModel.renameFontInMemory(oldPath, newFileName);
@@ -408,15 +413,21 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     }
 
     private void handleDelete(List<Integer> positions) {
-        if (positions == null || positions.isEmpty()) return;
+        if (positions == null || positions.isEmpty()) {
+            return;
+        }
 
         List<String> pathsToMove = new ArrayList<>();
         for (int position : positions) {
             String path = mAdapter.getFilePath(position);
-            if (path != null) pathsToMove.add(path);
+            if (path != null) {
+                pathsToMove.add(path);
+            }
         }
 
-        if (pathsToMove.isEmpty()) return;
+        if (pathsToMove.isEmpty()) {
+            return;
+        }
 
         int count = pathsToMove.size();
 
@@ -429,12 +440,11 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
 
-        confirmDialog.setOnShowListener(d -> {
+        confirmDialog.setOnShowListener(d ->
             confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                 confirmDialog.dismiss();
                 showMoveToTrashProgressDialog(pathsToMove);
-            });
-        });
+            }));
 
         confirmDialog.show();
     }
@@ -484,22 +494,34 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     }
 
     public void checkAndReopenProgressDialogPublic() {
-        if (isHidden() || !isAdded() || mContext == null) return;
+        if (isHidden() || !isAdded() || mContext == null) {
+            return;
+        }
 
         Boolean isProcessing = BatchOperationState.getIsProcessing().getValue();
-        if (!Boolean.TRUE.equals(isProcessing)) return;
+        if (!Boolean.TRUE.equals(isProcessing)) {
+            return;
+        }
 
-        if (BatchOperationState.getSourceScreen() != AppScreen.FAVORITES) return;
+        if (BatchOperationState.getSourceScreen() != AppScreen.FAVORITES) {
+            return;
+        }
 
-        if (!BatchOperationState.consumeShouldReopenDialog()) return;
+        if (!BatchOperationState.consumeShouldReopenDialog()) {
+            return;
+        }
 
-        if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) return;
+        if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) {
+            return;
+        }
 
         reconnectToProgressDialog();
     }
 
     private void reconnectToProgressDialog() {
-        if (!isAdded() || mContext == null) return;
+        if (!isAdded() || mContext == null) {
+            return;
+        }
 
         mCurrentProgressDialog = new ProgressDialog(mContext);
         mCurrentProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -533,15 +555,21 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     }
 
     private void handleFavoriteAction(List<Integer> positions, boolean addToFavorites) {
-        if (positions == null || positions.isEmpty()) return;
+        if (positions == null || positions.isEmpty()) {
+            return;
+        }
 
         List<String> paths = new ArrayList<>();
         for (int position : positions) {
             String path = mAdapter.getFilePath(position);
-            if (path != null) paths.add(path);
+            if (path != null) {
+                paths.add(path);
+            }
         }
 
-        if (paths.isEmpty()) return;
+        if (paths.isEmpty()) {
+            return;
+        }
 
         mSelectionManager.setSelecting(false);
 
@@ -574,7 +602,9 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
 
     public boolean handleBackPressed() {
-        if (mSelectionManager != null) return mSelectionManager.handleBackPress();
+        if (mSelectionManager != null) {
+            return mSelectionManager.handleBackPress();
+        }
         return false;
     }
 
@@ -621,7 +651,9 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
 
     private void updateMainActivityFontsCount(int count) {
-        if (mSelectionManager != null && mSelectionManager.isSelecting()) return;
+        if (mSelectionManager != null && mSelectionManager.isSelecting()) {
+            return;
+        }
 
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).updateFontsCount(AppScreen.FAVORITES, count);
@@ -659,7 +691,9 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
                 mSelectionManager.setSelecting(false);
             }
         } else {
-            if (mAdapter != null) mAdapter.smartUpdate();
+            if (mAdapter != null) {
+                mAdapter.smartUpdate();
+            }
 
             updateMainActivityFontsCount(mCurrentFavoritesList.size());
 
@@ -680,7 +714,9 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (mSelectionManager != null) mSelectionManager.refreshActionMode();
+        if (mSelectionManager != null) {
+            mSelectionManager.refreshActionMode();
+        }
     }
 
     @Override
@@ -731,7 +767,11 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
-        if (mExecutor != null)    mExecutor.shutdown();
+        if (mMainHandler != null) {
+            mMainHandler.removeCallbacksAndMessages(null);
+        }
+        if (mExecutor != null) {
+            mExecutor.shutdown();
+        }
     }
             }

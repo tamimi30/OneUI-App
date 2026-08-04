@@ -47,7 +47,7 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        return (mScreenList.get(position) == null) ? VIEW_TYPE_SEPARATOR : VIEW_TYPE_ITEM;
+        return mScreenList.get(position) == null ? VIEW_TYPE_SEPARATOR : VIEW_TYPE_ITEM;
     }
 
     @NonNull
@@ -55,7 +55,7 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder
     public DrawerListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
-        boolean isSeparator = (viewType == VIEW_TYPE_SEPARATOR);
+        boolean isSeparator = viewType == VIEW_TYPE_SEPARATOR;
         int layoutRes = isSeparator ? R.layout.drawer_list_separator
                                     : R.layout.drawer_list_item;
         View view = inflater.inflate(layoutRes, parent, false);
@@ -64,25 +64,37 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull DrawerListViewHolder holder, int position) {
-        if (holder.isSeparator()) return;
+        if (holder.isSeparator()) {
+            return;
+        }
 
         AppScreen screen = mScreenList.get(position);
-        if (screen == null) return;
+        if (screen == null) {
+            return;
+        }
 
         int iconRes = getIconForScreen(screen);
         String title = getTitleForScreen(screen);
 
-        if (iconRes != 0)     holder.setIcon(iconRes);
-        if (!title.isEmpty()) holder.setTitle(title);
+        if (iconRes != 0) {
+            holder.setIcon(iconRes);
+        }
+        if (!title.isEmpty()) {
+            holder.setTitle(title);
+        }
 
         holder.setSelected(screen == mSelectedScreen);
 
         holder.itemView.setOnClickListener(v -> {
             final int adapterPos = holder.getBindingAdapterPosition();
-            if (adapterPos == RecyclerView.NO_POSITION) return;
+            if (adapterPos == RecyclerView.NO_POSITION) {
+                return;
+            }
 
             AppScreen clickedScreen = mScreenList.get(adapterPos);
-            if (clickedScreen == null) return;
+            if (clickedScreen == null) {
+                return;
+            }
 
             boolean selectionChanged = false;
             if (mListener != null) {
@@ -136,7 +148,9 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder
 
 
     public void setSelectedItem(AppScreen screen) {
-        if (screen == null || screen == mSelectedScreen) return;
+        if (screen == null || screen == mSelectedScreen) {
+            return;
+        }
 
         AppScreen prev = mSelectedScreen;
         mSelectedScreen = screen;
@@ -144,14 +158,22 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder
         int prevPos = indexOfScreen(prev);
         int newPos  = indexOfScreen(screen);
 
-        if (prevPos >= 0) notifyItemChanged(prevPos);
-        if (newPos  >= 0) notifyItemChanged(newPos);
+        if (prevPos >= 0) {
+            notifyItemChanged(prevPos);
+        }
+        if (newPos >= 0) {
+            notifyItemChanged(newPos);
+        }
     }
 
     private int indexOfScreen(AppScreen screen) {
-        if (screen == null) return -1;
+        if (screen == null) {
+            return -1;
+        }
         for (int i = 0; i < mScreenList.size(); i++) {
-            if (mScreenList.get(i) == screen) return i;
+            if (mScreenList.get(i) == screen) {
+                return i;
+            }
         }
         return -1;
     }
