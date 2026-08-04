@@ -316,15 +316,7 @@ public class FontViewerFragment extends Fragment {
     }
 
 
-    public void loadFontFromPath(String path, String fileName, String realName) {
-        currentWeightWidthLabel = null;
-        loadFontFromPath(path, fileName, realName, 0, false);
-    }
-
-    public void loadFontFromPath(String path, String fileName, String realName, int ttcIndex) {
-        currentWeightWidthLabel = null;
-        loadFontFromPath(path, fileName, realName, ttcIndex, false);
-    }
+    
 
     public void loadFontFromPath(String path, String fileName, String realName, int ttcIndex, boolean isSystemFont) {
         Log.d(TAG, "loadFontFromPath - Received data:");
@@ -792,9 +784,7 @@ public class FontViewerFragment extends Fragment {
         outState.putBoolean(KEY_IS_SYSTEM_FONT, isSystemFont);
     }
 
-    public String getCurrentFontRealName() {
-        return currentFontRealName;
-    }
+    
 
     public String getCurrentFontFileName() {
         return currentFontFileName;
