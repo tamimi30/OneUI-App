@@ -89,18 +89,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    public void bind(String displayName,
-                     String path,
-                     boolean isSearchActive,
-                     String searchQuery,
-                     boolean isLastOpened,
-                     FontTextHighlighter highlighter,
-                     String weightWidthLabel,
-                     boolean isFavorite) {
-        bindCore(displayName, path, isSearchActive, searchQuery, isLastOpened,
-                 highlighter, false, false, weightWidthLabel);
-        setFavoriteIndicator(isFavorite, false);
-    }
+    
 
 
     public void bind(String displayName,
@@ -116,21 +105,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
                  highlighter, isSelectionMode, isSelected, weightWidthLabel);
     }
 
-    public void bind(String displayName,
-                     String path,
-                     boolean isSearchActive,
-                     String searchQuery,
-                     boolean isLastOpened,
-                     FontTextHighlighter highlighter,
-                     boolean isSelectionMode,
-                     boolean isSelected,
-                     String weightWidthLabel,
-                     boolean isFavorite) {
-        bindCore(displayName, path, isSearchActive, searchQuery, isLastOpened,
-                  highlighter, isSelectionMode, isSelected, weightWidthLabel);
-        setFavoriteIndicator(isFavorite, false);
-
-    }
+    
 
 
      public void setFavoriteIndicator(boolean isFavorite, boolean animate) {
