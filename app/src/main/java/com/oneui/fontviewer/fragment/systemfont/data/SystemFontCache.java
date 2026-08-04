@@ -2,7 +2,6 @@ package com.oneui.fontviewer.fragment.systemfont.data;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.util.Log;
 
 import com.oneui.fontviewer.data.database.AppDatabase;
