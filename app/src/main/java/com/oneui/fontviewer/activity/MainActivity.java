@@ -502,12 +502,6 @@ public class MainActivity extends BaseActivity
         return getResources().getQuantityString(R.plurals.font_count_subtitle, count, count);
     }
 
-    @Override
-    public void updateMenuVisibility(AppScreen screen) {
-    }
-
-    
-
 
     public void updateFontsCount(AppScreen screen, int count) {
         if (screen == AppScreen.LOCAL_FONTS) {
@@ -623,8 +617,5 @@ public class MainActivity extends BaseActivity
     public void onBackPressed() {
         mNavManager.handleBackPressed();
     }
-
-
-    
     
                                        }
