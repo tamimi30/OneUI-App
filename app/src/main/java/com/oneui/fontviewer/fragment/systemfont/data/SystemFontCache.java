@@ -135,32 +135,7 @@ public class SystemFontCache {
         return typeface;
     }
     
-    private void markAsCachedInDatabase(String fontPath) {
-        if (database == null) return;
-        
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            try {
-                long timestamp = System.currentTimeMillis();
-                database.fontDao().updateCacheStatus(fontPath, true, timestamp);
-                database.fontDao().recordAccess(fontPath, timestamp, timestamp);
-            } catch (Exception e) {
-                Log.w(TAG, "Failed to mark as cached in database: " + fontPath, e);
-            }
-        });
-    }
     
-    private void recordAccessInDatabase(String fontPath) {
-        if (database == null) return;
-        
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            try {
-                long timestamp = System.currentTimeMillis();
-                database.fontDao().recordAccess(fontPath, timestamp, timestamp);
-            } catch (Exception e) {
-                Log.w(TAG, "Failed to record access in database", e);
-            }
-        });
-    }
     
     private Typeface loadTypefaceInternal(String fontPath, float weight, int ttcIndex) {
         File fontFile = new File(fontPath);
