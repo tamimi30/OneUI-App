@@ -32,8 +32,7 @@ public interface FontDao {
     @Query("DELETE FROM fonts WHERE path = :path")
     int deleteByPath(String path);
     
-    @Query("DELETE FROM fonts WHERE is_system_font = 0")
-    int deleteAllLocalFonts();
+    
     
     @Query("DELETE FROM fonts WHERE is_system_font = 1")
     int deleteAllSystemFonts();
@@ -43,8 +42,7 @@ public interface FontDao {
     @Query("SELECT * FROM fonts WHERE path = :path LIMIT 1")
     LiveData<FontEntity> getFontByPath(String path);
     
-    @Query("SELECT * FROM fonts WHERE path = :path LIMIT 1")
-    FontEntity getFontByPathSync(String path);
+    
     
     @Query("SELECT * FROM fonts")
     LiveData<List<FontEntity>> getAllFonts();
