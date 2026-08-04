@@ -29,9 +29,7 @@ public class FontInfoDialog {
         this.originalPath = originalPath;
     }
 
-    public FontInfoDialog(Context context, Map<String, String> metadata) {
-        this(context, metadata, null, null);
-    }
+    
 
     public void show() {
         if (metadata == null || metadata.isEmpty()) {
