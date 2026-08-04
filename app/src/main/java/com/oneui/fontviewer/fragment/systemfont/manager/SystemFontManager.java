@@ -31,9 +31,7 @@ public class SystemFontManager {
         return instance;
     }
     
-    public boolean isSystemFontsAvailable() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
-    }
+    
     
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public List<SystemFontInfo> getSystemFonts() {
@@ -137,115 +135,5 @@ public class SystemFontManager {
         return null;
     }
     
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public SystemFontInfo findFontByName(String fontName) {
-        if (fontName == null || fontName.isEmpty()) {
-            return null;
-        }
-        
-        List<SystemFontInfo> allFonts = getSystemFonts();
-        
-        for (SystemFontInfo fontInfo : allFonts) {
-            if (fontInfo.getName().equalsIgnoreCase(fontName)) {
-                return fontInfo;
-            }
-        }
-        
-        return null;
-    }
     
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public SystemFontInfo findFontByPath(String fontPath) {
-        if (fontPath == null || fontPath.isEmpty()) {
-            return null;
-        }
-        
-        List<SystemFontInfo> allFonts = getSystemFonts();
-        
-        for (SystemFontInfo fontInfo : allFonts) {
-            if (fontInfo.getPath().equals(fontPath)) {
-                return fontInfo;
-            }
-        }
-        
-        return null;
-    }
-    
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public int countVariableFonts() {
-        List<SystemFontInfo> allFonts = getSystemFonts();
-        int count = 0;
-        
-        for (SystemFontInfo fontInfo : allFonts) {
-            if (fontInfo.isVariableFont()) {
-                count++;
-            }
-        }
-        
-        return count;
-    }
-    
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public List<SystemFontInfo> getVariableFonts() {
-        List<SystemFontInfo> allFonts = getSystemFonts();
-        List<SystemFontInfo> variableFonts = new ArrayList<>();
-        
-        for (SystemFontInfo fontInfo : allFonts) {
-            if (fontInfo.isVariableFont()) {
-                variableFonts.add(fontInfo);
-            }
-        }
-        
-        return variableFonts;
-    }
-    
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public SystemFontStatistics getStatistics() {
-        List<SystemFontInfo> allFonts = getSystemFonts();
-        
-        int totalFonts = allFonts.size();
-        int variableFonts = 0;
-        long totalSize = 0;
-        
-        Set<Integer> uniqueWeights = new HashSet<>();
-        
-        for (SystemFontInfo fontInfo : allFonts) {
-            if (fontInfo.isVariableFont()) {
-                variableFonts++;
-            }
-            totalSize += fontInfo.getSize();
-            uniqueWeights.add(fontInfo.getWeight());
-        }
-        
-        return new SystemFontStatistics(
-            totalFonts,
-            variableFonts,
-            totalSize,
-            uniqueWeights.size()
-        );
-    }
-    
-    public static class SystemFontStatistics {
-        public final int totalFonts;
-        public final int variableFonts;
-        public final long totalSize;
-        public final int uniqueWeights;
-        
-        public SystemFontStatistics(int totalFonts, int variableFonts, long totalSize, int uniqueWeights) {
-            this.totalFonts = totalFonts;
-            this.variableFonts = variableFonts;
-            this.totalSize = totalSize;
-            this.uniqueWeights = uniqueWeights;
-        }
-        
-        public String getFormattedTotalSize() {
-            if (totalSize < 1024) {
-                return totalSize + " B";
-            } else if (totalSize < 1024 * 1024) {
-                return String.format("%.2f KB", totalSize / 1024.0);
-            } else {
-                return String.format("%.2f MB", totalSize / (1024.0 * 1024.0));
-            }
-        }
-    }
 }
