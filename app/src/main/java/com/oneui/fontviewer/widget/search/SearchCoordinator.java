@@ -361,58 +361,6 @@ public class SearchCoordinator {
     }
 
 
-    private void toggleToolbarGhostTouches(boolean isSearchActive) {
-        if (activity == null) return;
-
-        androidx.appcompat.widget.Toolbar toolbar = null;
-        if (drawerLayout != null) {
-            toolbar = drawerLayout.getToolbar();
-        }
-        if (toolbar == null) {
-            toolbar = activity.findViewById(R.id.toolbar);
-        }
-
-        if (toolbar == null) return;
-
-        if (isSearchActive) {
-            toolbar.dismissPopupMenus();
-
-            toolbar.setTouchDelegate(null);
-        }
-
-        for (int i = 0; i < toolbar.getChildCount(); i++) {
-            View child = toolbar.getChildAt(i);
-            if (child instanceof ActionMenuView) {
-                child.setVisibility(isSearchActive ? View.GONE : View.VISIBLE);
-                child.setEnabled(!isSearchActive);
-
-                if (child instanceof ViewGroup) {
-                    ViewGroup actionMenuView = (ViewGroup) child;
-                    for (int j = 0; j < actionMenuView.getChildCount(); j++) {
-                        View menuChild = actionMenuView.getChildAt(j);
-
-                        menuChild.setVisibility(isSearchActive ? View.GONE : View.VISIBLE);
-                        menuChild.setEnabled(!isSearchActive);
-                        menuChild.setClickable(!isSearchActive);
-                    }
-                }
-            }
-        }
-    }
-
-    private Toolbar findToolbar(ViewGroup root) {
-        for (int i = 0; i < root.getChildCount(); i++) {
-            View child = root.getChildAt(i);
-            if (child instanceof Toolbar) {
-                return (Toolbar) child;
-            } else if (child instanceof ViewGroup) {
-                Toolbar found = findToolbar((ViewGroup) child);
-                if (found != null) return found;
-            }
-        }
-        return null;
-    }
-
     public void cleanup() {
         searchMenuItem        = null;
         searchView            = null;
@@ -423,4 +371,4 @@ public class SearchCoordinator {
 
         Log.d(TAG, "SearchCoordinator cleaned up");
     }
-}
+    }
