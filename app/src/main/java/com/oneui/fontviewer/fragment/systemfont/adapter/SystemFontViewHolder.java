@@ -1,9 +1,6 @@
 package com.oneui.fontviewer.fragment.systemfont.adapter;
 
 import android.graphics.Typeface;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.widget.search.FontTextHighlighter;
-import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
 
 import com.google.android.material.color.MaterialColors;
 
