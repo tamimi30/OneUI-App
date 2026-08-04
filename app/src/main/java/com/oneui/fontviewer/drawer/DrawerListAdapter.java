@@ -156,7 +156,5 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder
         return -1;
     }
 
-    public AppScreen getSelectedScreen() {
-        return mSelectedScreen;
-    }
+    
 }
