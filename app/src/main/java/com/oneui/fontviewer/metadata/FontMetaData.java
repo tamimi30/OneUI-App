@@ -101,9 +101,7 @@ public class FontMetaData {
         return "Unknown Font";
     }
     
-    public static String extractFontName(File fontFile) {
-        return extractFontName(fontFile, 0);
-    }
+    
     
     private static String getFontNameDirectWithTtc(File fontFile, int nameId, int ttcIndex) {
         RandomAccessFile raf = null;
