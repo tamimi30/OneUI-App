@@ -185,9 +185,5 @@ public class FontSizeDialog {
         }
     }
 
-    public void dismiss() {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-        }
-    }
+    
 }
