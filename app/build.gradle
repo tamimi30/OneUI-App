@@ -5,7 +5,9 @@ plugins {
 
 rewrite {
     activeRecipe 'org.openrewrite.staticanalysis.CommonStaticAnalysis',
-                 'org.openrewrite.java.RemoveUnusedImports'
+                 'org.openrewrite.java.RemoveUnusedImports',
+                 'org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods',
+                 'org.openrewrite.staticanalysis.RemoveUnusedPrivateFields'
     
     failOnDryRunResults = false
     sizeThresholdMb = 10
