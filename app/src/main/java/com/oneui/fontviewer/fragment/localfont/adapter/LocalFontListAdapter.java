@@ -294,10 +294,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         return -1;
     }
 
-    public void notifyFavoriteChanged(String path) {
-        int position = findPositionByPath(path);
-        if (position != -1) notifyItemChanged(position, PAYLOAD_UPDATE_FAVORITE);
-    }
+    
 
     public void notifyAllFavoritesChanged() {
         int size = mSortedList.size();
@@ -357,9 +354,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 fontsMetadataMap.put(item.getPath(), item);
     }
 
-    public void updateListWithAnimation(List<FontFileInfo> newFonts) {
-        updateFilteredFonts(newFonts, currentSearchQuery);
-    }
+    
 
     public void smartUpdate() {
         buildSections();
