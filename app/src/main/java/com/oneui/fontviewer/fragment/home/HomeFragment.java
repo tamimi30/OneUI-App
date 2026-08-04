@@ -1,7 +1,6 @@
 package com.oneui.fontviewer.fragment.home;
 
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
