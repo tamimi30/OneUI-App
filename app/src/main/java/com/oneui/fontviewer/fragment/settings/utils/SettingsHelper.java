@@ -121,16 +121,6 @@ public class SettingsHelper {
         }
     }
     
-    public static boolean areNotificationsEnabled(Context context) {
-        try {
-            return SettingsDataStore.getInstance(context)
-                    .getNotificationsEnabled()
-                    .blockingFirst();
-        } catch (Exception e) {
-            Log.e(TAG, "Error reading notifications setting", e);
-            return true;
-        }
-    }
     
     public static String getPreviewText(Context context) {
         try {
