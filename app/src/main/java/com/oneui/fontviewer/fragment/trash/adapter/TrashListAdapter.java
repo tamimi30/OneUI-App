@@ -282,12 +282,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyItemChanged(adapterPosition, PAYLOAD_UPDATE_SELECTION);
     }
 
-    public void selectAll() {
-        for (int i = 1; i <= mItems.size(); i++) {
-            selectedItems.put(i, true);
-        }
-        notifyItemRangeChanged(1, mItems.size(), PAYLOAD_UPDATE_SELECTION);
-    }
+    
 
     public void clearSelection() {
         selectedItems.clear();
