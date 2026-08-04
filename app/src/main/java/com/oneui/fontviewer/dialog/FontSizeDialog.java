@@ -3,10 +3,10 @@ package com.oneui.fontviewer.dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.EditText;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
@@ -82,8 +82,12 @@ public class FontSizeDialog {
                 if (!inputText.isEmpty()) {
                     try {
                         float enteredSize = Float.parseFloat(inputText);
-                        if (enteredSize > maxSize) enteredSize = maxSize;
-                        if (enteredSize < minSize) enteredSize = minSize;
+                        if (enteredSize > maxSize) {
+                            enteredSize = maxSize;
+                        }
+                        if (enteredSize < minSize) {
+                            enteredSize = minSize;
+                        }
 
                         int newProgress = (int) (enteredSize - minSize);
                         seekBar.setProgress(newProgress);
@@ -115,8 +119,12 @@ public class FontSizeDialog {
             if (!inputText.isEmpty()) {
                 try {
                     float enteredSize = Float.parseFloat(inputText);
-                    if (enteredSize > maxSize) enteredSize = maxSize;
-                    if (enteredSize < minSize) enteredSize = minSize;
+                    if (enteredSize > maxSize) {
+                        enteredSize = maxSize;
+                    }
+                    if (enteredSize < minSize) {
+                        enteredSize = minSize;
+                    }
                     tempSize = enteredSize;
                 } catch (NumberFormatException ignored) {}
             }

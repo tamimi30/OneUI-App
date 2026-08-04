@@ -34,17 +34,17 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.oneui.fontviewer.dialog.FontSizeDialog;
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.dialog.FontSizeDialog;
+import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerPreferenceManager;
+import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerStorageManager;
+import com.oneui.fontviewer.fragment.fontviewer.utils.BoldItalicFormatting;
 import com.oneui.fontviewer.fragment.fontviewer.utils.VariableFontHelper;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
-import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerStorageManager;
-import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerPreferenceManager;
+import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
 import com.oneui.fontviewer.metadata.FontMetadataExtractor;
-import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
-import com.oneui.fontviewer.fragment.fontviewer.utils.BoldItalicFormatting;
 
 public class FontViewerFragment extends Fragment {
 
@@ -60,10 +60,10 @@ public class FontViewerFragment extends Fragment {
     private static final String KEY_WEIGHT_WIDTH_LABEL = "weight_width_label";
     private static final String TAG = "FontViewerFragment";
 
-    private static final float DEFAULT_FONT_SIZE   = 34f;
-    private static final float MIN_FONT_SIZE       = 12f;
-    private static final float MAX_FONT_SIZE       = 200f;
-    private static final float DEFAULT_FONT_WEIGHT = 400f;
+    private static final float DEFAULT_FONT_SIZE   = 34F;
+    private static final float MIN_FONT_SIZE       = 12F;
+    private static final float MAX_FONT_SIZE       = 200F;
+    private static final float DEFAULT_FONT_WEIGHT = 400F;
 
     private static float sSessionFontSize = -1f;
 
@@ -78,9 +78,9 @@ public class FontViewerFragment extends Fragment {
     private Typeface currentTypeface;
     private float currentFontSize   = DEFAULT_FONT_SIZE;
     private float currentFontWeight = DEFAULT_FONT_WEIGHT;
-    private boolean isVariableFont  = false;
-    private int currentTtcIndex     = 0;
-    private boolean isSystemFont    = false;
+    private boolean isVariableFont;
+    private int currentTtcIndex;
+    private boolean isSystemFont;
 
     private String currentWeightWidthLabel;
 
@@ -94,7 +94,7 @@ public class FontViewerFragment extends Fragment {
     private FontViewerStorageManager storageManager;
     private FontViewerPreferenceManager preferenceManager;
     private SettingsViewModel settingsViewModel;
-    private BoldItalicFormatting formattingHelper = new BoldItalicFormatting();
+    private final BoldItalicFormatting formattingHelper = new BoldItalicFormatting();
 
 
     public interface OnFontChangedListener {
@@ -127,7 +127,7 @@ public class FontViewerFragment extends Fragment {
 
         settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
-        currentFontSize   = (sSessionFontSize > 0f) ? sSessionFontSize : DEFAULT_FONT_SIZE;
+        currentFontSize   = sSessionFontSize > 0f ? sSessionFontSize : DEFAULT_FONT_SIZE;
         currentFontWeight = preferenceManager.getFontWeight(DEFAULT_FONT_WEIGHT);
     }
 
@@ -345,7 +345,9 @@ public class FontViewerFragment extends Fragment {
     }
 
     private String extractRealPathFromUri(String pathOrUri) {
-        if (pathOrUri == null) return null;
+        if (pathOrUri == null) {
+            return null;
+        }
 
         if (pathOrUri.startsWith("content://")) {
             Uri uri = Uri.parse(pathOrUri);
@@ -490,7 +492,9 @@ public class FontViewerFragment extends Fragment {
 
 
     private void setupWeightSpinner(List<VariableFontHelper.VariableInstance> instances) {
-        if (weightSpinner == null || weightLabelText == null || !isAdded()) return;
+        if (weightSpinner == null || weightLabelText == null || !isAdded()) {
+            return;
+        }
 
         currentVariableInstances = instances;
         weightLabelText.setVisibility(View.GONE);
@@ -521,7 +525,9 @@ public class FontViewerFragment extends Fragment {
 
         final List<VariableFontHelper.VariableInstance> finalInstances = instances;
         weightSpinner.post(() -> {
-            if (weightSpinner == null || !isAdded()) return;
+            if (weightSpinner == null || !isAdded()) {
+                return;
+            }
             weightSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -537,7 +543,9 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void showWeightLabel(String label) {
-        if (weightLabelText == null || weightSpinner == null) return;
+        if (weightLabelText == null || weightSpinner == null) {
+            return;
+        }
 
         weightSpinner.setVisibility(View.GONE);
 
@@ -550,8 +558,12 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void hideWeightUI() {
-        if (weightLabelText != null) weightLabelText.setVisibility(View.GONE);
-        if (weightSpinner != null)   weightSpinner.setVisibility(View.GONE);
+        if (weightLabelText != null) {
+            weightLabelText.setVisibility(View.GONE);
+        }
+        if (weightSpinner != null) {
+            weightSpinner.setVisibility(View.GONE);
+        }
     }
 
     public void loadFontFromUri(Uri uri, String fileName) {
@@ -591,16 +603,14 @@ public class FontViewerFragment extends Fragment {
                     final String finalRealName = realName;
 
 
-                    mainHandler.post(() -> {
-                        loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
-                    });
+                    mainHandler.post(() ->
+                        loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false));
                 }
             } else {
-                mainHandler.post(() -> {
+                mainHandler.post(() ->
                     Toast.makeText(requireContext(),
                             getString(R.string.font_viewer_error_loading_font),
-                            Toast.LENGTH_SHORT).show();
-                });
+                            Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -662,7 +672,9 @@ public class FontViewerFragment extends Fragment {
         currentVariableInstances = null;
 
         Typeface defaultTypeface = Typeface.DEFAULT;
-        if (previewSentence != null) previewSentence.setTypeface(defaultTypeface);
+        if (previewSentence != null) {
+            previewSentence.setTypeface(defaultTypeface);
+        }
 
         hideWeightUI();
 
@@ -726,7 +738,7 @@ public class FontViewerFragment extends Fragment {
             metadata = new java.util.HashMap<>();
         }
 
-        String displayPath = (originalFontPath != null && !originalFontPath.isEmpty())
+        String displayPath = originalFontPath != null && !originalFontPath.isEmpty()
             ? originalFontPath
             : currentFontPath;
 

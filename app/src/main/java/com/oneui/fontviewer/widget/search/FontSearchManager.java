@@ -9,8 +9,6 @@ import com.oneui.fontviewer.utils.FileUtils;
 
 public class FontSearchManager {
     
-    private static final String TAG = "FontSearchManager";
-    
     private final List<FontFileInfo> allFonts;
     private final List<FontFileInfo> filteredFonts;
     private String currentSearchQuery;

@@ -2,11 +2,11 @@ package com.oneui.fontviewer.fragment.localfont.fontdirectory;
 
 import android.util.Log;
 
-import com.oneui.fontviewer.data.entity.FontFileInfo;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.oneui.fontviewer.data.entity.FontFileInfo;
 
 public class LocalFontDirectory {
 
