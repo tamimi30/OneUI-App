@@ -2,25 +2,25 @@ package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
-
-import androidx.appcompat.app.AlertDialog;
+import android.content.res.Configuration;
+import android.util.TypedValue;
+import android.widget.EditText;
 
 import java.io.File;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.utils.FileUtils;
@@ -34,9 +34,7 @@ public class FontActionDialogs {
     
 
     public static void showRenameDialog(Context context, String currentPath, OnRenameListener listener) {
-        if (context == null || currentPath == null || listener == null) {
-            return;
-        }
+        if (context == null || currentPath == null || listener == null) return;
 
         File file = new File(currentPath);
         String currentFileName = file.getName();
@@ -64,9 +62,7 @@ public class FontActionDialogs {
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.showSoftInput(input, InputMethodManager.SHOW_FORCED);
-                }
+                if (imm != null) imm.showSoftInput(input, InputMethodManager.SHOW_FORCED);
             }, 100);
 
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
@@ -130,9 +126,7 @@ public class FontActionDialogs {
                 listener.onRename(currentPath, extension.isEmpty() ? newName : newName + "." + extension);
 
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-                }
+                if (imm != null) imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
 
                 dialog.dismiss();
             });
@@ -149,14 +143,10 @@ public class FontActionDialogs {
     
 
     private static boolean isValidFileName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            return false;
-        }
+        if (name == null || name.trim().isEmpty()) return false;
         String[] forbiddenChars = {"/", "\\", ":", "*", "?", "\"", "<", ">", "|"};
         for (String forbidden : forbiddenChars) {
-            if (name.contains(forbidden)) {
-                return false;
-            }
+            if (name.contains(forbidden)) return false;
         }
         return true;
     }

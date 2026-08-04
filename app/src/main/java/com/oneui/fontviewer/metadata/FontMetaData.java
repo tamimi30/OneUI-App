@@ -34,49 +34,21 @@ public class FontMetaData {
             String vendorURL = getFontNameDirectWithTtc(fontFile, 11, ttcIndex);
             String licenseDescription = getFontNameDirectWithTtc(fontFile, 13, ttcIndex);
             String licenseURL = getFontNameDirectWithTtc(fontFile, 14, ttcIndex);
-
-            if (copyright != null && !copyright.isEmpty()) {
-                out.put("Copyright", copyright);
-            }
-            if (fullName != null && !fullName.isEmpty()) {
-                out.put("FullName", fullName);
-            }
-            if (family != null && !family.isEmpty()) {
-                out.put("Family", family);
-            }
-            if (subfamily != null && !subfamily.isEmpty()) {
-                out.put("SubFamily", subfamily);
-            }
-            if (postScriptName != null && !postScriptName.isEmpty()) {
-                out.put("PostScriptName", postScriptName);
-            }
-            if (version != null && !version.isEmpty()) {
-                out.put("Version", version);
-            }
-            if (manufacturer != null && !manufacturer.isEmpty()) {
-                out.put("Manufacturer", manufacturer);
-            }
-            if (designer != null && !designer.isEmpty()) {
-                out.put("Designer", designer);
-            }
-            if (trademark != null && !trademark.isEmpty()) {
-                out.put("Trademark", trademark);
-            }
-            if (description != null && !description.isEmpty()) {
-                out.put("Description", description);
-            }
-            if (designerURL != null && !designerURL.isEmpty()) {
-                out.put("DesignerURL", designerURL);
-            }
-            if (vendorURL != null && !vendorURL.isEmpty()) {
-                out.put("VendorURL", vendorURL);
-            }
-            if (licenseDescription != null && !licenseDescription.isEmpty()) {
-                out.put("LicenseDescription", licenseDescription);
-            }
-            if (licenseURL != null && !licenseURL.isEmpty()) {
-                out.put("LicenseURL", licenseURL);
-            }
+            
+            if (copyright != null && !copyright.isEmpty()) out.put("Copyright", copyright);
+            if (fullName != null && !fullName.isEmpty()) out.put("FullName", fullName);
+            if (family != null && !family.isEmpty()) out.put("Family", family);
+            if (subfamily != null && !subfamily.isEmpty()) out.put("SubFamily", subfamily);
+            if (postScriptName != null && !postScriptName.isEmpty()) out.put("PostScriptName", postScriptName);
+            if (version != null && !version.isEmpty()) out.put("Version", version);
+            if (manufacturer != null && !manufacturer.isEmpty()) out.put("Manufacturer", manufacturer);
+            if (designer != null && !designer.isEmpty()) out.put("Designer", designer);
+            if (trademark != null && !trademark.isEmpty()) out.put("Trademark", trademark);
+            if (description != null && !description.isEmpty()) out.put("Description", description);
+            if (designerURL != null && !designerURL.isEmpty()) out.put("DesignerURL", designerURL);
+            if (vendorURL != null && !vendorURL.isEmpty()) out.put("VendorURL", vendorURL);
+            if (licenseDescription != null && !licenseDescription.isEmpty()) out.put("LicenseDescription", licenseDescription);
+            if (licenseURL != null && !licenseURL.isEmpty()) out.put("LicenseURL", licenseURL);
             
             Map<String, String> technicalData = extractTechnicalDataDirectWithTtc(fontFile, ttcIndex);
             if (technicalData != null) {
@@ -318,13 +290,9 @@ public class FontMetaData {
                     
                     String weight = getWeightClassName(weightClass);
                     String width = getWidthClassName(widthClass);
-
-                    if (weight != null) {
-                        data.put("Weight", weight);
-                    }
-                    if (width != null) {
-                        data.put("Width", width);
-                    }
+                    
+                    if (weight != null) data.put("Weight", weight);
+                    if (width != null) data.put("Width", width);
                     
                     raf.skipBytes(54);
                     byte[] vendorID = new byte[4];
@@ -391,9 +359,7 @@ public class FontMetaData {
                     if (!scripts.isEmpty()) {
                         StringBuilder scriptsStr = new StringBuilder();
                         for (String script : scripts) {
-                            if (scriptsStr.length() > 0) {
-                                scriptsStr.append(", ");
-                            }
+                            if (scriptsStr.length() > 0) scriptsStr.append(", ");
                             scriptsStr.append(script);
                         }
                         data.put("SupportedScripts", scriptsStr.toString());
@@ -503,40 +469,18 @@ public class FontMetaData {
             for (int i = 0; i < segCount; i++) {
                 int start = startCodes[i];
                 int end = endCodes[i];
-
-                if (start <= 0x007A && end >= 0x0041) {
-                    scripts.add("Latin");
-                }
-                if (start <= 0x06FF && end >= 0x0600) {
-                    scripts.add("Arabic");
-                }
-                if (start <= 0x04FF && end >= 0x0400) {
-                    scripts.add("Cyrillic");
-                }
-                if (start <= 0x03FF && end >= 0x0370) {
-                    scripts.add("Greek");
-                }
-                if (start <= 0x05FF && end >= 0x0590) {
-                    scripts.add("Hebrew");
-                }
-                if (start <= 0x9FFF && end >= 0x4E00) {
-                    scripts.add("CJK");
-                }
-                if (start <= 0x097F && end >= 0x0900) {
-                    scripts.add("Devanagari");
-                }
-                if (start <= 0x0E7F && end >= 0x0E00) {
-                    scripts.add("Thai");
-                }
-                if (start <= 0xD7AF && end >= 0xAC00) {
-                    scripts.add("Hangul");
-                }
-                if (start <= 0x309F && end >= 0x3040) {
-                    scripts.add("Hiragana");
-                }
-                if (start <= 0x30FF && end >= 0x30A0) {
-                    scripts.add("Katakana");
-                }
+                
+                if (start <= 0x007A && end >= 0x0041) scripts.add("Latin");
+                if (start <= 0x06FF && end >= 0x0600) scripts.add("Arabic");
+                if (start <= 0x04FF && end >= 0x0400) scripts.add("Cyrillic");
+                if (start <= 0x03FF && end >= 0x0370) scripts.add("Greek");
+                if (start <= 0x05FF && end >= 0x0590) scripts.add("Hebrew");
+                if (start <= 0x9FFF && end >= 0x4E00) scripts.add("CJK");
+                if (start <= 0x097F && end >= 0x0900) scripts.add("Devanagari");
+                if (start <= 0x0E7F && end >= 0x0E00) scripts.add("Thai");
+                if (start <= 0xD7AF && end >= 0xAC00) scripts.add("Hangul");
+                if (start <= 0x309F && end >= 0x3040) scripts.add("Hiragana");
+                if (start <= 0x30FF && end >= 0x30A0) scripts.add("Katakana");
             }
             
         } catch (Exception e) {
@@ -559,40 +503,18 @@ public class FontMetaData {
                 long startCode = raf.readInt() & 0xFFFFFFFFL;
                 long endCode = raf.readInt() & 0xFFFFFFFFL;
                 raf.skipBytes(4);
-
-                if (startCode <= 0x007A && endCode >= 0x0041) {
-                    scripts.add("Latin");
-                }
-                if (startCode <= 0x06FF && endCode >= 0x0600) {
-                    scripts.add("Arabic");
-                }
-                if (startCode <= 0x04FF && endCode >= 0x0400) {
-                    scripts.add("Cyrillic");
-                }
-                if (startCode <= 0x03FF && endCode >= 0x0370) {
-                    scripts.add("Greek");
-                }
-                if (startCode <= 0x05FF && endCode >= 0x0590) {
-                    scripts.add("Hebrew");
-                }
-                if (startCode <= 0x9FFF && endCode >= 0x4E00) {
-                    scripts.add("CJK");
-                }
-                if (startCode <= 0x097F && endCode >= 0x0900) {
-                    scripts.add("Devanagari");
-                }
-                if (startCode <= 0x0E7F && endCode >= 0x0E00) {
-                    scripts.add("Thai");
-                }
-                if (startCode <= 0xD7AF && endCode >= 0xAC00) {
-                    scripts.add("Hangul");
-                }
-                if (startCode <= 0x309F && endCode >= 0x3040) {
-                    scripts.add("Hiragana");
-                }
-                if (startCode <= 0x30FF && endCode >= 0x30A0) {
-                    scripts.add("Katakana");
-                }
+                
+                if (startCode <= 0x007A && endCode >= 0x0041) scripts.add("Latin");
+                if (startCode <= 0x06FF && endCode >= 0x0600) scripts.add("Arabic");
+                if (startCode <= 0x04FF && endCode >= 0x0400) scripts.add("Cyrillic");
+                if (startCode <= 0x03FF && endCode >= 0x0370) scripts.add("Greek");
+                if (startCode <= 0x05FF && endCode >= 0x0590) scripts.add("Hebrew");
+                if (startCode <= 0x9FFF && endCode >= 0x4E00) scripts.add("CJK");
+                if (startCode <= 0x097F && endCode >= 0x0900) scripts.add("Devanagari");
+                if (startCode <= 0x0E7F && endCode >= 0x0E00) scripts.add("Thai");
+                if (startCode <= 0xD7AF && endCode >= 0xAC00) scripts.add("Hangul");
+                if (startCode <= 0x309F && endCode >= 0x3040) scripts.add("Hiragana");
+                if (startCode <= 0x30FF && endCode >= 0x30A0) scripts.add("Katakana");
             }
             
         } catch (Exception e) {

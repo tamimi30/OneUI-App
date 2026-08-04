@@ -1,13 +1,13 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.widget.TextView;
+import android.graphics.Typeface;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -41,8 +41,8 @@ public class FontInfoDialog {
         int secondaryColor = ta.getColor(0, 0);
         int primaryColor = ta.getColor(1, 0);
         ta.recycle();
-        String secondaryColorHex = String.format("#%06X", 0xFFFFFF & secondaryColor);
-        String primaryColorHex = String.format("#%06X", 0xFFFFFF & primaryColor);
+        String secondaryColorHex = String.format("#%06X", (0xFFFFFF & secondaryColor));
+        String primaryColorHex = String.format("#%06X", (0xFFFFFF & primaryColor));
         StringBuilder htmlBuilder = new StringBuilder();
 
         String[] orderedKeys = {
@@ -74,7 +74,7 @@ public class FontInfoDialog {
                 "Path"
         };
 
-        boolean isArabic = "ar".equals(java.util.Locale.getDefault().getLanguage());
+        boolean isArabic = java.util.Locale.getDefault().getLanguage().equals("ar");
         String[] displayNames = isArabic ? new String[]{
                 "الاسم الكامل",
                 "اسم PostScript",
@@ -149,7 +149,7 @@ public class FontInfoDialog {
                 }
                 
                 if ("Hinted".equals(key)) {
-                    boolean isAr = "ar".equals(java.util.Locale.getDefault().getLanguage());
+                    boolean isAr = java.util.Locale.getDefault().getLanguage().equals("ar");
                     if ("Improved".equalsIgnoreCase(value)) {
                         value = isAr ? "مُحسّن" : "Improved";
                     } else {

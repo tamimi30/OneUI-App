@@ -21,29 +21,28 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
 
+import dev.oneuiproject.oneui.layout.DrawerLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
-import dev.oneuiproject.oneui.layout.DrawerLayout;
-
-import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.activity.AppScreen;
+import com.oneui.fontviewer.activity.AppScreen;           
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
-import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
-import com.oneui.fontviewer.fragment.systemfont.adapter.SystemFontListAdapter;
-import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
-import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
-import com.oneui.fontviewer.fragment.systemfont.viewmodel.SystemFontListViewModel;
-import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.widget.search.FontSearchManager;
 import com.oneui.fontviewer.widget.search.SearchViewModel;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
 import com.oneui.fontviewer.widget.sort.SortByItemLayout;
+import com.oneui.fontviewer.utils.FontUIStateManager;
+import com.oneui.fontviewer.fragment.systemfont.adapter.SystemFontListAdapter;
+import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.fragment.systemfont.viewmodel.SystemFontListViewModel;
+import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
+import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
+import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
 
 public class SystemFontListFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
@@ -69,7 +68,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
     private boolean mIsFirstLoad = true;
 
-    private boolean mNeedsScrollRestore;
+    private boolean mNeedsScrollRestore = false;
 
     public interface OnFontSelectedListener {
         void onFontSelected(String fontPath, String realName, String fileName,
@@ -97,8 +96,9 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     }
 
     private void setupManagerListeners() {
-        mSearchManager.setSearchResultListener((count, empty) ->
-            mUIManager.updateEmptyView(empty, mSearchManager.isSearchActive()));
+        mSearchManager.setSearchResultListener((count, empty) -> {
+            mUIManager.updateEmptyView(empty, mSearchManager.isSearchActive());
+        });
 
         mSortManager.setSortChangeListener((type, asc) -> {
             if (mAdapter != null) {
@@ -264,8 +264,9 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         });
 
 
-        mAdapter.setSortChangeListener((type, asc) ->
-            mSortManager.setSortOptions(type, asc));
+        mAdapter.setSortChangeListener((type, asc) -> {
+            mSortManager.setSortOptions(type, asc);
+        });
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -285,9 +286,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     }
 
     private void setupRecyclerViewAnimator() {
-        if (mRecyclerView == null) {
-            return;
-        }
+        if (mRecyclerView == null) return;
         androidx.recyclerview.widget.DefaultItemAnimator animator =
             new androidx.recyclerview.widget.DefaultItemAnimator();
         animator.setAddDuration(150);
@@ -312,17 +311,11 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     }
 
     private void showUnsupportedView() {
-        if (getView() == null) {
-            return;
-        }
+        if (getView() == null) return;
         View unsupportedView = getView().findViewById(R.id.unsupported_view);
         View mainContent     = getView().findViewById(R.id.main_content_layout);
-        if (unsupportedView != null) {
-            unsupportedView.setVisibility(View.VISIBLE);
-        }
-        if (mainContent != null) {
-            mainContent.setVisibility(View.GONE);
-        }
+        if (unsupportedView != null) unsupportedView.setVisibility(View.VISIBLE);
+        if (mainContent != null)     mainContent.setVisibility(View.GONE);
     }
 
     private void refreshAdapterData() {
@@ -466,9 +459,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
             mSearchViewModel.deactivateSearch();
         } else {
-            if (mAdapter != null) {
-                mAdapter.smartUpdate();
-            }
+            if (mAdapter != null) mAdapter.smartUpdate();
 
             updateMainActivityFontsCount(mCurrentFontsList.size());
 
@@ -516,11 +507,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mMainHandler != null) {
-            mMainHandler.removeCallbacksAndMessages(null);
-        }
-        if (mExecutor != null) {
-            mExecutor.shutdown();
-        }
+        if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
+        if (mExecutor != null)    mExecutor.shutdown();
     }
     }

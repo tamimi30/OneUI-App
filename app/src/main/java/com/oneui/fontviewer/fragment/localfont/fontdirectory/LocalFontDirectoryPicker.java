@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 import android.util.Log;
-
 import androidx.fragment.app.Fragment;
-
 import java.io.File;
 
 public class LocalFontDirectoryPicker {

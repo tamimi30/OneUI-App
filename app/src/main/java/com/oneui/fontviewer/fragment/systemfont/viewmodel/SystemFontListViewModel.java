@@ -9,10 +9,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.List;
-
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontRepository;
+
+import java.util.List;
 
 public class SystemFontListViewModel extends AndroidViewModel {
     

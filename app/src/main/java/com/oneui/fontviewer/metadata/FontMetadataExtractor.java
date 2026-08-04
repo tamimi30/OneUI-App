@@ -19,7 +19,7 @@ public class FontMetadataExtractor {
         try {
             String fontName = FontMetaData.extractFontName(fontFile, ttcIndex);
             
-            if (fontName != null && !fontName.isEmpty() && !"Unknown Font".equals(fontName)) {
+            if (fontName != null && !fontName.isEmpty() && !fontName.equals("Unknown Font")) {
                 Log.d(TAG, "Successfully extracted font name: " + fontName);
                 return fontName;
             }

@@ -10,9 +10,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import androidx.core.app.NotificationCompat;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.AppScreen;
@@ -45,9 +45,7 @@ public class OperationForegroundService extends Service {
             int    total      = intent.getIntExtra(EXTRA_TOTAL, 0);
             String sourceName = intent.getStringExtra(EXTRA_SOURCE_FRAGMENT);
 
-            if (title == null) {
-                title = getString(R.string.app_name);
-            }
+            if (title == null) title = getString(R.string.app_name);
 
             Notification notification = buildInitialNotification(title, total, sourceName);
             startForeground(mNotifId, notification);
@@ -119,9 +117,7 @@ public class OperationForegroundService extends Service {
     private void ensureChannelCreated() {
         NotificationManager nm =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (nm == null || nm.getNotificationChannel(CHANNEL_ID) != null) {
-            return;
-        }
+        if (nm == null || nm.getNotificationChannel(CHANNEL_ID) != null) return;
 
         NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,

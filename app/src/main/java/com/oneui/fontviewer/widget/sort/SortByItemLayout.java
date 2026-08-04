@@ -73,13 +73,9 @@ public class SortByItemLayout extends LinearLayout {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-
-        if (mTextContainer != null) {
-            mTextContainer.setEnabled(enabled);
-        }
-        if (mOrderIcon != null) {
-            mOrderIcon.setEnabled(enabled);
-        }
+        
+        if (mTextContainer != null) mTextContainer.setEnabled(enabled);
+        if (mOrderIcon != null) mOrderIcon.setEnabled(enabled);
         
         setAlpha(enabled ? 1.0f : 0.4f);
     }
@@ -89,9 +85,7 @@ public class SortByItemLayout extends LinearLayout {
             mTextContainer.setClickable(true);
             mTextContainer.setFocusable(true);
             mTextContainer.setOnClickListener(v -> {
-                if (isEnabled()) {
-                    showSortMenu();
-                }
+                if (isEnabled()) showSortMenu();
             });
         }
 
@@ -110,20 +104,14 @@ public class SortByItemLayout extends LinearLayout {
     }
 
     private void showSortMenu() {
-        if (mTextContainer == null) {
-            return;
-        }
+        if (mTextContainer == null) return;
 
         PopupMenu popup = new PopupMenu(getContext(), mTextContainer);
         popup.getMenuInflater().inflate(R.menu.menu_sort_options, popup.getMenu());
 
-        if (mCurrentSortType == SortType.NAME) {
-            popup.getMenu().findItem(R.id.sort_by_name).setChecked(true);
-        } else if (mCurrentSortType == SortType.DATE) {
-            popup.getMenu().findItem(R.id.sort_by_date).setChecked(true);
-        } else if (mCurrentSortType == SortType.SIZE) {
-            popup.getMenu().findItem(R.id.sort_by_size).setChecked(true);
-        }
+        if (mCurrentSortType == SortType.NAME) popup.getMenu().findItem(R.id.sort_by_name).setChecked(true);
+        else if (mCurrentSortType == SortType.DATE) popup.getMenu().findItem(R.id.sort_by_date).setChecked(true);
+        else if (mCurrentSortType == SortType.SIZE) popup.getMenu().findItem(R.id.sort_by_size).setChecked(true);
 
         popup.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
@@ -143,9 +131,7 @@ public class SortByItemLayout extends LinearLayout {
     }
 
     private void updateUI() {
-        if (mSortTextView == null || mOrderIcon == null) {
-            return;
-        }
+        if (mSortTextView == null || mOrderIcon == null) return;
 
         if (mCurrentSortType == SortType.NAME) {
             mSortTextView.setText(R.string.sort_name);

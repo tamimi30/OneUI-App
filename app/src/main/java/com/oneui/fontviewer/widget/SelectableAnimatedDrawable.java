@@ -8,18 +8,19 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.util.Xml;
 import android.widget.ImageView;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.ColorUtils;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import android.util.TypedValue;
+import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.graphics.drawable.AnimatedStateListDrawableCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
@@ -27,8 +28,8 @@ public class SelectableAnimatedDrawable extends AnimatedStateListDrawableCompat 
 
     private static final String LOG_TAG = "SelectableAnimDrawable";
     private float radius = -1f;
-    private final int selectedColor = -1;
-    private final Paint backgroundPaint;
+    private int selectedColor = -1;
+    private Paint backgroundPaint;
     private final RectF shapeBounds = new RectF();
     private ValueAnimator backgroundAnimator;
 
@@ -55,7 +56,7 @@ public class SelectableAnimatedDrawable extends AnimatedStateListDrawableCompat 
             if (imageView.getDrawable() != null) {
                 RectF drawableBounds = new RectF(imageView.getDrawable().getBounds());
                 imageView.getImageMatrix().mapRect(shapeBounds, drawableBounds);
-                float radiusPx = radius == -1f ? shapeBounds.height() / 2f : radius;
+                float radiusPx = (radius == -1f) ? shapeBounds.height() / 2f : radius;
                 canvas.drawRoundRect(shapeBounds, radiusPx, radiusPx, backgroundPaint);
             }
         }
@@ -65,29 +66,21 @@ public class SelectableAnimatedDrawable extends AnimatedStateListDrawableCompat 
     @Override
     public void setAlpha(int alpha) {
         super.setAlpha(alpha);
-        if (backgroundPaint != null) {
-            backgroundPaint.setAlpha(alpha);
-        }
+        if (backgroundPaint != null) backgroundPaint.setAlpha(alpha);
     }
 
     @Override
     public void setColorFilter(ColorFilter colorFilter) {
         super.setColorFilter(colorFilter);
-        if (backgroundPaint != null) {
-            backgroundPaint.setColorFilter(colorFilter);
-        }
+        if (backgroundPaint != null) backgroundPaint.setColorFilter(colorFilter);
     }
 
     @Override
     protected boolean onStateChange(int[] stateSet) {
         boolean changed = super.onStateChange(stateSet);
-        if (!changed) {
-            return false;
-        }
+        if (!changed) return false;
 
-        if (backgroundAnimator != null) {
-            backgroundAnimator.cancel();
-        }
+        if (backgroundAnimator != null) backgroundAnimator.cancel();
 
         if (backgroundPaint != null) {
             boolean isSelected = false;
@@ -122,9 +115,7 @@ public class SelectableAnimatedDrawable extends AnimatedStateListDrawableCompat 
     @Override
     public void jumpToCurrentState() {
         super.jumpToCurrentState();
-        if (backgroundAnimator != null) {
-            backgroundAnimator.cancel();
-        }
+        if (backgroundAnimator != null) backgroundAnimator.cancel();
         if (backgroundPaint != null) {
             boolean isSelected = false;
             for (int state : getState()) {
@@ -154,12 +145,8 @@ public class SelectableAnimatedDrawable extends AnimatedStateListDrawableCompat 
                 // Empty loop
             }
 
-            if (type != XmlPullParser.START_TAG) {
-                throw new XmlPullParserException("No start tag found");
-            }
-            if (!"animated-selector".equals(parser.getName())) {
-                throw new XmlPullParserException("invalid animated-selector tag");
-            }
+            if (type != XmlPullParser.START_TAG) throw new XmlPullParserException("No start tag found");
+            if (!"animated-selector".equals(parser.getName())) throw new XmlPullParserException("invalid animated-selector tag");
 
             SelectableAnimatedDrawable drawable = new SelectableAnimatedDrawable();
             drawable.inflate(context, res, parser, attrs, theme);

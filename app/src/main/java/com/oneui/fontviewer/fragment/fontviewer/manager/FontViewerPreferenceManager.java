@@ -3,6 +3,7 @@ package com.oneui.fontviewer.fragment.fontviewer.manager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
