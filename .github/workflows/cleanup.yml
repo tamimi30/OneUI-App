@@ -25,28 +25,28 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            gradle-9.3.1
-          key: ${{ runner.os }}-gradle-9.3.1-v2-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+            gradle-9.6.1
+          key: ${{ runner.os }}-gradle-9.6.1-v2-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-9.3.1-v2-
+            ${{ runner.os }}-gradle-9.6.1-v2-
 
       - name: Download and Setup Gradle
         run: |
-          if [ -d "gradle-9.3.1" ]; then
-             echo "✅ Gradle 9.3.1 found in cache. Skipping download."
+          if [ -d "gradle-9.6.1" ]; then
+             echo "✅ Gradle 9.6.1 found in cache. Skipping download."
           else
              echo "⬇️ Gradle not found. Downloading..."
-             wget https://services.gradle.org/distributions/gradle-9.3.1-bin.zip -O gradle_dist.zip
+             wget https://services.gradle.org/distributions/gradle-9.6.1-bin.zip -O gradle_dist.zip
              unzip -q gradle_dist.zip
              rm gradle_dist.zip
           fi
-          echo "$(pwd)/gradle-9.3.1/bin" >> $GITHUB_PATH
+          echo "$(pwd)/gradle-9.6.1/bin" >> $GITHUB_PATH
 
       # --- الإصلاح هنا ---
-      # تمت إزالة "--gradle-version 9.3.1" لتجنب فحص الشبكة
+      # تمت إزالة "--gradle-version 9.6.1" لتجنب فحص الشبكة
       # وتمت إضافة "--no-daemon" لتوفير الذاكرة
       - name: Generate Gradle Wrapper
-        run: ./gradle-9.3.1/bin/gradle wrapper --distribution-type all --no-daemon
+        run: ./gradle-9.6.1/bin/gradle wrapper --distribution-type all --no-daemon
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -72,7 +72,7 @@ jobs:
           git config --global user.email "actions@github.com"
           
           # حذف مجلد الجرادل المحمل يدوياً لكي لا يتم رفعه (اختياري)
-          rm -rf gradle-9.3.1/
+          rm -rf gradle-9.6.1/
           
           # إضافة ملفات الجافا المعدلة
           git add app/src/main/java/**/*.java || true
