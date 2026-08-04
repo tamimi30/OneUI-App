@@ -51,17 +51,7 @@ public class LocalFontPreferenceManager {
                 );
     }
     
-    public String getLastOpenedFont() {
-        try {
-            cachedLastOpenedPath = isFavoritesList
-                    ? dataStore.getLastOpenedFavoriteFontPath().blockingFirst()
-                    : dataStore.getLastOpenedFontPath().blockingFirst();
-            return cachedLastOpenedPath;
-        } catch (Exception e) {
-            Log.d(TAG, "No last opened font found");
-            return null;
-        }
-    }
+    
     
     public boolean isLastOpenedFont(String fontPath) {
         if (fontPath == null) {
@@ -71,18 +61,7 @@ public class LocalFontPreferenceManager {
         return cachedLastOpenedPath != null && cachedLastOpenedPath.equals(fontPath);
     }
     
-    public void clearLastOpenedFont() {
-        cachedLastOpenedPath = null;
-        
-        (isFavoritesList
-                ? dataStore.setLastOpenedFavoriteFontPath(null)
-                : dataStore.setLastOpenedFontPath(null))
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                    prefs -> Log.d(TAG, "Cleared last opened font"),
-                    error -> Log.e(TAG, "Error clearing last opened font", error)
-                );
-    }
+    
     
     public void saveFontFolderPath(String folderPath) {
         if (folderPath == null) {
