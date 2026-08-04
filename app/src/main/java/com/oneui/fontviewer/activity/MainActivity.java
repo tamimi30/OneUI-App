@@ -8,8 +8,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.widget.Toast;
-import android.os.Looper;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
@@ -19,7 +17,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.app.AlertDialog;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -29,7 +26,6 @@ import java.util.Map;
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
-import com.oneui.fontviewer.dialog.FontInfoDialog;
 import com.oneui.fontviewer.fragment.fontviewer.FontViewerActivity;
 import com.oneui.fontviewer.fragment.localfont.LocalFontListFragment;
 import com.oneui.fontviewer.fragment.systemfont.SystemFontListFragment;
@@ -37,10 +33,7 @@ import com.oneui.fontviewer.fragment.favorite.FavoriteFontListFragment;
 import com.oneui.fontviewer.fragment.trash.TrashFragment;
 import com.oneui.fontviewer.drawer.DrawerListAdapter;
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.utils.FileUtils;
-import com.oneui.fontviewer.utils.translation.TranslationService;
 import com.oneui.fontviewer.widget.search.SearchCoordinator;
-import com.oneui.fontviewer.widget.TextDrawable;
 import com.oneui.fontviewer.fragment.settings.SettingsActivity;
 import com.oneui.fontviewer.fragment.home.HomeActivity;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
