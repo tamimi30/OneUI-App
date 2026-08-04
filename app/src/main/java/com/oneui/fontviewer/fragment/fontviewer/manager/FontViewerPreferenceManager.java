@@ -91,9 +91,6 @@ public class FontViewerPreferenceManager {
                 );
     }
     
-    public float getFontWeight() {
-        return getFontWeight(SettingsDataStore.DEFAULT_VIEWER_FONT_WEIGHT);
-    }
     
     public float getFontWeight(float defaultWeight) {
         try {
