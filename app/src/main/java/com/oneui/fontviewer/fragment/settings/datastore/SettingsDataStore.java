@@ -483,24 +483,6 @@ public class SettingsDataStore {
         return dataStore.data().map(prefs -> prefs.get(KEY_VIEWER_REAL_NAME));
     }
     
-    // ════════════════════════════════════════════════════════════
-    // Font Viewer - Font Size
-    // ════════════════════════════════════════════════════════════
-    
-    public Single<Preferences> setViewerFontSize(float size) {
-        return dataStore.updateDataAsync(prefs -> {
-            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            mutablePrefs.set(KEY_VIEWER_FONT_SIZE, size);
-            return Single.just(mutablePrefs);
-        });
-    }
-    
-    public Flowable<Float> getViewerFontSize() {
-        return dataStore.data().map(prefs -> 
-            prefs.get(KEY_VIEWER_FONT_SIZE) != null ? 
-            prefs.get(KEY_VIEWER_FONT_SIZE) : DEFAULT_VIEWER_FONT_SIZE
-        );
-    }
     
     // ════════════════════════════════════════════════════════════
     // Font Viewer - Font Weight
