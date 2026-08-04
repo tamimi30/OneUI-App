@@ -206,30 +206,5 @@ public class LocalFontCache {
         });
     }
     
-    public void preloadMostUsedFonts(int limit) {
-        if (database == null) return;
-        
-        new Thread(() -> {
-            try {
-                List<FontEntity> mostUsed = database.fontDao().getMostAccessedFonts(limit);
-                
-                int loadedCount = 0;
-                for (FontEntity font : mostUsed) {
-                    if (font.isSystemFont()) continue; 
-                    
-                    String path = font.getPath();
-                    if (getIfCached(path) == null) {
-                        Typeface typeface = getTypeface(path);
-                        if (typeface != null) {
-                            loadedCount++;
-                        }
-                    }
-                }
-                
-                Log.d(TAG, "Preloaded " + loadedCount + " most used fonts");
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to preload most used fonts", e);
-            }
-        }, "LocalFontCache-MostUsedPreload").start();
-    }
-                }
+    
+}
