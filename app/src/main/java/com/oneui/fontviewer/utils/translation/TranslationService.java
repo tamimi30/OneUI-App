@@ -185,10 +185,6 @@ public class TranslationService {
         }
     }
     
-    public void clearCache() {
-        translationCache.clearCache();
-        Log.i(TAG, "Translation cache cleared by user request");
-    }
     
     public boolean isTranslationEnabled() {
         try {
