@@ -127,12 +127,5 @@ public class LocalFontPermissionManager {
         return false;
     }
     
-    public boolean shouldShowPermissionRationale() {
-        if (fragment == null) {
-            return false;
-        }
-        return fragment.shouldShowRequestPermissionRationale(
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        );
-    }
+    
 }
