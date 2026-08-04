@@ -135,30 +135,13 @@ public class LocalFontCache {
         }
     }
     
-    public boolean wasLoadedBefore(String fontPath) {
-        if (database == null) return false;
-        
-        try {
-            FontEntity font = database.fontDao().getFontByPathSync(fontPath);
-            return font != null && font.isCached();
-        } catch (Exception e) {
-            return false;
-        }
-    }
+    
     
     public int getCachedFontsCount() {
         return memoryCache.size();
     }
     
-    public int getPersistedFontsCount() {
-        if (database == null) return 0;
-        
-        try {
-            return database.fontDao().getCachedFontsCount();
-        } catch (Exception e) {
-            return 0;
-        }
-    }
+    
     
     public void clearMemoryCache() {
         memoryCache.clear();
