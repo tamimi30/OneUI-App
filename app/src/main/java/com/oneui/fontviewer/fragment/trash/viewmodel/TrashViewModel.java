@@ -330,22 +330,9 @@ public class TrashViewModel extends AndroidViewModel {
         }
     }
 
-    public static int getDaysRemaining(@NonNull FontEntity entity) {
-        if (entity.getDeletedAt() <= 0) {
-            return 30;
-        }
+    
 
-        long now         = System.currentTimeMillis();
-        long elapsedMs   = now - entity.getDeletedAt();
-        long elapsedDays = elapsedMs / (24L * 60 * 60 * 1000);
-
-        return (int) (30 - elapsedDays);
-    }
-
-    public boolean isOperationRunning() {
-        Boolean loading = _isLoading.getValue();
-        return loading != null && loading;
-    }
+    
 
     public void clearOperationResult() {
         _operationResult.postValue(null);
