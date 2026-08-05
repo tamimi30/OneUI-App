@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: 📥 تحميل كود المشروع
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: ☕ إعداد بيئة جافا
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -26,12 +26,14 @@ jobs:
           cd Chazer
           cargo build --release
 
+      - name: ℹ️ عرض تعليمات ووسائط الأداة
+        run: ./Chazer/target/release/chazer --help
+
       - name: 🔍 فحص وحذف الكود الميت من تطبيقك فقط
-        # قمنا بإضافة استبعاد لمجلد أداة Chazer حتى لا يفحصه بالخطأ
         run: ./Chazer/target/release/chazer . --deep true --delete --exclude "Chazer/**"
 
       - name: 📤 إنشاء طلب سحب (Pull Request) للمراجعة
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: remove dead code via Chazer"
