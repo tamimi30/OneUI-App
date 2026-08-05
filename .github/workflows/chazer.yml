@@ -19,14 +19,15 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          
-      - name: 🚀 تثبيت أداة Chazer
-        # نستخدم مدير حزم Rust لتثبيت الأداة من مصدرها الرسمي مباشرة
-        run: cargo install chazer
+
+      - name: 🛠️ تحميل وبناء أداة Chazer محلياً
+        run: |
+          git clone https://github.com/dr7ro0t/Chazer.git
+          cd Chazer
+          cargo build --release
 
       - name: 🔍 فحص وحذف الكود الميت
-        # سيتم تشغيل الأداة من المسار الذي يثبت فيه cargo برامجه
-        run: ~/.cargo/bin/chazer . --deep --delete
+        run: ./Chazer/target/release/chazer . --deep --delete
 
       - name: 📤 إنشاء طلب سحب (Pull Request) للمراجعة
         uses: peter-evans/create-pull-request@v6
