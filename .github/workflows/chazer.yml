@@ -12,28 +12,28 @@ jobs:
 
       - name: Install Chazer
         run: |
-          curl -L https://github.com/ChazerTool/releases/latest/download/chazer-linux -o chazer
+          curl -L https://github.com/chazer-tool/chazer/releases/latest/download/chazer-linux-amd64 -o chazer
           chmod +x chazer
 
       - name: Run Chazer Scan
         run: ./chazer scan . --json > report.json
 
       - name: Upload Report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7   # النسخة الجديدة
         with:
           name: dead-code-report
           path: report.json
 
   prune:
     runs-on: ubuntu-latest
-    needs: scan   # الحذف لا يعمل إلا بعد الفحص
+    needs: scan
     steps:
       - name: Checkout project
         uses: actions/checkout@v7
 
       - name: Install Chazer
         run: |
-          curl -L https://github.com/ChazerTool/releases/latest/download/chazer-linux -o chazer
+          curl -L https://github.com/chazer-tool/chazer/releases/latest/download/chazer-linux-amd64 -o chazer
           chmod +x chazer
 
       - name: Run Chazer Prune
