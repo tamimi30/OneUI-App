@@ -3,6 +3,9 @@ name: Chazer Dead Code Tools
 on:
   workflow_dispatch:
 
+env:
+  CHAZER_REPO: "chazer-tool/chazer"   # غيّر إذا الريبو مختلف
+
 jobs:
   scan:
     runs-on: ubuntu-latest
@@ -10,20 +13,71 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Resolve latest Chazer asset URL
+        id: resolve
+        run: |
+          python3 - <<'PY'
+import os, json, urllib.request, sys
+repo = os.environ.get("CHAZER_REPO")
+api = f"https://api.github.com/repos/{repo}/releases/latest"
+req = urllib.request.Request(api, headers={"Accept":"application/vnd.github.v3+json","User-Agent":"github-actions"})
+with urllib.request.urlopen(req, timeout=30) as r:
+    data = json.load(r)
+assets = data.get("assets", [])
+candidates = [a for a in assets if ("linux" in a.get("name","").lower() or "amd64" in a.get("name","").lower())]
+if not candidates and assets:
+    candidates = assets
+if not candidates:
+    print("::set-output name=url::")
+    sys.exit(0)
+asset = candidates[0]
+print(f"::set-output name=url::{asset.get('browser_download_url')}")
+print(f"::set-output name=name::{asset.get('name')}")
+PY
+
       - name: Download Chazer binary
         run: |
-          curl -L "https://github.com/chazer-tool/chazer/releases/latest/download/chazer-linux-amd64" -o chazer || { echo "Download failed"; exit 1; }
+          if [ -z "${{ steps.resolve.outputs.url }}" ]; then
+            echo "No release asset found for $CHAZER_REPO"
+            exit 1
+          fi
+          echo "Downloading ${{ steps.resolve.outputs.name }}"
+          curl -L "${{ steps.resolve.outputs.url }}" -o chazer || { echo "curl failed"; exit 1; }
           chmod +x chazer || true
-          ./chazer --version || echo "chazer --version failed"
+          echo "Downloaded file info:"
+          ls -lh chazer || true
+          file chazer || true
+          ./chazer --version || echo "chazer --version failed (binary may be incompatible)"
+
+      - name: Verify chazer is executable
+        run: |
+          if [ ! -x ./chazer ]; then
+            echo "Downloaded 'chazer' is not executable or missing. Uploading for inspection and failing."
+            mkdir -p artifact
+            cp chazer artifact/chazer_download || true
+            tar -czf artifact_chazer.tar.gz artifact || true
+            echo "artifact_chazer.tar.gz" > artifact_list.txt
+            ls -l artifact || true
+            exit 1
+          fi
 
       - name: Run Chazer Scan
-        run: ./chazer scan . --json > report.json
+        run: |
+          set -e
+          ./chazer scan . --json > report.json
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
         with:
           name: dead-code-report
           path: report.json
+
+      - name: Upload downloaded binary for inspection if needed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chazer-download-for-inspection
+          path: artifact_chazer.tar.gz
 
   prune:
     runs-on: ubuntu-latest
@@ -32,13 +86,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download Chazer binary
+      - name: Resolve and install Chazer
         run: |
-          curl -L "https://github.com/chazer-tool/chazer/releases/latest/download/chazer-linux-amd64" -o chazer || { echo "Download failed"; exit 1; }
-          chmod +x chazer || true
+          python3 - <<'PY'
+import os, json, urllib.request, subprocess
+repo = os.environ.get("CHAZER_REPO")
+api = f"https://api.github.com/repos/{repo}/releases/latest"
+req = urllib.request.Request(api, headers={"Accept":"application/vnd.github.v3+json","User-Agent":"github-actions"})
+with urllib.request.urlopen(req, timeout=30) as r:
+    data = json.load(r)
+assets = data.get("assets", [])
+candidates = [a for a in assets if ("linux" in a.get("name","").lower() or "amd64" in a.get("name","").lower())]
+if not candidates and assets:
+    candidates = assets
+if not candidates:
+    print("No asset found")
+    raise SystemExit(1)
+url = candidates[0].get("browser_download_url")
+subprocess.check_call(["curl","-L",url,"-o","chazer"])
+subprocess.check_call(["chmod","+x","chazer"])
+print("Downloaded chazer")
+PY
 
       - name: Run Chazer Prune
-        run: ./chazer prune . --batch
+        run: |
+          set -e
+          ./chazer prune . --batch
 
       - name: Commit and Push Changes
         run: |
