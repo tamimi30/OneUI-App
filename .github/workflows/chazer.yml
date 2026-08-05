@@ -26,9 +26,9 @@ jobs:
           cd Chazer
           cargo build --release
 
-      - name: 🔍 فحص وحذف الكود الميت
-        # تم تصحيح الأمر هنا بإضافة true بجانب --deep
-        run: ./Chazer/target/release/chazer . --deep true --delete
+      - name: 🔍 فحص وحذف الكود الميت من تطبيقك فقط
+        # قمنا بإضافة استبعاد لمجلد أداة Chazer حتى لا يفحصه بالخطأ
+        run: ./Chazer/target/release/chazer . --deep true --delete --exclude "Chazer/**"
 
       - name: 📤 إنشاء طلب سحب (Pull Request) للمراجعة
         uses: peter-evans/create-pull-request@v6
