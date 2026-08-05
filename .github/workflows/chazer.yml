@@ -3,9 +3,6 @@ name: Chazer Dead Code Tools
 on:
   workflow_dispatch:
 
-env:
-  CHAZER_REPO: "chazer-tool/chazer"   # تعديل فقط إذا كان repo مختلف
-
 jobs:
   scan:
     runs-on: ubuntu-latest
@@ -13,86 +10,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Find latest Chazer release asset (linux)
-        id: find_asset
+      - name: Download Chazer binary
         run: |
-          echo "Querying GitHub Releases for $CHAZER_REPO"
-          python3 - <<'PY'
-import sys, json, urllib.request, os
-repo = os.environ.get("CHAZER_REPO")
-api = f"https://api.github.com/repos/{repo}/releases/latest"
-req = urllib.request.Request(api, headers={"Accept":"application/vnd.github.v3+json","User-Agent":"github-actions"})
-with urllib.request.urlopen(req, timeout=30) as r:
-    data = json.load(r)
-assets = data.get("assets", [])
-# prefer linux amd64 names
-candidates = [a for a in assets if ("linux" in a.get("name","").lower() or "amd64" in a.get("name","").lower())]
-if not candidates and assets:
-    candidates = assets
-if not candidates:
-    print("::set-output name=url::")
-    sys.exit(0)
-# choose first candidate
-url = candidates[0].get("browser_download_url","")
-name = candidates[0].get("name","chazer")
-print(json.dumps({"url":url,"name":name}))
-PY
-      - name: Download Chazer binary robustly
-        run: |
-          # read JSON from previous step (if empty, fail with clear message)
-          ASSET_JSON=$(python3 - <<'PY'
-import os,sys,json,subprocess
-# read step output from environment (we used python inline so we need to re-query API)
-repo = os.environ.get("CHAZER_REPO")
-import urllib.request, json
-api = f"https://api.github.com/repos/{repo}/releases/latest"
-req = urllib.request.Request(api, headers={"Accept":"application/vnd.github.v3+json","User-Agent":"github-actions"})
-with urllib.request.urlopen(req, timeout=30) as r:
-    data = json.load(r)
-assets = data.get("assets", [])
-candidates = [a for a in assets if ("linux" in a.get("name","").lower() or "amd64" in a.get("name","").lower())]
-if not candidates and assets:
-    candidates = assets
-if not candidates:
-    print("")
-    sys.exit(0)
-print(candidates[0].get("browser_download_url","") + "||" + candidates[0].get("name","chazer"))
-PY
-          )
-          if [ -z "$ASSET_JSON" ]; then
-            echo "No release asset found for $CHAZER_REPO. Please check CHAZER_REPO value or upload binary to repo."
-            exit 1
-          fi
-          URL=$(echo "$ASSET_JSON" | cut -d'|' -f1)
-          NAME=$(echo "$ASSET_JSON" | cut -d'|' -f2)
-          echo "Downloading asset: $NAME"
-          curl -L "$URL" -o chazer || (echo "curl failed to download chazer" && exit 1)
+          curl -L "https://github.com/chazer-tool/chazer/releases/latest/download/chazer-linux-amd64" -o chazer || { echo "Download failed"; exit 1; }
           chmod +x chazer || true
-          echo "Downloaded file size:"
-          ls -lh chazer || true
-          echo "File type:"
-          file chazer || true
-          echo "Attempting to run ./chazer --version (may fail if binary incompatible)"
-          ./chazer --version || echo "chazer --version failed (binary may be incompatible)"
-
-      - name: Verify chazer is executable
-        run: |
-          if [ ! -x ./chazer ]; then
-            echo "Downloaded 'chazer' is not executable. Uploading it for inspection and failing the job."
-            mkdir -p artifact
-            cp chazer artifact/chazer_download || true
-            tar -czf artifact_chazer.tar.gz artifact || true
-            echo "artifact_chazer.tar.gz" > artifact_list.txt
-            ls -l artifact || true
-            # upload artifact by creating a small JSON so next step can pick it up
-            exit 1
-          fi
+          ./chazer --version || echo "chazer --version failed"
 
       - name: Run Chazer Scan
-        run: |
-          set -e
-          ./chazer scan . --json > report.json
-        continue-on-error: false
+        run: ./chazer scan . --json > report.json
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
@@ -107,41 +32,19 @@ PY
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Find and install Chazer
+      - name: Download Chazer binary
         run: |
-          # same robust download as scan job
-          python3 - <<'PY'
-import os, json, urllib.request
-repo = os.environ.get("CHAZER_REPO")
-api = f"https://api.github.com/repos/{repo}/releases/latest"
-req = urllib.request.Request(api, headers={"Accept":"application/vnd.github.v3+json","User-Agent":"github-actions"})
-with urllib.request.urlopen(req, timeout=30) as r:
-    data = json.load(r)
-assets = data.get("assets", [])
-candidates = [a for a in assets if ("linux" in a.get("name","").lower() or "amd64" in a.get("name","").lower())]
-if not candidates and assets:
-    candidates = assets
-if not candidates:
-    print("No asset found")
-    raise SystemExit(1)
-url = candidates[0].get("browser_download_url")
-import subprocess
-subprocess.check_call(["curl","-L",url,"-o","chazer"])
-subprocess.check_call(["chmod","+x","chazer"])
-print("Downloaded chazer")
-PY
+          curl -L "https://github.com/chazer-tool/chazer/releases/latest/download/chazer-linux-amd64" -o chazer || { echo "Download failed"; exit 1; }
+          chmod +x chazer || true
 
       - name: Run Chazer Prune
-        run: |
-          set -e
-          ./chazer prune . --batch
+        run: ./chazer prune . --batch
 
       - name: Commit and Push Changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          # only commit if there are changes
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
