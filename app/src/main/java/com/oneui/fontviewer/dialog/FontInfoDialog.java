@@ -1,7 +1,6 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
-import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
