@@ -2,7 +2,12 @@ package com.oneui.fontviewer.fragment.localfont.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.util.TypedValue;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +19,7 @@ import com.google.android.material.color.MaterialColors;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.widget.search.FontTextHighlighter;
+import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
 import com.oneui.fontviewer.widget.SelectableLinearLayout;
 
 public class LocalFontViewHolder extends RecyclerView.ViewHolder {

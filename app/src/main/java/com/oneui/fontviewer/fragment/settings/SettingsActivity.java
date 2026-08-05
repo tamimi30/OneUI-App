@@ -1,5 +1,7 @@
 package com.oneui.fontviewer.fragment.settings;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;

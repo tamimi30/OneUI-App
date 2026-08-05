@@ -23,6 +23,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import dev.oneuiproject.oneui.dialog.ProgressDialog;
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.oneui.fontviewer.fragment.fontviewer.FontViewerActivity;
@@ -71,6 +72,8 @@ public class MainActivity extends BaseActivity
     private NavManager mNavManager;
 
     private SearchCoordinator mSearchCoordinator;
+
+    private ProgressDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -603,6 +606,9 @@ public class MainActivity extends BaseActivity
 
     @Override
     protected void onDestroy() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
         mSearchCoordinator.cleanup();
         super.onDestroy();
     }

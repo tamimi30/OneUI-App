@@ -1,5 +1,6 @@
 package com.oneui.fontviewer.fragment.fontviewer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -82,6 +83,8 @@ public class FontViewerFragment extends Fragment {
     private boolean isSystemFont    = false;
 
     private String currentWeightWidthLabel;
+
+    private List<VariableFontHelper.VariableInstance> currentVariableInstances;
 
     private OnFontChangedListener fontChangedListener;
 
@@ -489,7 +492,7 @@ public class FontViewerFragment extends Fragment {
     private void setupWeightSpinner(List<VariableFontHelper.VariableInstance> instances) {
         if (weightSpinner == null || weightLabelText == null || !isAdded()) return;
 
-        
+        currentVariableInstances = instances;
         weightLabelText.setVisibility(View.GONE);
         weightSpinner.setVisibility(View.VISIBLE);
 
@@ -656,6 +659,7 @@ public class FontViewerFragment extends Fragment {
         currentTtcIndex         = 0;
         isSystemFont            = false;
         currentWeightWidthLabel  = null;
+        currentVariableInstances = null;
 
         Typeface defaultTypeface = Typeface.DEFAULT;
         if (previewSentence != null) previewSentence.setTypeface(defaultTypeface);
