@@ -3,12 +3,12 @@ package com.oneui.fontviewer.fragment.systemfont.data;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
+import androidx.lifecycle.LiveData;
 
 import com.oneui.fontviewer.data.dao.FontDao;
 import com.oneui.fontviewer.data.database.AppDatabase;
@@ -16,9 +16,9 @@ import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
 import com.oneui.fontviewer.fragment.systemfont.manager.SystemFontManager;
 import com.oneui.fontviewer.metadata.FontMetadataExtractor;
-import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
+import com.oneui.fontviewer.metadata.FontWeightWidthExtractor; 
 
-public final class SystemFontRepository {
+public class SystemFontRepository {
 
     private static final String TAG = "SystemFontRepository";
     private static volatile SystemFontRepository INSTANCE;
@@ -160,7 +160,7 @@ public final class SystemFontRepository {
                         fontFile, fontInfo.getTtcIndex());
 
                     if (extractedName != null && !extractedName.isEmpty() &&
-                        !"Unknown Font".equals(extractedName)) {
+                        !extractedName.equals("Unknown Font")) {
                         entity.setRealName(extractedName);
                         Log.d(TAG, "✓ Instantly extracted system font name: " + extractedName);
                     }
@@ -224,7 +224,7 @@ public final class SystemFontRepository {
                                     fontFile, font.getTtcIndex());
 
                                 if (realName != null && !realName.isEmpty() &&
-                                    !"Unknown Font".equals(realName)) {
+                                    !realName.equals("Unknown Font")) {
                                     fontDao.updateRealName(font.getPath(), realName,
                                         System.currentTimeMillis());
                                     extracted++;

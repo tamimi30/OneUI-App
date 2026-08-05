@@ -11,21 +11,20 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.util.SeslRoundedCorner;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import androidx.appcompat.util.SeslRoundedCorner;
 
 import dev.oneuiproject.oneui.widget.RoundLinearLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.widget.SelectableLinearLayout;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -41,7 +40,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final Context context;
     private List<FontEntity> mItems = new ArrayList<>();
 
-    private boolean isSelectionMode;
+    private boolean isSelectionMode = false;
 
     private final SparseBooleanArray selectedItems = new SparseBooleanArray();
 
@@ -64,17 +63,11 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             @Override public void onItemRangeMoved(int f, int t, int c) { updateListEdges(); }
 
             private void updateListEdges() {
-                if (recyclerView == null) {
-                    return;
-                }
+                if (recyclerView == null) return;
                 recyclerView.post(() -> {
-                    if (recyclerView == null || recyclerView.isComputingLayout()) {
-                        return;
-                    }
+                    if (recyclerView == null || recyclerView.isComputingLayout()) return;
                     int total = getItemCount();
-                    if (total > 0) {
-                        notifyItemRangeChanged(0, total, PAYLOAD_UPDATE_CORNERS);
-                    }
+                    if (total > 0) notifyItemRangeChanged(0, total, PAYLOAD_UPDATE_CORNERS);
                 });
             }
         });
@@ -87,7 +80,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
     public void submitList(@Nullable List<FontEntity> newList) {
-        List<FontEntity> safeNew = newList != null ? newList : Collections.emptyList();
+        List<FontEntity> safeNew = (newList != null) ? newList : Collections.emptyList();
 
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(
                 new TrashDiffCallback(mItems, safeNew));
@@ -121,23 +114,15 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-            return VIEW_TYPE_HEADER;
-        }
-        if (position == getItemCount() - 1) {
-            return VIEW_TYPE_SPACE;
-        }
+        if (position == 0) return VIEW_TYPE_HEADER;
+        if (position == getItemCount() - 1) return VIEW_TYPE_SPACE;
         return VIEW_TYPE_ITEM;
     }
 
     @Override
     public long getItemId(int position) {
-        if (position == 0) {
-            return Long.MIN_VALUE;
-        }
-        if (position == getItemCount() - 1) {
-            return Long.MAX_VALUE;
-        } 
+        if (position == 0) return Long.MIN_VALUE;              
+        if (position == getItemCount() - 1) return Long.MAX_VALUE; 
         return mItems.get(position - 1).getId();                
     }
 
@@ -183,40 +168,30 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof TrashHeaderViewHolder || holder instanceof SpaceViewHolder) {
-            return;
-        }
+        if (holder instanceof TrashHeaderViewHolder || holder instanceof SpaceViewHolder) return;
 
         if (holder instanceof TrashItemViewHolder) {
             TrashItemViewHolder th = (TrashItemViewHolder) holder;
             RoundLinearLayout root = (RoundLinearLayout) th.itemView;
             
             int totalFonts = mItems.size();
-            boolean isFirst = position == 1;
-            boolean isLast  = position == getItemCount() - 2;
+            boolean isFirst = (position == 1);
+            boolean isLast  = (position == getItemCount() - 2);
 
             if (totalFonts == 1) {
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_ALL);
-                if (th.dividerView != null) {
-                    th.dividerView.setVisibility(View.GONE);
-                }
+                if (th.dividerView != null) th.dividerView.setVisibility(View.GONE);
             } else if (isFirst) {
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
                                      | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
-                if (th.dividerView != null) {
-                    th.dividerView.setVisibility(View.VISIBLE);
-                }
+                if (th.dividerView != null) th.dividerView.setVisibility(View.VISIBLE);
             } else if (isLast) {
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
                                      | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
-                if (th.dividerView != null) {
-                    th.dividerView.setVisibility(View.INVISIBLE);
-                }
+                if (th.dividerView != null) th.dividerView.setVisibility(View.INVISIBLE);
             } else {
                 root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_NONE);
-                if (th.dividerView != null) {
-                    th.dividerView.setVisibility(View.VISIBLE);
-                }
+                if (th.dividerView != null) th.dividerView.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -233,13 +208,9 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         holder.itemView.setOnClickListener(v -> {
             int pos = holder.getBindingAdapterPosition();
-            if (pos == RecyclerView.NO_POSITION) {
-                return;
-            }
+            if (pos == RecyclerView.NO_POSITION) return;
             if (isSelectionMode) {
-                if (selectionListener != null) {
-                    selectionListener.onToggleSelection(pos);
-                }
+                if (selectionListener != null) selectionListener.onToggleSelection(pos);
             } else {
                 Toast.makeText(context, R.string.toast_prepare_file_to_open,
                         Toast.LENGTH_SHORT).show();
@@ -248,9 +219,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         holder.itemView.setOnLongClickListener(v -> {
             int pos = holder.getBindingAdapterPosition();
-            if (pos == RecyclerView.NO_POSITION) {
-                return false;
-            }
+            if (pos == RecyclerView.NO_POSITION) return false;
             if (selectionListener != null) {
                 if (!isSelectionMode) {
                     selectionListener.onStartSelection(pos);
@@ -303,18 +272,13 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void setSelectionMode(boolean enabled) {
         this.isSelectionMode = enabled;
-        if (!enabled) {
-            selectedItems.clear();
-        }
+        if (!enabled) selectedItems.clear();
         notifyItemRangeChanged(1, mItems.size(), PAYLOAD_UPDATE_SELECTION);
     }
 
     public void setItemSelected(int adapterPosition, boolean selected) {
-        if (selected) {
-            selectedItems.put(adapterPosition, true);
-        } else {
-            selectedItems.delete(adapterPosition);
-        }
+        if (selected) selectedItems.put(adapterPosition, true);
+        else selectedItems.delete(adapterPosition);
         notifyItemChanged(adapterPosition, PAYLOAD_UPDATE_SELECTION);
     }
 
@@ -336,9 +300,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public int getSelectedCount() {
         int count = 0;
         for (int i = 0; i < selectedItems.size(); i++) {
-            if (selectedItems.valueAt(i)) {
-                count++;
-            }
+            if (selectedItems.valueAt(i)) count++;
         }
         return count;
     }
@@ -355,9 +317,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public List<FontEntity> getSelectedFonts() {
         List<FontEntity> selected = new ArrayList<>();
         for (int i = 0; i < selectedItems.size(); i++) {
-            if (!selectedItems.valueAt(i)) {
-                continue;
-            }
+            if (!selectedItems.valueAt(i)) continue;
             int adapterPos = selectedItems.keyAt(i);
             int itemIndex  = adapterPos - 1; 
             if (itemIndex >= 0 && itemIndex < mItems.size()) {
@@ -375,9 +335,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Nullable
     public FontEntity getItemAtAdapterPosition(int adapterPosition) {
         int itemIndex = adapterPosition - 1;
-        if (itemIndex < 0 || itemIndex >= mItems.size()) {
-            return null;
-        }
+        if (itemIndex < 0 || itemIndex >= mItems.size()) return null;
         return mItems.get(itemIndex);
     }
 

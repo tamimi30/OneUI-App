@@ -8,7 +8,6 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import dev.oneuiproject.oneui.layout.AppInfoLayout;
 import dev.oneuiproject.oneui.widget.Toast;
 
@@ -42,9 +41,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
 public void changeStatus(View v) {
     int s = appInfoLayout.getStatus() + 1;
-    if (s == 4) {
-        s = -1;
-    }
+    if (s == 4) s = -1;
     appInfoLayout.setStatus(s);
 }
 

@@ -8,12 +8,11 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.fragment.settings.SettingsFragment;
+import com.oneui.fontviewer.activity.BaseActivity;
 
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
-
-import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.activity.BaseActivity;
-import com.oneui.fontviewer.fragment.settings.SettingsFragment;
 
 public class SettingsActivity extends BaseActivity {
 

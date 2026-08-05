@@ -5,17 +5,17 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.oneui.fontviewer.data.dao.FontDao;
 import com.oneui.fontviewer.data.database.AppDatabase;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.fragment.trash.manager.TrashFileManager;
 
-public final class TrashRepository {
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class TrashRepository {
 
     private static final String TAG = "TrashRepository";
 
@@ -78,10 +78,8 @@ public final class TrashRepository {
                     if (!sourceFile.exists()) {
                         Log.w(TAG, "Ghost file detected. Removing from DB: " + font.getPath());
                         fontDao.deleteByPath(font.getPath()); 
-                        succeeded++;
-                        if (progressListener != null) {
-                            progressListener.onProgress(i + 1, total);
-                        }
+                        succeeded++; 
+                        if (progressListener != null) progressListener.onProgress(i + 1, total);
                         continue;
                     }
 
@@ -155,9 +153,7 @@ public final class TrashRepository {
                         Log.w(TAG, "Ghost file detected in trash. Cleaning DB: " + font.getPath());
                         fontDao.deleteFromTrash(font.getPath()); 
                         succeeded++;
-                        if (progressListener != null) {
-                            progressListener.onProgress(i + 1, total);
-                        }
+                        if (progressListener != null) progressListener.onProgress(i + 1, total);
                         continue;
                     }
 

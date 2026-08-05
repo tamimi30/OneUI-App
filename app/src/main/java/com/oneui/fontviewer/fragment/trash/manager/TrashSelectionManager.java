@@ -7,20 +7,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.window.OnBackInvokedCallback;
 import android.window.OnBackInvokedDispatcher;
-import androidx.activity.OnBackPressedCallback;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
-import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 public class TrashSelectionManager {
 
@@ -30,9 +29,9 @@ public class TrashSelectionManager {
     private final TrashListAdapter adapter;
     private final RecyclerView     recyclerView;
 
-    private boolean             isSelecting;
+    private boolean             isSelecting      = false;
     private boolean             checkAllListening = true;
-    private final SparseBooleanArray  selectedItems    = new SparseBooleanArray();
+    private SparseBooleanArray  selectedItems    = new SparseBooleanArray();
 
     private SelectionActionListener actionListener;
     private OnBackPressedCallback   onBackPressedCallback;
@@ -88,33 +87,24 @@ public class TrashSelectionManager {
     private void setupBackHandling() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             onBackInvokedCallback = () -> {
-                if (isSelecting) {
-                    setSelecting(false);
-                }
+                if (isSelecting) setSelecting(false);
             };
         }
 
         onBackPressedCallback = new OnBackPressedCallback(false) {
             @Override
             public void handleOnBackPressed() {
-                if (isSelecting) {
-                    setSelecting(false);
-                }
+                if (isSelecting) setSelecting(false);
             }
         };
     }
 
 
     public void setSelecting(boolean enabled) {
-        if (isSelecting == enabled) {
-            return;
-        }
+        if (isSelecting == enabled) return;
         isSelecting = enabled;
-        if (enabled) {
-            activateSelectionMode();
-        } else {
-            deactivateSelectionMode();
-        }
+        if (enabled) activateSelectionMode();
+        else          deactivateSelectionMode();
     }
 
     private void activateSelectionMode() {
@@ -137,9 +127,7 @@ public class TrashSelectionManager {
         });
 
         drawerLayout.setActionModeCheckboxListener((menuItem, isChecked) -> {
-            if (checkAllListening) {
-                toggleSelectAll(isChecked);
-            }
+            if (checkAllListening) toggleSelectAll(isChecked);
             updateActionModeUI();
         });
 
@@ -170,15 +158,10 @@ public class TrashSelectionManager {
 
 
     public void toggleSelection(int position) {
-        if (!isSelecting) {
-            setSelecting(true);
-        }
+        if (!isSelecting) setSelecting(true);
 
-        if (selectedItems.get(position, false)) {
-            selectedItems.delete(position);
-        } else {
-            selectedItems.put(position, true);
-        }
+        if (selectedItems.get(position, false)) selectedItems.delete(position);
+        else selectedItems.put(position, true);
 
         adapter.setItemSelected(position, selectedItems.get(position, false));
         updateActionModeUI();
@@ -188,9 +171,7 @@ public class TrashSelectionManager {
         selectedItems.clear();
         int itemCount = adapter.getItemCount();
         for (int i = 1; i < itemCount - 1; i++) {
-            if (selectAll) {
-                selectedItems.put(i, true);
-            }
+            if (selectAll) selectedItems.put(i, true);
             adapter.setItemSelected(i, selectAll);
         }
     }
@@ -213,7 +194,7 @@ public class TrashSelectionManager {
             MenuItem restoreItemBottom  = bottomMenu  != null ? bottomMenu.findItem(R.id.action_restore)   : null;
             MenuItem restoreItemToolbar = toolbarMenu != null ? toolbarMenu.findItem(R.id.action_restore)  : null;
 
-            boolean isAllSelected = selectedCount == totalCount;
+            boolean isAllSelected = (selectedCount == totalCount);
 
             String deleteText = isAllSelected
                     ? activity.getString(R.string.action_delete_all)
@@ -223,18 +204,10 @@ public class TrashSelectionManager {
                     ? activity.getString(R.string.action_restore_all)
                     : activity.getString(R.string.action_restore);
 
-            if (deleteItemBottom != null) {
-                deleteItemBottom.setTitle(deleteText);
-            }
-            if (deleteItemToolbar != null) {
-                deleteItemToolbar.setTitle(deleteText);
-            }
-            if (restoreItemBottom != null) {
-                restoreItemBottom.setTitle(restoreText);
-            }
-            if (restoreItemToolbar != null) {
-                restoreItemToolbar.setTitle(restoreText);
-            }
+            if (deleteItemBottom  != null) deleteItemBottom.setTitle(deleteText);
+            if (deleteItemToolbar != null) deleteItemToolbar.setTitle(deleteText);
+            if (restoreItemBottom  != null) restoreItemBottom.setTitle(restoreText);
+            if (restoreItemToolbar != null) restoreItemToolbar.setTitle(restoreText);
         }
 
         checkAllListening = true;
@@ -248,16 +221,12 @@ public class TrashSelectionManager {
 
 
     private void handleRestoreAction() {
-        if (selectedItems.size() == 0 || actionListener == null) {
-            return;
-        }
+        if (selectedItems.size() == 0 || actionListener == null) return;
         actionListener.onRestoreRequested(getSelectedFonts());
     }
 
     private void handleDeleteAction() {
-        if (selectedItems.size() == 0 || actionListener == null) {
-            return;
-        }
+        if (selectedItems.size() == 0 || actionListener == null) return;
         actionListener.onDeletePermanentlyRequested(getSelectedFonts());
     }
 
@@ -266,9 +235,7 @@ public class TrashSelectionManager {
         for (int i = 0; i < selectedItems.size(); i++) {
             int adapterPos = selectedItems.keyAt(i);
             FontEntity font = adapter.getItemAtAdapterPosition(adapterPos);
-            if (font != null) {
-                fonts.add(font);
-            }
+            if (font != null) fonts.add(font);
         }
         return fonts;
     }
@@ -276,9 +243,7 @@ public class TrashSelectionManager {
 
     public List<Integer> getSelectedPositions() {
         List<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) {
-            positions.add(selectedItems.keyAt(i));
-        }
+        for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
         return positions;
     }
 
@@ -296,9 +261,7 @@ public class TrashSelectionManager {
     }
 
     public void cleanup() {
-        if (isSelecting) {
-            setSelecting(false);
-        }
+        if (isSelecting) setSelecting(false);
         onBackPressedCallback = null;
         onBackInvokedCallback = null;
         actionListener        = null;

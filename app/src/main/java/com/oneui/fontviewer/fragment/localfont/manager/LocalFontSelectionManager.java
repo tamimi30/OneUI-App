@@ -8,20 +8,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.window.OnBackInvokedCallback;
 import android.window.OnBackInvokedDispatcher;
-import androidx.activity.OnBackPressedCallback;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
-import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.localfont.adapter.LocalFontListAdapter;
 import com.oneui.fontviewer.widget.sort.SortByItemLayout;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 public class LocalFontSelectionManager {
 
@@ -31,8 +30,8 @@ public class LocalFontSelectionManager {
     private final RecyclerView recyclerView;
     private final SortByItemLayout sortBar;
     
-    private boolean isSelecting;
-    private final SparseBooleanArray selectedItems = new SparseBooleanArray();
+    private boolean isSelecting = false;
+    private SparseBooleanArray selectedItems = new SparseBooleanArray();
     private boolean checkAllListening = true;
     
     private SelectionActionListener actionListener;
@@ -97,32 +96,23 @@ public class LocalFontSelectionManager {
     private void setupBackHandling() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             onBackInvokedCallback = () -> {
-                if (isSelecting) {
-                    setSelecting(false);
-                }
+                if (isSelecting) setSelecting(false);
             };
         }
 
         onBackPressedCallback = new OnBackPressedCallback(false) {
             @Override
             public void handleOnBackPressed() {
-                if (isSelecting) {
-                    setSelecting(false);
-                }
+                if (isSelecting) setSelecting(false);
             }
         };
     }
 
     public void setSelecting(boolean enabled) {
-        if (isSelecting == enabled) {
-            return;
-        }
+        if (isSelecting == enabled) return;
         isSelecting = enabled;
-        if (enabled) {
-            activateSelectionMode();
-        } else {
-            deactivateSelectionMode();
-        }
+        if (enabled) activateSelectionMode();
+        else deactivateSelectionMode();
     }
 
     private void activateSelectionMode() {
@@ -149,9 +139,7 @@ public class LocalFontSelectionManager {
         });
 
         drawerLayout.setActionModeCheckboxListener((menuItem, isChecked) -> {
-            if (checkAllListening) {
-                toggleSelectAll(isChecked);
-            }
+            if (checkAllListening) toggleSelectAll(isChecked);
             updateActionModeUI();
         });
 
@@ -183,15 +171,10 @@ public class LocalFontSelectionManager {
     }
 
     public void toggleSelection(int position) {
-        if (!isSelecting) {
-            setSelecting(true);
-        }
+        if (!isSelecting) setSelecting(true);
 
-        if (selectedItems.get(position, false)) {
-            selectedItems.delete(position);
-        } else {
-            selectedItems.put(position, true);
-        }
+        if (selectedItems.get(position, false)) selectedItems.delete(position);
+        else selectedItems.put(position, true);
 
         adapter.setItemSelected(position, selectedItems.get(position, false));
         updateActionModeUI();
@@ -201,9 +184,7 @@ public class LocalFontSelectionManager {
         selectedItems.clear();
         int itemCount = adapter.getItemCount();
         for (int i = 1; i < itemCount - 1; i++) {
-            if (selectAll) {
-                selectedItems.put(i, true);
-            }
+            if (selectAll) selectedItems.put(i, true);
             adapter.setItemSelected(i, selectAll);
         }
     }
@@ -228,28 +209,20 @@ public class LocalFontSelectionManager {
             MenuItem favoriteItemBottom  = bottomMenu  != null ? bottomMenu.findItem(R.id.action_favorite)  : null;
             MenuItem favoriteItemToolbar = toolbarMenu != null ? toolbarMenu.findItem(R.id.action_favorite) : null;
 
-            boolean isSingleSelection = selectedCount == 1;
+            boolean isSingleSelection = (selectedCount == 1);
 
             boolean isPortrait = activity.getResources().getConfiguration().orientation
                     == Configuration.ORIENTATION_PORTRAIT;
 
-            if (renameItemBottom != null) {
-                renameItemBottom.setVisible(isSingleSelection);
-            }
-            if (renameItemToolbar != null) {
-                renameItemToolbar.setVisible(!isPortrait && isSingleSelection);
-            }
+            if (renameItemBottom  != null) renameItemBottom.setVisible(isSingleSelection);
+            if (renameItemToolbar != null) renameItemToolbar.setVisible(!isPortrait && isSingleSelection);
 
-            String deleteText = selectedCount == totalCount
+            String deleteText = (selectedCount == totalCount)
                     ? activity.getString(R.string.action_delete_all)
                     : activity.getString(R.string.action_delete);
 
-            if (deleteItemBottom != null) {
-                deleteItemBottom.setTitle(deleteText);
-            }
-            if (deleteItemToolbar != null) {
-                deleteItemToolbar.setTitle(deleteText);
-            }
+            if (deleteItemBottom  != null) deleteItemBottom.setTitle(deleteText);
+            if (deleteItemToolbar != null) deleteItemToolbar.setTitle(deleteText);
 
             boolean allFavorited = resolveFavoriteAction();
 
@@ -273,9 +246,7 @@ public class LocalFontSelectionManager {
     }
 
     private boolean resolveFavoriteAction() {
-        if (favoriteStatusChecker == null || selectedItems.size() == 0) {
-            return false;
-        }
+        if (favoriteStatusChecker == null || selectedItems.size() == 0) return false;
         for (int i = 0; i < selectedItems.size(); i++) {
             if (!favoriteStatusChecker.isFavorited(selectedItems.keyAt(i))) {
                 return false;
@@ -291,35 +262,25 @@ public class LocalFontSelectionManager {
     }
 
     private void handleRenameAction() {
-        if (selectedItems.size() != 1 || actionListener == null) {
-            return;
-        }
+        if (selectedItems.size() != 1 || actionListener == null) return;
         actionListener.onRenameRequested(selectedItems.keyAt(0));
     }
 
     private void handleDeleteAction() {
-        if (selectedItems.size() == 0 || actionListener == null) {
-            return;
-        }
+        if (selectedItems.size() == 0 || actionListener == null) return;
         List<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) {
-            positions.add(selectedItems.keyAt(i));
-        }
+        for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
         actionListener.onDeleteRequested(positions);
     }
 
     private void handleFavoriteAction() {
-        if (selectedItems.size() == 0 || actionListener == null) {
-            return;
-        }
+        if (selectedItems.size() == 0 || actionListener == null) return;
 
         boolean allFavorited = resolveFavoriteAction();
         boolean addToFavorites = !allFavorited;
 
         List<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) {
-            positions.add(selectedItems.keyAt(i));
-        }
+        for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
         actionListener.onFavoriteRequested(positions, addToFavorites);
     }
 
@@ -341,9 +302,7 @@ public class LocalFontSelectionManager {
 
     public List<Integer> getSelectedPositions() {
         List<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) {
-            positions.add(selectedItems.keyAt(i));
-        }
+        for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
         return positions;
     }
 
@@ -361,9 +320,7 @@ public class LocalFontSelectionManager {
     }
 
     public void cleanup() {
-        if (isSelecting) {
-            setSelecting(false);
-        }
+        if (isSelecting) setSelecting(false);
         onBackPressedCallback = null;
         onBackInvokedCallback = null;
         actionListener = null;

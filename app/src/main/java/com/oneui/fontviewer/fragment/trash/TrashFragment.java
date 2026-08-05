@@ -12,7 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.TextView;                          
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,19 +26,18 @@ import com.google.android.material.appbar.AppBarLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.activity.AppScreen;
+import com.oneui.fontviewer.activity.AppScreen;           
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.dialog.TrashActionDialogs;
-import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
+import com.oneui.fontviewer.utils.FontUIStateManager;  
 import com.oneui.fontviewer.fragment.trash.manager.TrashSelectionManager;
+import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
 import com.oneui.fontviewer.fragment.trash.viewmodel.TrashViewModel;
-import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
 
 public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
@@ -64,20 +63,20 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     @Nullable
     private ProgressDialog mCurrentProgressDialog;
 
-    private boolean mIsDialogHidden;
+    private boolean mIsDialogHidden = false;
 
     @Nullable
     private TrashViewModel.OperationType mCurrentOperationType;
 
-    private boolean mIsBatchOperationRunning;
+    private boolean mIsBatchOperationRunning = false;
 
     @Nullable
-    private List<FontEntity> mPendingTrashUpdate;
+    private List<FontEntity> mPendingTrashUpdate = null;
 
     @Nullable
-    private Integer mPendingTrashCount;
+    private Integer mPendingTrashCount = null;
 
-    private int mTrashCount;
+    private int mTrashCount = 0;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -161,9 +160,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     }
 
     private void setupDrawerLayout() {
-        if (getActivity() == null) {
-            return;
-        }
+        if (getActivity() == null) return;
         View drawerView = getActivity().findViewById(R.id.drawer_layout);
         if (drawerView instanceof DrawerLayout) {
             mDrawerLayout = (DrawerLayout) drawerView;
@@ -192,9 +189,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     }
 
     private void setupRecyclerViewAnimator() {
-        if (mRecyclerView == null) {
-            return;
-        }
+        if (mRecyclerView == null) return;
         androidx.recyclerview.widget.DefaultItemAnimator animator =
             new androidx.recyclerview.widget.DefaultItemAnimator();
         animator.setAddDuration(150);
@@ -206,9 +201,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
 
     private void initSelectionManager() {
-        if (mDrawerLayout == null || mAdapter == null || mRecyclerView == null) {
-            return;
-        }
+        if (mDrawerLayout == null || mAdapter == null || mRecyclerView == null) return;
 
         mSelectionManager = new TrashSelectionManager(
                 requireActivity(),
@@ -253,9 +246,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     private void setupViewModelObservers() {
 
         mViewModel.getTrashedFontsLiveData().observe(getViewLifecycleOwner(), fonts -> {
-            if (fonts == null) {
-                return;
-            }
+            if (fonts == null) return;
 
             if (mIsBatchOperationRunning) {
                 mPendingTrashUpdate = new ArrayList<>(fonts);
@@ -286,9 +277,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         });
 
         mViewModel.getOperationProgressLiveData().observe(getViewLifecycleOwner(), progress -> {
-            if (progress == null) {
-                return;
-            }
+            if (progress == null) return;
 
             if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) {
                 mCurrentProgressDialog.setProgress(progress.current);
@@ -300,9 +289,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         });
 
         mViewModel.getOperationResultLiveData().observe(getViewLifecycleOwner(), result -> {
-            if (result == null) {
-                return;
-            }
+            if (result == null) return;
 
             if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) {
                 mCurrentProgressDialog.dismiss();
@@ -360,9 +347,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
     public void handleEmptyTrash() {
         List<FontEntity> allFonts = mAdapter.getAllFonts();
-        if (allFonts.isEmpty()) {
-            return;
-        }
+        if (allFonts.isEmpty()) return;
 
         TrashActionDialogs.showDeletePermanentlyDialog(
                 mContext,
@@ -372,9 +357,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     }
 
     private void handleRestoreAction(@NonNull List<FontEntity> fonts) {
-        if (fonts.isEmpty()) {
-            return;
-        }
+        if (fonts.isEmpty()) return;
 
         mSelectionManager.setSelecting(false);
 
@@ -382,9 +365,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     }
 
     private void handleDeletePermanentlyAction(@NonNull List<FontEntity> fonts) {
-        if (fonts.isEmpty()) {
-            return;
-        }
+        if (fonts.isEmpty()) return;
 
         TrashActionDialogs.showDeletePermanentlyDialog(
                 mContext,
@@ -495,43 +476,29 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
 
     public void checkAndReopenProgressDialogPublic() {
-        if (isHidden() || !isAdded() || mContext == null || mViewModel == null) {
-            return;
-        }
+        if (isHidden() || !isAdded() || mContext == null || mViewModel == null) return;
 
         Boolean isProcessing = BatchOperationState.getIsProcessing().getValue();
-        if (!Boolean.TRUE.equals(isProcessing)) {
-            return;
-        }
+        if (!Boolean.TRUE.equals(isProcessing)) return;
 
-        if (BatchOperationState.getSourceScreen() != AppScreen.TRASH) {
-            return;
-        }
+        if (BatchOperationState.getSourceScreen() != AppScreen.TRASH) return;
 
-        if (!BatchOperationState.consumeShouldReopenDialog()) {
-            return;
-        }
+        if (!BatchOperationState.consumeShouldReopenDialog()) return;
 
-        if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) {
-            return;
-        }
+        if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) return;
 
         reconnectToProgressDialog();
     }
 
     private void reconnectToProgressDialog() {
-        if (!isAdded() || mContext == null) {
-            return;
-        }
+        if (!isAdded() || mContext == null) return;
 
         mIsDialogHidden = false;
 
         BatchOperationState.ProgressData lastProgress =
                 BatchOperationState.getProgress().getValue();
 
-        if (lastProgress == null) {
-            return;
-        }
+        if (lastProgress == null) return;
 
         mCurrentProgressDialog = new ProgressDialog(mContext);
         mCurrentProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -578,9 +545,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
 
     private void updateSubtitle(int count) {
-        if (mSelectionManager != null && mSelectionManager.isSelecting()) {
-            return;
-        }
+        if (mSelectionManager != null && mSelectionManager.isSelecting()) return;
 
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).updateFontsCount(AppScreen.TRASH, count);
@@ -595,9 +560,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
 
     public boolean handleBackPressed() {
-        if (mSelectionManager != null) {
-            return mSelectionManager.handleBackPress();
-        }
+        if (mSelectionManager != null) return mSelectionManager.handleBackPress();
         return false;
     }
 
@@ -610,9 +573,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
         if (!isHidden()) {
             Integer count = mViewModel.getTrashedFontsCountLiveData().getValue();
-            if (count != null) {
-                updateSubtitle(count);
-            }
+            if (count != null) updateSubtitle(count);
         }
     }
 
@@ -628,9 +589,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         if (!hidden) {
             checkAndReopenProgressDialogPublic();
             Integer count = mViewModel.getTrashedFontsCountLiveData().getValue();
-            if (count != null) {
-                updateSubtitle(count);
-            }
+            if (count != null) updateSubtitle(count);
         } else {
             if (mSelectionManager != null && mSelectionManager.isSelecting()) {
                 mSelectionManager.setSelecting(false);
@@ -641,9 +600,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (mSelectionManager != null) {
-            mSelectionManager.refreshActionMode();
-        }
+        if (mSelectionManager != null) mSelectionManager.refreshActionMode();
     }
 
 
@@ -684,8 +641,6 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mMainHandler != null) {
-            mMainHandler.removeCallbacksAndMessages(null);
-        }
+        if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
     }
     }

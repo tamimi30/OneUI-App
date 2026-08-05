@@ -2,14 +2,15 @@ package com.oneui.fontviewer.widget.sort;
 
 import android.content.Context;
 import android.util.Log;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.oneui.fontviewer.data.entity.FontFileInfo;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
+import com.oneui.fontviewer.data.entity.FontFileInfo;
 
 public class FontSortManager {
 
@@ -43,7 +44,7 @@ public class FontSortManager {
 
     public FontSortManager(Context context, String listType) {
         this.dataStore    = SettingsDataStore.getInstance(context);
-        this.listType     = listType != null ? listType.toUpperCase() : LIST_TYPE_LOCAL;
+        this.listType     = (listType != null) ? listType.toUpperCase() : LIST_TYPE_LOCAL;
         this.isSystemFont = LIST_TYPE_SYSTEM.equals(this.listType);
         loadSortPreferences();
     }
@@ -169,9 +170,7 @@ public class FontSortManager {
     
 
     private void notifySortChanged() {
-        if (listener != null) {
-            listener.onSortChanged(currentSortType, isSortAscending);
-        }
+        if (listener != null) listener.onSortChanged(currentSortType, isSortAscending);
     }
 
     

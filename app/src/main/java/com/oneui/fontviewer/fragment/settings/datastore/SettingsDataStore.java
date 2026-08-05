@@ -1,11 +1,13 @@
 package com.oneui.fontviewer.fragment.settings.datastore;
 
 import android.content.Context;
+
 import androidx.datastore.preferences.core.MutablePreferences;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStore;
+
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 
@@ -13,7 +15,7 @@ import io.reactivex.rxjava3.core.Single;
  * SettingsDataStore - Complete DataStore implementation
  * All SharedPreferences removed and replaced with DataStore
  */
-public final class SettingsDataStore {
+public class SettingsDataStore {
     
     private static final String DATASTORE_NAME = "settings";
     private static volatile SettingsDataStore INSTANCE;
@@ -66,8 +68,8 @@ public final class SettingsDataStore {
     public static final String DEFAULT_PREVIEW_TEXT = 
             "The quick brown fox jumps over the lazy dog.\n\n" +
             "0123456789";
-    public static final float DEFAULT_VIEWER_FONT_SIZE = 34F;
-    public static final float DEFAULT_VIEWER_FONT_WEIGHT = 400F;
+    public static final float DEFAULT_VIEWER_FONT_SIZE = 34f;
+    public static final float DEFAULT_VIEWER_FONT_WEIGHT = 400f;
     
     
     private SettingsDataStore(Context context) {
@@ -448,12 +450,8 @@ public final class SettingsDataStore {
     public Single<Preferences> setLastViewedFont(String path, String fileName, String realName) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            if (path != null) {
-                mutablePrefs.set(KEY_VIEWER_FONT_PATH, path);
-            }
-            if (fileName != null) {
-                mutablePrefs.set(KEY_VIEWER_FILE_NAME, fileName);
-            }
+            if (path != null) mutablePrefs.set(KEY_VIEWER_FONT_PATH, path);
+            if (fileName != null) mutablePrefs.set(KEY_VIEWER_FILE_NAME, fileName);
             if (realName != null) {
                 mutablePrefs.set(KEY_VIEWER_REAL_NAME, realName);
             } else {

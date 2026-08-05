@@ -1,19 +1,18 @@
 package com.oneui.fontviewer.fragment.settings.utils;
 
-import android.app.LocaleManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.os.LocaleList;
 import android.util.Log;
-import androidx.core.content.res.ResourcesCompat;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDelegate;
+import android.os.LocaleList;
+import android.app.LocaleManager;
 
 import java.util.Locale;
+
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
@@ -53,9 +52,9 @@ public class SettingsHelper {
                     LocaleList locales = localeManager.getApplicationLocales();
                     if (!locales.isEmpty()) {
                         String lang = locales.get(0).getLanguage();
-                        if ("ar".equals(lang)) {
+                        if (lang.equals("ar")) {
                             return LANGUAGE_ARABIC;
-                        } else if ("en".equals(lang)) {
+                        } else if (lang.equals("en")) {
                             return LANGUAGE_ENGLISH;
                         }
                     }

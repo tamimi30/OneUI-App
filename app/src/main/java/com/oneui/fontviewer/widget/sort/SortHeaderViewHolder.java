@@ -11,8 +11,8 @@ import com.oneui.fontviewer.R;
 public class SortHeaderViewHolder extends RecyclerView.ViewHolder {
     
     private final SortByItemLayout sortLayout;
-    private final boolean isInitialized;
-    private boolean isListenerSet;
+    private boolean isInitialized = false;
+    private boolean isListenerSet = false;
     
     public SortHeaderViewHolder(@NonNull View itemView) {
         super(itemView);

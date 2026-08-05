@@ -9,17 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.oneui.fontviewer.data.database.AppDatabase;
+import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
+import com.oneui.fontviewer.fragment.localfont.data.LocalFontRepository;
+import com.oneui.fontviewer.fragment.systemfont.data.SystemFontRepository;
+import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
+import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
+import com.oneui.fontviewer.utils.CrashHandler;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.oneui.fontviewer.data.database.AppDatabase;
-import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
-import com.oneui.fontviewer.fragment.localfont.data.LocalFontRepository;
-import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
-import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
-import com.oneui.fontviewer.fragment.systemfont.data.SystemFontRepository;
-import com.oneui.fontviewer.utils.CrashHandler;
 
 /**
  * App - النسخة المحسّنة لحل مشكلة وميض الثيم

@@ -3,12 +3,12 @@ package com.oneui.fontviewer.fragment.localfont.data;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
+import androidx.lifecycle.LiveData;
 
 import com.oneui.fontviewer.data.dao.FontDao;
 import com.oneui.fontviewer.data.database.AppDatabase;
@@ -16,9 +16,9 @@ import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.fragment.localfont.fontdirectory.LocalFontDirectory;
 import com.oneui.fontviewer.metadata.FontMetadataExtractor;
-import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
+import com.oneui.fontviewer.metadata.FontWeightWidthExtractor; 
 
-public final class LocalFontRepository {
+public class LocalFontRepository {
 
     private static final String TAG = "LocalFontRepository";
     private static volatile LocalFontRepository INSTANCE;
@@ -343,7 +343,7 @@ public final class LocalFontRepository {
                                 File fontFile = new File(fileInfo.getPath());
                                 String realName = FontMetadataExtractor.extractFontName(fontFile, 0);
                                 if (realName != null && !realName.isEmpty() &&
-                                    !"Unknown Font".equals(realName)) {
+                                    !realName.equals("Unknown Font")) {
                                     newFont.setRealName(realName);
                                     Log.d(TAG, "★ Instantly extracted name: " + realName);
                                 }
@@ -464,7 +464,7 @@ public final class LocalFontRepository {
                             String realName = FontMetadataExtractor.extractFontName(
                                 fontFile, font.getTtcIndex());
                             if (realName != null && !realName.isEmpty() &&
-                                !"Unknown Font".equals(realName)) {
+                                !realName.equals("Unknown Font")) {
                                 updates.add(new NameUpdate(font.getPath(), realName));
                             }
                         }
