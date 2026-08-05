@@ -33,7 +33,7 @@ jobs:
         run: ./Chazer/target/release/chazer . --deep true --delete --exclude "Chazer/**"
 
       - name: 📤 إنشاء طلب سحب (Pull Request) للمراجعة
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: remove dead code via Chazer"
