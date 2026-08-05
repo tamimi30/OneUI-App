@@ -39,7 +39,6 @@ import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
 import com.oneui.fontviewer.dialog.FontActionDialogs;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
-import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.fragment.localfont.adapter.LocalFontListAdapter;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
