@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Install Chazer
         run: |
@@ -29,7 +29,7 @@ jobs:
     needs: scan   # الحذف لا يعمل إلا بعد الفحص
     steps:
       - name: Checkout project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Install Chazer
         run: |
