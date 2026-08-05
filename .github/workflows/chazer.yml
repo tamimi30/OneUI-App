@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  CHAZER_REPO: "chazer-tool/chazer"   # غيّر إذا الريبو مختلف
+  CHAZER_REPO: "chazer-tool/chazer"
 
 jobs:
   scan:
@@ -15,9 +15,10 @@ jobs:
 
       - name: Resolve latest Chazer asset URL
         id: resolve
+        shell: bash
         run: |
           python3 - <<'PY'
-import os, json, urllib.request, sys
+import os, sys, json, urllib.request
 repo = os.environ.get("CHAZER_REPO")
 api = f"https://api.github.com/repos/{repo}/releases/latest"
 req = urllib.request.Request(api, headers={"Accept":"application/vnd.github.v3+json","User-Agent":"github-actions"})
@@ -28,11 +29,14 @@ candidates = [a for a in assets if ("linux" in a.get("name","").lower() or "amd6
 if not candidates and assets:
     candidates = assets
 if not candidates:
-    print("::set-output name=url::")
+    # no asset found -> leave outputs empty
     sys.exit(0)
 asset = candidates[0]
-print(f"::set-output name=url::{asset.get('browser_download_url')}")
-print(f"::set-output name=name::{asset.get('name')}")
+url = asset.get("browser_download_url","")
+name = asset.get("name","chazer")
+with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+    out.write(f"url={url}\n")
+    out.write(f"name={name}\n")
 PY
 
       - name: Download Chazer binary
@@ -41,20 +45,18 @@ PY
             echo "No release asset found for $CHAZER_REPO"
             exit 1
           fi
-          echo "Downloading ${{ steps.resolve.outputs.name }}"
+          echo "Downloading ${{ steps.resolve.outputs.name }} from ${{ steps.resolve.outputs.url }}"
           curl -L "${{ steps.resolve.outputs.url }}" -o chazer || { echo "curl failed"; exit 1; }
           chmod +x chazer || true
           echo "Downloaded file info:"
           ls -lh chazer || true
           file chazer || true
-          ./chazer --version || echo "chazer --version failed (binary may be incompatible)"
-
-      - name: Verify chazer is executable
-        run: |
-          if [ ! -x ./chazer ]; then
-            echo "Downloaded 'chazer' is not executable or missing. Failing the job."
+          # if file command shows text/html or ASCII text, fail early
+          if file chazer | grep -qiE 'html|text'; then
+            echo "Downloaded file is not a binary executable (likely an HTML error page). Failing."
             exit 1
           fi
+          ./chazer --version || echo "chazer --version failed (binary may be incompatible)"
 
       - name: Run Chazer Scan
         run: |
@@ -74,10 +76,10 @@ PY
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Resolve and install Chazer
+      - name: Resolve and download Chazer
         run: |
           python3 - <<'PY'
-import os, json, urllib.request, subprocess
+import os, sys, json, urllib.request, subprocess
 repo = os.environ.get("CHAZER_REPO")
 api = f"https://api.github.com/repos/{repo}/releases/latest"
 req = urllib.request.Request(api, headers={"Accept":"application/vnd.github.v3+json","User-Agent":"github-actions"})
@@ -95,6 +97,15 @@ subprocess.check_call(["curl","-L",url,"-o","chazer"])
 subprocess.check_call(["chmod","+x","chazer"])
 print("Downloaded chazer")
 PY
+
+      - name: Verify chazer is executable
+        run: |
+          if [ ! -x ./chazer ]; then
+            echo "chazer is not executable or missing"
+            exit 1
+          fi
+          file chazer || true
+          ./chazer --version || echo "chazer --version failed (binary may be incompatible)"
 
       - name: Run Chazer Prune
         run: |
