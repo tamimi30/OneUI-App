@@ -27,7 +27,8 @@ jobs:
           cargo build --release
 
       - name: 🔍 فحص وحذف الكود الميت
-        run: ./Chazer/target/release/chazer . --deep --delete
+        # تم تصحيح الأمر هنا بإضافة true بجانب --deep
+        run: ./Chazer/target/release/chazer . --deep true --delete
 
       - name: 📤 إنشاء طلب سحب (Pull Request) للمراجعة
         uses: peter-evans/create-pull-request@v6
