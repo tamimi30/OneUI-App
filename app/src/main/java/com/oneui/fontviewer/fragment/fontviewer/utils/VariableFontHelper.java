@@ -3,9 +3,6 @@ package com.oneui.fontviewer.fragment.fontviewer.utils;
 import android.graphics.Typeface;
 import android.graphics.fonts.Font;
 import android.graphics.fonts.FontVariationAxis;
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.RandomAccessFile;
