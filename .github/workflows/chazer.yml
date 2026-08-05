@@ -1,125 +1,58 @@
-name: Chazer Dead Code Tools
+name: Chazer Dead Code Cleanup
 
 on:
-  workflow_dispatch:
-
-env:
-  CHAZER_REPO: "chazer-tool/chazer"
+  # يتيح لك تشغيل الفحص يدوياً بضغطة زر من صفحة Actions في GitHub
+  workflow_dispatch: 
 
 jobs:
-  scan:
+  scan-and-clean:
     runs-on: ubuntu-latest
+    
+    # إعطاء الصلاحيات اللازمة للبوت لإنشاء فرع جديد وطلب سحب
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout Android Project
         uses: actions/checkout@v4
 
-      - name: Resolve latest Chazer asset URL
-        id: resolve
-        shell: bash
-        run: |
-          python3 - <<'PY'
-import os, sys, json, urllib.request
-repo = os.environ.get("CHAZER_REPO")
-api = f"https://api.github.com/repos/{repo}/releases/latest"
-req = urllib.request.Request(api, headers={"Accept":"application/vnd.github.v3+json","User-Agent":"github-actions"})
-with urllib.request.urlopen(req, timeout=30) as r:
-    data = json.load(r)
-assets = data.get("assets", [])
-candidates = [a for a in assets if ("linux" in a.get("name","").lower() or "amd64" in a.get("name","").lower())]
-if not candidates and assets:
-    candidates = assets
-if not candidates:
-    # no asset found -> leave outputs empty
-    sys.exit(0)
-asset = candidates[0]
-url = asset.get("browser_download_url","")
-name = asset.get("name","chazer")
-with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
-    out.write(f"url={url}\n")
-    out.write(f"name={name}\n")
-PY
-
-      - name: Download Chazer binary
-        run: |
-          if [ -z "${{ steps.resolve.outputs.url }}" ]; then
-            echo "No release asset found for $CHAZER_REPO"
-            exit 1
-          fi
-          echo "Downloading ${{ steps.resolve.outputs.name }} from ${{ steps.resolve.outputs.url }}"
-          curl -L "${{ steps.resolve.outputs.url }}" -o chazer || { echo "curl failed"; exit 1; }
-          chmod +x chazer || true
-          echo "Downloaded file info:"
-          ls -lh chazer || true
-          file chazer || true
-          # if file command shows text/html or ASCII text, fail early
-          if file chazer | grep -qiE 'html|text'; then
-            echo "Downloaded file is not a binary executable (likely an HTML error page). Failing."
-            exit 1
-          fi
-          ./chazer --version || echo "chazer --version failed (binary may be incompatible)"
-
-      - name: Run Chazer Scan
-        run: |
-          set -e
-          ./chazer scan . --json > report.json
-
-      - name: Upload Report
-        uses: actions/upload-artifact@v4
+      - name: ☕ Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          name: dead-code-report
-          path: report.json
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
 
-  prune:
-    runs-on: ubuntu-latest
-    needs: scan
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Resolve and download Chazer
+      - name: 🛠️ Download and Setup Chazer
         run: |
-          python3 - <<'PY'
-import os, sys, json, urllib.request, subprocess
-repo = os.environ.get("CHAZER_REPO")
-api = f"https://api.github.com/repos/{repo}/releases/latest"
-req = urllib.request.Request(api, headers={"Accept":"application/vnd.github.v3+json","User-Agent":"github-actions"})
-with urllib.request.urlopen(req, timeout=30) as r:
-    data = json.load(r)
-assets = data.get("assets", [])
-candidates = [a for a in assets if ("linux" in a.get("name","").lower() or "amd64" in a.get("name","").lower())]
-if not candidates and assets:
-    candidates = assets
-if not candidates:
-    print("No asset found")
-    raise SystemExit(1)
-url = candidates[0].get("browser_download_url")
-subprocess.check_call(["curl","-L",url,"-o","chazer"])
-subprocess.check_call(["chmod","+x","chazer"])
-print("Downloaded chazer")
-PY
+          echo "Cloning Chazer tool from dr7ro0t/Chazer..."
+          git clone https://github.com/dr7ro0t/Chazer.git chazer-tool
+          # إذا كانت الأداة تتطلب تثبيت مكتبات معينة (مثل بايثون)، يمكنك إضافتها هنا
 
-      - name: Verify chazer is executable
+      - name: 🔍 Run Chazer to Remove Dead Code
         run: |
-          if [ ! -x ./chazer ]; then
-            echo "chazer is not executable or missing"
-            exit 1
-          fi
-          file chazer || true
-          ./chazer --version || echo "chazer --version failed (binary may be incompatible)"
-
-      - name: Run Chazer Prune
-        run: |
-          set -e
-          ./chazer prune . --batch
-
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Chazer: remove dead code"
-            git push
-          fi
+          echo "Running Chazer on Java/Android files..."
+          # ملاحظة هامة: يجب استبدال هذا الأمر بالأمر الفعلي المخصص لتشغيل أداة Chazer
+          # على سبيل المثال، إذا كانت الأداة تعمل ببايثون:
+          # python chazer-tool/main.py app/src/main/java
+          # أو إذا كانت سكريبت Bash:
+          # chmod +x chazer-tool/chazer.sh && ./chazer-tool/chazer.sh app/src/main/java
+          
+      - name: 🚀 Create Pull Request for Manual Review
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: remove dead java code via Chazer"
+          title: "🧹 مراجعة وحذف الأكواد الميتة (Chazer)"
+          body: |
+            تم فحص المشروع بواسطة أداة **[Chazer](https://github.com/dr7ro0t/Chazer)**.
+            
+            **الخطوة المطلوبة:**
+            يرجى مراجعة الأسطر التي تم حذفها في تبويب **Files changed**.
+            إذا كانت التعديلات صحيحة ولا تؤثر على التطبيق، يمكنك الموافقة عليها (Merge) ليتم اعتماد الحذف النهائي.
+          branch: chazer-cleanup-pr
+          base: main # قم بتغييرها إلى master إذا كان هذا هو اسم الفرع الرئيسي لديك
+          labels: |
+            cleanup
+            dead-code
