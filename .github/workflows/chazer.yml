@@ -52,12 +52,7 @@ PY
       - name: Verify chazer is executable
         run: |
           if [ ! -x ./chazer ]; then
-            echo "Downloaded 'chazer' is not executable or missing. Uploading for inspection and failing."
-            mkdir -p artifact
-            cp chazer artifact/chazer_download || true
-            tar -czf artifact_chazer.tar.gz artifact || true
-            echo "artifact_chazer.tar.gz" > artifact_list.txt
-            ls -l artifact || true
+            echo "Downloaded 'chazer' is not executable or missing. Failing the job."
             exit 1
           fi
 
@@ -71,13 +66,6 @@ PY
         with:
           name: dead-code-report
           path: report.json
-
-      - name: Upload downloaded binary for inspection if needed
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: chazer-download-for-inspection
-          path: artifact_chazer.tar.gz
 
   prune:
     runs-on: ubuntu-latest
