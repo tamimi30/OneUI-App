@@ -1,7 +1,7 @@
 name: Chazer Dead Code Cleanup
 
 on:
-  workflow_dispatch: # لتشغيل الفحص يدوياً بضغطة زر
+  workflow_dispatch:
 
 jobs:
   scan-and-clean:
@@ -20,17 +20,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           
-      - name: 🚀 تنزيل وتثبيت أداة Chazer
-        # نقوم بتحميل النسخة الجاهزة للينكس حسب تعليمات الأداة
-        run: |
-          wget https://github.com/dr7ro0t/Chazer/releases/latest/download/chazer-linux-x86_64 -O chazer
-          chmod +x chazer
-          sudo mv chazer /usr/local/bin/
+      - name: 🚀 تثبيت أداة Chazer
+        # نستخدم مدير حزم Rust لتثبيت الأداة من مصدرها الرسمي مباشرة
+        run: cargo install chazer
 
       - name: 🔍 فحص وحذف الكود الميت
-        # تشغيل الأداة على المجلد الحالي مع تفعيل خيار الحذف التلقائي
-        # استخدمنا --deep لفحص أعمق، و --delete للحذف الفعلي
-        run: chazer . --deep --delete
+        # سيتم تشغيل الأداة من المسار الذي يثبت فيه cargo برامجه
+        run: ~/.cargo/bin/chazer . --deep --delete
 
       - name: 📤 إنشاء طلب سحب (Pull Request) للمراجعة
         uses: peter-evans/create-pull-request@v6
