@@ -1,58 +1,48 @@
 name: Chazer Dead Code Cleanup
 
 on:
-  # يتيح لك تشغيل الفحص يدوياً بضغطة زر من صفحة Actions في GitHub
-  workflow_dispatch: 
+  workflow_dispatch: # لتشغيل الفحص يدوياً بضغطة زر
 
 jobs:
   scan-and-clean:
     runs-on: ubuntu-latest
-    
-    # إعطاء الصلاحيات اللازمة للبوت لإنشاء فرع جديد وطلب سحب
     permissions:
       contents: write
       pull-requests: write
 
     steps:
-      - name: 📥 Checkout Android Project
+      - name: 📥 تحميل كود المشروع
         uses: actions/checkout@v4
 
-      - name: ☕ Set up JDK 17
+      - name: ☕ إعداد بيئة جافا
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
-
-      - name: 🛠️ Download and Setup Chazer
-        run: |
-          echo "Cloning Chazer tool from dr7ro0t/Chazer..."
-          git clone https://github.com/dr7ro0t/Chazer.git chazer-tool
-          # إذا كانت الأداة تتطلب تثبيت مكتبات معينة (مثل بايثون)، يمكنك إضافتها هنا
-
-      - name: 🔍 Run Chazer to Remove Dead Code
-        run: |
-          echo "Running Chazer on Java/Android files..."
-          # ملاحظة هامة: يجب استبدال هذا الأمر بالأمر الفعلي المخصص لتشغيل أداة Chazer
-          # على سبيل المثال، إذا كانت الأداة تعمل ببايثون:
-          # python chazer-tool/main.py app/src/main/java
-          # أو إذا كانت سكريبت Bash:
-          # chmod +x chazer-tool/chazer.sh && ./chazer-tool/chazer.sh app/src/main/java
           
-      - name: 🚀 Create Pull Request for Manual Review
+      - name: 🚀 تنزيل وتثبيت أداة Chazer
+        # نقوم بتحميل النسخة الجاهزة للينكس حسب تعليمات الأداة
+        run: |
+          wget https://github.com/dr7ro0t/Chazer/releases/latest/download/chazer-linux-x86_64 -O chazer
+          chmod +x chazer
+          sudo mv chazer /usr/local/bin/
+
+      - name: 🔍 فحص وحذف الكود الميت
+        # تشغيل الأداة على المجلد الحالي مع تفعيل خيار الحذف التلقائي
+        # استخدمنا --deep لفحص أعمق، و --delete للحذف الفعلي
+        run: chazer . --deep --delete
+
+      - name: 📤 إنشاء طلب سحب (Pull Request) للمراجعة
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: remove dead java code via Chazer"
+          commit-message: "chore: remove dead code via Chazer"
           title: "🧹 مراجعة وحذف الأكواد الميتة (Chazer)"
           body: |
-            تم فحص المشروع بواسطة أداة **[Chazer](https://github.com/dr7ro0t/Chazer)**.
+            تم فحص المشروع وحذف الأكواد الميتة بواسطة أداة **Chazer**.
             
-            **الخطوة المطلوبة:**
-            يرجى مراجعة الأسطر التي تم حذفها في تبويب **Files changed**.
-            إذا كانت التعديلات صحيحة ولا تؤثر على التطبيق، يمكنك الموافقة عليها (Merge) ليتم اعتماد الحذف النهائي.
+            **الخطوة المطلوبة منك:**
+            الرجاء مراجعة الملفات التي تم تعديلها في هذا الطلب (من تبويب Files changed). 
+            إذا كانت التعديلات صحيحة ولا تؤثر على التطبيق، يمكنك الموافقة عليها (Merge) ليتم اعتماد الحذف النهائي في مشروعك.
           branch: chazer-cleanup-pr
-          base: main # قم بتغييرها إلى master إذا كان هذا هو اسم الفرع الرئيسي لديك
-          labels: |
-            cleanup
-            dead-code
+          base: main
