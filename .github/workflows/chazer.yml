@@ -19,7 +19,7 @@ jobs:
         run: ./chazer scan . --json > report.json
 
       - name: Upload Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: dead-code-report
           path: report.json
