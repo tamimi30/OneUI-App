@@ -9,35 +9,35 @@ import androidx.fragment.app.Fragment;
 import java.io.File;
 
 public class LocalFontDirectoryPicker {
-
+    
     private static final String TAG = "LocalFontDirectoryPicker";
     public static final int FOLDER_PICKER_REQUEST_CODE = 200;
-
+    
     private final Context context;
     private final Fragment fragment;
     private DirectorySelectionListener listener;
-
+    
     public interface DirectorySelectionListener {
         void onDirectorySelected(String directoryPath);
         void onDirectorySelectionCancelled();
         void onDirectorySelectionError(Exception error);
     }
-
+    
     public LocalFontDirectoryPicker(Fragment fragment) {
         this.fragment = fragment;
         this.context = fragment.requireContext();
     }
-
+    
     public void setDirectorySelectionListener(DirectorySelectionListener listener) {
         this.listener = listener;
     }
-
+    
     public void openDirectoryPicker() {
         try {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-
+            
             try {
                 File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                 if (downloadsDir != null && downloadsDir.exists()) {
@@ -46,7 +46,7 @@ public class LocalFontDirectoryPicker {
             } catch (Exception e) {
                 Log.w(TAG, "Could not set initial directory", e);
             }
-
+            
             if (fragment != null) {
                 fragment.startActivityForResult(intent, FOLDER_PICKER_REQUEST_CODE);
             }
@@ -57,15 +57,15 @@ public class LocalFontDirectoryPicker {
             }
         }
     }
-
+    
     public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FOLDER_PICKER_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
                 try {
                     android.net.Uri treeUri = data.getData();
-
+                    
                     String directoryPath = getRealPathFromTreeUri(treeUri);
-
+                    
                     if (directoryPath != null) {
                         Log.d(TAG, "Directory selected: " + directoryPath);
                         if (listener != null) {
@@ -95,38 +95,38 @@ public class LocalFontDirectoryPicker {
         }
         return false;
     }
-
+    
     private String getRealPathFromTreeUri(android.net.Uri treeUri) {
         if (treeUri == null) {
             return null;
         }
-
+        
         try {
             String uriPath = treeUri.toString();
-
+            
             if (uriPath.contains("primary:")) {
                 String relativePath = uriPath.substring(uriPath.indexOf("primary:") + 8);
                 return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + relativePath;
             }
-
+            
             if (uriPath.contains("/storage/")) {
                 int storageIndex = uriPath.indexOf("/storage/");
                 String potentialPath = uriPath.substring(storageIndex);
-
+                
                 if (potentialPath.contains("%3A")) {
                     potentialPath = potentialPath.replace("%3A", "/");
                 }
                 if (potentialPath.contains(":")) {
                     potentialPath = potentialPath.replace(":", "/");
                 }
-
+                
                 if (potentialPath.startsWith("/storage/emulated/0/")) {
                     return potentialPath;
                 } else if (potentialPath.contains("/storage/")) {
                     return potentialPath.substring(potentialPath.indexOf("/storage/"));
                 }
             }
-
+            
             String documentId = android.provider.DocumentsContract.getTreeDocumentId(treeUri);
             if (documentId != null) {
                 if (documentId.startsWith("primary:")) {
@@ -143,14 +143,14 @@ public class LocalFontDirectoryPicker {
                     }
                 }
             }
-
+            
         } catch (Exception e) {
             Log.e(TAG, "Error converting URI to path", e);
         }
-
+        
         Log.w(TAG, "Could not determine real path, using fallback");
         return null;
     }
-
-
+    
+    
                     }

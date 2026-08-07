@@ -36,7 +36,7 @@ public class HomeActivity extends BaseActivity {
         if (mHomeFragment != null && mHomeFragment.handleBackPressed()) {
             return;
         }
-
+        
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O && isTaskRoot()) {
             finishAfterTransition();
         } else {

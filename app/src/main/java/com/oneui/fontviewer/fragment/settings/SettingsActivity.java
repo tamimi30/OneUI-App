@@ -1,5 +1,7 @@
 package com.oneui.fontviewer.fragment.settings;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -7,6 +9,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.fragment.settings.SettingsFragment;
 import com.oneui.fontviewer.activity.BaseActivity;
 
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
@@ -21,7 +24,7 @@ public class SettingsActivity extends BaseActivity {
         setContentView(R.layout.activity_settings);
 
         initToolbar();
-
+        
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                 .beginTransaction()

@@ -141,7 +141,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-
+    
 
     public boolean handleBackPressed() {
         if (mEnableBackToHeader && mAppBarLayout != null && mAppBarLayout.seslIsCollapsed()) {
@@ -151,7 +151,7 @@ public class HomeFragment extends Fragment {
         return false;
     }
 
-
+    
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {

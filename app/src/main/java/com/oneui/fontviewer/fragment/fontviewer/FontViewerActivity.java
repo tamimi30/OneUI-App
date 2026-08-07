@@ -7,6 +7,7 @@ import android.view.View;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
+import android.view.animation.OvershootInterpolator;
 
 import java.util.Map;
 
@@ -93,6 +94,35 @@ public class FontViewerActivity extends BaseActivity
         new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 300);
     }
 
+    private void setupFab() {
+        if (fabFontSize != null) {
+            fabFontSize.setVisibility(View.VISIBLE);
+            fabFontSize.setAlpha(0f);
+            fabFontSize.setScaleX(0f);
+            fabFontSize.setScaleY(0f);
+            fabFontSize.animate()
+                     .alpha(1f).scaleX(1f).scaleY(1f)
+                     .setDuration(750)
+                     .setInterpolator(new OvershootInterpolator(1.2f))
+                     .start();
+            fabFontSize.setOnClickListener(v -> {
+                if (mFontViewerFragment != null) {
+                    mFontViewerFragment.showFontSizeDialogPublic();
+                }
+            });
+        }
+        if (formatBar != null) {
+            formatBar.setVisibility(View.VISIBLE);
+            formatBar.setAlpha(0f);
+            formatBar.setScaleX(0f);
+            formatBar.setScaleY(0f);
+            formatBar.animate()
+                     .alpha(1f).scaleX(1f).scaleY(1f)
+                     .setDuration(750)
+                     .setInterpolator(new OvershootInterpolator(1.2f))
+                     .start();
+        }
+    }
 
     private void loadFontFromIntent(Intent intent) {
         if (intent == null || mFontViewerFragment == null) return;
@@ -252,4 +282,4 @@ public class FontViewerActivity extends BaseActivity
         dismissLoadingDialog();
         super.onDestroy();
     }
-              }
+              } 

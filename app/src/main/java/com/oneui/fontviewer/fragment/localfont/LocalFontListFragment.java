@@ -33,11 +33,11 @@ import java.util.concurrent.Executors;
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
-import com.oneui.fontviewer.activity.AppScreen;
+import com.oneui.fontviewer.activity.AppScreen;           
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
 import com.oneui.fontviewer.dialog.FontActionDialogs;
-import com.oneui.fontviewer.dialog.TrashActionDialogs;
+import com.oneui.fontviewer.dialog.TrashActionDialogs; 
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontSelectionManager;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontPermissionManager;
@@ -211,7 +211,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         this.mMenu = menu;
 
-        menu.clear();
+        menu.clear(); 
         inflater.inflate(R.menu.menu_font_list_search, menu);
         inflater.inflate(R.menu.menu_local_fonts_more, menu);
 
@@ -283,13 +283,13 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             if (isLoading != null && isLoading) {
                 mUIManager.showLoadingState();
                 if (!isHidden()) {
-                    setDrawerLocked(true);
+                    setDrawerLocked(true); 
                 }
             } else {
                 mUIManager.hideLoadingState();
                 refreshAdapterData();
-                setDrawerLocked(false);
-
+                setDrawerLocked(false); 
+                
                 if (mRecyclerView != null && mRecyclerView.getVisibility() == View.VISIBLE) {
                     mRecyclerView.setAlpha(0f);
                     mRecyclerView.animate().alpha(1f).setDuration(400).start();
@@ -311,7 +311,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         mSettingsViewModel.getFontPreviewEnabled().observe(this, enabled -> {
             if (mAdapter != null && isAdded()) {
-                mAdapter.setFontPreviewEnabled(enabled);
+                mAdapter.setFontPreviewEnabled(enabled); 
                 Log.d(TAG, "Font preview setting changed: " + enabled);
             }
         });
@@ -625,7 +625,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         AlertDialog confirmDialog = new AlertDialog.Builder(mContext)
                 .setMessage(message)
-                .setPositiveButton(R.string.action_move_to_trash, null)
+                .setPositiveButton(R.string.action_move_to_trash, null) 
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
 
@@ -832,7 +832,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         setMenuVisibility(!hidden);
         if (!hidden && getActivity() != null) {
-            getActivity().invalidateOptionsMenu();
+            getActivity().invalidateOptionsMenu(); 
         }
 
         if (hidden) {
@@ -943,7 +943,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         mUIManager.updateEmptyView(false, mSearchManager.isSearchActive());
 
         if (mNeedsScrollRestore) {
-            mNeedsScrollRestore = false;
+            mNeedsScrollRestore = false; 
             mMainHandler.post(() -> {
                 if (isAdded() && getView() != null) {
                     mUIManager.restoreRecyclerViewState();
@@ -1028,15 +1028,15 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
         if (mExecutor != null)    mExecutor.shutdown();
     }
-
+    
     private void setDrawerLocked(boolean locked) {
         if (mDrawerLayout == null) return;
-
+        
         androidx.drawerlayout.widget.DrawerLayout inner = findInnerDrawer(mDrawerLayout);
         if (inner != null) {
             inner.setDrawerLockMode(locked ? 1 : 0);
         }
-
+        
         androidx.appcompat.widget.Toolbar toolbar = mDrawerLayout.getToolbar();
         if (toolbar != null) {
             for (int i = 0; i < toolbar.getChildCount(); i++) {

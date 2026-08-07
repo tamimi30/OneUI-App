@@ -22,7 +22,7 @@ public class BatchOperationState {
         public final int    current;
         public final int    total;
         public final String title;
-        public final int    operationCode;
+        public final int    operationCode; 
 
         public ProgressData(int current, int total, String title) {
             this(current, total, title, 1);
@@ -38,7 +38,7 @@ public class BatchOperationState {
 
     private static final MutableLiveData<ProgressData> _progress =
             new MutableLiveData<>();
-
+    
     private static volatile AtomicBoolean _currentCancelFlag = null;
 
     private static volatile boolean _shouldReopenDialog = false;

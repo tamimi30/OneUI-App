@@ -1,7 +1,7 @@
 package com.oneui.fontviewer.fragment.systemfont.data;
 
 public class SystemFontInfo {
-
+    
     private final String name;
     private final String path;
     private final long size;
@@ -12,7 +12,7 @@ public class SystemFontInfo {
     private final String axes;
     private String realName;
     private String weightWidthLabel;
-
+    
     public SystemFontInfo(String name, String path, long size, long lastModified,
                          int weight, int slant, int ttcIndex, String axes) {
         this.name = name;
@@ -24,43 +24,43 @@ public class SystemFontInfo {
         this.ttcIndex = ttcIndex;
         this.axes = axes;
         this.realName = null;
-        this.weightWidthLabel = null;
+        this.weightWidthLabel = null; 
     }
-
+    
     public String getName() {
         return name;
     }
-
+    
     public String getPath() {
         return path;
     }
-
+    
     public long getSize() {
         return size;
     }
-
+    
     public long getLastModified() {
         return lastModified;
     }
-
+    
     public int getWeight() {
         return weight;
     }
-
-
+    
+    
     public int getTtcIndex() {
         return ttcIndex;
     }
-
-
+    
+    
     public boolean isVariableFont() {
         return axes != null && !axes.isEmpty();
     }
-
+    
     public void setRealName(String realName) {
         this.realName = realName;
     }
-
+    
     public String getRealName() {
         return realName;
     }
@@ -73,6 +73,6 @@ public class SystemFontInfo {
     public String getWeightWidthLabel() {
         return weightWidthLabel;
     }
-
-
+    
+    
 }

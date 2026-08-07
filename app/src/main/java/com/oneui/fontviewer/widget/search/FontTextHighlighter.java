@@ -4,40 +4,41 @@ import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import androidx.annotation.ColorInt;
 import com.google.android.material.color.MaterialColors;
 
 import java.util.Locale;
 
 public class FontTextHighlighter {
-
+    
     private final Context context;
     private final int highlightColor;
-
+    
     public FontTextHighlighter(Context context) {
         this.context = context;
         this.highlightColor = MaterialColors.getColor(
             context,
             androidx.appcompat.R.attr.colorPrimary,
-            context.getColor(android.R.color.holo_blue_light)
+            context.getColor(android.R.color.holo_blue_light) 
         );
     }
-
-
+    
+    
     public SpannableString highlightText(String text, String searchQuery) {
         if (text == null || text.isEmpty()) {
             return null;
         }
-
+        
         if (searchQuery == null || searchQuery.isEmpty()) {
             return new SpannableString(text);
         }
-
+        
         SpannableString spannableString = new SpannableString(text);
         String lowerText = text.toLowerCase(Locale.getDefault());
         String lowerQuery = searchQuery.toLowerCase(Locale.getDefault());
-
+        
         int startPos = lowerText.indexOf(lowerQuery);
-
+        
         if (startPos >= 0) {
             spannableString.setSpan(
                 new ForegroundColorSpan(highlightColor),
@@ -46,9 +47,9 @@ public class FontTextHighlighter {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             );
         }
-
+        
         return spannableString;
     }
-
-
+    
+    
 }

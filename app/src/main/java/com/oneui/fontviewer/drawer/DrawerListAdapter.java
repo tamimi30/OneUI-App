@@ -156,5 +156,5 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder
         return -1;
     }
 
-
+    
 }

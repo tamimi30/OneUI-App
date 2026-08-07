@@ -17,9 +17,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
-import com.oneui.fontviewer.dialog.TrashActionDialogs;
+import com.oneui.fontviewer.dialog.TrashActionDialogs; 
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
-import com.oneui.fontviewer.utils.notification.OperationForegroundService;
+import com.oneui.fontviewer.utils.notification.OperationForegroundService; 
 import com.oneui.fontviewer.R;
 
 public class TrashViewModel extends AndroidViewModel {
@@ -30,16 +30,16 @@ public class TrashViewModel extends AndroidViewModel {
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public enum OperationType {
-        MOVE_TO_TRASH,
-        RESTORE,
-        DELETE_PERMANENTLY,
-        EMPTY_TRASH
+        MOVE_TO_TRASH,       
+        RESTORE,             
+        DELETE_PERMANENTLY,  
+        EMPTY_TRASH          
     }
 
     public static class OperationProgress {
-        public final int           current;
-        public final int           total;
-        public final OperationType operationType;
+        public final int           current;       
+        public final int           total;         
+        public final OperationType operationType; 
 
         public OperationProgress(int current, int total, OperationType operationType) {
             this.current       = current;
@@ -49,10 +49,10 @@ public class TrashViewModel extends AndroidViewModel {
     }
 
     public static class OperationResult {
-        public final int           succeeded;
-        public final int           failed;
-        public final OperationType operationType;
-        public final boolean       wasCancelled;
+        public final int           succeeded;     
+        public final int           failed;        
+        public final OperationType operationType; 
+        public final boolean       wasCancelled;  
 
         public OperationResult(int succeeded, int failed,
                                OperationType operationType, boolean wasCancelled) {
@@ -95,7 +95,7 @@ public class TrashViewModel extends AndroidViewModel {
         return _isLoading;
     }
 
-
+    
 
     public void restoreFonts(@NonNull List<FontEntity> fonts) {
         if (fonts.isEmpty()) return;

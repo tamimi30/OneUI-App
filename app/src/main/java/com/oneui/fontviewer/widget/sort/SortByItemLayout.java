@@ -73,10 +73,10 @@ public class SortByItemLayout extends LinearLayout {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-
+        
         if (mTextContainer != null) mTextContainer.setEnabled(enabled);
         if (mOrderIcon != null) mOrderIcon.setEnabled(enabled);
-
+        
         setAlpha(enabled ? 1.0f : 0.4f);
     }
 
@@ -161,7 +161,7 @@ public class SortByItemLayout extends LinearLayout {
             mListener.onSortChanged(mCurrentSortType, mIsAscending);
         }
     }
-
+    
     public void setSortType(SortType type) {
         this.mCurrentSortType = type;
         updateUI();

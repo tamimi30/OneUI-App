@@ -7,8 +7,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.appcompat.widget.ActionMenuView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
@@ -18,9 +22,10 @@ import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.AppScreen;
-import com.oneui.fontviewer.fragment.favorite.FavoriteFontListFragment;
+import com.oneui.fontviewer.fragment.favorite.FavoriteFontListFragment; 
 import com.oneui.fontviewer.fragment.localfont.LocalFontListFragment;
 import com.oneui.fontviewer.fragment.systemfont.SystemFontListFragment;
+import com.oneui.fontviewer.fragment.trash.TrashFragment; 
 
 
 public class SearchCoordinator {
@@ -39,7 +44,7 @@ public class SearchCoordinator {
 
     private boolean    isSearchExpanded = false;
     private String     savedSearchQuery = "";
-    private AppScreen  lastScreen       = null;
+    private AppScreen  lastScreen       = null; 
 
     private SearchStateListener stateListener;
 
@@ -74,7 +79,7 @@ public class SearchCoordinator {
 
     public void bindSearchMenuItem(@NonNull MenuItem searchMenuItem) {
         this.searchMenuItem = searchMenuItem;
-
+        
         this.searchMenuItem.setActionView(null);
         this.searchMenuItem.setOnMenuItemClickListener(item -> {
             expandSearch();
@@ -146,7 +151,7 @@ public class SearchCoordinator {
 
     private boolean handleSearchExpand() {
         isSearchExpanded = true;
-
+        
         if (stateListener != null) {
             stateListener.onSearchExpanded();
         }
@@ -236,7 +241,7 @@ public class SearchCoordinator {
 
 
     public void saveState(@NonNull Bundle outState) {
-        if (screenProvider == null) return;
+        if (screenProvider == null) return; 
 
         AppScreen currentScreen = screenProvider.getCurrentScreen();
         boolean isSearchableScreen = (currentScreen == AppScreen.LOCAL_FONTS
@@ -261,7 +266,7 @@ public class SearchCoordinator {
     }
 
     public void restoreState(@NonNull Bundle savedInstanceState) {
-        if (screenProvider == null) return;
+        if (screenProvider == null) return; 
 
         isSearchExpanded = savedInstanceState.getBoolean(KEY_SEARCH_EXPANDED, false);
         savedSearchQuery = savedInstanceState.getString(KEY_SEARCH_QUERY, "");
@@ -294,13 +299,13 @@ public class SearchCoordinator {
     public void collapseSearch() {
         if (!isSearchExpanded) return;
         if (drawerLayout != null) {
-            drawerLayout.dismissSearchMode();
+            drawerLayout.dismissSearchMode(); 
         }
     }
 
     public void expandSearch() {
         if (drawerLayout != null && !drawerLayout.isSearchMode()) {
-            drawerLayout.showSearchMode();
+            drawerLayout.showSearchMode(); 
         }
     }
 

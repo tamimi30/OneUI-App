@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.oneui.fontviewer.activity.AppScreen;
+import com.oneui.fontviewer.activity.AppScreen;           
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
@@ -126,7 +126,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear();
+        menu.clear(); 
         inflater.inflate(R.menu.menu_font_list_search, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search_fonts);
@@ -189,7 +189,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
         mSettingsViewModel.getFontPreviewEnabled().observe(this, enabled -> {
             if (mAdapter != null && isAdded()) {
-                mAdapter.setFontPreviewEnabled(enabled);
+                mAdapter.setFontPreviewEnabled(enabled); 
                 Log.d(TAG, "Font preview setting changed: " + enabled);
             }
         });
@@ -447,7 +447,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
         setMenuVisibility(!hidden);
         if (!hidden && getActivity() != null) {
-            getActivity().invalidateOptionsMenu();
+            getActivity().invalidateOptionsMenu(); 
         }
 
         if (hidden) {

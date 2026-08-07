@@ -13,7 +13,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         Context wrappedContext = SettingsHelper.wrapContext(newBase);
-
+        
         super.attachBaseContext(wrappedContext);
     }
 

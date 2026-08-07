@@ -9,31 +9,31 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 
 public class FontViewerPreferenceManager {
-
+    
     private static final String TAG = "FontViewerPrefManager";
     private final SettingsDataStore dataStore;
     private final SharedPreferences originalPathPrefs;
-
+    
     public FontViewerPreferenceManager(Context context) {
         this.dataStore = SettingsDataStore.getInstance(context);
         this.originalPathPrefs = context.getApplicationContext()
                 .getSharedPreferences("font_viewer_original_path", Context.MODE_PRIVATE);
     }
-
+    
     public void saveLastViewedFontOriginalPath(String originalPath) {
         originalPathPrefs.edit().putString("original_path", originalPath).apply();
     }
-
+    
     public String getLastViewedFontOriginalPath() {
         return originalPathPrefs.getString("original_path", null);
     }
-
+    
     public void saveLastViewedFont(String fontPath, String fileName, String realName) {
         if (fontPath == null) {
             Log.w(TAG, "Attempted to save null font path");
             return;
         }
-
+        
         dataStore.setLastViewedFont(fontPath, fileName, realName)
                 .subscribeOn(Schedulers.io())
                 .subscribe(
@@ -41,7 +41,7 @@ public class FontViewerPreferenceManager {
                     error -> Log.e(TAG, "Error saving font: " + error.getMessage())
                 );
     }
-
+    
     public String getLastViewedFontPath() {
         try {
             return dataStore.getViewerFontPath().blockingFirst();
@@ -50,7 +50,7 @@ public class FontViewerPreferenceManager {
             return null;
         }
     }
-
+    
     public String getLastViewedFontFileName() {
         try {
             return dataStore.getViewerFileName().blockingFirst();
@@ -59,7 +59,7 @@ public class FontViewerPreferenceManager {
             return null;
         }
     }
-
+    
     public String getLastViewedFontRealName() {
         try {
             return dataStore.getViewerRealName().blockingFirst();
@@ -68,9 +68,9 @@ public class FontViewerPreferenceManager {
             return null;
         }
     }
-
-
-
+    
+    
+    
     public void clearLastViewedFont() {
         dataStore.clearLastViewedFont()
                 .subscribeOn(Schedulers.io())
@@ -79,9 +79,9 @@ public class FontViewerPreferenceManager {
                     error -> Log.e(TAG, "Error clearing font: " + error.getMessage())
                 );
     }
-
-
-
+    
+    
+    
     public void saveFontWeight(float fontWeight) {
         dataStore.setViewerFontWeight(fontWeight)
                 .subscribeOn(Schedulers.io())
@@ -90,8 +90,8 @@ public class FontViewerPreferenceManager {
                     error -> Log.e(TAG, "Error saving font weight: " + error.getMessage())
                 );
     }
-
-
+    
+    
     public float getFontWeight(float defaultWeight) {
         try {
             Float value = dataStore.getViewerFontWeight().blockingFirst();
@@ -101,6 +101,6 @@ public class FontViewerPreferenceManager {
             return defaultWeight;
         }
     }
-
-
+    
+    
 }

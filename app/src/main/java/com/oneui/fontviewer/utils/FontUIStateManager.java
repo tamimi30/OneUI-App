@@ -14,9 +14,9 @@ import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 
 public class FontUIStateManager {
-
+    
     private static final String TAG = "FontUIStateManager";
-
+    
     private final Context context;
     private View selectFolderContainer;
     private View mainContentLayout;
@@ -33,18 +33,18 @@ public class FontUIStateManager {
     private AppBarLayout appBarLayout;
 
     private View loadingContainer;
-
+    
     private Parcelable recyclerViewState;
     private SortByItemLayout.SortType savedSortType;
     private boolean savedSortAscending;
 
     private int defaultEmptyMessageResId = R.string.local_fonts_empty_message;
-
+    
     public FontUIStateManager(Context context) {
         this.context = context;
     }
-
-    public void setViews(View selectFolderContainer, View mainContentLayout,
+    
+    public void setViews(View selectFolderContainer, View mainContentLayout, 
         View emptyView, TextView emptyTextView, RecyclerView recyclerView) {
         this.selectFolderContainer = selectFolderContainer;
         this.mainContentLayout = mainContentLayout;
@@ -74,7 +74,7 @@ public class FontUIStateManager {
     public void setLoadingContainer(View loadingContainer) {
         this.loadingContainer = loadingContainer;
     }
-
+    
     public void setAppBarLayout(AppBarLayout appBarLayout) {
         this.appBarLayout = appBarLayout;
     }
@@ -82,17 +82,17 @@ public class FontUIStateManager {
     public void setDefaultEmptyMessage(int resId) {
         this.defaultEmptyMessageResId = resId;
     }
-
+    
     public void updateUIVisibility(boolean hasFolderUri) {
         if (selectFolderContainer != null) {
             selectFolderContainer.setVisibility(hasFolderUri ? View.GONE : View.VISIBLE);
         }
-
+        
         if (mainContentLayout != null) {
             mainContentLayout.setVisibility(hasFolderUri ? View.VISIBLE : View.GONE);
         }
     }
-
+    
     public void updateEmptyView(boolean isEmpty, boolean isSearchActive) {
         if (isEmpty) {
             showEmptyView(isSearchActive);
@@ -104,15 +104,15 @@ public class FontUIStateManager {
     public void updateEmptyView(boolean isEmpty) {
         updateEmptyView(isEmpty, false);
     }
-
+    
     private void showEmptyView(boolean isSearchActive) {
         if (recyclerView != null) {
             recyclerView.setVisibility(View.GONE);
         }
-
+        
         if (emptyView != null) {
             emptyView.setVisibility(View.VISIBLE);
-
+            
             if (appBarLayout != null) {
                 updateEmptyViewPosition(Math.abs(appBarLayout.getTop()));
             }
@@ -148,12 +148,12 @@ public class FontUIStateManager {
             }
         }
     }
-
+    
     private void hideEmptyView() {
         if (recyclerView != null) {
             recyclerView.setVisibility(View.VISIBLE);
         }
-
+        
         if (emptyView != null) {
             emptyView.setVisibility(View.GONE);
         }
@@ -162,19 +162,19 @@ public class FontUIStateManager {
             noResultsTextView.setVisibility(View.GONE);
         }
     }
-
+    
     public void updateEmptyViewPosition(int verticalOffset) {
         if (appBarLayout == null) {
             return;
         }
-
+        
         int totalScrollRange = appBarLayout.getTotalScrollRange();
         float translationY = 0f;
-
+        
         if (totalScrollRange != 0) {
             translationY = (Math.abs(verticalOffset) - totalScrollRange) / 2.0f;
         }
-
+        
         if (emptyView != null && emptyView.getVisibility() == View.VISIBLE) {
             View innerEmptyView = emptyView.findViewById(R.id.empty_container);
             if (innerEmptyView != null) {
@@ -189,14 +189,14 @@ public class FontUIStateManager {
             }
         }
     }
-
+    
     public void saveRecyclerViewState() {
         if (recyclerView != null && recyclerView.getLayoutManager() != null) {
             recyclerViewState = recyclerView.getLayoutManager().onSaveInstanceState();
             Log.d(TAG, "RecyclerView state saved");
         }
     }
-
+    
     public void restoreRecyclerViewState() {
         if (recyclerViewState != null && recyclerView != null && recyclerView.getLayoutManager() != null) {
             recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
@@ -204,35 +204,35 @@ public class FontUIStateManager {
             Log.d(TAG, "RecyclerView state restored");
         }
     }
-
+    
     public void setRecyclerViewState(Parcelable state) {
         this.recyclerViewState = state;
     }
-
+    
     public Parcelable getRecyclerViewState() {
         return recyclerViewState;
     }
-
+    
     public void saveSortState(SortByItemLayout.SortType sortType, boolean ascending) {
         this.savedSortType = sortType;
         this.savedSortAscending = ascending;
         Log.d(TAG, "Sort state saved: type=" + sortType + ", ascending=" + ascending);
     }
-
-
-
+    
+    
+    
     public void showLoadingState() {
         if (recyclerView != null) recyclerView.setVisibility(View.GONE);
         if (emptyView != null) emptyView.setVisibility(View.GONE);
-        if (loadingContainer != null) loadingContainer.setVisibility(View.VISIBLE);
+        if (loadingContainer != null) loadingContainer.setVisibility(View.VISIBLE); 
     }
-
+    
     public void hideLoadingState() {
         if (loadingContainer != null) {
-            loadingContainer.setVisibility(View.GONE);
+            loadingContainer.setVisibility(View.GONE); 
         }
 
     }
-
-
+    
+    
 }

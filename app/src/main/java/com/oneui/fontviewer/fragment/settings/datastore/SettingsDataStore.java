@@ -11,13 +11,18 @@ import androidx.datastore.rxjava3.RxDataStore;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 
+/**
+ * SettingsDataStore - Complete DataStore implementation
+ * All SharedPreferences removed and replaced with DataStore
+ */
 public class SettingsDataStore {
-
+    
     private static final String DATASTORE_NAME = "settings";
     private static volatile SettingsDataStore INSTANCE;
-
+    
     private final RxDataStore<Preferences> dataStore;
-
+    
+    // Core keys
     private final Preferences.Key<Integer> KEY_LANGUAGE_MODE;
     private final Preferences.Key<Integer> KEY_THEME_MODE;
     private final Preferences.Key<Boolean> KEY_THEME_AUTO;
@@ -28,45 +33,52 @@ public class SettingsDataStore {
     private final Preferences.Key<String> KEY_LAST_OPENED_FONT_PATH;
     private final Preferences.Key<String> KEY_FOLDER_PATH;
 
-
-
+    
+    
+    // Local fonts keys (Local fonts)
     private final Preferences.Key<String> KEY_SORT_TYPE;
     private final Preferences.Key<Boolean> KEY_SORT_ASCENDING;
     private final Preferences.Key<String> KEY_LAST_OPENED_SYSTEM_FONT_PATH;
 
+    // ★ System fonts sort keys — منفصلة تماماً عن مفاتيح المجلد المحلي ★
     private final Preferences.Key<String> KEY_SYSTEM_SORT_TYPE;
     private final Preferences.Key<Boolean> KEY_SYSTEM_SORT_ASCENDING;
 
+    // ★ Favorites sort keys — منفصلة تماماً لتجنب أي تعارض مع القوائم الأخرى ★
     private final Preferences.Key<String> KEY_FAVORITES_SORT_TYPE;
     private final Preferences.Key<Boolean> KEY_FAVORITES_SORT_ASCENDING;
 
+    // ★ Favorites last opened font key — منفصل تماماً عن مفتاح الخطوط المحلية ★
     private final Preferences.Key<String> KEY_LAST_OPENED_FAVORITE_FONT_PATH;
-
+    
+    // Font viewer keys
     private final Preferences.Key<String> KEY_VIEWER_FONT_PATH;
     private final Preferences.Key<String> KEY_VIEWER_FILE_NAME;
     private final Preferences.Key<String> KEY_VIEWER_REAL_NAME;
     private final Preferences.Key<Float> KEY_VIEWER_FONT_SIZE;
     private final Preferences.Key<Float> KEY_VIEWER_FONT_WEIGHT;
-
+    
+    // Default values
     public static final int DEFAULT_LANGUAGE_MODE = 0;
     public static final int DEFAULT_THEME_MODE = 0;
     public static final boolean DEFAULT_THEME_AUTO = true;
     public static final boolean DEFAULT_FONT_PREVIEW_ENABLED = true;
     public static final boolean DEFAULT_TRANSLATION_ENABLED = false;
     public static final boolean DEFAULT_NOTIFICATIONS_ENABLED = true;
-    public static final String DEFAULT_PREVIEW_TEXT =
+    public static final String DEFAULT_PREVIEW_TEXT = 
             "The quick brown fox jumps over the lazy dog.\n\n" +
             "0123456789";
     public static final float DEFAULT_VIEWER_FONT_SIZE = 34f;
     public static final float DEFAULT_VIEWER_FONT_WEIGHT = 400f;
-
-
+    
+    
     private SettingsDataStore(Context context) {
         dataStore = new RxPreferenceDataStoreBuilder(
                 context.getApplicationContext(),
                 DATASTORE_NAME
         ).build();
-
+        
+        // Initialize core keys
         KEY_LANGUAGE_MODE = PreferencesKeys.intKey("language_mode");
         KEY_THEME_MODE = PreferencesKeys.intKey("theme_mode");
         KEY_THEME_AUTO = PreferencesKeys.booleanKey("theme_auto");
@@ -77,27 +89,32 @@ public class SettingsDataStore {
         KEY_LAST_OPENED_FONT_PATH = PreferencesKeys.stringKey("last_opened_font_path");
         KEY_FOLDER_PATH = PreferencesKeys.stringKey("folder_path");
 
-
-
+        
+        
+        // Initialize FontList (Local) keys
         KEY_SORT_TYPE = PreferencesKeys.stringKey("sort_type");
         KEY_SORT_ASCENDING = PreferencesKeys.booleanKey("sort_ascending");
         KEY_LAST_OPENED_SYSTEM_FONT_PATH = PreferencesKeys.stringKey("last_opened_system_font_path");
 
+        // ★ Initialize System Font sort keys ★
         KEY_SYSTEM_SORT_TYPE = PreferencesKeys.stringKey("system_sort_type");
         KEY_SYSTEM_SORT_ASCENDING = PreferencesKeys.booleanKey("system_sort_ascending");
 
+        // ★ Initialize Favorites sort keys ★
         KEY_FAVORITES_SORT_TYPE = PreferencesKeys.stringKey("favorites_sort_type");
         KEY_FAVORITES_SORT_ASCENDING = PreferencesKeys.booleanKey("favorites_sort_ascending");
 
+        // ★ Initialize Favorites last opened font key ★
         KEY_LAST_OPENED_FAVORITE_FONT_PATH = PreferencesKeys.stringKey("last_opened_favorite_font_path");
-
+        
+        // Initialize Font Viewer keys
         KEY_VIEWER_FONT_PATH = PreferencesKeys.stringKey("viewer_font_path");
         KEY_VIEWER_FILE_NAME = PreferencesKeys.stringKey("viewer_file_name");
         KEY_VIEWER_REAL_NAME = PreferencesKeys.stringKey("viewer_real_name");
         KEY_VIEWER_FONT_SIZE = PreferencesKeys.floatKey("viewer_font_size");
         KEY_VIEWER_FONT_WEIGHT = PreferencesKeys.floatKey("viewer_font_weight");
     }
-
+    
     public static SettingsDataStore getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (SettingsDataStore.class) {
@@ -108,15 +125,18 @@ public class SettingsDataStore {
         }
         return INSTANCE;
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Language Mode
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<Integer> getLanguageMode() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_LANGUAGE_MODE) != null ?
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_LANGUAGE_MODE) != null ? 
             prefs.get(KEY_LANGUAGE_MODE) : DEFAULT_LANGUAGE_MODE
         );
     }
-
+    
     public Single<Preferences> setLanguageMode(int mode) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -124,15 +144,18 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Theme Mode
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<Integer> getThemeMode() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_THEME_MODE) != null ?
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_THEME_MODE) != null ? 
             prefs.get(KEY_THEME_MODE) : DEFAULT_THEME_MODE
         );
     }
-
+    
     public Single<Preferences> setThemeMode(int mode) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -140,14 +163,14 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
+    
     public Flowable<Boolean> getThemeAuto() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_THEME_AUTO) != null ?
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_THEME_AUTO) != null ? 
             prefs.get(KEY_THEME_AUTO) : DEFAULT_THEME_AUTO
         );
     }
-
+    
     public Single<Preferences> setThemeAuto(boolean auto) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -156,16 +179,19 @@ public class SettingsDataStore {
         });
     }
 
-
-
-
+    
+    
+    // ════════════════════════════════════════════════════════════
+    // Font Preview
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<Boolean> getFontPreviewEnabled() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_FONT_PREVIEW_ENABLED) != null ?
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_FONT_PREVIEW_ENABLED) != null ? 
             prefs.get(KEY_FONT_PREVIEW_ENABLED) : DEFAULT_FONT_PREVIEW_ENABLED
         );
     }
-
+    
     public Single<Preferences> setFontPreviewEnabled(boolean enabled) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -173,15 +199,18 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Translation
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<Boolean> getTranslationEnabled() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_TRANSLATION_ENABLED) != null ?
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_TRANSLATION_ENABLED) != null ? 
             prefs.get(KEY_TRANSLATION_ENABLED) : DEFAULT_TRANSLATION_ENABLED
         );
     }
-
+    
     public Single<Preferences> setTranslationEnabled(boolean enabled) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -189,15 +218,18 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Notifications
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<Boolean> getNotificationsEnabled() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_NOTIFICATIONS_ENABLED) != null ?
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_NOTIFICATIONS_ENABLED) != null ? 
             prefs.get(KEY_NOTIFICATIONS_ENABLED) : DEFAULT_NOTIFICATIONS_ENABLED
         );
     }
-
+    
     public Single<Preferences> setNotificationsEnabled(boolean enabled) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -205,15 +237,18 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Preview Text
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<String> getPreviewText() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_PREVIEW_TEXT) != null ?
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_PREVIEW_TEXT) != null ? 
             prefs.get(KEY_PREVIEW_TEXT) : DEFAULT_PREVIEW_TEXT
         );
     }
-
+    
     public Single<Preferences> setPreviewText(String text) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -221,14 +256,17 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Last Opened Font (Local)
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<String> getLastOpenedFontPath() {
-        return dataStore.data().map(prefs ->
+        return dataStore.data().map(prefs -> 
             prefs.get(KEY_LAST_OPENED_FONT_PATH)
         );
     }
-
+    
     public Single<Preferences> setLastOpenedFontPath(String path) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -240,14 +278,17 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Last Opened Font (Favorites)
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<String> getLastOpenedFavoriteFontPath() {
-        return dataStore.data().map(prefs ->
+        return dataStore.data().map(prefs -> 
             prefs.get(KEY_LAST_OPENED_FAVORITE_FONT_PATH)
         );
     }
-
+    
     public Single<Preferences> setLastOpenedFavoriteFontPath(String path) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -259,14 +300,17 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Folder Path
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<String> getFolderPath() {
-        return dataStore.data().map(prefs ->
+        return dataStore.data().map(prefs -> 
             prefs.get(KEY_FOLDER_PATH)
         );
     }
-
+    
     public Single<Preferences> setFolderPath(String path) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -278,15 +322,18 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Sort Options (Local Folder Fonts)
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<String> getSortType() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_SORT_TYPE) != null ?
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_SORT_TYPE) != null ? 
             prefs.get(KEY_SORT_TYPE) : "NAME"
         );
     }
-
+    
     public Single<Preferences> setSortType(String type) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -294,14 +341,14 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
+    
     public Flowable<Boolean> getSortAscending() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_SORT_ASCENDING) != null ?
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_SORT_ASCENDING) != null ? 
             prefs.get(KEY_SORT_ASCENDING) : true
         );
     }
-
+    
     public Single<Preferences> setSortAscending(boolean ascending) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -310,6 +357,9 @@ public class SettingsDataStore {
         });
     }
 
+    // ════════════════════════════════════════════════════════════
+    // Sort Options (System Fonts) ★ منفصلة تماماً لتجنب التجمد ★
+    // ════════════════════════════════════════════════════════════
 
     public Flowable<String> getSystemSortType() {
         return dataStore.data().map(prefs ->
@@ -339,6 +389,9 @@ public class SettingsDataStore {
         });
     }
 
+    // ════════════════════════════════════════════════════════════
+    // Sort Options (Favorites) ★ منفصلة تماماً لتجنب أي تعارض ★
+    // ════════════════════════════════════════════════════════════
 
     public Flowable<String> getFavoritesSortType() {
         return dataStore.data().map(prefs ->
@@ -367,14 +420,17 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Last Opened System Font
+    // ════════════════════════════════════════════════════════════
+    
     public Flowable<String> getLastOpenedSystemFontPath() {
-        return dataStore.data().map(prefs ->
+        return dataStore.data().map(prefs -> 
             prefs.get(KEY_LAST_OPENED_SYSTEM_FONT_PATH)
         );
     }
-
+    
     public Single<Preferences> setLastOpenedSystemFontPath(String path) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -386,8 +442,11 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Last Viewed Font
+    // ════════════════════════════════════════════════════════════
+    
     public Single<Preferences> setLastViewedFont(String path, String fileName, String realName) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -401,7 +460,7 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
+    
     public Single<Preferences> clearLastViewedFont() {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -411,21 +470,24 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
+    
     public Flowable<String> getViewerFontPath() {
         return dataStore.data().map(prefs -> prefs.get(KEY_VIEWER_FONT_PATH));
     }
-
+    
     public Flowable<String> getViewerFileName() {
         return dataStore.data().map(prefs -> prefs.get(KEY_VIEWER_FILE_NAME));
     }
-
+    
     public Flowable<String> getViewerRealName() {
         return dataStore.data().map(prefs -> prefs.get(KEY_VIEWER_REAL_NAME));
     }
-
-
-
+    
+    
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Font Weight
+    // ════════════════════════════════════════════════════════════
+    
     public Single<Preferences> setViewerFontWeight(float weight) {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -433,15 +495,18 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-
+    
     public Flowable<Float> getViewerFontWeight() {
-        return dataStore.data().map(prefs ->
-            prefs.get(KEY_VIEWER_FONT_WEIGHT) != null ?
+        return dataStore.data().map(prefs -> 
+            prefs.get(KEY_VIEWER_FONT_WEIGHT) != null ? 
             prefs.get(KEY_VIEWER_FONT_WEIGHT) : DEFAULT_VIEWER_FONT_WEIGHT
         );
     }
-
-
+    
+    // ════════════════════════════════════════════════════════════
+    // Clear All
+    // ════════════════════════════════════════════════════════════
+    
     public Single<Preferences> clearAll() {
         return dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();

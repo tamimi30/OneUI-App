@@ -142,6 +142,7 @@ public class SelectableAnimatedDrawable extends AnimatedStateListDrawableCompat 
 
             int type;
             while ((type = parser.next()) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
+                // Empty loop
             }
 
             if (type != XmlPullParser.START_TAG) throw new XmlPullParserException("No start tag found");

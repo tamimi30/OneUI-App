@@ -13,9 +13,10 @@ import androidx.lifecycle.LiveData;
 import com.oneui.fontviewer.data.dao.FontDao;
 import com.oneui.fontviewer.data.database.AppDatabase;
 import com.oneui.fontviewer.data.entity.FontEntity;
+import com.oneui.fontviewer.fragment.systemfont.data.SystemFontInfo;
 import com.oneui.fontviewer.fragment.systemfont.manager.SystemFontManager;
 import com.oneui.fontviewer.metadata.FontMetadataExtractor;
-import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
+import com.oneui.fontviewer.metadata.FontWeightWidthExtractor; 
 
 public class SystemFontRepository {
 

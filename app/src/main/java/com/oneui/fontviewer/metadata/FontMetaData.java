@@ -13,12 +13,12 @@ import java.util.Map;
 import java.util.Set;
 
 public class FontMetaData {
-
+    
     private static final String TAG = "FontMetaData";
-
+    
     public static Map<String, String> extractMetaDataWithTtcIndex(File fontFile, int ttcIndex) {
         Map<String, String> out = new HashMap<>();
-
+        
         try {
             String copyright = getFontNameDirectWithTtc(fontFile, 0, ttcIndex);
             String fullName = getFontNameDirectWithTtc(fontFile, 4, ttcIndex);
@@ -34,7 +34,7 @@ public class FontMetaData {
             String vendorURL = getFontNameDirectWithTtc(fontFile, 11, ttcIndex);
             String licenseDescription = getFontNameDirectWithTtc(fontFile, 13, ttcIndex);
             String licenseURL = getFontNameDirectWithTtc(fontFile, 14, ttcIndex);
-
+            
             if (copyright != null && !copyright.isEmpty()) out.put("Copyright", copyright);
             if (fullName != null && !fullName.isEmpty()) out.put("FullName", fullName);
             if (family != null && !family.isEmpty()) out.put("Family", family);
@@ -49,115 +49,116 @@ public class FontMetaData {
             if (vendorURL != null && !vendorURL.isEmpty()) out.put("VendorURL", vendorURL);
             if (licenseDescription != null && !licenseDescription.isEmpty()) out.put("LicenseDescription", licenseDescription);
             if (licenseURL != null && !licenseURL.isEmpty()) out.put("LicenseURL", licenseURL);
-
+            
             Map<String, String> technicalData = extractTechnicalDataDirectWithTtc(fontFile, ttcIndex);
             if (technicalData != null) {
                 out.putAll(technicalData);
             }
-
+            
         } catch (Exception e) {
             Log.w(TAG, "Fallback extraction failed: " + e.getMessage());
         }
-
+        
         return out.isEmpty() ? null : out;
     }
-
+    
     public static Map<String, String> extractMetaData(File fontFile) {
         return extractMetaDataWithTtcIndex(fontFile, 0);
     }
-
+    
     public static String extractFontName(File fontFile, int ttcIndex) {
         String directName = getFontNameDirectWithTtc(fontFile, 4, ttcIndex);
         if (directName != null && !directName.isEmpty() && isValidFontName(directName)) {
             Log.d(TAG, "Extracted from nameId 4 (Full Name): " + directName);
             return directName;
         }
-
+        
         directName = getFontNameDirectWithTtc(fontFile, 1, ttcIndex);
         if (directName != null && !directName.isEmpty() && isValidFontName(directName)) {
             Log.d(TAG, "Extracted from nameId 1 (Family): " + directName);
             return directName;
         }
-
+        
         directName = getFontNameDirectWithTtc(fontFile, 6, ttcIndex);
         if (directName != null && !directName.isEmpty() && isValidFontName(directName)) {
             Log.d(TAG, "Extracted from nameId 6 (PostScript): " + directName);
             return directName;
         }
-
+        
         directName = getFontNameDirectWithTtc(fontFile, 3, ttcIndex);
         if (directName != null && !directName.isEmpty() && isValidFontName(directName)) {
             Log.d(TAG, "Extracted from nameId 3 (Unique ID): " + directName);
             return directName;
         }
-
+        
         directName = getFontNameDirectWithTtc(fontFile, 2, ttcIndex);
         if (directName != null && !directName.isEmpty() && isValidFontName(directName)) {
             Log.d(TAG, "Extracted from nameId 2 (SubFamily): " + directName);
             return directName;
         }
-
+        
         Log.w(TAG, "Failed to extract font name from: " + fontFile.getName());
         return "Unknown Font";
     }
-
-
-
+    
+    
+    
     private static String getFontNameDirectWithTtc(File fontFile, int nameId, int ttcIndex) {
         RandomAccessFile raf = null;
         try {
             raf = new RandomAccessFile(fontFile, "r");
-
+            
             byte[] headerBytes = new byte[4];
             raf.read(headerBytes);
             String headerTag = new String(headerBytes, "US-ASCII");
-
+            
             long fontOffset = 0;
-
+            
             if ("ttcf".equals(headerTag)) {
                 raf.skipBytes(4);
                 long numFonts = readUInt32(raf);
-
+                
                 if (ttcIndex >= numFonts) {
                     Log.w(TAG, "TTC index " + ttcIndex + " exceeds number of fonts: " + numFonts);
                     return null;
                 }
-
+                
                 raf.seek(12 + (ttcIndex * 4));
                 fontOffset = readUInt32(raf);
             }
-
+            
             raf.seek(fontOffset + 4);
             int numTables = raf.readUnsignedShort();
             raf.skipBytes(6);
-
+            
             long nameTableOffset = -1;
             for (int i = 0; i < numTables; i++) {
                 byte[] tag = new byte[4];
                 raf.read(tag);
                 String tagStr = new String(tag, "ISO-8859-1");
-
+                
                 raf.skipBytes(4);
                 long offset = raf.readInt() & 0xFFFFFFFFL;
                 raf.skipBytes(4);
-
+                
                 if ("name".equals(tagStr)) {
                     nameTableOffset = offset;
                     break;
                 }
             }
-
+            
             if (nameTableOffset == -1) {
                 return null;
             }
-
+            
             raf.seek(nameTableOffset);
+            int format = raf.readUnsignedShort();
             int count = raf.readUnsignedShort();
             int stringOffset = raf.readUnsignedShort();
-
+            
             String bestName = null;
             int bestPriority = Integer.MAX_VALUE;
-
+            
             for (int i = 0; i < count; i++) {
                 int platformID = raf.readUnsignedShort();
                 int encodingID = raf.readUnsignedShort();
@@ -165,34 +166,34 @@ public class FontMetaData {
                 int nameID = raf.readUnsignedShort();
                 int length = raf.readUnsignedShort();
                 int offset = raf.readUnsignedShort();
-
+                
                 if (nameID == nameId && length > 0) {
                     int priority = getPlatformPriority(platformID, encodingID, languageID);
-
+                    
                     if (priority < bestPriority) {
                         long currentPos = raf.getFilePointer();
                         raf.seek(nameTableOffset + stringOffset + offset);
-
+                        
                         byte[] nameBytes = new byte[length];
                         raf.readFully(nameBytes);
-
+                        
                         String name = decodeNameBytes(nameBytes, platformID, encodingID);
                         if (name != null && !name.trim().isEmpty() && isValidFontName(name)) {
                             bestName = name.trim();
                             bestPriority = priority;
                         }
-
+                        
                         raf.seek(currentPos);
-
+                        
                         if (bestPriority == 0) {
                             break;
                         }
                     }
                 }
             }
-
+            
             return bestName;
-
+            
         } catch (Exception e) {
             Log.w(TAG, "getFontNameDirectWithTtc failed: " + e.getMessage());
             return null;
@@ -205,34 +206,34 @@ public class FontMetaData {
             }
         }
     }
-
-
-
+    
+    
+    
     private static Map<String, String> extractTechnicalDataDirectWithTtc(File fontFile, int ttcIndex) {
         Map<String, String> data = new HashMap<>();
         RandomAccessFile raf = null;
-
+        
         try {
             raf = new RandomAccessFile(fontFile, "r");
-
+            
             byte[] headerBytes = new byte[4];
             raf.read(headerBytes);
             String headerTag = new String(headerBytes, "US-ASCII");
-
+            
             long fontOffset = 0;
-
+            
             if ("ttcf".equals(headerTag)) {
                 raf.skipBytes(4);
                 long numFonts = readUInt32(raf);
-
+                
                 if (ttcIndex >= numFonts) {
                     return data;
                 }
-
+                
                 raf.seek(12 + (ttcIndex * 4));
                 fontOffset = readUInt32(raf);
             }
-
+            
             raf.seek(fontOffset + 4);
             int numTables = raf.readUnsignedShort();
             raf.skipBytes(6);
@@ -242,15 +243,16 @@ public class FontMetaData {
             long cmapTableOffset = -1;
             long fvarTableOffset = -1;
             boolean isHinted = false;
-
+            
             for (int i = 0; i < numTables; i++) {
                 byte[] tag = new byte[4];
                 raf.read(tag);
                 String tagStr = new String(tag, "ISO-8859-1");
-
+                
                 raf.skipBytes(4);
                 long offset = raf.readInt() & 0xFFFFFFFFL;
-
+                long length = raf.readInt() & 0xFFFFFFFFL;
+                
                 if ("OS/2".equals(tagStr)) {
                     os2TableOffset = offset;
                 } else if ("head".equals(tagStr)) {
@@ -265,32 +267,33 @@ public class FontMetaData {
                     isHinted = true;
                 }
             }
-
+            
             if (isHinted) {
                 data.put("Hinted", "Improved");
             } else {
                 data.put("Hinted", "Not improved");
             }
-
+            
             if (fvarTableOffset != -1) {
                 data.put("FontType", "Variable Font");
             } else {
                 data.put("FontType", "Static Font");
             }
-
+            
             if (os2TableOffset != -1) {
                 try {
                     raf.seek(os2TableOffset);
+                    int version = raf.readUnsignedShort();
                     raf.skipBytes(2);
                     int weightClass = raf.readUnsignedShort();
                     int widthClass = raf.readUnsignedShort();
-
+                    
                     String weight = getWeightClassName(weightClass);
                     String width = getWidthClassName(widthClass);
-
+                    
                     if (weight != null) data.put("Weight", weight);
                     if (width != null) data.put("Width", width);
-
+                    
                     raf.skipBytes(54);
                     byte[] vendorID = new byte[4];
                     raf.read(vendorID);
@@ -302,7 +305,7 @@ public class FontMetaData {
                     Log.w(TAG, "Failed to read OS/2 table: " + e.getMessage());
                 }
             }
-
+            
             if (headTableOffset != -1) {
                 try {
                     raf.seek(headTableOffset);
@@ -313,10 +316,10 @@ public class FontMetaData {
                     raf.skipBytes(2);
                     int unitsPerEm = raf.readUnsignedShort();
                     data.put("UnitsPerEm", String.valueOf(unitsPerEm));
-
+                    
                     long created = raf.readLong();
                     long modified = raf.readLong();
-
+                    
                     try {
                         long createdMs = (created - 2082844800L) * 1000L;
                         Date createdDate = new Date(createdMs);
@@ -325,7 +328,7 @@ public class FontMetaData {
                     } catch (Exception e) {
                         Log.w(TAG, "Failed to parse created date: " + e.getMessage());
                     }
-
+                    
                     try {
                         long modifiedMs = (modified - 2082844800L) * 1000L;
                         Date modifiedDate = new Date(modifiedMs);
@@ -338,7 +341,7 @@ public class FontMetaData {
                     Log.w(TAG, "Failed to read head table: " + e.getMessage());
                 }
             }
-
+            
             if (maxpTableOffset != -1) {
                 try {
                     raf.seek(maxpTableOffset);
@@ -349,7 +352,7 @@ public class FontMetaData {
                     Log.w(TAG, "Failed to read maxp table: " + e.getMessage());
                 }
             }
-
+            
             if (cmapTableOffset != -1) {
                 try {
                     Set<String> scripts = detectSupportedScriptsDirect(raf, cmapTableOffset);
@@ -365,7 +368,7 @@ public class FontMetaData {
                     Log.w(TAG, "Failed to detect scripts: " + e.getMessage());
                 }
             }
-
+            
         } catch (Exception e) {
             Log.w(TAG, "extractTechnicalDataDirectWithTtc failed: " + e.getMessage());
         } finally {
@@ -376,36 +379,37 @@ public class FontMetaData {
                 }
             }
         }
-
+        
         return data;
     }
-
-
-
+    
+    
+    
     private static long readUInt32(RandomAccessFile raf) throws Exception {
         byte[] bytes = new byte[4];
         raf.read(bytes);
-        return ((long)(bytes[0] & 0xFF) << 24) |
-               ((long)(bytes[1] & 0xFF) << 16) |
-               ((long)(bytes[2] & 0xFF) << 8) |
+        return ((long)(bytes[0] & 0xFF) << 24) | 
+               ((long)(bytes[1] & 0xFF) << 16) | 
+               ((long)(bytes[2] & 0xFF) << 8) | 
                (long)(bytes[3] & 0xFF);
     }
-
+    
     private static Set<String> detectSupportedScriptsDirect(RandomAccessFile raf, long cmapOffset) {
         Set<String> scripts = new HashSet<>();
-
+        
         try {
             raf.seek(cmapOffset);
+            int version = raf.readUnsignedShort();
             int numTables = raf.readUnsignedShort();
-
+            
             long bestSubtableOffset = -1;
             int bestPriority = Integer.MAX_VALUE;
-
+            
             for (int i = 0; i < numTables; i++) {
                 int platformID = raf.readUnsignedShort();
                 int encodingID = raf.readUnsignedShort();
                 long offset = raf.readInt() & 0xFFFFFFFFL;
-
+                
                 int priority = 10;
                 if (platformID == 3 && encodingID == 10) {
                     priority = 0;
@@ -414,58 +418,58 @@ public class FontMetaData {
                 } else if (platformID == 0 && encodingID == 3) {
                     priority = 2;
                 }
-
+                
                 if (priority < bestPriority) {
                     bestSubtableOffset = cmapOffset + offset;
                     bestPriority = priority;
                 }
             }
-
+            
             if (bestSubtableOffset != -1) {
                 raf.seek(bestSubtableOffset);
                 int format = raf.readUnsignedShort();
-
+                
                 if (format == 4) {
                     scripts = detectScriptsFormat4(raf);
                 } else if (format == 12) {
                     scripts = detectScriptsFormat12(raf);
                 }
             }
-
+            
         } catch (Exception e) {
             Log.w(TAG, "detectSupportedScriptsDirect failed: " + e.getMessage());
         }
-
+        
         return scripts;
     }
-
+    
     private static Set<String> detectScriptsFormat4(RandomAccessFile raf) {
         Set<String> scripts = new HashSet<>();
-
+        
         try {
             raf.skipBytes(2);
             raf.skipBytes(2);
             int segCountX2 = raf.readUnsignedShort();
             int segCount = segCountX2 / 2;
-
+            
             raf.skipBytes(6);
-
+            
             int[] endCodes = new int[segCount];
             for (int i = 0; i < segCount; i++) {
                 endCodes[i] = raf.readUnsignedShort();
             }
-
+            
             raf.skipBytes(2);
-
+            
             int[] startCodes = new int[segCount];
             for (int i = 0; i < segCount; i++) {
                 startCodes[i] = raf.readUnsignedShort();
             }
-
+            
             for (int i = 0; i < segCount; i++) {
                 int start = startCodes[i];
                 int end = endCodes[i];
-
+                
                 if (start <= 0x007A && end >= 0x0041) scripts.add("Latin");
                 if (start <= 0x06FF && end >= 0x0600) scripts.add("Arabic");
                 if (start <= 0x04FF && end >= 0x0400) scripts.add("Cyrillic");
@@ -478,28 +482,28 @@ public class FontMetaData {
                 if (start <= 0x309F && end >= 0x3040) scripts.add("Hiragana");
                 if (start <= 0x30FF && end >= 0x30A0) scripts.add("Katakana");
             }
-
+            
         } catch (Exception e) {
             Log.w(TAG, "detectScriptsFormat4 failed: " + e.getMessage());
         }
-
+        
         return scripts;
     }
-
+    
     private static Set<String> detectScriptsFormat12(RandomAccessFile raf) {
         Set<String> scripts = new HashSet<>();
-
+        
         try {
             raf.skipBytes(2);
             raf.skipBytes(4);
             raf.skipBytes(4);
             long numGroups = raf.readInt() & 0xFFFFFFFFL;
-
+            
             for (long i = 0; i < numGroups && i < 1000; i++) {
                 long startCode = raf.readInt() & 0xFFFFFFFFL;
                 long endCode = raf.readInt() & 0xFFFFFFFFL;
                 raf.skipBytes(4);
-
+                
                 if (startCode <= 0x007A && endCode >= 0x0041) scripts.add("Latin");
                 if (startCode <= 0x06FF && endCode >= 0x0600) scripts.add("Arabic");
                 if (startCode <= 0x04FF && endCode >= 0x0400) scripts.add("Cyrillic");
@@ -512,14 +516,14 @@ public class FontMetaData {
                 if (startCode <= 0x309F && endCode >= 0x3040) scripts.add("Hiragana");
                 if (startCode <= 0x30FF && endCode >= 0x30A0) scripts.add("Katakana");
             }
-
+            
         } catch (Exception e) {
             Log.w(TAG, "detectScriptsFormat12 failed: " + e.getMessage());
         }
-
+        
         return scripts;
     }
-
+    
     private static String decodeNameBytes(byte[] bytes, int platformID, int encodingID) {
         try {
             String charset;
@@ -536,7 +540,7 @@ public class FontMetaData {
             } else {
                 charset = "UTF-8";
             }
-
+            
             return new String(bytes, charset);
         } catch (Exception e) {
             try {
@@ -546,7 +550,7 @@ public class FontMetaData {
             }
         }
     }
-
+    
     private static int getPlatformPriority(int platformId, int encodingId, int languageId) {
         if (platformId == 3 && encodingId == 1 && languageId == 0x0409) {
             return 0;
@@ -571,44 +575,44 @@ public class FontMetaData {
         }
         return 10;
     }
-
+    
     private static boolean isValidFontName(String name) {
         if (name == null || name.trim().isEmpty()) {
             return false;
         }
-
+        
         name = name.trim();
-
+        
         if (name.length() < 2) {
             return false;
         }
-
+        
         int controlChars = 0;
         int validChars = 0;
         int totalChars = name.length();
-
+        
         for (int i = 0; i < totalChars; i++) {
             char c = name.charAt(i);
-
+            
             if (c < 32 || (c >= 127 && c < 160)) {
                 controlChars++;
                 continue;
             }
-
-            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
-                (c >= '0' && c <= '9') || c == ' ' || c == '-' || c == '_' ||
+            
+            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || 
+                (c >= '0' && c <= '9') || c == ' ' || c == '-' || c == '_' || 
                 c == '.' || c == '\'' || c == ',' || c >= 128) {
                 validChars++;
             }
         }
-
+        
         if (controlChars == totalChars) {
             return false;
         }
-
+        
         return validChars > 0 && (validChars * 100 / totalChars) >= 30;
     }
-
+    
     private static String getWeightClassName(int weightClass) {
         switch (weightClass) {
             case 100: return "Thin";

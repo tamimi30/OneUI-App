@@ -42,7 +42,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private DropDownPreference languagePreference;
     private HorizontalRadioPreference themePreference;
     private SwitchPreferenceCompat themeAutoPreference;
-
+    
     private SwitchPreferenceCompat fontPreviewPreference;
     private SwitchPreferenceCompat translationPreference;
     private EditTextPreference previewTextPreference;
@@ -112,7 +112,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         themeAutoPreference = findPreference("theme_auto");
 
-
+        
 
         fontPreviewPreference = findPreference("font_preview_enabled");
         if (fontPreviewPreference != null) {
@@ -238,7 +238,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         });
 
-
+        
 
         viewModel.getFontPreviewEnabled().observe(this, enabled -> {
             if (fontPreviewPreference != null && enabled != null) {

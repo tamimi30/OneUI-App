@@ -19,27 +19,27 @@ import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 public class SettingsViewModel extends AndroidViewModel {
 
     private static final String TAG = "SettingsViewModel";
-
+    
     private final SettingsDataStore dataStore;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     private final MutableLiveData<Integer> languageMode = new MutableLiveData<>();
     private final MutableLiveData<Integer> themeMode = new MutableLiveData<>();
     private final MutableLiveData<Boolean> themeAuto = new MutableLiveData<>();
-
+    
     private final MutableLiveData<Boolean> fontPreviewEnabled = new MutableLiveData<>();
     private final MutableLiveData<Boolean> translationEnabled = new MutableLiveData<>();
     private final MutableLiveData<Boolean> notificationsEnabled = new MutableLiveData<>();
 
     private final MutableLiveData<String> previewText = new MutableLiveData<>();
-
+    
     private final MutableLiveData<SettingsEvent> settingsEvent = new MutableLiveData<>();
 
     public SettingsViewModel(@NonNull Application application) {
         super(application);
-
+        
         dataStore = SettingsDataStore.getInstance(application);
-
+        
         observeDataStore();
     }
 
@@ -74,7 +74,7 @@ public class SettingsViewModel extends AndroidViewModel {
                 )
         );
 
-
+        
 
         disposables.add(
             dataStore.getFontPreviewEnabled()
@@ -142,7 +142,7 @@ public class SettingsViewModel extends AndroidViewModel {
         return notificationsEnabled;
     }
 
-
+    
 
     public LiveData<String> getPreviewText() {
         return previewText;
@@ -208,15 +208,15 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-
+    
 
     public void setThemeMode(int mode) {
         if (themeMode.getValue() != null && themeMode.getValue() == mode) {
             return;
         }
-
+        
         Log.d(TAG, "Setting theme mode to: " + mode);
-
+        
         disposables.add(
             dataStore.setThemeAuto(false)
                 .flatMap(prefs -> dataStore.setThemeMode(mode))
@@ -236,9 +236,9 @@ public class SettingsViewModel extends AndroidViewModel {
         if (themeAuto.getValue() != null && themeAuto.getValue() == enabled) {
             return;
         }
-
+        
         Log.d(TAG, "Setting theme auto to: " + enabled);
-
+        
         disposables.add(
             dataStore.setThemeAuto(enabled)
                 .subscribeOn(Schedulers.io())
@@ -253,13 +253,13 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-
+    
 
     public void setFontPreviewEnabled(boolean enabled) {
         if (fontPreviewEnabled.getValue() != null && fontPreviewEnabled.getValue() == enabled) {
             return;
         }
-
+        
         disposables.add(
             dataStore.setFontPreviewEnabled(enabled)
                 .subscribeOn(Schedulers.io())
@@ -274,7 +274,7 @@ public class SettingsViewModel extends AndroidViewModel {
         if (translationEnabled.getValue() != null && translationEnabled.getValue() == enabled) {
             return;
         }
-
+        
         disposables.add(
             dataStore.setTranslationEnabled(enabled)
                 .subscribeOn(Schedulers.io())
@@ -289,7 +289,7 @@ public class SettingsViewModel extends AndroidViewModel {
         if (notificationsEnabled.getValue() != null && notificationsEnabled.getValue() == enabled) {
             return;
         }
-
+        
         disposables.add(
             dataStore.setNotificationsEnabled(enabled)
                 .subscribeOn(Schedulers.io())
@@ -304,7 +304,7 @@ public class SettingsViewModel extends AndroidViewModel {
         if (previewText.getValue() != null && previewText.getValue().equals(text)) {
             return;
         }
-
+        
         disposables.add(
             dataStore.setPreviewText(text)
                 .subscribeOn(Schedulers.io())
@@ -322,7 +322,7 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-
+    
 
     @Override
     protected void onCleared() {

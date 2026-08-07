@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -46,7 +47,7 @@ public final class TrashActionDialogs {
         void onHide();
     }
 
-
+    
 
     public static void showDeletePermanentlyDialog(
             @NonNull Context context,
@@ -70,7 +71,7 @@ public final class TrashActionDialogs {
                         R.color.oui_functional_red_color));
     }
 
-
+    
 
     @NonNull
     public static ProgressDialog createDeleteProgressDialog(

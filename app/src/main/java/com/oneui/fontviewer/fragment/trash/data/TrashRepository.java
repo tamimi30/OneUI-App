@@ -25,7 +25,7 @@ public class TrashRepository {
 
     private final FontDao         fontDao;
     private final ExecutorService executorService;
-
+    
     private TrashRepository(Context context) {
         AppDatabase database = AppDatabase.getInstance(context);
         fontDao         = database.fontDao();
@@ -77,8 +77,8 @@ public class TrashRepository {
                     File sourceFile = new File(font.getPath());
                     if (!sourceFile.exists()) {
                         Log.w(TAG, "Ghost file detected. Removing from DB: " + font.getPath());
-                        fontDao.deleteByPath(font.getPath());
-                        succeeded++;
+                        fontDao.deleteByPath(font.getPath()); 
+                        succeeded++; 
                         if (progressListener != null) progressListener.onProgress(i + 1, total);
                         continue;
                     }
@@ -89,17 +89,17 @@ public class TrashRepository {
                     if (newTrashedPath != null) {
                         try {
                             fontDao.moveToTrash(
-                                    font.getPath(),
-                                    newTrashedPath,
-                                    now,
-                                    now
+                                    font.getPath(),   
+                                    newTrashedPath,   
+                                    now,              
+                                    now               
                             );
                             succeeded++;
                             Log.d(TAG, "Moved to trash [" + (i + 1) + "/" + total + "]: "
                                     + font.getFileName());
                         } catch (Exception e) {
                             Log.e(TAG, "DB update failed after moving: " + font.getPath(), e);
-                            fontDao.deleteByPath(font.getPath());
+                            fontDao.deleteByPath(font.getPath()); 
                             succeeded++;
                         }
                     } else {
@@ -151,7 +151,7 @@ public class TrashRepository {
                     File trashedFile = new File(font.getPath());
                     if (!trashedFile.exists()) {
                         Log.w(TAG, "Ghost file detected in trash. Cleaning DB: " + font.getPath());
-                        fontDao.deleteFromTrash(font.getPath());
+                        fontDao.deleteFromTrash(font.getPath()); 
                         succeeded++;
                         if (progressListener != null) progressListener.onProgress(i + 1, total);
                         continue;
@@ -159,29 +159,29 @@ public class TrashRepository {
 
                     String originalPath = font.getOriginalPath() != null
                             ? font.getOriginalPath()
-                            : font.getPath();
+                            : font.getPath(); 
 
                     String restoredPath = TrashFileManager.restoreFromTrash(
                             context,
-                            font.getPath(),
-                            originalPath
+                            font.getPath(),    
+                            originalPath       
                     );
 
                     if (restoredPath != null) {
                         String newFileName = new java.io.File(restoredPath).getName();
                         try {
                             fontDao.restoreFromTrash(
-                                    font.getPath(),
-                                    restoredPath,
-                                    newFileName,
-                                    now
+                                    font.getPath(),  
+                                    restoredPath,    
+                                    newFileName,     
+                                    now              
                             );
                             succeeded++;
                             Log.d(TAG, "Restored [" + (i + 1) + "/" + total + "]: "
                                     + font.getFileName() + " → " + restoredPath);
                         } catch (Exception e) {
                             Log.e(TAG, "DB update failed after restoring: " + font.getPath(), e);
-                            fontDao.deleteFromTrash(font.getPath());
+                            fontDao.deleteFromTrash(font.getPath()); 
                             succeeded++;
                         }
                     } else {
