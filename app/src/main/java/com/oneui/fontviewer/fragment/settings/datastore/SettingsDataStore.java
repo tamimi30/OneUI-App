@@ -55,7 +55,6 @@ public class SettingsDataStore {
     private final Preferences.Key<String> KEY_VIEWER_FONT_PATH;
     private final Preferences.Key<String> KEY_VIEWER_FILE_NAME;
     private final Preferences.Key<String> KEY_VIEWER_REAL_NAME;
-    private final Preferences.Key<Float> KEY_VIEWER_FONT_SIZE;
     private final Preferences.Key<Float> KEY_VIEWER_FONT_WEIGHT;
     
     // Default values
@@ -68,7 +67,6 @@ public class SettingsDataStore {
     public static final String DEFAULT_PREVIEW_TEXT = 
             "The quick brown fox jumps over the lazy dog.\n\n" +
             "0123456789";
-    public static final float DEFAULT_VIEWER_FONT_SIZE = 34f;
     public static final float DEFAULT_VIEWER_FONT_WEIGHT = 400f;
     
     
@@ -111,7 +109,6 @@ public class SettingsDataStore {
         KEY_VIEWER_FONT_PATH = PreferencesKeys.stringKey("viewer_font_path");
         KEY_VIEWER_FILE_NAME = PreferencesKeys.stringKey("viewer_file_name");
         KEY_VIEWER_REAL_NAME = PreferencesKeys.stringKey("viewer_real_name");
-        KEY_VIEWER_FONT_SIZE = PreferencesKeys.floatKey("viewer_font_size");
         KEY_VIEWER_FONT_WEIGHT = PreferencesKeys.floatKey("viewer_font_weight");
     }
     
