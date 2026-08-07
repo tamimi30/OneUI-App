@@ -13,7 +13,6 @@ public class LocalFontDirectoryPicker {
     private static final String TAG = "LocalFontDirectoryPicker";
     public static final int FOLDER_PICKER_REQUEST_CODE = 200;
     
-    private final Context context;
     private final Fragment fragment;
     private DirectorySelectionListener listener;
     
@@ -25,7 +24,7 @@ public class LocalFontDirectoryPicker {
     
     public LocalFontDirectoryPicker(Fragment fragment) {
         this.fragment = fragment;
-        this.context = fragment.requireContext();
+        
     }
     
     public void setDirectorySelectionListener(DirectorySelectionListener listener) {
