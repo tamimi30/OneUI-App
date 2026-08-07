@@ -193,7 +193,7 @@ public class FontViewerFragment extends Fragment {
 
             if (currentFontPath != null && !currentFontPath.isEmpty()) {
                 notifyFontChangedImmediate();
-                loadFontFromPathWithWeight(currentFontPath, currentFontFileName, currentFontRealName, currentFontWeight);
+                loadFontFromPathWithWeight(currentFontPath, currentFontWeight);
             }
         } else {
             Intent hostIntent = requireActivity().getIntent();
@@ -263,7 +263,7 @@ public class FontViewerFragment extends Fragment {
             return;
         }
 
-        Typeface newTypeface = null;
+        Typeface newTypeface;
 
         if (isSystemFont) {
             SystemFontCache cache = SystemFontCache.getInstance();
@@ -332,7 +332,7 @@ public class FontViewerFragment extends Fragment {
             formattingHelper.reset();
         }
 
-        loadFontFromPathWithWeight(path, fileName, realName, DEFAULT_FONT_WEIGHT);
+        loadFontFromPathWithWeight(path, DEFAULT_FONT_WEIGHT);
     }
 
     public void loadFontFromPath(String path, String fileName, String realName,
@@ -370,7 +370,7 @@ public class FontViewerFragment extends Fragment {
         }
     }
 
-    private void loadFontFromPathWithWeight(String path, String fileName, String realName, float weight) {
+    private void loadFontFromPathWithWeight(String path, float weight) {
         bgExecutor.execute(() -> {
             try {
                 File fontFile = new File(path);
@@ -396,7 +396,7 @@ public class FontViewerFragment extends Fragment {
                     variableInstances = VariableFontHelper.extractVariableInstances(fontFile, currentTtcIndex);
                 }
 
-                Typeface typeface = null;
+                Typeface typeface;
 
                 try {
                     if (isSystemFont) {
@@ -701,7 +701,7 @@ public class FontViewerFragment extends Fragment {
         }
 
                 notifyFontChangedImmediate();
-                loadFontFromPathWithWeight(lastPath, lastFileName, lastRealName, lastWeight);
+                loadFontFromPathWithWeight(lastPath, lastWeight);
             } else {
                 preferenceManager.clearLastViewedFont();
             }
