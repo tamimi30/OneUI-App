@@ -245,12 +245,6 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    
 
     public void setLocalFolderSelected(boolean selected) {
     }
