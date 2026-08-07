@@ -35,10 +35,7 @@ public class App extends Application {
     private static App sInstance;
     private static final List<WeakReference<Activity>> activities = new ArrayList<>();
     
-    private AppDatabase database;
     private SettingsDataStore settingsDataStore;
-    private LocalFontRepository localFontRepository;
-    private SystemFontRepository systemFontRepository;
 
     @Override
     public void onCreate() {
@@ -97,7 +94,7 @@ public class App extends Application {
     }
     
     private void initializeDatabase() {
-        database = AppDatabase.getInstance(this);
+        AppDatabase.getInstance(this);
         Log.d(TAG, "AppDatabase initialized");
     }
     
@@ -114,10 +111,10 @@ public class App extends Application {
      * قبل أن يحتاجه أي ViewModel، مما يُقلل العبء عند فتح الشاشات
      */
     private void initializeRepositories() {
-        localFontRepository = LocalFontRepository.getInstance(this);
+        LocalFontRepository.getInstance(this);
         Log.d(TAG, "LocalFontRepository initialized");
         
-        systemFontRepository = SystemFontRepository.getInstance(this);
+        SystemFontRepository.getInstance(this);
         Log.d(TAG, "SystemFontRepository initialized");
     }
     
@@ -210,8 +207,6 @@ public class App extends Application {
             }
         }
     }
-
-    
 
     @Override
     public void onLowMemory() {
