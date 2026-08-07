@@ -49,9 +49,9 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private RecyclerView recyclerView;
 
-    private boolean mIsFontPreviewEnabled = true;
+    private boolean mIsFontPreviewEnabled;
 
-    private String mCurrentLastOpenedPath = null;
+    private String mCurrentLastOpenedPath;
 
     private final SortedList<FontFileInfo> mSortedList;
 
