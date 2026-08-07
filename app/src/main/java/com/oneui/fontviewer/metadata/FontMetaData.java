@@ -427,7 +427,7 @@ public class FontMetaData {
             
             if (bestSubtableOffset != -1) {
                 raf.seek(bestSubtableOffset);
-                raf.readUnsignedShort();
+                int format = raf.readUnsignedShort();
                 
                 if (format == 4) {
                     scripts = detectScriptsFormat4(raf);
