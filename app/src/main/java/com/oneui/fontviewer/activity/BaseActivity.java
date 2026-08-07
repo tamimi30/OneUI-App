@@ -1,9 +1,7 @@
 package com.oneui.fontviewer.activity;
 
 import android.content.Context;
-import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;

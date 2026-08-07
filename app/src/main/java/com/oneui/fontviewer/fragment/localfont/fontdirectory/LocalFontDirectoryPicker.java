@@ -1,7 +1,6 @@
 package com.oneui.fontviewer.fragment.localfont.fontdirectory;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 import android.util.Log;
