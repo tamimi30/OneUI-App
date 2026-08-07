@@ -10,11 +10,9 @@ import java.util.Locale;
 
 public class FontTextHighlighter {
     
-    private final Context context;
     private final int highlightColor;
     
     public FontTextHighlighter(Context context) {
-        this.context = context;
         this.highlightColor = MaterialColors.getColor(
             context,
             androidx.appcompat.R.attr.colorPrimary,
