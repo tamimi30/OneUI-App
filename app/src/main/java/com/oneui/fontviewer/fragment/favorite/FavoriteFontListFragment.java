@@ -33,13 +33,12 @@ import dev.oneuiproject.oneui.dialog.ProgressDialog;
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.activity.AppScreen;           
+import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
 import com.oneui.fontviewer.dialog.FontActionDialogs;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
-import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.fragment.localfont.adapter.LocalFontListAdapter;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
@@ -138,7 +137,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear(); 
+        menu.clear();
         inflater.inflate(R.menu.menu_font_list_search, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search_fonts);
@@ -253,7 +252,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         mRecyclerView = view.findViewById(R.id.font_recycler_view);
 
         mUIManager.setViews(
-            null,                                        
+            null,
             view.findViewById(R.id.main_content_layout),
             view.findViewById(R.id.empty_view),
             view.findViewById(R.id.empty_text),
@@ -340,7 +339,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
             mDrawerLayout,
             mAdapter,
             mRecyclerView,
-            null 
+            null
         );
 
         mSelectionManager.setFavoriteStatusChecker(position -> true);
@@ -425,7 +424,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         AlertDialog confirmDialog = new AlertDialog.Builder(mContext)
                 .setMessage(message)
-                .setPositiveButton(R.string.action_move_to_trash, null) 
+                .setPositiveButton(R.string.action_move_to_trash, null)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
 
@@ -547,7 +546,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         mViewModel.toggleFavoritesBatch(paths, addToFavorites, () -> {
             String message = addToFavorites
-                ? getString(R.string.action_favorite)    
+                ? getString(R.string.action_favorite)
                 : getString(R.string.action_unfavorite);
             Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
         });
@@ -643,7 +642,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         setMenuVisibility(!hidden);
         if (!hidden && getActivity() != null) {
-            getActivity().invalidateOptionsMenu(); 
+            getActivity().invalidateOptionsMenu();
         }
 
         if (hidden) {

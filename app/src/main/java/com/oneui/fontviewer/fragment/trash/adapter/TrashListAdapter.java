@@ -5,7 +5,6 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -121,9 +120,9 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public long getItemId(int position) {
-        if (position == 0) return Long.MIN_VALUE;              
-        if (position == getItemCount() - 1) return Long.MAX_VALUE; 
-        return mItems.get(position - 1).getId();                
+        if (position == 0) return Long.MIN_VALUE;
+        if (position == getItemCount() - 1) return Long.MAX_VALUE;
+        return mItems.get(position - 1).getId();
     }
 
 
@@ -173,7 +172,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (holder instanceof TrashItemViewHolder) {
             TrashItemViewHolder th = (TrashItemViewHolder) holder;
             RoundLinearLayout root = (RoundLinearLayout) th.itemView;
-            
+
             int totalFonts = mItems.size();
             boolean isFirst = (position == 1);
             boolean isLast  = (position == getItemCount() - 2);
@@ -282,7 +281,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyItemChanged(adapterPosition, PAYLOAD_UPDATE_SELECTION);
     }
 
-    
+
 
     public void clearSelection() {
         selectedItems.clear();
@@ -319,7 +318,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         for (int i = 0; i < selectedItems.size(); i++) {
             if (!selectedItems.valueAt(i)) continue;
             int adapterPos = selectedItems.keyAt(i);
-            int itemIndex  = adapterPos - 1; 
+            int itemIndex  = adapterPos - 1;
             if (itemIndex >= 0 && itemIndex < mItems.size()) {
                 selected.add(mItems.get(itemIndex));
             }

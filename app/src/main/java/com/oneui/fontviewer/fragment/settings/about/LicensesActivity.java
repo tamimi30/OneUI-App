@@ -41,7 +41,6 @@ public class LicensesActivity extends BaseActivity {
             mToolbarLayout.setNavigationButtonOnClickListener(v -> onBackPressed());
         }
 
-        // تفعيل استجابة الروابط عند الضغط عليها
         if (mLicenseTextView != null) {
             mLicenseTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
@@ -52,7 +51,6 @@ public class LicensesActivity extends BaseActivity {
 
         StringBuilder text = new StringBuilder();
         try {
-            // قراءة الملف من مجلد raw
             InputStream is = getResources().openRawResource(R.raw.license);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             String line;
@@ -61,7 +59,7 @@ public class LicensesActivity extends BaseActivity {
             }
             br.close();
             is.close();
-            
+
             mLicenseTextView.setText(text.toString());
         } catch (Exception e) {
             Log.e(TAG, "Error reading license file", e);

@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.SortedList;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.widget.search.FontTextHighlighter;
-import com.oneui.fontviewer.fragment.systemfont.adapter.SystemFontViewHolder;
 import com.oneui.fontviewer.widget.sort.SortHeaderViewHolder;
 import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
@@ -142,7 +141,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.currentSortType      = SortByItemLayout.SortType.NAME;
         this.currentSortAscending = true;
 
-        
+
 
         this.mIsFontPreviewEnabled = SettingsHelper.isFontPreviewEnabled(context);
 
@@ -187,7 +186,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void setFontClickListener(OnFontClickListener l)                    { this.fontClickListener = l; }
     public void setSortChangeListener(SortByItemLayout.OnSortChangeListener l) { this.sortChangeListener = l; }
 
-    
+
 
     public void setFontPreviewEnabled(boolean enabled) {
         if (this.mIsFontPreviewEnabled != enabled) {
@@ -370,9 +369,9 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 FontFileInfo fontInfo      = mSortedList.get(position - 1);
                 String displayName         = FileUtils.removeExtension(fontInfo.getName());
                 boolean isLastOpened       = preferenceManager.isLastOpenedFont(fontInfo.getPath());
-                
+
                 if (isSearchActive) isLastOpened = false;
-                
+
                 SystemFontInfo sfi         = getFontInfoForPath(fontInfo.getPath());
                 String weightWidthLabel    = (sfi != null) ? sfi.getWeightWidthLabel() : null;
                 ((SystemFontViewHolder) holder).bind(
@@ -384,9 +383,9 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if (payloads.contains(PAYLOAD_UPDATE_LAST_OPENED) && holder instanceof SystemFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 boolean isLastOpened  = preferenceManager.isLastOpenedFont(fontInfo.getPath());
-                
+
                 if (isSearchActive) isLastOpened = false;
-                
+
                 ((SystemFontViewHolder) holder).bindLastOpened(isLastOpened);
             }
         } else {
@@ -431,7 +430,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         String realName    = (sfi != null) ? sfi.getRealName() : null;
         int ttcIndex       = (sfi != null) ? sfi.getTtcIndex() : 0;
 
-       
+
 
         String weightWidthLabel = (sfi != null) ? sfi.getWeightWidthLabel() : null;
 

@@ -1,6 +1,5 @@
 package com.oneui.fontviewer.fragment.fontviewer;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -133,7 +132,7 @@ public class FontViewerFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear(); 
+        menu.clear();
         inflater.inflate(R.menu.menu_main_font_meta, menu);
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -156,7 +155,7 @@ public class FontViewerFragment extends Fragment {
 
         setMenuVisibility(!hidden);
         if (!hidden && getActivity() != null) {
-            getActivity().invalidateOptionsMenu(); 
+            getActivity().invalidateOptionsMenu();
         }
     }
 
@@ -209,18 +208,18 @@ public class FontViewerFragment extends Fragment {
 
 
         updatePreviewTexts();
-        
+
         if (getActivity() instanceof FontViewerActivity) {
             ((FontViewerActivity) getActivity()).updateFabFontSizeText(currentFontSize);
         }
-        
+
         if (getActivity() instanceof FontViewerActivity) {
             FontViewerActivity main = (FontViewerActivity) getActivity();
             formattingHelper.setup(main.getBtnBold(), main.getBtnItalic(), (isFakeBold, isFakeItalic) -> {
         if (previewSentence != null) {
             previewSentence.getPaint().setFakeBoldText(isFakeBold);
             previewSentence.getPaint().setTextSkewX(isFakeItalic ? -0.25f : 0f);
-            previewSentence.invalidate(); 
+            previewSentence.invalidate();
         }
     });
     formattingHelper.restoreState(savedInstanceState);
@@ -243,14 +242,6 @@ public class FontViewerFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         bgExecutor.shutdownNow();
-    }
-    private void onFontSizeChanged(float newSize) {
-        currentFontSize = newSize;
-        applyFontSize();
-        sSessionFontSize = newSize;
-        if (getActivity() instanceof FontViewerActivity) {
-            ((FontViewerActivity) getActivity()).updateFabFontSizeText(newSize);
-        }
     }
 
     private void onFontWeightChanged(VariableFontHelper.VariableInstance instance) {
@@ -307,7 +298,7 @@ public class FontViewerFragment extends Fragment {
     }
 
 
-    
+
 
     public void loadFontFromPath(String path, String fileName, String realName, int ttcIndex, boolean isSystemFont) {
         Log.d(TAG, "loadFontFromPath - Received data:");
@@ -460,7 +451,7 @@ public class FontViewerFragment extends Fragment {
 
             } catch (Exception e) {
                 mainHandler.post(() -> {
-                   
+
                     currentFontRealName = null;
 
 
@@ -639,7 +630,7 @@ public class FontViewerFragment extends Fragment {
             currentTypeface   = originalTypeface;
             applyFontToPreviewTexts();
             applyFontSize();
-            
+
             if (getActivity() instanceof FontViewerActivity) {
                 ((FontViewerActivity) getActivity()).updateFabFontSizeText(originalSize);
             }
@@ -648,33 +639,6 @@ public class FontViewerFragment extends Fragment {
         fontSizeDialog.show();
     }
 
-    private void resetFontDisplay() {
-        currentTypeface         = null;
-        currentFontPath         = null;
-        currentFontFileName     = null;
-        currentFontRealName     = null;
-        originalFontPath        = null;
-        isVariableFont          = false;
-        currentFontWeight       = DEFAULT_FONT_WEIGHT;
-        currentTtcIndex         = 0;
-        isSystemFont            = false;
-        currentWeightWidthLabel  = null;
-        currentVariableInstances = null;
-
-        Typeface defaultTypeface = Typeface.DEFAULT;
-        if (previewSentence != null) previewSentence.setTypeface(defaultTypeface);
-
-        hideWeightUI();
-
-        if (fontChangedListener != null) {
-            fontChangedListener.onFontCleared();
-        }
-        
-        if (formattingHelper != null) {
-            formattingHelper.reset();
-        }
-
-    }
 
     private void loadLastUsedFont() {
         String lastPath     = preferenceManager.getLastViewedFontPath();
@@ -775,7 +739,7 @@ public class FontViewerFragment extends Fragment {
         outState.putBoolean(KEY_IS_SYSTEM_FONT, isSystemFont);
     }
 
-    
+
 
     public String getCurrentFontFileName() {
         return currentFontFileName;

@@ -12,175 +12,175 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SystemFontCache {
-    
+
     private static final String TAG = "SystemFontCache";
     private static SystemFontCache instance;
-    
+
     private final ConcurrentHashMap<String, Typeface> memoryCache;
     private final ConcurrentHashMap<String, Typeface> weightedCache;
     private Context context;
     private AppDatabase database;
     private volatile boolean isInitialized = false;
-    
+
     private SystemFontCache() {
         memoryCache = new ConcurrentHashMap<>(150);
         weightedCache = new ConcurrentHashMap<>(300);
     }
-    
+
     public static synchronized SystemFontCache getInstance() {
         if (instance == null) {
             instance = new SystemFontCache();
         }
         return instance;
     }
-    
+
     public void initialize(Context context) {
         if (isInitialized) {
             return;
         }
-        
+
         this.context = context.getApplicationContext();
         this.database = AppDatabase.getInstance(this.context);
-        
+
         Log.d(TAG, "SystemFontCache initializing with Room Database");
-        
+
         preloadCachedFontsFromDatabase();
-        
+
         isInitialized = true;
     }
-    
+
     private void preloadCachedFontsFromDatabase() {
         new Thread(() -> {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             try {
                 long startTime = System.currentTimeMillis();
-                
+
                 List<FontEntity> cachedSystemFonts = database.fontDao().getCachedFonts();
-                
+
                 if (cachedSystemFonts == null || cachedSystemFonts.isEmpty()) {
                     Log.d(TAG, "No cached system fonts found in database");
                     return;
                 }
-                
+
                 cachedSystemFonts.removeIf(font -> !font.isSystemFont());
-                
+
                 if (cachedSystemFonts.isEmpty()) {
                     Log.d(TAG, "No cached system fonts after filtering");
                     return;
                 }
-                
+
                 Log.d(TAG, "Found " + cachedSystemFonts.size() + " cached system fonts");
-                
+
                 int loadedCount = 0;
-                
+
                 cachedSystemFonts.sort((f1, f2) -> {
                     int countCompare = Integer.compare(f2.getAccessCount(), f1.getAccessCount());
                     if (countCompare != 0) return countCompare;
                     return Long.compare(f2.getLastAccessTime(), f1.getLastAccessTime());
                 });
-                
+
                 for (FontEntity font : cachedSystemFonts) {
                     String path = font.getPath();
-                    
+
                     Typeface typeface = loadTypefaceInternal(path, 0, 0);
-                    
+
                     if (typeface != null) {
                         memoryCache.put(path, typeface);
                         loadedCount++;
-                        
+
                         if (loadedCount % 10 == 0) {
                             Log.d(TAG, "Preloaded " + loadedCount + " system fonts...");
                         }
                     }
                 }
-                
+
                 long duration = System.currentTimeMillis() - startTime;
                 Log.d(TAG, "★ Auto-preloaded " + loadedCount + " system fonts in " + duration + "ms");
-                
+
             } catch (Exception e) {
                 Log.e(TAG, "Failed to preload cached system fonts from database", e);
             }
         }, "SystemFontCache-Preloader").start();
     }
-    
+
     public Typeface getIfCached(String fontPath) {
         if (fontPath == null) return null;
         return memoryCache.get(fontPath);
     }
-    
+
     public Typeface getTypeface(String fontPath) {
         if (fontPath == null || fontPath.isEmpty()) {
             return null;
         }
-        
+
         return memoryCache.computeIfAbsent(fontPath, path -> loadTypefaceInternal(path, 0, 0));
     }
-    
+
     public Typeface getTypefaceWithWeight(String fontPath, float weight, int ttcIndex) {
         if (fontPath == null || fontPath.isEmpty()) {
             return null;
         }
-        
+
         Log.d(TAG, "Loading typeface with weight: " + weight + ", ttcIndex: " + ttcIndex);
-        
+
         Typeface typeface = loadTypefaceInternal(fontPath, weight, ttcIndex);
-        
+
         if (typeface != null) {
             Log.d(TAG, "Successfully created typeface with weight: " + weight);
         } else {
             Log.e(TAG, "Failed to create typeface with weight: " + weight);
         }
-        
+
         return typeface;
     }
-    
-    
-    
+
+
+
     private Typeface loadTypefaceInternal(String fontPath, float weight, int ttcIndex) {
         File fontFile = new File(fontPath);
         if (!fontFile.exists() || !fontFile.canRead()) {
             Log.w(TAG, "Font file does not exist or cannot be read: " + fontPath);
             return null;
         }
-        
+
         return loadTypefaceUsingBuilder(fontFile, weight, ttcIndex);
     }
         private Typeface loadTypefaceUsingBuilder(File fontFile, float weight, int ttcIndex) {
         try {
-            android.graphics.fonts.Font.Builder fontBuilder = 
+            android.graphics.fonts.Font.Builder fontBuilder =
                 new android.graphics.fonts.Font.Builder(fontFile);
-            
+
             if (ttcIndex > 0) {
                 fontBuilder.setTtcIndex(ttcIndex);
                 Log.d(TAG, "Set TTC index: " + ttcIndex);
             }
-            
+
             if (weight > 0 && weight != 400) {
                 String variationSettings = "'wght' " + weight;
                 fontBuilder.setFontVariationSettings(variationSettings);
                 Log.d(TAG, "Set font variation settings: " + variationSettings);
             }
-            
+
             android.graphics.fonts.Font font = fontBuilder.build();
-            
-            Typeface.CustomFallbackBuilder fallbackBuilder = 
+
+            Typeface.CustomFallbackBuilder fallbackBuilder =
                 new Typeface.CustomFallbackBuilder(
                     new android.graphics.fonts.FontFamily.Builder(font).build()
                 );
-            
+
             return fallbackBuilder.build();
-            
+
         } catch (Exception e) {
             Log.e(TAG, "Font.Builder failed", e);
-            
+
             if (weight <= 0 || weight == 400) {
                 return loadTypefaceFromFile(fontFile.getAbsolutePath());
             }
-            
+
             return null;
         }
     }
-    
+
     private Typeface loadTypefaceFromFile(String fontPath) {
         try {
             return Typeface.createFromFile(fontPath);
@@ -189,32 +189,32 @@ public class SystemFontCache {
             return null;
         }
     }
-    
-    
-    
+
+
+
     public int getCachedFontsCount() {
         return memoryCache.size() + weightedCache.size();
     }
-    
-    
-    
+
+
+
     public void clearMemoryCache() {
         memoryCache.clear();
         weightedCache.clear();
         Log.d(TAG, "Memory cache cleared");
     }
-    
+
     public void clearCache() {
         memoryCache.clear();
         weightedCache.clear();
-        
+
         if (database != null) {
             AppDatabase.databaseWriteExecutor.execute(() -> {
                 try {
                     long timestamp = System.currentTimeMillis();
-                    
+
                     int rowsUpdated = database.fontDao().resetSystemFontsCacheStatus(timestamp);
-                    
+
                     Log.d(TAG, "★ Full cache cleared efficiently: " + rowsUpdated + " rows updated");
                 } catch (Exception e) {
                     Log.e(TAG, "Failed to clear cache from database", e);
@@ -222,19 +222,19 @@ public class SystemFontCache {
             });
         }
     }
-    
+
     public void removeFont(String fontPath) {
         if (fontPath == null) return;
-        
+
         memoryCache.remove(fontPath);
         weightedCache.keySet().removeIf(key -> key.startsWith(fontPath + ":"));
-        
+
         if (database != null) {
             AppDatabase.databaseWriteExecutor.execute(() -> {
                 try {
                     database.fontDao().updateCacheStatus(
-                        fontPath, 
-                        false, 
+                        fontPath,
+                        false,
                         System.currentTimeMillis()
                     );
                 } catch (Exception e) {
@@ -243,12 +243,12 @@ public class SystemFontCache {
             });
         }
     }
-    
+
     public void preloadFonts(List<String> fontPaths) {
         if (fontPaths == null || fontPaths.isEmpty()) {
             return;
         }
-        
+
         new Thread(() -> {
             int loadedCount = 0;
             for (String fontPath : fontPaths) {
@@ -259,7 +259,7 @@ public class SystemFontCache {
                     }
                 }
             }
-            
+
             Log.d(TAG, "Preloaded " + loadedCount + " system fonts into memory");
         }, "SystemFontCache-BackgroundPreload").start();
     }

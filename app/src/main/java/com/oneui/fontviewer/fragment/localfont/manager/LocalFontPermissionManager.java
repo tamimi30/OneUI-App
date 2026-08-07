@@ -13,44 +13,44 @@ import androidx.fragment.app.Fragment;
 import android.util.Log;
 
 public class LocalFontPermissionManager {
-    
+
     private static final String TAG = "LocalFontPermissionManager";
     public static final int STORAGE_PERMISSION_REQUEST_CODE = 100;
     public static final int MANAGE_STORAGE_REQUEST_CODE = 101;
-    
+
     private final Context context;
     private final Fragment fragment;
     private PermissionResultListener listener;
-    
+
     public interface PermissionResultListener {
         void onPermissionGranted();
         void onPermissionDenied();
         void onManageStoragePermissionRequired();
     }
-    
+
     public LocalFontPermissionManager(Fragment fragment) {
         this.fragment = fragment;
         this.context = fragment.requireContext();
     }
-    
+
     public LocalFontPermissionManager(Context context) {
         this.context = context;
         this.fragment = null;
     }
-    
+
     public void setPermissionResultListener(PermissionResultListener listener) {
         this.listener = listener;
     }
-    
+
     public boolean hasRequiredPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             return Environment.isExternalStorageManager();
         } else {
-            return ContextCompat.checkSelfPermission(context, 
+            return ContextCompat.checkSelfPermission(context,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         }
     }
-    
+
     public void requestPermissions() {
         if (fragment == null) {
             throw new IllegalStateException("Fragment is required to request permissions");
@@ -69,7 +69,7 @@ public class LocalFontPermissionManager {
             );
         }
     }
-    
+
     private void requestManageStoragePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {
@@ -91,7 +91,7 @@ public class LocalFontPermissionManager {
             }
         }
     }
-    
+
     public boolean handlePermissionResult(int requestCode, int[] grantResults) {
         if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -107,7 +107,7 @@ public class LocalFontPermissionManager {
         }
         return false;
     }
-    
+
     public boolean handleActivityResult(int requestCode) {
         if (requestCode == MANAGE_STORAGE_REQUEST_CODE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -126,6 +126,6 @@ public class LocalFontPermissionManager {
         }
         return false;
     }
-    
-    
+
+
 }

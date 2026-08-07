@@ -15,106 +15,106 @@ import com.oneui.fontviewer.fragment.systemfont.data.SystemFontRepository;
 import java.util.List;
 
 public class SystemFontListViewModel extends AndroidViewModel {
-    
+
     private static final String TAG = "SystemFontListViewModel";
-    
+
     private final SystemFontRepository repository;
     private final LiveData<List<FontEntity>> fontsLiveData;
     private final MutableLiveData<Boolean> isLoadingLiveData;
     private final MutableLiveData<String> errorMessageLiveData;
     private final MutableLiveData<Boolean> isApiAvailableLiveData;
-    
+
     public SystemFontListViewModel(@NonNull Application application) {
         super(application);
-        
+
         repository = SystemFontRepository.getInstance(application);
         fontsLiveData = repository.getSystemFonts();
         isLoadingLiveData = new MutableLiveData<>(false);
         errorMessageLiveData = new MutableLiveData<>();
         isApiAvailableLiveData = new MutableLiveData<>(checkApiAvailability());
     }
-    
+
     public LiveData<List<FontEntity>> getFontsLiveData() {
         return fontsLiveData;
     }
-    
+
     public LiveData<Integer> getFontsCountLiveData() {
         return repository.getSystemFontsCount();
     }
-    
+
     public LiveData<Boolean> getIsLoadingLiveData() {
         return isLoadingLiveData;
     }
-    
+
     public LiveData<String> getErrorMessageLiveData() {
         return errorMessageLiveData;
     }
-    
+
     public LiveData<Boolean> getIsApiAvailableLiveData() {
         return isApiAvailableLiveData;
     }
-    
+
     private boolean checkApiAvailability() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
     }
-    
+
     public void loadSystemFonts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             errorMessageLiveData.postValue("SystemFonts API requires Android 10 (API 29) or higher");
             isApiAvailableLiveData.postValue(false);
             return;
         }
-        
+
         boolean hasExistingData = fontsLiveData.getValue() != null && !fontsLiveData.getValue().isEmpty();
-        
+
         if (!hasExistingData) {
             isLoadingLiveData.postValue(true);
         }
-        
+
         repository.loadAndSyncSystemFonts(new SystemFontRepository.OnSyncCompleteListener() {
             @Override
             public void onSyncComplete(int added, int updated, int deleted) {
                 if (!hasExistingData) {
                     isLoadingLiveData.postValue(false);
                 }
-                
-                String message = String.format("Synced: %d added, %d updated, %d deleted", 
+
+                String message = String.format("Synced: %d added, %d updated, %d deleted",
                     added, updated, deleted);
                 Log.d(TAG, message);
-                
+
                 if (added == 0 && updated == 0 && deleted == 0) {
                     Log.d(TAG, "No changes in system fonts");
                 }
             }
         });
     }
-    
+
     public LiveData<List<FontEntity>> searchFonts(String query) {
         if (query == null || query.trim().isEmpty()) {
             return fontsLiveData;
         }
         return repository.searchSystemFonts(query.trim());
     }
-    
+
     public LiveData<List<FontEntity>> getSortedFonts(SystemFontRepository.SortType sortType, boolean ascending) {
         return repository.getSystemFontsSorted(sortType, ascending);
     }
-    
+
     public void recordFontAccess(String fontPath) {
         if (fontPath != null && !fontPath.isEmpty()) {
             repository.recordAccess(fontPath);
         }
     }
-    
+
     public void updateFontRealName(String fontPath, String realName) {
         if (fontPath != null && realName != null) {
             repository.updateRealName(fontPath, realName);
         }
     }
-    
+
     public void refreshFonts() {
         isLoadingLiveData.postValue(true);
-        
+
         repository.deleteAllSystemFonts(success -> {
             if (success) {
                 loadSystemFonts();
@@ -124,7 +124,7 @@ public class SystemFontListViewModel extends AndroidViewModel {
             }
         });
     }
-    
+
     public void getVariableFontsCount(SystemFontRepository.OnCountListener listener) {
         repository.getVariableFontsCount(listener);
     }

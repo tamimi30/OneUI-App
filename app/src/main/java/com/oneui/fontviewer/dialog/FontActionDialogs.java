@@ -13,7 +13,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.content.res.Configuration;
-import android.util.TypedValue;
 import android.widget.EditText;
 
 import java.io.File;
@@ -31,7 +30,7 @@ public class FontActionDialogs {
         void onRename(String oldPath, String newFileName);
     }
 
-    
+
 
     public static void showRenameDialog(Context context, String currentPath, OnRenameListener listener) {
         if (context == null || currentPath == null || listener == null) return;
@@ -140,7 +139,7 @@ public class FontActionDialogs {
         errorText.setVisibility(View.VISIBLE);
     }
 
-    
+
 
     private static boolean isValidFileName(String name) {
         if (name == null || name.trim().isEmpty()) return false;

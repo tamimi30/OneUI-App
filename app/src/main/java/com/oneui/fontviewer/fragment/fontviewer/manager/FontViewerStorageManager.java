@@ -15,62 +15,62 @@ import java.io.InputStream;
 import java.util.UUID;
 
 public class FontViewerStorageManager {
-    
+
     private static final String TAG = "FontViewerStorageManager";
     private static final String VIEWER_FONTS_DIR = "fonts";
     private static final int BUFFER_SIZE = 8192;
-    
+
     private final Context context;
-    
+
     public FontViewerStorageManager(Context context) {
         this.context = context.getApplicationContext();
     }
-    
+
     public File copyFontForViewing(Uri fontUri, String suggestedFileName) {
         if (fontUri == null) {
             Log.w(TAG, "Font URI is null");
             return null;
         }
-        
+
         try {
             String fileName = suggestedFileName != null ? suggestedFileName : getFileNameFromUri(fontUri);
             if (fileName == null) {
                 fileName = "font_" + System.currentTimeMillis() + ".ttf";
             }
-            
+
             String extension = ".ttf";
             int lastDotIndex = fileName.lastIndexOf('.');
             if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
                 extension = fileName.substring(lastDotIndex);
             }
-            
+
             File fontsDirectory = getFontsDirectory();
             if (fontsDirectory == null) {
                 Log.e(TAG, "Failed to get or create fonts directory");
                 return null;
             }
-            
+
             File outputFile = new File(fontsDirectory, "viewer_font_" + UUID.randomUUID().toString() + extension);
-            
+
             try (InputStream inputStream = context.getContentResolver().openInputStream(fontUri);
                  FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-                
+
                 if (inputStream == null) {
                     Log.e(TAG, "Failed to open input stream for URI: " + fontUri);
                     return null;
                 }
-                
+
                 byte[] buffer = new byte[BUFFER_SIZE];
                 int bytesRead;
-                
+
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, bytesRead);
                 }
-                
+
                 outputStream.flush();
                 Log.d(TAG, "Successfully copied font to: " + outputFile.getAbsolutePath());
                 return outputFile;
-                
+
             } catch (Exception e) {
                 Log.e(TAG, "Error copying font file", e);
                 if (outputFile.exists()) {
@@ -78,31 +78,31 @@ public class FontViewerStorageManager {
                 }
                 return null;
             }
-            
+
         } catch (Exception e) {
             Log.e(TAG, "Unexpected error in copyFontForViewing", e);
             return null;
         }
     }
-    
+
     public String getFileNameFromUri(Uri uri) {
         if (uri == null) {
             return null;
         }
-        
+
         String fileName = null;
-        
+
         try {
             Cursor cursor = null;
             try {
                 cursor = context.getContentResolver().query(
-                    uri, 
-                    new String[]{OpenableColumns.DISPLAY_NAME}, 
-                    null, 
-                    null, 
+                    uri,
+                    new String[]{OpenableColumns.DISPLAY_NAME},
+                    null,
+                    null,
                     null
                 );
-                
+
                 if (cursor != null && cursor.moveToFirst()) {
                     int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                     if (nameIndex >= 0) {
@@ -117,7 +117,7 @@ public class FontViewerStorageManager {
         } catch (Exception e) {
             Log.w(TAG, "Failed to get filename from ContentResolver", e);
         }
-        
+
         if (fileName == null) {
             try {
                 DocumentFile documentFile = DocumentFile.fromSingleUri(context, uri);
@@ -128,7 +128,7 @@ public class FontViewerStorageManager {
                 Log.w(TAG, "Failed to get filename from DocumentFile", e);
             }
         }
-        
+
         if (fileName == null) {
             String path = uri.getPath();
             if (path != null) {
@@ -138,28 +138,28 @@ public class FontViewerStorageManager {
                 }
             }
         }
-        
+
         if (fileName == null) {
             fileName = "font_" + System.currentTimeMillis() + ".ttf";
         }
-        
+
         return fileName;
     }
-    
+
     public File getFontsDirectory() {
         File fontsDirectory = new File(context.getFilesDir(), VIEWER_FONTS_DIR);
-        
+
         if (!fontsDirectory.exists()) {
             if (!fontsDirectory.mkdirs()) {
                 Log.e(TAG, "Failed to create fonts directory");
                 return null;
             }
         }
-        
+
         return fontsDirectory;
     }
-    
-    
+
+
     public String getRealPathFromUri(Uri uri) {
         if (uri == null) return null;
 

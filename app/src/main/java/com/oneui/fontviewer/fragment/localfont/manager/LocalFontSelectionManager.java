@@ -29,11 +29,11 @@ public class LocalFontSelectionManager {
     private final LocalFontListAdapter adapter;
     private final RecyclerView recyclerView;
     private final SortByItemLayout sortBar;
-    
+
     private boolean isSelecting = false;
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
     private boolean checkAllListening = true;
-    
+
     private SelectionActionListener actionListener;
     private OnBackPressedCallback onBackPressedCallback;
     private OnBackInvokedCallback onBackInvokedCallback;
@@ -157,7 +157,7 @@ public class LocalFontSelectionManager {
         adapter.clearSelection();
         adapter.setSelectionMode(false);
 
-        
+
         drawerLayout.dismissActionMode();
 
         enableSortBar();

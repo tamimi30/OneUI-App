@@ -145,7 +145,7 @@ public class TrashSelectionManager {
         adapter.clearSelection();
         adapter.setSelectionMode(false);
 
-        
+
         drawerLayout.dismissActionMode();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

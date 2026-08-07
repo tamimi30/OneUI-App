@@ -5,7 +5,6 @@ import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.SparseBooleanArray;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +20,8 @@ import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontPreferenceManager;
 import com.oneui.fontviewer.widget.search.FontTextHighlighter;
-import com.oneui.fontviewer.fragment.localfont.adapter.LocalFontViewHolder;
 import com.oneui.fontviewer.widget.sort.SortHeaderViewHolder;
 import com.oneui.fontviewer.widget.sort.SortByItemLayout;
-import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
 import com.oneui.fontviewer.utils.FileUtils;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.localfont.viewmodel.LocalFontListViewModel;
@@ -184,7 +181,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.currentSortType = SortByItemLayout.SortType.NAME;
         this.currentSortAscending = true;
 
-        
+
 
         this.mIsFontPreviewEnabled = SettingsHelper.isFontPreviewEnabled(context);
 
@@ -193,7 +190,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             new FontSortedListCallback()
         );
 
-        setHasStableIds(true); 
+        setHasStableIds(true);
 
         registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -246,7 +243,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.favoriteStatusProvider = provider;
     }
 
-    
+
 
     public void setFontPreviewEnabled(boolean enabled) {
         if (this.mIsFontPreviewEnabled != enabled) {
@@ -294,7 +291,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         return -1;
     }
 
-    
+
 
     public void notifyAllFavoritesChanged() {
         int size = mSortedList.size();
@@ -354,7 +351,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 fontsMetadataMap.put(item.getPath(), item);
     }
 
-    
+
 
     public void smartUpdate() {
         buildSections();
@@ -463,7 +460,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
 
                 boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
-                if (isSearchActive) isLastOpened = false; 
+                if (isSearchActive) isLastOpened = false;
                 ((LocalFontViewHolder) holder).updateLastOpenedHighlight(isLastOpened);
             }
 
@@ -480,7 +477,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     if (vh.selectableLayout != null) {
                         vh.selectableLayout.setSelectionMode(isSelectionMode);
                         vh.selectableLayout.setSelectedAnimate(isItemSelected(position));
-                        
+
                     }
                 } else if (holder instanceof SortHeaderViewHolder) {
                     ((SortHeaderViewHolder) holder).setSortEnabled(!isSelectionMode);
@@ -490,9 +487,9 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             if (payloads.contains(PAYLOAD_UPDATE_LAST_OPENED) && holder instanceof LocalFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
                 boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
-                
+
                 if (isSearchActive) isLastOpened = false;
-                
+
                 ((LocalFontViewHolder) holder).updateLastOpenedHighlight(isLastOpened);
             }
 
@@ -536,7 +533,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         LocalFontListViewModel.FontFileInfoWithMetadata metadata = getFontMetadataForPath(path);
         String realName = (metadata != null) ? metadata.getRealName() : null;
-        
+
 
         String weightWidthLabel = (metadata != null) ? metadata.getWeightWidthLabel() : null;
 

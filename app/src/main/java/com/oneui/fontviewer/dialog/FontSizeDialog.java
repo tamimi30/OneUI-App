@@ -3,7 +3,6 @@ package com.oneui.fontviewer.dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.EditText;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -60,7 +59,7 @@ public class FontSizeDialog {
         fontSizeValue = dialogView.findViewById(R.id.font_size_value);
 
         fontSizeValue.setOnClickListener(v -> fontSizeValue.selectAll());
-        fontSizeValue.setLongClickable(false); 
+        fontSizeValue.setLongClickable(false);
 
         fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
             @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
@@ -89,7 +88,7 @@ public class FontSizeDialog {
                         seekBar.setProgress(newProgress);
                         updateFontSizeText(enteredSize);
                         tempSize = enteredSize;
-                        
+
                         if (sizeListener != null) {
                             sizeListener.onFontSizeChanged(enteredSize);
                         }
@@ -120,11 +119,11 @@ public class FontSizeDialog {
                     tempSize = enteredSize;
                 } catch (NumberFormatException ignored) {}
             }
-            
+
             if (sizeListener != null) {
                 sizeListener.onFontSizeChanged(tempSize);
             }
-            
+
             fontSizeValue.clearFocus();
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
@@ -185,5 +184,5 @@ public class FontSizeDialog {
         }
     }
 
-    
+
 }

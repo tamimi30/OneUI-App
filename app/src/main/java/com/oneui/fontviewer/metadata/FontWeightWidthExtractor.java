@@ -25,7 +25,7 @@ public class FontWeightWidthExtractor {
             String weight = getWeightName(ww[0]);
             String width  = getWidthName(ww[1]);
             String label  = buildLabel(weight, width);
-            
+
             if (label == null) return null;
 
             return isVF ? VF_PREFIX + " • " + label : label;
@@ -48,18 +48,18 @@ public class FontWeightWidthExtractor {
             long fontOffset = resolveFontOffset(raf, ttcIndex);
             if (fontOffset < 0) return null;
 
-            raf.seek(fontOffset + 4); 
+            raf.seek(fontOffset + 4);
             int numTables = raf.readUnsignedShort();
-            raf.skipBytes(6); 
+            raf.skipBytes(6);
 
             long os2Offset = -1;
             for (int i = 0; i < numTables; i++) {
                 byte[] tag = new byte[4];
                 raf.read(tag);
                 String t = new String(tag, "ISO-8859-1");
-                raf.skipBytes(4); 
+                raf.skipBytes(4);
                 long off = raf.readInt() & 0xFFFFFFFFL;
-                raf.skipBytes(4); 
+                raf.skipBytes(4);
 
                 if ("OS/2".equals(t)) {
                     os2Offset = off;
@@ -69,8 +69,8 @@ public class FontWeightWidthExtractor {
 
             if (os2Offset < 0) return null;
 
-            raf.seek(os2Offset + 2); 
-            raf.skipBytes(2);        
+            raf.seek(os2Offset + 2);
+            raf.skipBytes(2);
             int weightClass = raf.readUnsignedShort();
             int widthClass  = raf.readUnsignedShort();
 
@@ -100,7 +100,7 @@ public class FontWeightWidthExtractor {
                 byte[] tag = new byte[4];
                 raf.read(tag);
                 String t = new String(tag, "ISO-8859-1");
-                raf.skipBytes(12); 
+                raf.skipBytes(12);
 
                 if ("fvar".equals(t)) return true;
             }
@@ -120,7 +120,7 @@ public class FontWeightWidthExtractor {
         String tag = new String(hdr, "US-ASCII");
 
         if ("ttcf".equals(tag)) {
-            raf.skipBytes(4); 
+            raf.skipBytes(4);
             long numFonts = readUInt32(raf);
             if (ttcIndex < 0 || ttcIndex >= numFonts) return -1;
             raf.seek(12 + (long) ttcIndex * 4);
@@ -165,7 +165,7 @@ public class FontWeightWidthExtractor {
             case 2: return "Extra Condensed";
             case 3: return "Condensed";
             case 4: return "Semi Condensed";
-            case 5: return null; 
+            case 5: return null;
             case 6: return "Semi Expanded";
             case 7: return "Expanded";
             case 8: return "Extra Expanded";

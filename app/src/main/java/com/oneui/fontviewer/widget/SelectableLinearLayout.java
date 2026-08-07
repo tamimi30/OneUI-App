@@ -4,14 +4,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
 
@@ -60,7 +58,7 @@ public class SelectableLinearLayout extends LinearLayout {
                 LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 params.gravity = Gravity.CENTER_VERTICAL;
                 params.setMarginEnd(spacing);
-                params.setMarginStart(dpToPx(context, -4)); 
+                params.setMarginStart(dpToPx(context, -4));
                 checkBox.setLayoutParams(params);
                 checkBox.setClickable(false);
                 checkBox.setLongClickable(false);
@@ -68,9 +66,8 @@ public class SelectableLinearLayout extends LinearLayout {
                 checkBox.setBackground(null);
                 addView(checkBox, 0);
             } else if (checkMode == CHECK_MODE_OVERLAY) {
-                // ★ تم إصلاح الخطأ: الآن نقوم بإنشاء رسمة "علامة الصح" الأنيميشن ★
                 checkDrawable = SelectableAnimatedDrawable.create(context, R.drawable.oui_des_list_item_selection_anim_selector, context.getTheme());
-                
+
                 if (a.hasValue(R.styleable.SelectableLinearLayout_cornerRadius)) {
                     if (checkDrawable != null) {
                         checkDrawable.setCornerRadius(a.getDimension(R.styleable.SelectableLinearLayout_cornerRadius, 0f));
@@ -97,24 +94,20 @@ public class SelectableLinearLayout extends LinearLayout {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            
-            // بداية الحل: إضافة استثناء للـ CheckBox لمنع مشكلة التطاير بعد تدوير الشاشة
+
             android.transition.TransitionSet transitionSet = new android.transition.TransitionSet();
             transitionSet.setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER);
             transitionSet.setDuration(275);
 
-            // 1. أنيميشن الانزلاق للنصوص والأيقونات
             android.transition.ChangeBounds slideTransition = new android.transition.ChangeBounds();
-            slideTransition.excludeTarget(checkBox, true); // ★ هذا السطر هو مفتاح الحل، يمنع تطاير الـ CheckBox ★
+            slideTransition.excludeTarget(checkBox, true);
             transitionSet.addTransition(slideTransition);
-            
-            // 2. أنيميشن الظهور والاختفاء التدريجي مخصص فقط للـ CheckBox
+
             android.transition.Fade fadeTransition = new android.transition.Fade();
             fadeTransition.addTarget(checkBox);
             transitionSet.addTransition(fadeTransition);
 
             android.transition.TransitionManager.beginDelayedTransition(this, transitionSet);
-            // نهاية الحل.
 
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
@@ -141,7 +134,7 @@ public class SelectableLinearLayout extends LinearLayout {
         }
         setBackground(isSelected ? selectedHighlightColor : null);
     }
-    
+
     private int dpToPx(Context context, int dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }

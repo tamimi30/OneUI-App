@@ -11,7 +11,7 @@ import com.oneui.fontviewer.R;
 public class OneUiTextHelper {
 
     public static void applyFontLevel(TextView textView, Context context, AttributeSet attrs) {
-        
+
         int[] textSizeAttr = new int[]{android.R.attr.textSize};
         TypedArray aText = context.obtainStyledAttributes(attrs, textSizeAttr);
         float rawTextSize = -1f;
@@ -28,7 +28,7 @@ public class OneUiTextHelper {
 
         if (rawTextSize != -1f) {
             float fontScale = context.getResources().getConfiguration().fontScale;
-            
+
             float maxScale = maxLevel != -1 ? getFontScale(maxLevel) : -1f;
             float minScale = minLevel != -1 ? getFontScale(minLevel) : -1f;
 
@@ -48,14 +48,14 @@ public class OneUiTextHelper {
 
     private static float getFontScale(int level) {
         switch (level) {
-            case 1: return 0.8f;  // tiny
-            case 2: return 0.9f;  // extra_small
-            case 3: return 1.0f;  // small
-            case 4: return 1.1f;  // medium
-            case 5: return 1.3f;  // large
-            case 6: return 1.5f;  // extra_large
-            case 7: return 1.7f;  // huge
-            case 8: return 2.0f;  // extra_huge
+            case 1: return 0.8f;
+            case 2: return 0.9f;
+            case 3: return 1.0f;
+            case 4: return 1.1f;
+            case 5: return 1.3f;
+            case 6: return 1.5f;
+            case 7: return 1.7f;
+            case 8: return 2.0f;
             default: return 1.0f;
         }
     }

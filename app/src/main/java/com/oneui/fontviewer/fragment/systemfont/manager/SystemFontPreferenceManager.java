@@ -8,15 +8,15 @@ import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SystemFontPreferenceManager {
-    
+
     private static final String TAG = "SystemFontPrefManager";
     private final SettingsDataStore dataStore;
-    
+
     private String cachedLastOpenedPath;
-    
+
     public SystemFontPreferenceManager(Context context) {
         this.dataStore = SettingsDataStore.getInstance(context);
-        
+
         try {
             cachedLastOpenedPath = dataStore.getLastOpenedSystemFontPath().blockingFirst();
         } catch (Exception e) {
@@ -24,15 +24,15 @@ public class SystemFontPreferenceManager {
             Log.d(TAG, "No cached last opened system font");
         }
     }
-    
+
     public void saveLastOpenedFont(String fontPath) {
         if (fontPath == null) {
             Log.w(TAG, "Attempted to save null font path");
             return;
         }
-        
+
         cachedLastOpenedPath = fontPath;
-        
+
         dataStore.setLastOpenedSystemFontPath(fontPath)
                 .subscribeOn(Schedulers.io())
                 .subscribe(
@@ -40,9 +40,9 @@ public class SystemFontPreferenceManager {
                     error -> Log.e(TAG, "Error saving last opened system font", error)
                 );
     }
-    
-    
-    
+
+
+
     public String getLastOpenedFont() {
         try {
             cachedLastOpenedPath = dataStore.getLastOpenedSystemFontPath().blockingFirst();
@@ -52,14 +52,14 @@ public class SystemFontPreferenceManager {
             return null;
         }
     }
-    
+
     public boolean isLastOpenedFont(String fontPath) {
         if (fontPath == null) {
             return false;
         }
-        
+
         return cachedLastOpenedPath != null && cachedLastOpenedPath.equals(fontPath);
     }
-    
-    
+
+
 }

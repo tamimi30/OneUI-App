@@ -1,7 +1,6 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
-import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -29,7 +28,7 @@ public class FontInfoDialog {
         this.originalPath = originalPath;
     }
 
-    
+
 
     public void show() {
         if (metadata == null || metadata.isEmpty()) {
@@ -147,7 +146,7 @@ public class FontInfoDialog {
                 if ("Version".equals(key)) {
                     value = cleanVersionString(value);
                 }
-                
+
                 if ("Hinted".equals(key)) {
                     boolean isAr = java.util.Locale.getDefault().getLanguage().equals("ar");
                     if ("Improved".equalsIgnoreCase(value)) {
@@ -184,10 +183,10 @@ public class FontInfoDialog {
         }
         Spanned formattedText = Html.fromHtml(htmlBuilder.toString(), Html.FROM_HTML_MODE_LEGACY);
 
-        String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null 
+        String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null
                 && !metadata.get("FullName").isEmpty() ?
-                metadata.get("FullName") : 
-                (metadata.containsKey("Family") && metadata.get("Family") != null 
+                metadata.get("FullName") :
+                (metadata.containsKey("Family") && metadata.get("Family") != null
                 && !metadata.get("Family").isEmpty() ?
                 metadata.get("Family") : context.getString(R.string.font_viewer_select_font));
 
@@ -202,7 +201,6 @@ public class FontInfoDialog {
         TextView messageView = dialog.findViewById(android.R.id.message);
         if (messageView != null) {
             messageView.setTextSize(17);
-            // إضافة الخط المخصص (sec-roboto-light) بنمط عادي (NORMAL)
             Typeface customTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
             messageView.setTypeface(customTypeface);
             messageView.setMovementMethod(LinkMovementMethod.getInstance());

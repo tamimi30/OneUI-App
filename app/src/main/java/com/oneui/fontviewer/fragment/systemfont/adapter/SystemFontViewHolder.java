@@ -17,14 +17,14 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
 
     private final TextView nameView;
     private final TextView weightWidthView;
-    public final View dividerView; 
+    public final View dividerView;
     private final Typeface originalTypeface;
 
     public SystemFontViewHolder(@NonNull View itemView) {
         super(itemView);
         nameView        = itemView.findViewById(R.id.font_item_name);
-        weightWidthView = itemView.findViewById(R.id.font_item_weight_width); 
-        dividerView     = itemView.findViewById(R.id.item_divider); 
+        weightWidthView = itemView.findViewById(R.id.font_item_weight_width);
+        dividerView     = itemView.findViewById(R.id.item_divider);
         originalTypeface = nameView.getTypeface();
     }
 
@@ -57,7 +57,7 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
             int primaryColor = MaterialColors.getColor(
                 nameView.getContext(),
                 androidx.appcompat.R.attr.colorPrimary,
-                nameView.getContext().getColor(android.R.color.holo_blue_light) 
+                nameView.getContext().getColor(android.R.color.holo_blue_light)
             );
             nameView.setTextColor(primaryColor);
         } else {

@@ -24,7 +24,7 @@ public class FontErrorDialog {
             errorIcon.setImageResource(dev.oneuiproject.oneui.R.drawable.ic_oui_error);
         } catch (Exception e) {
         }
-        
+
         float density = context.getResources().getDisplayMetrics().density;
         int iconSize = (int) (70 * density);
         LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(iconSize, iconSize);
@@ -32,17 +32,16 @@ public class FontErrorDialog {
         errorIcon.setLayoutParams(iconParams);
 
         TextView errorMessage = new TextView(context);
-        
+
         errorMessage.setText(R.string.font_metadata_error);
-        
+
         errorMessage.setGravity(Gravity.CENTER);
         errorMessage.setTextSize(16f);
         errorMessage.setTextColor(context.getColor(R.color.sort_bar_text_color));
-         
-        // إضافة الخط المخصص (sec-roboto-light) بنمط عادي (NORMAL)
+
         Typeface customTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
-        errorMessage.setTypeface(customTypeface); 
-       
+        errorMessage.setTypeface(customTypeface);
+
         layout.addView(errorIcon);
         layout.addView(errorMessage);
 

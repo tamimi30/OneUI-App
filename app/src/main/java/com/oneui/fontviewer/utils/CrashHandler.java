@@ -56,7 +56,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             String fileName = "crash_" + ts + ".txt";
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // Use MediaStore to write to public Downloads (no runtime permission required)
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
                 values.put(MediaStore.MediaColumns.MIME_TYPE, "text/plain");
@@ -70,7 +69,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
                     }
                 }
             } else {
-                // Legacy path for Android 9 and below — requires WRITE_EXTERNAL_STORAGE permission (runtime on M+)
                 File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "OneUIApp");
                 if (!dir.exists()) dir.mkdirs();
                 File out = new File(dir, fileName);

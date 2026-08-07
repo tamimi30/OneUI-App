@@ -1,13 +1,10 @@
 package com.oneui.fontviewer.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.oneui.fontviewer.R;
 
 public class OneUiButton extends AppCompatButton {
 

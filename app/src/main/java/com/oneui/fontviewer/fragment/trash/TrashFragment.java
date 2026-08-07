@@ -12,7 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;                          
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,11 +30,11 @@ import dev.oneuiproject.oneui.dialog.ProgressDialog;
 import dev.oneuiproject.oneui.layout.DrawerLayout;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.activity.AppScreen;           
+import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.dialog.TrashActionDialogs;
-import com.oneui.fontviewer.utils.FontUIStateManager;  
+import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.fragment.trash.manager.TrashSelectionManager;
 import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
 import com.oneui.fontviewer.fragment.trash.viewmodel.TrashViewModel;
@@ -99,7 +99,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear(); 
+        menu.clear();
         inflater.inflate(R.menu.menu_trash_more, menu);
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -352,7 +352,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         TrashActionDialogs.showDeletePermanentlyDialog(
                 mContext,
                 allFonts.size(),
-                () -> showDeleteProgressAndExecute(allFonts, true)  
+                () -> showDeleteProgressAndExecute(allFonts, true)
         );
     }
 
@@ -372,7 +372,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
                 fonts.size(),
                 () -> {
                     mSelectionManager.setSelecting(false);
-                    showDeleteProgressAndExecute(fonts, false);  
+                    showDeleteProgressAndExecute(fonts, false);
                 }
         );
     }
@@ -583,7 +583,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
         setMenuVisibility(!hidden);
         if (!hidden && getActivity() != null) {
-            getActivity().invalidateOptionsMenu(); 
+            getActivity().invalidateOptionsMenu();
         }
 
         if (!hidden) {

@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -15,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.dialog.TrashActionDialogs;
 

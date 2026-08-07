@@ -139,7 +139,7 @@ public class MainActivity extends BaseActivity
         mSearchCoordinator.handleSearchIntent(intent);
 
         if (intent != null) {
-            
+
 
             boolean fromNotif = intent.getBooleanExtra("from_notification", false);
             if (fromNotif) {
@@ -253,7 +253,7 @@ public class MainActivity extends BaseActivity
         return super.onOptionsItemSelected(item);
     }
 
-    
+
 
     public void setLocalFolderSelected(boolean selected) {
     }
@@ -276,7 +276,7 @@ public class MainActivity extends BaseActivity
         startActivity(new Intent(this, SettingsActivity.class));
     }
 
-    
+
 
     private void restoreFragmentsState(Bundle savedInstanceState) {
         String screenName = savedInstanceState.getString(
@@ -375,11 +375,11 @@ public class MainActivity extends BaseActivity
         List<AppScreen> drawerScreenList = Arrays.asList(
                 AppScreen.HOME,
                 AppScreen.FONT_VIEWER,
-                null,                   
+                null,
                 AppScreen.LOCAL_FONTS,
                 AppScreen.SYSTEM_FONTS,
                 AppScreen.FAVORITES,
-                null,                   
+                null,
                 AppScreen.TRASH
         );
 
@@ -390,7 +390,7 @@ public class MainActivity extends BaseActivity
                     if (screen == AppScreen.HOME) {
                         Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                         startActivity(intent);
-                        return false; 
+                        return false;
                     }
 
                     if (screen == AppScreen.FONT_VIEWER) {
@@ -526,8 +526,8 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    
-    
+
+
     @Override
     public void onFontSelected(String fontPath, String realName, String fileName,
                                int ttcIndex, String weightWidthLabel) {
@@ -617,5 +617,5 @@ public class MainActivity extends BaseActivity
     public void onBackPressed() {
         mNavManager.handleBackPressed();
     }
-    
+
                                        }

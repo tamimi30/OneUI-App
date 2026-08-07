@@ -3,7 +3,6 @@ package com.oneui.fontviewer.fragment.settings.utils;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.util.Log;
 import android.os.LocaleList;
@@ -12,15 +11,13 @@ import android.app.LocaleManager;
 import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.res.ResourcesCompat;
 
-import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 
 public class SettingsHelper {
 
     private static final String TAG = "SettingsHelper";
-    
+
     public static final int LANGUAGE_SYSTEM = 0;
     public static final int LANGUAGE_ARABIC = 1;
     public static final int LANGUAGE_ENGLISH = 2;
@@ -97,8 +94,8 @@ public class SettingsHelper {
         }
     }
 
-    
-    
+
+
     public static boolean isFontPreviewEnabled(Context context) {
         try {
             return SettingsDataStore.getInstance(context)
@@ -109,7 +106,7 @@ public class SettingsHelper {
             return true;
         }
     }
-    
+
     public static boolean isTranslationEnabled(Context context) {
         try {
             return SettingsDataStore.getInstance(context)
@@ -120,8 +117,8 @@ public class SettingsHelper {
             return false;
         }
     }
-    
-    
+
+
     public static String getPreviewText(Context context) {
         try {
             return SettingsDataStore.getInstance(context)
@@ -136,9 +133,9 @@ public class SettingsHelper {
 
     public static void applyTheme(Context context) {
         boolean isAuto = isThemeAuto(context);
-        
+
         Log.d(TAG, "Applying theme - Auto mode: " + isAuto);
-        
+
         if (isAuto) {
             Log.d(TAG, "Applying FOLLOW_SYSTEM mode");
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
@@ -157,7 +154,7 @@ public class SettingsHelper {
 
     public static Locale getLocale(Context context) {
         int mode = getLanguageMode(context);
-        
+
         switch (mode) {
             case LANGUAGE_ARABIC:
                 return new Locale("ar");
@@ -177,17 +174,17 @@ public class SettingsHelper {
     public static Context wrapContext(Context context) {
         Locale locale = getLocale(context);
         Locale.setDefault(locale);
-        
+
         Resources res = context.getResources();
         Configuration config = new Configuration(res.getConfiguration());
-        
+
         config.setLocale(locale);
-        
+
         Log.d(TAG, "Context wrapped with locale: " + locale.getLanguage());
-        
+
         return context.createConfigurationContext(config);
     }
-    
+
     public static void initializeFromSettings(Context context) {
         applyTheme(context);
     }

@@ -13,15 +13,15 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class TranslationDataStore {
-    
+
     private static final String TAG = "TranslationDataStore";
     private static final String DATASTORE_NAME = "translation_cache";
     private static final int MAX_CACHE_SIZE = 500;
-    
+
     private static volatile TranslationDataStore INSTANCE;
     private final RxDataStore<Preferences> dataStore;
     private final Context context;
-    
+
     private TranslationDataStore(Context context) {
         this.context = context.getApplicationContext();
         this.dataStore = new RxPreferenceDataStoreBuilder(
@@ -29,7 +29,7 @@ public class TranslationDataStore {
                 DATASTORE_NAME
         ).build();
     }
-    
+
     public static TranslationDataStore getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (TranslationDataStore.class) {
@@ -40,12 +40,12 @@ public class TranslationDataStore {
         }
         return INSTANCE;
     }
-    
+
     public Single<String> getTranslation(String key) {
         if (key == null || key.isEmpty()) {
             return Single.just("");
         }
-        
+
         Preferences.Key<String> prefKey = PreferencesKeys.stringKey(key);
         return dataStore.data()
                 .firstOrError()
@@ -55,12 +55,12 @@ public class TranslationDataStore {
                 })
                 .onErrorReturnItem("");
     }
-    
+
     public void saveTranslation(String key, String value) {
         if (key == null || key.isEmpty() || value == null || value.isEmpty()) {
             return;
         }
-        
+
         Preferences.Key<String> prefKey = PreferencesKeys.stringKey(key);
         dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -76,7 +76,7 @@ public class TranslationDataStore {
             error -> Log.e(TAG, "Error saving translation: " + error.getMessage())
         );
     }
-    
+
     private void checkAndCleanCache() {
         dataStore.data()
                 .firstOrError()
@@ -92,7 +92,7 @@ public class TranslationDataStore {
                     error -> Log.e(TAG, "Error checking cache size: " + error.getMessage())
                 );
     }
-    
+
     public void clearCache() {
         dataStore.updateDataAsync(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
@@ -105,7 +105,7 @@ public class TranslationDataStore {
             error -> Log.e(TAG, "Error clearing cache: " + error.getMessage())
         );
     }
-    
+
     public Single<Integer> getCacheSize() {
         return dataStore.data()
                 .firstOrError()

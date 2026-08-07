@@ -16,7 +16,7 @@ import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.fragment.localfont.fontdirectory.LocalFontDirectory;
 import com.oneui.fontviewer.metadata.FontMetadataExtractor;
-import com.oneui.fontviewer.metadata.FontWeightWidthExtractor; 
+import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
 
 public class LocalFontRepository {
 
@@ -25,7 +25,7 @@ public class LocalFontRepository {
 
     private final FontDao fontDao;
     private final ExecutorService executorService;
-    private final AppDatabase database; 
+    private final AppDatabase database;
 
     public enum SortType {
         NAME,
@@ -34,7 +34,7 @@ public class LocalFontRepository {
     }
 
     private LocalFontRepository(Context context) {
-        database = AppDatabase.getInstance(context); 
+        database = AppDatabase.getInstance(context);
         fontDao = database.fontDao();
         executorService = AppDatabase.databaseWriteExecutor;
     }
@@ -158,13 +158,13 @@ public class LocalFontRepository {
             try {
                 long now = System.currentTimeMillis();
                     final int[] totalRows = {0};
-                    
+
                     database.runInTransaction(() -> {
                         for (String path : paths) {
                             totalRows[0] += fontDao.updateFavoriteStatus(path, isFavorite, now);
                         }
                     });
-                    
+
                     Log.d(TAG, "★ Batch favorite status updated: " + paths.size()
                         + " fonts → " + isFavorite);
                     if (listener != null) {
@@ -338,7 +338,7 @@ public class LocalFontRepository {
                     if (existing == null) {
                         FontEntity newFont = createFontEntityFromFile(fileInfo, false);
 
-                        if (fileInfo.getSize() < 2 * 1024 * 1024) { 
+                        if (fileInfo.getSize() < 2 * 1024 * 1024) {
                             try {
                                 File fontFile = new File(fileInfo.getPath());
                                 String realName = FontMetadataExtractor.extractFontName(fontFile, 0);
@@ -442,7 +442,7 @@ public class LocalFontRepository {
         return false;
     }
 
-    
+
 
     private void extractRealNamesSync() {
         try {
@@ -539,6 +539,6 @@ public class LocalFontRepository {
 
     public interface OnSyncCompleteListener {
         void onSyncComplete(int added, int updated, int deleted);
-        void onFullExtractionComplete(); 
+        void onFullExtractionComplete();
     }
     }
