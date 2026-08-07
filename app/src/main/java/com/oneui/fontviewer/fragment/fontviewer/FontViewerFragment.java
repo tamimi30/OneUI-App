@@ -83,8 +83,6 @@ public class FontViewerFragment extends Fragment {
 
     private String currentWeightWidthLabel;
 
-    private List<VariableFontHelper.VariableInstance> currentVariableInstances;
-
     private OnFontChangedListener fontChangedListener;
 
     private final ExecutorService bgExecutor = Executors.newSingleThreadExecutor();
@@ -491,7 +489,6 @@ public class FontViewerFragment extends Fragment {
     private void setupWeightSpinner(List<VariableFontHelper.VariableInstance> instances) {
         if (weightSpinner == null || weightLabelText == null || !isAdded()) return;
 
-        currentVariableInstances = instances;
         weightLabelText.setVisibility(View.GONE);
         weightSpinner.setVisibility(View.VISIBLE);
 
@@ -658,7 +655,6 @@ public class FontViewerFragment extends Fragment {
         currentTtcIndex         = 0;
         isSystemFont            = false;
         currentWeightWidthLabel  = null;
-        currentVariableInstances = null;
 
         Typeface defaultTypeface = Typeface.DEFAULT;
         if (previewSentence != null) previewSentence.setTypeface(defaultTypeface);
@@ -773,8 +769,6 @@ public class FontViewerFragment extends Fragment {
         outState.putInt(KEY_TTC_INDEX, currentTtcIndex);
         outState.putBoolean(KEY_IS_SYSTEM_FONT, isSystemFont);
     }
-
-    
 
     public String getCurrentFontFileName() {
         return currentFontFileName;
