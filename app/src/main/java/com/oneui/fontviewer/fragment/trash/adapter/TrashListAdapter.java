@@ -31,8 +31,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public static final int VIEW_TYPE_ITEM   = 1;
     public static final int VIEW_TYPE_SPACE  = 2;
 
-    private static final long DAYS_30_MS = 30L * 24L * 60L * 60L * 1000L;
-
     private static final String PAYLOAD_UPDATE_SELECTION = "UPDATE_SELECTION";
     private static final String PAYLOAD_UPDATE_CORNERS   = "UPDATE_CORNERS";
 
