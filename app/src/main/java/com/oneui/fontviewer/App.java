@@ -191,8 +191,6 @@ public class App extends Application {
         return sInstance;
     }
     
-    
-
     /**
      * إعادة بناء جميع الأنشطة الحية
      * تُستخدم عند تغيير الثيم أو الخط أو الإعدادات العامة التي تتطلب
