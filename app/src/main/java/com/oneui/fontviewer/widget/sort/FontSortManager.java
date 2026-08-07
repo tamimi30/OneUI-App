@@ -20,8 +20,6 @@ public class FontSortManager {
 
     private final String listType;
 
-    private final boolean isSystemFont;
-
     private SortByItemLayout.SortType currentSortType;
     private boolean isSortAscending;
     private SortChangeListener listener;
@@ -33,7 +31,6 @@ public class FontSortManager {
 
     public FontSortManager(Context context, boolean isSystemFont) {
         this.dataStore    = SettingsDataStore.getInstance(context);
-        this.isSystemFont = isSystemFont;
         this.listType     = isSystemFont ? LIST_TYPE_SYSTEM : LIST_TYPE_LOCAL;
         loadSortPreferences();
     }
@@ -41,7 +38,6 @@ public class FontSortManager {
     public FontSortManager(Context context, String listType) {
         this.dataStore    = SettingsDataStore.getInstance(context);
         this.listType     = (listType != null) ? listType.toUpperCase() : LIST_TYPE_LOCAL;
-        this.isSystemFont = LIST_TYPE_SYSTEM.equals(this.listType);
         loadSortPreferences();
     }
 
@@ -156,8 +152,6 @@ public class FontSortManager {
             notifySortChanged();
         }
     }
-
-    
 
     public SortByItemLayout.SortType getCurrentSortType() { return currentSortType; }
 
