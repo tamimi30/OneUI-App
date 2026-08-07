@@ -211,7 +211,7 @@ public class VariableFontHelper {
                 
                 if ("wght".equals(axisTagStr)) {
                     float minValue = readFixed(raf);
-                    float defaultValue = readFixed(raf);
+                    readFixed(raf);
                     float maxValue = readFixed(raf);
                     
                     return new float[]{minValue, maxValue};
