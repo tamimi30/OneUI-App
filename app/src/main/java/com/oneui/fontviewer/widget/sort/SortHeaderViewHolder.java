@@ -10,14 +10,12 @@ import com.oneui.fontviewer.R;
 public class SortHeaderViewHolder extends RecyclerView.ViewHolder {
     
     private final SortByItemLayout sortLayout;
-    private boolean isInitialized = false;
     private boolean isListenerSet = false;
     
     public SortHeaderViewHolder(@NonNull View itemView) {
         super(itemView);
         sortLayout = itemView.findViewById(R.id.sort_layout);
         sortLayout.setupClickListeners();
-        isInitialized = true;
     }
     
     public void bind(SortByItemLayout.SortType sortType, boolean ascending, 
