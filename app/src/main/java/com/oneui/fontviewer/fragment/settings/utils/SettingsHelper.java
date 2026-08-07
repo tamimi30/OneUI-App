@@ -3,7 +3,6 @@ package com.oneui.fontviewer.fragment.settings.utils;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.util.Log;
 import android.os.LocaleList;
@@ -12,9 +11,7 @@ import android.app.LocaleManager;
 import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.res.ResourcesCompat;
 
-import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 
 public class SettingsHelper {

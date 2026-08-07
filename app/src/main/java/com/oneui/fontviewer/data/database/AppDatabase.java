@@ -2,12 +2,9 @@ package com.oneui.fontviewer.data.database;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.room.migration.Migration;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.oneui.fontviewer.data.dao.FontDao;
 import com.oneui.fontviewer.data.entity.FontEntity;

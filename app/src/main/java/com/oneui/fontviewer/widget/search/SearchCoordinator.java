@@ -7,12 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import androidx.appcompat.widget.ActionMenuView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
@@ -25,7 +21,6 @@ import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.fragment.favorite.FavoriteFontListFragment; 
 import com.oneui.fontviewer.fragment.localfont.LocalFontListFragment;
 import com.oneui.fontviewer.fragment.systemfont.SystemFontListFragment;
-import com.oneui.fontviewer.fragment.trash.TrashFragment; 
 
 
 public class SearchCoordinator {

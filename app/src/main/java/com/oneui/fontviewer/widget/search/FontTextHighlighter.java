@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import androidx.annotation.ColorInt;
 import com.google.android.material.color.MaterialColors;
 
 import java.util.Locale;

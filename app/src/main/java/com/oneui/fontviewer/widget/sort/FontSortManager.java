@@ -3,14 +3,10 @@ package com.oneui.fontviewer.widget.sort;
 import android.content.Context;
 import android.util.Log;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
-import com.oneui.fontviewer.data.entity.FontFileInfo;
 
 public class FontSortManager {
 
