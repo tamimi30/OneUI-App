@@ -251,7 +251,7 @@ public class FontMetaData {
                 
                 raf.skipBytes(4);
                 long offset = raf.readInt() & 0xFFFFFFFFL;
-                long length = raf.readInt() & 0xFFFFFFFFL;
+                raf.readInt();
                 
                 if ("OS/2".equals(tagStr)) {
                     os2TableOffset = offset;
@@ -283,7 +283,7 @@ public class FontMetaData {
             if (os2TableOffset != -1) {
                 try {
                     raf.seek(os2TableOffset);
-                    int version = raf.readUnsignedShort();
+                    raf.readUnsignedShort();
                     raf.skipBytes(2);
                     int weightClass = raf.readUnsignedShort();
                     int widthClass = raf.readUnsignedShort();
@@ -399,7 +399,7 @@ public class FontMetaData {
         
         try {
             raf.seek(cmapOffset);
-            int version = raf.readUnsignedShort();
+            raf.readUnsignedShort();
             int numTables = raf.readUnsignedShort();
             
             long bestSubtableOffset = -1;
@@ -427,7 +427,7 @@ public class FontMetaData {
             
             if (bestSubtableOffset != -1) {
                 raf.seek(bestSubtableOffset);
-                int format = raf.readUnsignedShort();
+                raf.readUnsignedShort();
                 
                 if (format == 4) {
                     scripts = detectScriptsFormat4(raf);
