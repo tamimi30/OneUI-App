@@ -334,8 +334,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
         moveServiceIntent.putExtra(OperationForegroundService.EXTRA_TOTAL, fontsToMove.size());
         moveServiceIntent.putExtra(OperationForegroundService.EXTRA_SOURCE_FRAGMENT, sourceIndex);
         ContextCompat.startForegroundService(getApplication(), moveServiceIntent);
-
-        final int totalFonts = fontsToMove.size();
+ 
         trashRepository.moveToTrashBatch(
                 getApplication(),
                 fontsToMove,
