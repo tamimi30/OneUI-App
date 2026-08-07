@@ -35,8 +35,6 @@ public class FontUIStateManager {
     private View loadingContainer;
     
     private Parcelable recyclerViewState;
-    private SortByItemLayout.SortType savedSortType;
-    private boolean savedSortAscending;
 
     private int defaultEmptyMessageResId = R.string.local_fonts_empty_message;
     
@@ -214,12 +212,8 @@ public class FontUIStateManager {
     }
     
     public void saveSortState(SortByItemLayout.SortType sortType, boolean ascending) {
-        this.savedSortType = sortType;
-        this.savedSortAscending = ascending;
         Log.d(TAG, "Sort state saved: type=" + sortType + ", ascending=" + ascending);
     }
-    
-    
     
     public void showLoadingState() {
         if (recyclerView != null) recyclerView.setVisibility(View.GONE);
