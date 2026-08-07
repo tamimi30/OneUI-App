@@ -7,7 +7,6 @@ public class SystemFontInfo {
     private final long size;
     private final long lastModified;
     private final int weight;
-    private final int slant;
     private final int ttcIndex;
     private final String axes;
     private String realName;
@@ -20,7 +19,6 @@ public class SystemFontInfo {
         this.size = size;
         this.lastModified = lastModified;
         this.weight = weight;
-        this.slant = slant;
         this.ttcIndex = ttcIndex;
         this.axes = axes;
         this.realName = null;
