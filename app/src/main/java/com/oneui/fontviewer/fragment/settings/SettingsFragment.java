@@ -34,8 +34,6 @@ import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    private static final String TAG = "SettingsFragment";
-
     private Context mContext;
     private SettingsViewModel viewModel;
 
