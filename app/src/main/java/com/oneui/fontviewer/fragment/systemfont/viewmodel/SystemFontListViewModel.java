@@ -37,18 +37,10 @@ public class SystemFontListViewModel extends AndroidViewModel {
     public LiveData<List<FontEntity>> getFontsLiveData() {
         return fontsLiveData;
     }
-    
-    public LiveData<Integer> getFontsCountLiveData() {
-        return repository.getSystemFontsCount();
-    }
-    
+     
     public LiveData<Boolean> getIsLoadingLiveData() {
         return isLoadingLiveData;
-    }
-    
-    public LiveData<String> getErrorMessageLiveData() {
-        return errorMessageLiveData;
-    }
+    } 
     
     public LiveData<Boolean> getIsApiAvailableLiveData() {
         return isApiAvailableLiveData;
@@ -87,18 +79,7 @@ public class SystemFontListViewModel extends AndroidViewModel {
                 }
             }
         });
-    }
-    
-    public LiveData<List<FontEntity>> searchFonts(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            return fontsLiveData;
-        }
-        return repository.searchSystemFonts(query.trim());
-    }
-    
-    public LiveData<List<FontEntity>> getSortedFonts(SystemFontRepository.SortType sortType, boolean ascending) {
-        return repository.getSystemFontsSorted(sortType, ascending);
-    }
+    } 
     
     public void recordFontAccess(String fontPath) {
         if (fontPath != null && !fontPath.isEmpty()) {
@@ -106,26 +87,4 @@ public class SystemFontListViewModel extends AndroidViewModel {
         }
     }
     
-    public void updateFontRealName(String fontPath, String realName) {
-        if (fontPath != null && realName != null) {
-            repository.updateRealName(fontPath, realName);
-        }
-    }
-    
-    public void refreshFonts() {
-        isLoadingLiveData.postValue(true);
-        
-        repository.deleteAllSystemFonts(success -> {
-            if (success) {
-                loadSystemFonts();
-            } else {
-                isLoadingLiveData.postValue(false);
-                errorMessageLiveData.postValue("Failed to clear old system fonts data");
-            }
-        });
-    }
-    
-    public void getVariableFontsCount(SystemFontRepository.OnCountListener listener) {
-        repository.getVariableFontsCount(listener);
-    }
 }
