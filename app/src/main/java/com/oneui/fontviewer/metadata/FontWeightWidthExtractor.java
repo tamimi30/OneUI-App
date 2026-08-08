@@ -36,11 +36,6 @@ public class FontWeightWidthExtractor {
         }
     }
 
-    public static String extract(File fontFile) {
-        return extract(fontFile, 0);
-    }
-
-
     private static int[] readWeightWidth(File fontFile, int ttcIndex) {
         RandomAccessFile raf = null;
         try {
