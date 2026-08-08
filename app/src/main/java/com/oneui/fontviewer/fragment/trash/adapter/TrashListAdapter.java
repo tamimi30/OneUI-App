@@ -294,35 +294,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return isSelectionMode;
     }
 
-    public int getSelectedCount() {
-        int count = 0;
-        for (int i = 0; i < selectedItems.size(); i++) {
-            if (selectedItems.valueAt(i)) count++;
-        }
-        return count;
-    }
-
-    public int getTotalItemCount() {
-        return mItems.size();
-    }
-
-    public boolean isAllSelected() {
-        return !mItems.isEmpty() && getSelectedCount() == mItems.size();
-    }
-
-    @NonNull
-    public List<FontEntity> getSelectedFonts() {
-        List<FontEntity> selected = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) {
-            if (!selectedItems.valueAt(i)) continue;
-            int adapterPos = selectedItems.keyAt(i);
-            int itemIndex  = adapterPos - 1; 
-            if (itemIndex >= 0 && itemIndex < mItems.size()) {
-                selected.add(mItems.get(itemIndex));
-            }
-        }
-        return selected;
-    }
+    
 
     @NonNull
     public List<FontEntity> getAllFonts() {
