@@ -1,12 +1,11 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import android.graphics.Typeface;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -28,21 +27,11 @@ public class FontInfoDialog {
         this.originalPath = originalPath;
     }
 
-    
-
     public void show() {
         if (metadata == null || metadata.isEmpty()) {
             showNoMetadataDialog();
             return;
         }
-
-        android.content.res.TypedArray ta = context.obtainStyledAttributes(new int[]{android.R.attr.textColorSecondary, android.R.attr.textColorPrimary});
-        int secondaryColor = ta.getColor(0, 0);
-        int primaryColor = ta.getColor(1, 0);
-        ta.recycle();
-        String secondaryColorHex = String.format("#%06X", (0xFFFFFF & secondaryColor));
-        String primaryColorHex = String.format("#%06X", (0xFFFFFF & primaryColor));
-        StringBuilder htmlBuilder = new StringBuilder();
 
         String[] orderedKeys = {
                 "FullName",
@@ -130,84 +119,73 @@ public class FontInfoDialog {
                 "Path"
         };
 
+        LayoutInflater inflater = LayoutInflater.from(context);
+
+        LinearLayout container = new LinearLayout(context);
+        container.setOrientation(LinearLayout.VERTICAL);
+        float density = context.getResources().getDisplayMetrics().density;
+        int hPadding = (int) (24 * density);
+        int vPadding = (int) (8 * density);
+        container.setPadding(hPadding, vPadding, hPadding, vPadding);
+
         boolean hasContent = false;
 
         for (int i = 0; i < orderedKeys.length; i++) {
             String key = orderedKeys[i];
             String displayName = displayNames[i];
             String value = metadata.get(key);
+
             if ("FileName".equals(key) && originalFileName != null) {
-            value = originalFileName;
+                value = originalFileName;
             } else if ("Path".equals(key) && originalPath != null) {
-            value = originalPath;
-        }
+                value = originalPath;
+            }
 
             if (value != null && !value.isEmpty()) {
                 if ("Version".equals(key)) {
                     value = cleanVersionString(value);
                 }
-                
+
                 if ("Hinted".equals(key)) {
-                    boolean isAr = java.util.Locale.getDefault().getLanguage().equals("ar");
                     if ("Improved".equalsIgnoreCase(value)) {
-                        value = isAr ? "مُحسّن" : "Improved";
+                        value = isArabic ? "مُحسّن" : "Improved";
                     } else {
-                        value = isAr ? "غير مُحسّن" : "Not Improved";
+                        value = isArabic ? "غير مُحسّن" : "Not Improved";
                     }
                 }
 
-                if (hasContent) {
-                    htmlBuilder.append("<br><br>");
-                }
-                htmlBuilder.append("<small><font color='").append(secondaryColorHex).append("'>")
-                        .append(displayName)
-                        .append("</font></small><br>");
+                View itemView = inflater.inflate(R.layout.font_info_dialog_item, container, false);
+                TextView labelView = itemView.findViewById(R.id.font_info_label);
+                TextView valueView = itemView.findViewById(R.id.font_info_value);
 
-                if (isUrl(value)) {
-                    htmlBuilder.append("<a href='").append(value).append("'>")
-                            .append(android.text.TextUtils.htmlEncode(value))
-                            .append("</a>");
-                } else {
-                    String escapedValue = android.text.TextUtils.htmlEncode(value);
-                    htmlBuilder.append("<font color='").append(primaryColorHex).append("'>")
-                            .append(escapedValue)
-                            .append("</font>");
-                }
+                labelView.setText(displayName);
+                valueView.setText(value);
 
+                container.addView(itemView);
                 hasContent = true;
             }
         }
 
         if (!hasContent) {
-            htmlBuilder.append("No metadata available.");
+            showNoMetadataDialog();
+            return;
         }
-        Spanned formattedText = Html.fromHtml(htmlBuilder.toString(), Html.FROM_HTML_MODE_LEGACY);
 
-        String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null 
+        ScrollView scrollView = new ScrollView(context);
+        scrollView.addView(container);
+
+        String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null
                 && !metadata.get("FullName").isEmpty() ?
-                metadata.get("FullName") : 
-                (metadata.containsKey("Family") && metadata.get("Family") != null 
+                metadata.get("FullName") :
+                (metadata.containsKey("Family") && metadata.get("Family") != null
                 && !metadata.get("Family").isEmpty() ?
                 metadata.get("Family") : context.getString(R.string.font_viewer_select_font));
 
-        AlertDialog dialog = new AlertDialog.Builder(context)
+        new AlertDialog.Builder(context)
                 .setTitle(dialogTitle)
-                .setMessage(formattedText)
+                .setView(scrollView)
                 .setPositiveButton(android.R.string.ok, null)
-                .create();
-
-        dialog.show();
-
-        TextView messageView = dialog.findViewById(android.R.id.message);
-        if (messageView != null) {
-            messageView.setTextSize(17);
-            // إضافة الخط المخصص (sec-roboto-light) بنمط عادي (NORMAL)
-            Typeface customTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
-            messageView.setTypeface(customTypeface);
-            messageView.setMovementMethod(LinkMovementMethod.getInstance());
-            Linkify.addLinks(messageView, Linkify.WEB_URLS | Linkify.EMAIL_ADDRESSES);
-            messageView.setLinkTextColor(context.getResources().getColor(R.color.sesl_primary_color_light, context.getTheme()));
-        }
+                .show();
     }
 
     private void showNoMetadataDialog() {
@@ -216,14 +194,6 @@ public class FontInfoDialog {
                 .setMessage("No metadata available.")
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
-    }
-
-    private boolean isUrl(String text) {
-        if (text == null || text.isEmpty()) {
-            return false;
-        }
-        String lowerText = text.toLowerCase().trim();
-        return lowerText.startsWith("http://") || lowerText.startsWith("https://") || lowerText.startsWith("www.");
     }
 
     private String cleanVersionString(String version) {
@@ -238,4 +208,4 @@ public class FontInfoDialog {
 
         return version;
     }
-    }
+}
