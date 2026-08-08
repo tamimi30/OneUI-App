@@ -239,15 +239,7 @@ public class TrashSelectionManager {
         }
         return fonts;
     }
-
-
-    public List<Integer> getSelectedPositions() {
-        List<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
-        return positions;
-    }
-
-    public int getSelectedCount()  { return selectedItems.size(); }
+    
     public boolean isSelecting()   { return isSelecting; }
 
     public OnBackPressedCallback getOnBackPressedCallback() { return onBackPressedCallback; }
