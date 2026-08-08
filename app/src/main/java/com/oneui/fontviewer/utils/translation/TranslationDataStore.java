@@ -106,10 +106,4 @@ public class TranslationDataStore {
         );
     }
     
-    public Single<Integer> getCacheSize() {
-        return dataStore.data()
-                .firstOrError()
-                .map(prefs -> prefs.asMap().size())
-                .onErrorReturnItem(0);
-    }
 }
