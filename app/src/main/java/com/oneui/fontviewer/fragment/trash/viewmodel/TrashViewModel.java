@@ -89,13 +89,7 @@ public class TrashViewModel extends AndroidViewModel {
 
     public LiveData<OperationResult> getOperationResultLiveData() {
         return _operationResult;
-    }
-
-    public LiveData<Boolean> getIsLoadingLiveData() {
-        return _isLoading;
-    }
-
-    
+    } 
 
     public void restoreFonts(@NonNull List<FontEntity> fonts) {
         if (fonts.isEmpty()) return;
