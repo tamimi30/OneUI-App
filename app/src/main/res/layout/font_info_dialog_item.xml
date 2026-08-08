@@ -15,6 +15,8 @@
         android:fontFamily="sec-roboto-light"
         android:textStyle="normal"
         android:textSize="13sp"
+        android:textDirection="locale"
+        android:lineSpacingExtra="4sp"
         android:textColor="?android:attr/textColorSecondary" />
 
     <TextView
@@ -24,6 +26,8 @@
         android:fontFamily="sec-roboto-light"
         android:textStyle="normal"
         android:textSize="17sp"
+        android:textDirection="locale"
+        android:lineSpacingExtra="4sp"
         android:textColor="?android:attr/textColorPrimary"
         android:autoLink="web|email"
         android:textColorLink="?attr/colorPrimary" />
