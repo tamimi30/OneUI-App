@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
 
 import java.util.Map;
 
@@ -121,7 +122,10 @@ public class FontInfoDialog {
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View contentView = inflater.inflate(R.layout.font_info_dialog_content, null, false);
+        NestedScrollView scrollView = contentView.findViewById(R.id.font_info_scroll_view);
         LinearLayout container = contentView.findViewById(R.id.font_info_items_container);
+        View indicatorUp = contentView.findViewById(R.id.font_info_scroll_indicator_up);
+        View indicatorDown = contentView.findViewById(R.id.font_info_scroll_indicator_down);
 
         boolean hasContent = false;
 
@@ -167,6 +171,12 @@ public class FontInfoDialog {
             container.addView(emptyView);
         }
 
+        if (scrollView != null && indicatorUp != null && indicatorDown != null) {
+            scrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
+                    updateScrollIndicators(scrollView, indicatorUp, indicatorDown));
+            scrollView.post(() -> updateScrollIndicators(scrollView, indicatorUp, indicatorDown));
+        }
+
         String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null
                 && !metadata.get("FullName").isEmpty() ?
                 metadata.get("FullName") :
@@ -181,6 +191,11 @@ public class FontInfoDialog {
                 .create();
 
         dialog.show();
+    }
+
+    private void updateScrollIndicators(NestedScrollView scrollView, View indicatorUp, View indicatorDown) {
+        indicatorUp.setVisibility(scrollView.canScrollVertically(-1) ? View.VISIBLE : View.GONE);
+        indicatorDown.setVisibility(scrollView.canScrollVertically(1) ? View.VISIBLE : View.GONE);
     }
 
     private void showNoMetadataDialog() {
