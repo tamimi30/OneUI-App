@@ -31,6 +31,10 @@ public class SystemFontManager {
         return instance;
     }
     
+    public boolean isSystemFontsAvailable() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
+    }
+    
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public List<SystemFontInfo> getSystemFonts() {
         if (!isSystemFontsAvailable()) {
