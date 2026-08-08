@@ -299,14 +299,7 @@ public class LocalFontSelectionManager {
             sortBar.setAlpha(1.0f);
         }
     }
-
-    public List<Integer> getSelectedPositions() {
-        List<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
-        return positions;
-    }
-
-    public int getSelectedCount()  { return selectedItems.size(); }
+ 
     public boolean isSelecting()   { return isSelecting; }
 
     public OnBackPressedCallback getOnBackPressedCallback() { return onBackPressedCallback; }
