@@ -47,10 +47,6 @@ public interface FontDao {
     @Query("SELECT * FROM fonts")
     LiveData<List<FontEntity>> getAllFonts();
     
-    @Query("SELECT * FROM fonts")
-    List<FontEntity> getAllFontsSync();
-    
-    
     @Query("SELECT * FROM fonts WHERE is_system_font = 1 ORDER BY file_name ASC")
     LiveData<List<FontEntity>> getSystemFonts();
     
@@ -87,13 +83,6 @@ public interface FontDao {
            "ORDER BY file_name ASC")
     LiveData<List<FontEntity>> searchFonts(boolean isSystem, String query);
     
-    @Query("SELECT * FROM fonts WHERE is_system_font = :isSystem AND is_trashed = 0 " +
-           "AND (file_name LIKE '%' || :query || '%' " +
-           "OR real_name LIKE '%' || :query || '%') " +
-           "ORDER BY file_name ASC")
-    List<FontEntity> searchFontsSync(boolean isSystem, String query);
-    
-    
     @Query("UPDATE fonts SET is_cached = :isCached, updated_at = :timestamp WHERE path = :path")
     int updateCacheStatus(String path, boolean isCached, long timestamp);
     
@@ -105,9 +94,6 @@ public interface FontDao {
     @Query("SELECT * FROM fonts WHERE is_cached = 1 ORDER BY last_access_time DESC")
     List<FontEntity> getCachedFonts();
     
-    @Query("UPDATE fonts SET is_cached = 0, updated_at = :timestamp")
-    int resetAllCacheStatus(long timestamp);
-    
     @Query("UPDATE fonts SET is_cached = 0, updated_at = :timestamp WHERE is_system_font = 1")
     int resetSystemFontsCacheStatus(long timestamp);
     
@@ -118,35 +104,14 @@ public interface FontDao {
     @Query("SELECT COUNT(*) FROM fonts")
     LiveData<Integer> getTotalFontsCount();
     
-    @Query("SELECT COUNT(*) FROM fonts")
-    int getTotalFontsCountSync();
-    
     @Query("SELECT COUNT(*) FROM fonts WHERE is_system_font = 1")
-    LiveData<Integer> getSystemFontsCount();
-    
-    @Query("SELECT COUNT(*) FROM fonts WHERE is_system_font = 1")
-    int getSystemFontsCountSync();
+    LiveData<Integer> getSystemFontsCount();  
     
     @Query("SELECT COUNT(*) FROM fonts WHERE is_system_font = 0 AND is_trashed = 0")
     LiveData<Integer> getLocalFontsCount();
     
-    @Query("SELECT COUNT(*) FROM fonts WHERE is_system_font = 0 AND is_trashed = 0")
-    int getLocalFontsCountSync();
-    
     @Query("SELECT COUNT(*) FROM fonts WHERE is_variable_font = 1")
     int getVariableFontsCount();
-    
-    @Query("SELECT COUNT(*) FROM fonts WHERE is_cached = 1")
-    int getCachedFontsCount();
-    
-    @Query("SELECT SUM(size) FROM fonts WHERE is_system_font = 0 AND is_trashed = 0")
-    long getTotalLocalFontsSize();
-    
-    @Query("SELECT EXISTS(SELECT 1 FROM fonts WHERE path = :path)")
-    boolean fontExists(String path);
-    
-    @Query("SELECT * FROM fonts WHERE is_variable_font = 1 ORDER BY file_name ASC")
-    List<FontEntity> getVariableFonts();
     
     @Query("UPDATE fonts SET real_name = :realName, updated_at = :timestamp WHERE path = :path")
     int updateRealName(String path, String realName, long timestamp);
@@ -208,9 +173,6 @@ public interface FontDao {
     @Query("SELECT COUNT(*) FROM fonts WHERE is_trashed = 1")
     LiveData<Integer> getTrashFontsCount();
 
-    @Query("SELECT COUNT(*) FROM fonts WHERE is_trashed = 1")
-    int getTrashFontsCountSync();
-
     @Query("UPDATE fonts SET is_trashed = 1, deleted_at = :deletedAt, " +
            "original_path = :originalPath, path = :path, updated_at = :timestamp " +
            "WHERE path = :originalPath")
@@ -223,9 +185,6 @@ public interface FontDao {
 
     @Query("DELETE FROM fonts WHERE path = :path AND is_trashed = 1")
     int deleteFromTrash(String path);
-
-    @Query("DELETE FROM fonts WHERE is_trashed = 1")
-    int emptyTrash();
 
     @Query("SELECT * FROM fonts WHERE is_trashed = 1 AND deleted_at <= :expiryTimestamp")
     List<FontEntity> getExpiredTrashFonts(long expiryTimestamp);
