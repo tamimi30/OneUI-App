@@ -276,8 +276,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public void clearSelection()                         { selectedItems.clear(); }
     public boolean isItemSelected(int position)          { return selectedItems.get(position, false); }
-    public boolean isSelectionMode()                     { return isSelectionMode; }
-
+    
     public String getFilePath(int position) {
         if (position > 0 && position <= mSortedList.size())
             return mSortedList.get(position - 1).getPath();
