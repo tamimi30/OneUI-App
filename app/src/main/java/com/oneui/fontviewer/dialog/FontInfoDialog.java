@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -121,12 +120,8 @@ public class FontInfoDialog {
 
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        LinearLayout container = new LinearLayout(context);
-        container.setOrientation(LinearLayout.VERTICAL);
-        float density = context.getResources().getDisplayMetrics().density;
-        int hPadding = (int) (24 * density);
-        int vPadding = (int) (8 * density);
-        container.setPadding(hPadding, vPadding, hPadding, vPadding);
+        View contentView = inflater.inflate(R.layout.font_info_dialog_content, null, false);
+        LinearLayout container = contentView.findViewById(R.id.font_info_items_container);
 
         boolean hasContent = false;
 
@@ -134,7 +129,6 @@ public class FontInfoDialog {
             String key = orderedKeys[i];
             String displayName = displayNames[i];
             String value = metadata.get(key);
-
             if ("FileName".equals(key) && originalFileName != null) {
                 value = originalFileName;
             } else if ("Path".equals(key) && originalPath != null) {
@@ -147,32 +141,31 @@ public class FontInfoDialog {
                 }
 
                 if ("Hinted".equals(key)) {
+                    boolean isAr = java.util.Locale.getDefault().getLanguage().equals("ar");
                     if ("Improved".equalsIgnoreCase(value)) {
-                        value = isArabic ? "مُحسّن" : "Improved";
+                        value = isAr ? "مُحسّن" : "Improved";
                     } else {
-                        value = isArabic ? "غير مُحسّن" : "Not Improved";
+                        value = isAr ? "غير مُحسّن" : "Not Improved";
                     }
                 }
 
                 View itemView = inflater.inflate(R.layout.font_info_dialog_item, container, false);
                 TextView labelView = itemView.findViewById(R.id.font_info_label);
                 TextView valueView = itemView.findViewById(R.id.font_info_value);
-
                 labelView.setText(displayName);
                 valueView.setText(value);
 
                 container.addView(itemView);
+
                 hasContent = true;
             }
         }
 
         if (!hasContent) {
-            showNoMetadataDialog();
-            return;
+            TextView emptyView = new TextView(context);
+            emptyView.setText("No metadata available.");
+            container.addView(emptyView);
         }
-
-        ScrollView scrollView = new ScrollView(context);
-        scrollView.addView(container);
 
         String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null
                 && !metadata.get("FullName").isEmpty() ?
@@ -181,11 +174,13 @@ public class FontInfoDialog {
                 && !metadata.get("Family").isEmpty() ?
                 metadata.get("Family") : context.getString(R.string.font_viewer_select_font));
 
-        new AlertDialog.Builder(context)
+        AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle(dialogTitle)
-                .setView(scrollView)
+                .setView(contentView)
                 .setPositiveButton(android.R.string.ok, null)
-                .show();
+                .create();
+
+        dialog.show();
     }
 
     private void showNoMetadataDialog() {
