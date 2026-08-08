@@ -138,12 +138,6 @@ public class SettingsViewModel extends AndroidViewModel {
         return translationEnabled;
     }
 
-    public LiveData<Boolean> getNotificationsEnabled() {
-        return notificationsEnabled;
-    }
-
-    
-
     public LiveData<String> getPreviewText() {
         return previewText;
     }
@@ -285,21 +279,6 @@ public class SettingsViewModel extends AndroidViewModel {
         );
     }
 
-    public void setNotificationsEnabled(boolean enabled) {
-        if (notificationsEnabled.getValue() != null && notificationsEnabled.getValue() == enabled) {
-            return;
-        }
-        
-        disposables.add(
-            dataStore.setNotificationsEnabled(enabled)
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                    preferences -> Log.d(TAG, "Notifications updated to: " + enabled),
-                    error -> Log.e(TAG, "Error setting notifications", error)
-                )
-        );
-    }
-
     public void setPreviewText(String text) {
         if (previewText.getValue() != null && previewText.getValue().equals(text)) {
             return;
@@ -321,8 +300,6 @@ public class SettingsViewModel extends AndroidViewModel {
                 )
         );
     }
-
-    
 
     @Override
     protected void onCleared() {
