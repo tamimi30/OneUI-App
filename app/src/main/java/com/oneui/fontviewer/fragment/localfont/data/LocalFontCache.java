@@ -133,58 +133,7 @@ public class LocalFontCache {
             Log.e(TAG, "Error loading font from file: " + fontPath, e);
             return null;
         }
-    }
-    
-    
-    
-    public int getCachedFontsCount() {
-        return memoryCache.size();
-    }
-    
-    
-    
-    public void clearMemoryCache() {
-        memoryCache.clear();
-        Log.d(TAG, "Memory cache cleared");
-    }
-    
-    public void clearCache() {
-        memoryCache.clear();
-        
-        if (database != null) {
-            AppDatabase.databaseWriteExecutor.execute(() -> {
-                try {
-                    long timestamp = System.currentTimeMillis();
-                    
-                    int rowsUpdated = database.fontDao().resetLocalFontsCacheStatus(timestamp);
-                    
-                    Log.d(TAG, "★ Full cache cleared efficiently: " + rowsUpdated + " rows updated");
-                } catch (Exception e) {
-                    Log.e(TAG, "Failed to clear cache from database", e);
-                }
-            });
-        }
-    }
-    
-    public void removeFont(String fontPath) {
-        if (fontPath == null) return;
-        
-        memoryCache.remove(fontPath);
-        
-        if (database != null) {
-            AppDatabase.databaseWriteExecutor.execute(() -> {
-                try {
-                    database.fontDao().updateCacheStatus(
-                        fontPath, 
-                        false, 
-                        System.currentTimeMillis()
-                    );
-                } catch (Exception e) {
-                    Log.w(TAG, "Failed to remove from database cache", e);
-                }
-            });
-        }
-    }
+    } 
     
     public void preloadFonts(List<String> fontPaths) {
         if (fontPaths == null || fontPaths.isEmpty()) {
