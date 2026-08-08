@@ -138,20 +138,6 @@ public class LocalFontListViewModel extends AndroidViewModel {
         });
     }
 
-    public LiveData<Integer> getFavoritesCountLiveData() {
-        return repository.getFavoriteFontsCount();
-    }
-
-    public void toggleFavorite(String path, boolean isFavorite) {
-        repository.updateFavoriteStatus(path, isFavorite, success -> {
-            if (success) {
-                Log.d(TAG, "★ Favorite toggled: " + path + " → " + isFavorite);
-            } else {
-                Log.w(TAG, "Failed to toggle favorite: " + path);
-            }
-        });
-    }
-
     public void toggleFavoritesBatch(List<String> paths, boolean isFavorite, Runnable onSuccess) {
         if (paths == null || paths.isEmpty()) return;
 
@@ -175,33 +161,6 @@ public class LocalFontListViewModel extends AndroidViewModel {
         });
     }
 
-    
-
-    public LiveData<List<FontEntity>> searchFavorites(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            return repository.getFavoriteFonts();
-        }
-        return repository.searchFavoriteFonts(query.trim());
-    }
-
-    public LiveData<List<FontEntity>> getSortedFavorites(LocalFontRepository.SortType sortType,
-                                                          boolean ascending) {
-        if (sortType == null) {
-            return repository.getFavoriteFonts();
-        }
-
-        switch (sortType) {
-            case DATE:
-                return repository.getFavoritesSortedByDate(ascending);
-            case SIZE:
-                return repository.getFavoritesSortedBySize(ascending);
-            case NAME:
-            default:
-                return repository.getFavoritesSortedByName(ascending);
-        }
-    }
-
-    
     public boolean renameFontInMemory(String oldPath, String newFileName) {
         File oldFile = new File(oldPath);
         
@@ -394,21 +353,10 @@ public class LocalFontListViewModel extends AndroidViewModel {
             trashCancelFlag.set(true);
             Log.d(TAG, "cancelTrashOperation: cancellation requested");
         }
-    }
-
-    
-    
-    
-    public LiveData<Integer> getFontsCountLiveData() {
-        return repository.getLocalFontsCount();
-    }
+    } 
     
     public LiveData<Boolean> getIsLoadingLiveData() {
         return isLoadingLiveData;
-    }
-    
-    public LiveData<String> getErrorMessageLiveData() {
-        return errorMessageLiveData;
     }
     
     public void loadFonts() {
@@ -467,56 +415,13 @@ public class LocalFontListViewModel extends AndroidViewModel {
         });
     }
     
-    public LiveData<List<FontEntity>> searchFonts(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            return repository.getLocalFonts();
-        }
-        return repository.searchFonts(false, query.trim());
-    }
-    
-    public LiveData<List<FontEntity>> getSortedFonts(LocalFontRepository.SortType sortType, boolean ascending) {
-        if (sortType == null) {
-            return repository.getLocalFonts();
-        }
-        
-        switch (sortType) {
-            case DATE:
-                return ascending ? repository.getFontsSortedByDate(false, true)
-                                : repository.getFontsSortedByDate(false, false);
-            case SIZE:
-                return ascending ? repository.getFontsSortedBySize(false, true)
-                                : repository.getFontsSortedBySize(false, false);
-            case NAME:
-            default:
-                return ascending ? repository.getFontsSortedByName(false, true)
-                                : repository.getFontsSortedByName(false, false);
-        }
-    }
-    
     public void recordFontAccess(String fontPath) {
         if (fontPath != null && !fontPath.isEmpty()) {
             repository.recordAccess(fontPath);
         }
     }
     
-    public void updateFontRealName(String fontPath, String realName) {
-        if (fontPath != null && realName != null) {
-            repository.updateRealName(fontPath, realName);
-        }
-    }
     
-    public void updateFontCacheStatus(String fontPath, boolean isCached) {
-        if (fontPath != null) {
-            repository.updateCacheStatus(fontPath, isCached);
-        }
-    }
-    
-    public void refreshFonts() {
-        String folderPath = preferenceManager.getFontFolderPath();
-        if (folderPath != null) {
-            loadFontsFromPath(folderPath);
-        }
-    }
     
     public void saveFolderPath(String folderPath) {
         if (folderPath != null && !folderPath.isEmpty()) {
@@ -532,18 +437,5 @@ public class LocalFontListViewModel extends AndroidViewModel {
         return preferenceManager.hasFontFolderPath();
     }
     
-    public LiveData<FontEntity> getFontByPath(String fontPath) {
-        if (fontPath == null || fontPath.isEmpty()) {
-            return new MutableLiveData<>(null);
-        }
-        return repository.getFontByPath(fontPath);
-    }
     
-    public void deleteFont(FontEntity font, LocalFontRepository.OnCompleteListener listener) {
-        if (font != null) {
-            repository.delete(font, listener);
-        }
-    }
-    
-    
-                }
+                    }
