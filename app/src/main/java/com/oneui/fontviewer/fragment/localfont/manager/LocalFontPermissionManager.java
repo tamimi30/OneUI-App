@@ -31,12 +31,7 @@ public class LocalFontPermissionManager {
     public LocalFontPermissionManager(Fragment fragment) {
         this.fragment = fragment;
         this.context = fragment.requireContext();
-    }
-    
-    public LocalFontPermissionManager(Context context) {
-        this.context = context;
-        this.fragment = null;
-    }
+    } 
     
     public void setPermissionResultListener(PermissionResultListener listener) {
         this.listener = listener;
