@@ -20,12 +20,7 @@ public class SearchViewModel extends ViewModel {
     public void setSearchQuery(String query) {
         String newQuery = query == null ? "" : query;
         searchQueryLiveData.setValue(newQuery);
-    }
-    
-    public String getCurrentSearchQuery() {
-        String query = searchQueryLiveData.getValue();
-        return query == null ? "" : query;
-    }
+    }  
     
     public void activateSearch() {
         isSearchActiveLiveData.setValue(true);
