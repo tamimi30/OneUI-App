@@ -9,6 +9,6 @@
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
     android:scrollbars="vertical"
-    android:scrollbarStyle="outsideOverlay">
+    android:scrollbarStyle="outsideOverlay" />
 
 </androidx.core.widget.NestedScrollView>
