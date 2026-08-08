@@ -66,18 +66,6 @@ public class BatchOperationState {
         return _sourceScreen;
     }
 
-    @Deprecated
-    public static int getSourceFragmentIndex() {
-        if (_sourceScreen == null) return -1;
-        switch (_sourceScreen) {
-            case LOCAL_FONTS:  return 2;
-            case SYSTEM_FONTS: return 3;
-            case FAVORITES:    return 4;
-            case TRASH:        return 5;
-            default:           return -1;
-        }
-    }
-
     public static void setProcessing(boolean isProcessing) {
         if (!isProcessing) {
             _sourceScreen = null;
