@@ -315,14 +315,6 @@ public class SearchCoordinator {
         }
     }
 
-
-    public void setSearchQuery(@NonNull String query) {
-        if (searchView != null) {
-            searchView.setQuery(query, false);
-            performSearch(query);
-        }
-    }
-
     public boolean isSearchExpanded() {
         return isSearchExpanded;
     }
@@ -333,17 +325,6 @@ public class SearchCoordinator {
             return searchView.getQuery().toString();
         }
         return savedSearchQuery;
-    }
-
-    public boolean isSearchActive() {
-        return isSearchExpanded && !getCurrentSearchQuery().isEmpty();
-    }
-
-    public void clearSearchQuery() {
-        if (searchView != null) {
-            searchView.setQuery("", false);
-            performSearch("");
-        }
     }
 
     public void onFragmentChanged(AppScreen newScreen) {
