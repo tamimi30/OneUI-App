@@ -3,6 +3,7 @@ package com.oneui.fontviewer.dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -119,62 +120,59 @@ public class FontInfoDialog {
                 "Path"
         };
 
+        // الحاوية القابلة للتمرير — نفس فكرة details_dialog_layout.xml (NestedScrollView + scrollIndicators)
+        NestedScrollView scrollView = new NestedScrollView(context);
+        scrollView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        scrollView.setFillViewport(true);
+        scrollView.setScrollIndicators(View.SCROLL_INDICATOR_TOP | View.SCROLL_INDICATOR_BOTTOM);
+
+        int sidePadding = dpToPx(24);
+        scrollView.setPaddingRelative(sidePadding, 0, sidePadding, dpToPx(8));
+
+        LinearLayout container = new LinearLayout(context);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        scrollView.addView(container);
+
         LayoutInflater inflater = LayoutInflater.from(context);
-
-        View contentView = inflater.inflate(R.layout.font_info_dialog_content, null, false);
-        NestedScrollView scrollView = contentView.findViewById(R.id.font_info_scroll_view);
-        LinearLayout container = contentView.findViewById(R.id.font_info_items_container);
-        View indicatorUp = contentView.findViewById(R.id.font_info_scroll_indicator_up);
-        View indicatorDown = contentView.findViewById(R.id.font_info_scroll_indicator_down);
-
         boolean hasContent = false;
 
         for (int i = 0; i < orderedKeys.length; i++) {
             String key = orderedKeys[i];
             String displayName = displayNames[i];
             String value = metadata.get(key);
+
             if ("FileName".equals(key) && originalFileName != null) {
                 value = originalFileName;
             } else if ("Path".equals(key) && originalPath != null) {
                 value = originalPath;
             }
 
-            if (value != null && !value.isEmpty()) {
-                if ("Version".equals(key)) {
-                    value = cleanVersionString(value);
-                }
-
-                if ("Hinted".equals(key)) {
-                    boolean isAr = java.util.Locale.getDefault().getLanguage().equals("ar");
-                    if ("Improved".equalsIgnoreCase(value)) {
-                        value = isAr ? "مُحسّن" : "Improved";
-                    } else {
-                        value = isAr ? "غير مُحسّن" : "Not Improved";
-                    }
-                }
-
-                View itemView = inflater.inflate(R.layout.font_info_dialog_item, container, false);
-                TextView labelView = itemView.findViewById(R.id.font_info_label);
-                TextView valueView = itemView.findViewById(R.id.font_info_value);
-                labelView.setText(displayName);
-                valueView.setText(value);
-
-                container.addView(itemView);
-
-                hasContent = true;
+            if (value == null || value.isEmpty()) {
+                continue;
             }
+
+            if ("Version".equals(key)) {
+                value = cleanVersionString(value);
+            }
+
+            if ("Hinted".equals(key)) {
+                if ("Improved".equalsIgnoreCase(value)) {
+                    value = isArabic ? "مُحسّن" : "Improved";
+                } else {
+                    value = isArabic ? "غير مُحسّن" : "Not Improved";
+                }
+            }
+
+            addItemView(inflater, container, displayName, value);
+            hasContent = true;
         }
 
         if (!hasContent) {
-            TextView emptyView = new TextView(context);
-            emptyView.setText("No metadata available.");
-            container.addView(emptyView);
-        }
-
-        if (scrollView != null && indicatorUp != null && indicatorDown != null) {
-            scrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
-                    updateScrollIndicators(scrollView, indicatorUp, indicatorDown));
-            scrollView.post(() -> updateScrollIndicators(scrollView, indicatorUp, indicatorDown));
+            showNoMetadataDialog();
+            return;
         }
 
         String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null
@@ -186,16 +184,24 @@ public class FontInfoDialog {
 
         AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle(dialogTitle)
-                .setView(contentView)
+                .setView(scrollView)
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
 
         dialog.show();
     }
 
-    private void updateScrollIndicators(NestedScrollView scrollView, View indicatorUp, View indicatorDown) {
-        indicatorUp.setVisibility(scrollView.canScrollVertically(-1) ? View.VISIBLE : View.GONE);
-        indicatorDown.setVisibility(scrollView.canScrollVertically(1) ? View.VISIBLE : View.GONE);
+    // ينشئ صفاً واحداً (تسمية + قيمة) من font_info_dialog_item.xml ويضيفه للحاوية
+    private void addItemView(LayoutInflater inflater, LinearLayout container, String label, String value) {
+        View itemView = inflater.inflate(R.layout.font_info_dialog_item, container, false);
+
+        TextView labelView = itemView.findViewById(R.id.font_info_label);
+        TextView valueView = itemView.findViewById(R.id.font_info_value);
+
+        labelView.setText(label);
+        valueView.setText(value);
+
+        container.addView(itemView);
     }
 
     private void showNoMetadataDialog() {
@@ -217,5 +223,11 @@ public class FontInfoDialog {
         }
 
         return version;
+    }
+
+    // تحويل dp إلى بكسل حسب كثافة الشاشة
+    private int dpToPx(int dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 }
