@@ -1,7 +1,7 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
-import android.util.TypedValue;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.widget.NestedScrollView;
 
-import java.util.Locale;
 import java.util.Map;
 
 import com.oneui.fontviewer.R;
@@ -65,8 +63,7 @@ public class FontInfoDialog {
                 "Path"
         };
 
-        boolean isArabic = Locale.getDefault().getLanguage().equals("ar");
-
+        boolean isArabic = java.util.Locale.getDefault().getLanguage().equals("ar");
         String[] displayNames = isArabic ? new String[]{
                 "الاسم الكامل",
                 "اسم PostScript",
@@ -123,11 +120,40 @@ public class FontInfoDialog {
                 "Path"
         };
 
-        LayoutInflater inflater = LayoutInflater.from(context);
+        String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null
+                && !metadata.get("FullName").isEmpty() ?
+                metadata.get("FullName") :
+                (metadata.containsKey("Family") && metadata.get("Family") != null
+                        && !metadata.get("Family").isEmpty() ?
+                        metadata.get("Family") : context.getString(R.string.font_viewer_select_font));
 
-        LinearLayout container = new LinearLayout(context);
-        container.setOrientation(LinearLayout.VERTICAL);
-        container.setLayoutParams(new ViewGroup.LayoutParams(
+        // ننشئ الديالوج بشكل عادي، مع رسالة مؤقتة شبه فارغة
+        // فقط عشان "منطقة الرسالة" تتفعل وتُبنى بكل تفاصيلها المعتادة
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setTitle(dialogTitle)
+                .setMessage(" ")
+                .setPositiveButton(android.R.string.ok, null)
+                .create();
+
+        dialog.show();
+
+        // نمسك نص الرسالة الافتراضي جوه الديالوج (نفس طريقة الملف القديم)
+        TextView messageView = dialog.findViewById(android.R.id.message);
+        if (messageView == null || !(messageView.getParent() instanceof ViewGroup)) {
+            return;
+        }
+
+        // هذه هي "المنطقة" الجاهزة التي فيها شريط التمرير والمسافات والخطوط الفاصلة
+        ViewGroup scrollHost = (ViewGroup) messageView.getParent();
+        scrollHost.removeView(messageView);
+
+        // نستخدم سياق الديالوج نفسه (وليس سياق الشاشة العامة) لبناء العناصر الجديدة
+        Context dialogContext = dialog.getContext();
+        LayoutInflater inflater = LayoutInflater.from(dialogContext);
+
+        LinearLayout itemsContainer = new LinearLayout(dialogContext);
+        itemsContainer.setOrientation(LinearLayout.VERTICAL);
+        itemsContainer.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -144,14 +170,8 @@ public class FontInfoDialog {
                 value = originalPath;
             }
 
+            // نتجاهل أي معلومة قيمتها فارغة، حتى لا يظهر صف فارغ
             if (value == null || value.isEmpty()) {
-                continue;
-            }
-
-            // توحيد أي أسطر فارغة أو مسافات متعددة داخل القيمة إلى مسافة واحدة
-            value = value.replaceAll("\\s+", " ").trim();
-
-            if (value.isEmpty()) {
                 continue;
             }
 
@@ -167,86 +187,30 @@ public class FontInfoDialog {
                 }
             }
 
-            View itemView = inflater.inflate(R.layout.font_info_dialog_item, container, false);
+            // كل معلومة تُبنى كصف مستقل من ملف font_info_dialog_item.xml
+            // فتكون المسافات موحّدة بين كل المعلومات دائماً
+            View itemView = inflater.inflate(R.layout.font_info_dialog_item, itemsContainer, false);
             TextView labelView = itemView.findViewById(R.id.font_info_label);
             TextView valueView = itemView.findViewById(R.id.font_info_value);
+
             labelView.setText(displayName);
             valueView.setText(value);
+            valueView.setMovementMethod(LinkMovementMethod.getInstance());
 
-            container.addView(itemView);
+            itemsContainer.addView(itemView);
             hasContent = true;
         }
 
         if (!hasContent) {
-            showNoMetadataDialog();
-            return;
+            TextView emptyView = new TextView(dialogContext);
+            emptyView.setText("No metadata available.");
+            int pad = (int) (16 * dialogContext.getResources().getDisplayMetrics().density);
+            emptyView.setPadding(pad, pad, pad, pad);
+            itemsContainer.addView(emptyView);
         }
 
-        int sidePadding = dpToPx(24);
-
-        NestedScrollView scrollView = new NestedScrollView(context);
-        scrollView.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        scrollView.setFillViewport(true);
-        scrollView.setPaddingRelative(sidePadding, 0, sidePadding, 0);
-        scrollView.setVerticalScrollBarEnabled(true);
-        scrollView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
-        scrollView.addView(container);
-
-        // الخطان الفاصلان العلوي والسفلي، مبنيان يدوياً بنفس أسلوب AppCompat
-        View topDivider = createDivider(sidePadding);
-        View bottomDivider = createDivider(sidePadding);
-        topDivider.setVisibility(View.GONE);
-        bottomDivider.setVisibility(View.GONE);
-
-        LinearLayout wrapper = new LinearLayout(context);
-        wrapper.setOrientation(LinearLayout.VERTICAL);
-        wrapper.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        wrapper.setPadding(0, dpToPx(8), 0, dpToPx(8));
-        wrapper.addView(topDivider);
-        wrapper.addView(scrollView);
-        wrapper.addView(bottomDivider);
-
-        Runnable updateDividers = () -> {
-            topDivider.setVisibility(scrollView.canScrollVertically(-1) ? View.VISIBLE : View.GONE);
-            bottomDivider.setVisibility(scrollView.canScrollVertically(1) ? View.VISIBLE : View.GONE);
-        };
-        scrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener)
-                (v, scrollX, scrollY, oldScrollX, oldScrollY) -> updateDividers.run());
-        scrollView.post(updateDividers);
-
-        String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null
-                && !metadata.get("FullName").isEmpty() ?
-                metadata.get("FullName") :
-                (metadata.containsKey("Family") && metadata.get("Family") != null
-                && !metadata.get("Family").isEmpty() ?
-                metadata.get("Family") : context.getString(R.string.font_viewer_select_font));
-
-        new AlertDialog.Builder(context)
-                .setTitle(dialogTitle)
-                .setView(wrapper)
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
-    }
-
-    private View createDivider(int sideMargin) {
-        View divider = new View(context);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(1));
-        params.setMarginStart(sideMargin);
-        params.setMarginEnd(sideMargin);
-        divider.setLayoutParams(params);
-        divider.setBackgroundColor(resolveThemeColor(androidx.appcompat.R.attr.colorControlHighlight));
-        return divider;
-    }
-
-    private int resolveThemeColor(int attrRes) {
-        TypedValue typedValue = new TypedValue();
-        context.getTheme().resolveAttribute(attrRes, typedValue, true);
-        return typedValue.data;
+        // نضع قائمة عناصرنا الجديدة بدل الرسالة القديمة، في نفس "المنطقة" الجاهزة
+        scrollHost.addView(itemsContainer);
     }
 
     private void showNoMetadataDialog() {
@@ -269,9 +233,4 @@ public class FontInfoDialog {
 
         return version;
     }
-
-    private int dpToPx(int dp) {
-        float density = context.getResources().getDisplayMetrics().density;
-        return Math.round(dp * density);
-    }
-}
+                 }
