@@ -127,8 +127,6 @@ public class FontInfoDialog {
                         && !metadata.get("Family").isEmpty() ?
                         metadata.get("Family") : context.getString(R.string.font_viewer_select_font));
 
-        // ننشئ الديالوج بشكل عادي، مع رسالة مؤقتة شبه فارغة
-        // فقط عشان "منطقة الرسالة" تتفعل وتُبنى بكل تفاصيلها المعتادة
         AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle(dialogTitle)
                 .setMessage(" ")
@@ -137,17 +135,14 @@ public class FontInfoDialog {
 
         dialog.show();
 
-        // نمسك نص الرسالة الافتراضي جوه الديالوج (نفس طريقة الملف القديم)
         TextView messageView = dialog.findViewById(android.R.id.message);
         if (messageView == null || !(messageView.getParent() instanceof ViewGroup)) {
             return;
         }
 
-        // هذه هي "المنطقة" الجاهزة التي فيها شريط التمرير والمسافات والخطوط الفاصلة
         ViewGroup scrollHost = (ViewGroup) messageView.getParent();
         scrollHost.removeView(messageView);
 
-        // نستخدم سياق الديالوج نفسه (وليس سياق الشاشة العامة) لبناء العناصر الجديدة
         Context dialogContext = dialog.getContext();
         LayoutInflater inflater = LayoutInflater.from(dialogContext);
 
@@ -170,10 +165,13 @@ public class FontInfoDialog {
                 value = originalPath;
             }
 
-            // نتجاهل أي معلومة قيمتها فارغة، حتى لا يظهر صف فارغ
             if (value == null || value.isEmpty()) {
                 continue;
             }
+
+            // ننظّف القيمة: نشيل فواصل الأسطر، ونستبدل الرموز النادرة
+            // (شرطة طويلة، علامات تنصيص مُقوّسة...) برموز عادية يدعمها أي خط
+            value = sanitizeMetadataValue(value);
 
             if ("Version".equals(key)) {
                 value = cleanVersionString(value);
@@ -187,8 +185,6 @@ public class FontInfoDialog {
                 }
             }
 
-            // كل معلومة تُبنى كصف مستقل من ملف font_info_dialog_item.xml
-            // فتكون المسافات موحّدة بين كل المعلومات دائماً
             View itemView = inflater.inflate(R.layout.font_info_dialog_item, itemsContainer, false);
             TextView labelView = itemView.findViewById(R.id.font_info_label);
             TextView valueView = itemView.findViewById(R.id.font_info_value);
@@ -213,7 +209,6 @@ public class FontInfoDialog {
             itemsContainer.addView(emptyView);
         }
 
-        // نضع قائمة عناصرنا الجديدة بدل الرسالة القديمة، في نفس "المنطقة" الجاهزة
         scrollHost.addView(itemsContainer);
     }
 
@@ -236,6 +231,29 @@ public class FontInfoDialog {
         }
 
         return version;
+    }
+
+    private static String sanitizeMetadataValue(String value) {
+        if (value == null) {
+            return value;
+        }
+
+        return value
+                .replace("\r\n", " ")
+                .replace("\r", " ")
+                .replace("\n", " ")
+                .replace("\u2014", "-")
+                .replace("\u2013", "-")
+                .replace("\u2018", "'")
+                .replace("\u2019", "'")
+                .replace("\u201C", "\"")
+                .replace("\u201D", "\"")
+                .replace("\u2026", "...")
+                .replace("\u2022", "-")
+                .replace("\u00A0", " ")
+                .replace("\u200B", "")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 
     private static boolean isLinklessField(String key) {
@@ -262,4 +280,4 @@ public class FontInfoDialog {
                 return false;
         }
     }
-                 }
+}
