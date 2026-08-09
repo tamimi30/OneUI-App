@@ -194,6 +194,10 @@ public class FontInfoDialog {
             TextView valueView = itemView.findViewById(R.id.font_info_value);
 
             labelView.setText(displayName);
+
+            if (isLinklessField(key)) {
+                valueView.setAutoLinkMask(0);
+            }
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -232,5 +236,30 @@ public class FontInfoDialog {
         }
 
         return version;
+    }
+
+    private static boolean isLinklessField(String key) {
+        switch (key) {
+            case "FullName":
+            case "PostScriptName":
+            case "Family":
+            case "SubFamily":
+            case "Weight":
+            case "Width":
+            case "Hinted":
+            case "SupportedScripts":
+            case "GlyphCount":
+            case "UnitsPerEm":
+            case "VariableInstances":
+            case "Version":
+            case "ModifiedDate":
+            case "CreatedDate":
+            case "VendorID":
+            case "FileName":
+            case "Path":
+                return true;
+            default:
+                return false;
+        }
     }
                  }
