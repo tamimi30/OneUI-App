@@ -1,9 +1,11 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,6 +35,12 @@ public class FontInfoDialog {
             showNoMetadataDialog();
             return;
         }
+
+        // ننشئ الـ Builder أولاً، ونأخذ منه "كونتكست" الديالوج الخاص بالثيم
+        // (بدل كونتكست الشاشة العادي) لبناء كل عناصر الديالوج المخصصة عليه
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        Context dialogContext = builder.getContext();
+        LayoutInflater inflater = LayoutInflater.from(dialogContext);
 
         String[] orderedKeys = {
                 "FullName",
@@ -120,23 +128,55 @@ public class FontInfoDialog {
                 "Path"
         };
 
-        // الحاوية القابلة للتمرير — نفس فكرة details_dialog_layout.xml (NestedScrollView + scrollIndicators)
-        NestedScrollView scrollView = new NestedScrollView(context);
-        scrollView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        scrollView.setFillViewport(true);
-        scrollView.setScrollIndicators(View.SCROLL_INDICATOR_TOP | View.SCROLL_INDICATOR_BOTTOM);
-
+        // === الأرقام القابلة للتعديل: المسافة العمودية حول الخطوط، والمسافة الجانبية للنص ===
+        int verticalGap = dpToPx(20);
         int sidePadding = dpToPx(24);
-        scrollView.setPaddingRelative(sidePadding, 0, sidePadding, dpToPx(8));
+        int dividerColor = resolveColorControlHighlight(dialogContext);
 
-        LinearLayout container = new LinearLayout(context);
+        LinearLayout root = new LinearLayout(dialogContext);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        // مسافة فوق الخط العلوي (بينه وبين العنوان) ومسافة تحت الخط السفلي (بينه وبين زر حسناً)
+        root.setPadding(0, verticalGap, 0, verticalGap);
+
+        View topDivider = new View(dialogContext);
+        topDivider.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(1)));
+        topDivider.setBackgroundColor(dividerColor);
+        topDivider.setVisibility(View.GONE);
+        root.addView(topDivider);
+
+        NestedScrollView scrollView = new NestedScrollView(dialogContext);
+        scrollView.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        scrollView.setFillViewport(true);
+        scrollView.setVerticalScrollBarEnabled(true);
+        scrollView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
+        scrollView.setPaddingRelative(sidePadding, dpToPx(8), sidePadding, dpToPx(8));
+        root.addView(scrollView);
+
+        View bottomDivider = new View(dialogContext);
+        bottomDivider.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(1)));
+        bottomDivider.setBackgroundColor(dividerColor);
+        bottomDivider.setVisibility(View.GONE);
+        root.addView(bottomDivider);
+
+        LinearLayout container = new LinearLayout(dialogContext);
         container.setOrientation(LinearLayout.VERTICAL);
         container.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         scrollView.addView(container);
 
-        LayoutInflater inflater = LayoutInflater.from(context);
+        // إظهار/إخفاء الخطين الفاصلين حسب موضع التمرير الحالي
+        ViewTreeObserver.OnScrollChangedListener dividerScrollListener = () -> {
+            topDivider.setVisibility(scrollView.canScrollVertically(-1) ? View.VISIBLE : View.GONE);
+            bottomDivider.setVisibility(scrollView.canScrollVertically(1) ? View.VISIBLE : View.GONE);
+        };
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(dividerScrollListener);
+        scrollView.post(dividerScrollListener::onScrollChanged);
+
         boolean hasContent = false;
 
         for (int i = 0; i < orderedKeys.length; i++) {
@@ -180,18 +220,17 @@ public class FontInfoDialog {
                 metadata.get("FullName") :
                 (metadata.containsKey("Family") && metadata.get("Family") != null
                 && !metadata.get("Family").isEmpty() ?
-                metadata.get("Family") : context.getString(R.string.font_viewer_select_font));
+                metadata.get("Family") : dialogContext.getString(R.string.font_viewer_select_font));
 
-        AlertDialog dialog = new AlertDialog.Builder(context)
+        AlertDialog dialog = builder
                 .setTitle(dialogTitle)
-                .setView(scrollView)
+                .setView(root)
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
 
         dialog.show();
     }
 
-    // ينشئ صفاً واحداً (تسمية + قيمة) من font_info_dialog_item.xml ويضيفه للحاوية
     private void addItemView(LayoutInflater inflater, LinearLayout container, String label, String value) {
         View itemView = inflater.inflate(R.layout.font_info_dialog_item, container, false);
 
@@ -225,9 +264,15 @@ public class FontInfoDialog {
         return version;
     }
 
-    // تحويل dp إلى بكسل حسب كثافة الشاشة
+    private int resolveColorControlHighlight(Context ctx) {
+        TypedArray ta = ctx.obtainStyledAttributes(new int[]{R.attr.colorControlHighlight});
+        int color = ta.getColor(0, 0x1F000000);
+        ta.recycle();
+        return color;
+    }
+
     private int dpToPx(int dp) {
         float density = context.getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
     }
-}
+            }
