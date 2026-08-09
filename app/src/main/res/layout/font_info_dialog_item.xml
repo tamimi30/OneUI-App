@@ -5,6 +5,8 @@
     android:minHeight="69.75dp"
     android:gravity="center_vertical"
     android:orientation="vertical"
+    android:focusable="true"
+    android:clickable="false"
     android:paddingTop="14dp"
     android:paddingBottom="14dp">
 
