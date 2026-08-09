@@ -1,6 +1,7 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,8 +130,6 @@ public class FontInfoDialog {
         container.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
-        int horizontalPadding = dpToPx(24);
-        container.setPaddingRelative(horizontalPadding, 0, horizontalPadding, 0);
 
         boolean hasContent = false;
 
@@ -146,6 +145,13 @@ public class FontInfoDialog {
             }
 
             if (value == null || value.isEmpty()) {
+                continue;
+            }
+
+            // توحيد أي أسطر فارغة أو مسافات متعددة داخل القيمة إلى مسافة واحدة
+            value = value.replaceAll("\\s+", " ").trim();
+
+            if (value.isEmpty()) {
                 continue;
             }
 
@@ -176,16 +182,41 @@ public class FontInfoDialog {
             return;
         }
 
+        int sidePadding = dpToPx(24);
+
         NestedScrollView scrollView = new NestedScrollView(context);
-        scrollView.setLayoutParams(new ViewGroup.LayoutParams(
+        scrollView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         scrollView.setFillViewport(true);
-        scrollView.setPadding(0, dpToPx(8), 0, dpToPx(8));
+        scrollView.setPaddingRelative(sidePadding, 0, sidePadding, 0);
         scrollView.setVerticalScrollBarEnabled(true);
         scrollView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
-        scrollView.setScrollIndicators(View.SCROLL_INDICATOR_TOP | View.SCROLL_INDICATOR_BOTTOM);
         scrollView.addView(container);
+
+        // الخطان الفاصلان العلوي والسفلي، مبنيان يدوياً بنفس أسلوب AppCompat
+        View topDivider = createDivider(sidePadding);
+        View bottomDivider = createDivider(sidePadding);
+        topDivider.setVisibility(View.GONE);
+        bottomDivider.setVisibility(View.GONE);
+
+        LinearLayout wrapper = new LinearLayout(context);
+        wrapper.setOrientation(LinearLayout.VERTICAL);
+        wrapper.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        wrapper.setPadding(0, dpToPx(8), 0, dpToPx(8));
+        wrapper.addView(topDivider);
+        wrapper.addView(scrollView);
+        wrapper.addView(bottomDivider);
+
+        Runnable updateDividers = () -> {
+            topDivider.setVisibility(scrollView.canScrollVertically(-1) ? View.VISIBLE : View.GONE);
+            bottomDivider.setVisibility(scrollView.canScrollVertically(1) ? View.VISIBLE : View.GONE);
+        };
+        scrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener)
+                (v, scrollX, scrollY, oldScrollX, oldScrollY) -> updateDividers.run());
+        scrollView.post(updateDividers);
 
         String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null
                 && !metadata.get("FullName").isEmpty() ?
@@ -196,9 +227,26 @@ public class FontInfoDialog {
 
         new AlertDialog.Builder(context)
                 .setTitle(dialogTitle)
-                .setView(scrollView)
+                .setView(wrapper)
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
+    }
+
+    private View createDivider(int sideMargin) {
+        View divider = new View(context);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(1));
+        params.setMarginStart(sideMargin);
+        params.setMarginEnd(sideMargin);
+        divider.setLayoutParams(params);
+        divider.setBackgroundColor(resolveThemeColor(androidx.appcompat.R.attr.colorControlHighlight));
+        return divider;
+    }
+
+    private int resolveThemeColor(int attrRes) {
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(attrRes, typedValue, true);
+        return typedValue.data;
     }
 
     private void showNoMetadataDialog() {
