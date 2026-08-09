@@ -12,10 +12,9 @@
 
     <TextView
         android:id="@+id/font_info_label"
+        style="?android:attr/textAppearance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="sec-roboto-light"
-        android:textStyle="normal"
         android:textSize="13sp"
         android:textDirection="locale"
         android:lineSpacingExtra="4sp"
@@ -23,10 +22,9 @@
 
     <TextView
         android:id="@+id/font_info_value"
+        style="?android:attr/textAppearance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        
-        android:textStyle="normal"
         android:textSize="17sp"
         android:textDirection="locale"
         android:lineSpacingExtra="4sp"
