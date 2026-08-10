@@ -1,6 +1,7 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
 
 import java.util.Map;
 
@@ -196,6 +198,16 @@ public class FontInfoDialog {
             }
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
+
+            Typeface forcedTypeface = ResourcesCompat.getFont(context, R.font.roboto);
+            if (forcedTypeface != null) {
+                valueView.setTypeface(forcedTypeface);
+                valueView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                    if (((TextView) v).getTypeface() != forcedTypeface) {
+                        ((TextView) v).setTypeface(forcedTypeface);
+                    }
+                });
+            }
 
             itemsContainer.addView(itemView);
             hasContent = true;
