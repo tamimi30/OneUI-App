@@ -199,7 +199,7 @@ public class FontInfoDialog {
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
 
-            Typeface forcedTypeface = ResourcesCompat.getFont(context, R.font.roboto);
+            Typeface forcedTypeface = Typeface.DEFAULT;
             if (forcedTypeface != null) {
                 valueView.setTypeface(forcedTypeface);
                 valueView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
