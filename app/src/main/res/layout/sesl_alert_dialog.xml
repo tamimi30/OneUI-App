@@ -16,6 +16,7 @@
   -->
 <!-- Original code by Samsung, all rights reserved to the original author. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
               android:id="@+id/parentPanel"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
