@@ -26,6 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="17sp"
+        android:fontFamily="sans-serif"
         android:textDirection="locale"
         android:lineSpacingExtra="4sp"
         android:textColor="?android:attr/textColorPrimary"
