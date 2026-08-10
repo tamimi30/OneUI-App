@@ -41,7 +41,7 @@
 
                <ImageView
                    android:id="@android:id/icon"
-                   style="@style/RtlOverlay.Widget.AppCompat.DialogTitle.Icon"
+                   
                    android:layout_width="32dip"
                    android:layout_height="32dip"
                    android:src="@null"
