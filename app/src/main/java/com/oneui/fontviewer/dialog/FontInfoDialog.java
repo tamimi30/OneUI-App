@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.graphics.Typeface;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -172,14 +173,6 @@ public class FontInfoDialog {
             // ننظّف القيمة: نشيل فواصل الأسطر، ونستبدل الرموز النادرة
             // (شرطة طويلة، علامات تنصيص مُقوّسة...) برموز عادية يدعمها أي خط
             value = sanitizeMetadataValue(value);
-            
-            String debugCodes = "";
-            for (int ci = 0; ci < value.length(); ci++) {
-                if (value.charAt(ci) > 127) {
-                    debugCodes += " [U+" + Integer.toHexString(value.charAt(ci)).toUpperCase() + "]";
-                }
-            }
-            value = value + debugCodes;
 
             if ("Version".equals(key)) {
                 value = cleanVersionString(value);
@@ -196,6 +189,9 @@ public class FontInfoDialog {
             View itemView = inflater.inflate(R.layout.font_info_dialog_item, itemsContainer, false);
             TextView labelView = itemView.findViewById(R.id.font_info_label);
             TextView valueView = itemView.findViewById(R.id.font_info_value);
+            
+            labelView.setTypeface(Typeface.DEFAULT);
+            valueView.setTypeface(Typeface.DEFAULT);
 
             labelView.setText(displayName);
 
