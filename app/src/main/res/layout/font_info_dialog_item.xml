@@ -25,7 +25,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="17sp"
-        app:fontFamily="@font/roboto"
         android:textDirection="locale"
         android:lineSpacingExtra="4sp"
         android:textColor="?android:attr/textColorPrimary"
