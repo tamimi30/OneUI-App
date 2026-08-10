@@ -199,7 +199,7 @@ public class FontInfoDialog {
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
 
-            Typeface forcedTypeface = Typeface.create("sans-serif", Typeface.NORMAL);
+            Typeface forcedTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
             if (forcedTypeface != null) {
                 valueView.setTypeface(forcedTypeface);
                 valueView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
