@@ -40,7 +40,7 @@ public class FontErrorDialog {
         errorMessage.setTextColor(context.getColor(R.color.sort_bar_text_color));
          
         // إضافة الخط المخصص (sec-roboto-light) بنمط عادي (NORMAL)
-        Typeface customTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
+        Typeface customTypeface = Typeface.create("serif-monospace", Typeface.NORMAL);
         errorMessage.setTypeface(customTypeface); 
        
         layout.addView(errorIcon);
