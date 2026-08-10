@@ -169,6 +169,8 @@ public class FontInfoDialog {
                 continue;
             }
 
+            // ننظّف القيمة: نشيل فواصل الأسطر، ونستبدل الرموز النادرة
+            // (شرطة طويلة، علامات تنصيص مُقوّسة...) برموز عادية يدعمها أي خط
             value = sanitizeMetadataValue(value);
 
             if ("Version".equals(key)) {
@@ -191,11 +193,9 @@ public class FontInfoDialog {
 
             if (isLinklessField(key)) {
                 valueView.setAutoLinkMask(0);
-                valueView.setText(value);
-            } else {
-                valueView.setText(value);
-                valueView.setMovementMethod(LinkMovementMethod.getInstance());
             }
+            valueView.setText(value);
+            valueView.setMovementMethod(LinkMovementMethod.getInstance());
 
             itemsContainer.addView(itemView);
             hasContent = true;
@@ -242,26 +242,16 @@ public class FontInfoDialog {
                 .replace("\r\n", " ")
                 .replace("\r", " ")
                 .replace("\n", " ")
-                .replace("\u2010", "-")
-                .replace("\u2011", "-")
-                .replace("\u2012", "-")
-                .replace("\u2013", "-")
                 .replace("\u2014", "-")
-                .replace("\u2015", "-")
-                .replace("\u2212", "-")
+                .replace("\u2013", "-")
                 .replace("\u2018", "'")
                 .replace("\u2019", "'")
-                .replace("\u201A", "'")
                 .replace("\u201C", "\"")
                 .replace("\u201D", "\"")
-                .replace("\u201E", "\"")
                 .replace("\u2026", "...")
                 .replace("\u2022", "-")
                 .replace("\u00A0", " ")
                 .replace("\u200B", "")
-                .replace("\u200C", "")
-                .replace("\u200D", "")
-                .replace("\uFEFF", "")
                 .replaceAll("\\s+", " ")
                 .trim();
     }
@@ -290,4 +280,4 @@ public class FontInfoDialog {
                 return false;
         }
     }
-                }
+                                       }
