@@ -15,6 +15,7 @@ import com.oneui.fontviewer.fragment.favorite.FavoriteFontListFragment;
 import com.oneui.fontviewer.fragment.trash.TrashFragment;
 import com.oneui.fontviewer.drawer.DrawerListAdapter;
 import com.oneui.fontviewer.widget.search.SearchCoordinator;
+import com.oneui.fontviewer.R;
 
 public class NavManager {
 
@@ -103,43 +104,8 @@ public class NavManager {
 
     public void showFragmentAnimated(AppScreen screen) {
         FragmentManager fm = mHost.getAppFragmentManager();
-
-        Fragment currentlyVisible = null;
-        for (AppScreen s : AppScreen.values()) {
-            Fragment frag = mHost.getFragment(s);
-            if (frag != null && frag.isAdded() && !frag.isHidden() && s != screen) {
-                currentlyVisible = frag;
-                break;
-            }
-        }
-
-        if (currentlyVisible != null && currentlyVisible.getView() != null) {
-            final Fragment fragToHide = currentlyVisible;
-            fragToHide.getView().animate()
-                    .alpha(0f)
-                    .setDuration(200)
-                    .withEndAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            FragmentTransaction hideTransaction = fm.beginTransaction();
-                            hideTransaction.hide(fragToHide);
-                            fragToHide.setMenuVisibility(false);
-                            hideTransaction.commitNow();
-                            if (fragToHide.getView() != null) {
-                                fragToHide.getView().setAlpha(1f);
-                            }
-                            showNewScreenWithFade(screen);
-                        }
-                    })
-                    .start();
-        } else {
-            showNewScreenWithFade(screen);
-        }
-    }
-
-    private void showNewScreenWithFade(AppScreen screen) {
-        FragmentManager fm = mHost.getAppFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
+        transaction.setCustomAnimations(R.anim.note_style_fragment_enter, R.anim.note_style_fragment_exit);
 
         for (AppScreen s : AppScreen.values()) {
             Fragment frag = mHost.getFragment(s);
@@ -156,11 +122,6 @@ public class NavManager {
         }
 
         transaction.commitNow();
-
-        if (newFrag != null && newFrag.getView() != null) {
-            newFrag.getView().setAlpha(0f);
-            newFrag.getView().animate().alpha(1f).setDuration(200).start();
-        }
 
         mHost.setCurrentScreen(screen);
         if (mHost.getSearchCoordinator() != null) {
