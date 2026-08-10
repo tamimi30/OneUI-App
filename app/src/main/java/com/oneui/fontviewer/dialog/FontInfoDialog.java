@@ -172,6 +172,14 @@ public class FontInfoDialog {
             // ننظّف القيمة: نشيل فواصل الأسطر، ونستبدل الرموز النادرة
             // (شرطة طويلة، علامات تنصيص مُقوّسة...) برموز عادية يدعمها أي خط
             value = sanitizeMetadataValue(value);
+            
+            String debugCodes = "";
+            for (int ci = 0; ci < value.length(); ci++) {
+                if (value.charAt(ci) > 127) {
+                    debugCodes += " [U+" + Integer.toHexString(value.charAt(ci)).toUpperCase() + "]";
+                }
+            }
+            value = value + debugCodes;
 
             if ("Version".equals(key)) {
                 value = cleanVersionString(value);
