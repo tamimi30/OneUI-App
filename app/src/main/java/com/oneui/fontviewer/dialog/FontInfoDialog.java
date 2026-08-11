@@ -268,17 +268,19 @@ public class FontInfoDialog {
 
     // كود تشخيصي مؤقت لمعرفة رقم الرمز الحقيقي - سنحذفه لاحقاً
     private static String debugCodepoints(String value) {
-        if (value == null) return "";
+        if (value == null) return " [NULL]";
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < value.length(); i++) {
-            char c = value.charAt(i);
-            boolean suspicious = (c >= 0x00A0 && c <= 0x036F) || (c >= 0x2000 && c <= 0x2BFF);
-            if (suspicious) {
+        int i = 0;
+        while (i < value.length()) {
+            int cp = value.codePointAt(i);
+            if (cp < 0x20 || cp > 0x7E) {
                 if (sb.length() > 0) sb.append(' ');
-                sb.append(String.format("U+%04X", (int) c));
+                sb.append(String.format("U+%04X", cp));
             }
+            i += Character.charCount(cp);
         }
-        return sb.length() > 0 ? " [" + sb.toString() + "]" : "";
+        String found = sb.length() > 0 ? sb.toString() : "NONE";
+        return " [len=" + value.length() + " | " + found + "]";
     }
 
     private static boolean isLinklessField(String key) {
