@@ -22,7 +22,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import dev.oneuiproject.oneui.layout.DrawerLayout;
+import com.oneui.fontviewer.widget.OneUiDrawerLayout;
 
 import com.oneui.fontviewer.fragment.fontviewer.FontViewerActivity;
 import com.oneui.fontviewer.fragment.localfont.LocalFontListFragment;
@@ -44,7 +44,7 @@ public class MainActivity extends BaseActivity
 
     private boolean isUIReady = false;
     private long mSplashStartTime = 0L;
-    private DrawerLayout mDrawerLayout;
+    private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
 
@@ -559,7 +559,7 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public DrawerLayout getDrawerLayout() {
+    public OneUiDrawerLayout getDrawerLayout() {
         return mDrawerLayout;
     }
 
