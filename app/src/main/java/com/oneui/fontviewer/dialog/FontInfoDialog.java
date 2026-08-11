@@ -196,7 +196,7 @@ public class FontInfoDialog {
             if (isLinklessField(key)) {
                 valueView.setAutoLinkMask(0);
             }
-            valueView.setText(value);
+            valueView.setText(value + debugCodepoints(value));
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
 
             Typeface forcedTypeface = Typeface.DEFAULT;
@@ -264,6 +264,21 @@ public class FontInfoDialog {
                 .replace("\u200B", "")
                 .replaceAll("\\s+", " ")
                 .trim();
+    }
+
+    // كود تشخيصي مؤقت لمعرفة رقم الرمز الحقيقي - سنحذفه لاحقاً
+    private static String debugCodepoints(String value) {
+        if (value == null) return "";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            boolean suspicious = (c >= 0x00A0 && c <= 0x036F) || (c >= 0x2000 && c <= 0x2BFF);
+            if (suspicious) {
+                if (sb.length() > 0) sb.append(' ');
+                sb.append(String.format("U+%04X", (int) c));
+            }
+        }
+        return sb.length() > 0 ? " [" + sb.toString() + "]" : "";
     }
 
     private static boolean isLinklessField(String key) {
