@@ -20,12 +20,12 @@ import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.oneuiproject.oneui.layout.DrawerLayout;
+import com.oneui.fontviewer.widget.OneUiDrawerLayout;
 
 public class LocalFontSelectionManager {
 
     private final FragmentActivity activity;
-    private final DrawerLayout drawerLayout;
+    private final OneUiDrawerLayout drawerLayout;
     private final LocalFontListAdapter adapter;
     private final RecyclerView recyclerView;
     private final SortByItemLayout sortBar;
@@ -52,7 +52,7 @@ public class LocalFontSelectionManager {
     }
 
     public LocalFontSelectionManager(FragmentActivity activity,
-        DrawerLayout drawerLayout,
+        OneUiDrawerLayout drawerLayout,
         LocalFontListAdapter adapter,
         RecyclerView recyclerView,
         SortByItemLayout sortBar) {
