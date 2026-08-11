@@ -31,7 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
-import dev.oneuiproject.oneui.layout.DrawerLayout;
+import com.oneui.fontviewer.widget.OneUiDrawerLayout;
 
 import com.oneui.fontviewer.activity.AppScreen;           
 import com.oneui.fontviewer.activity.MainActivity;
@@ -65,7 +65,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private Handler mMainHandler;
     private ExecutorService mExecutor;
     private AppBarLayout mAppBarLayout;
-    private DrawerLayout mDrawerLayout;
+    private OneUiDrawerLayout mDrawerLayout;
     private SortByItemLayout mSortBar;
 
     private LocalFontPermissionManager mLocalFontPermissionManager;
@@ -440,8 +440,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private void setupDrawerLayout() {
         if (getActivity() != null) {
             View drawer = getActivity().findViewById(R.id.drawer_layout);
-            if (drawer instanceof DrawerLayout) {
-                mDrawerLayout = (DrawerLayout) drawer;
+            if (drawer instanceof OneUiDrawerLayout) {
+                mDrawerLayout = (OneUiDrawerLayout) drawer;
                 mAppBarLayout = mDrawerLayout.getAppBarLayout();
                 if (mAppBarLayout != null) {
                     mAppBarLayout.addOnOffsetChangedListener(this);
