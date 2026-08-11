@@ -198,7 +198,6 @@ public class FontInfoDialog {
             }
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
-            valueView.setTextDirection(View.TEXT_DIRECTION_FIRST_STRONG);
 
             Typeface forcedTypeface = Typeface.DEFAULT;
             valueView.setTypeface(forcedTypeface);
@@ -291,4 +290,4 @@ public class FontInfoDialog {
                 return false;
         }
     }
-                                       }
+                                                 }
