@@ -7,6 +7,7 @@ import android.view.View;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.view.animation.OvershootInterpolator;
 
 import java.util.Map;
@@ -225,6 +226,11 @@ public class FontViewerActivity extends BaseActivity
                     runOnUiThread(() -> {
                         isFinished[0] = true;
                         dismissLoadingDialog();
+                        if ("NO_INTERNET".equals(error)) {
+                            Toast.makeText(FontViewerActivity.this,
+                                    R.string.toast_no_internit_connection,
+                                    Toast.LENGTH_LONG).show();
+                        }
                         showFontInfoDialog(meta);
                     });
                 }
