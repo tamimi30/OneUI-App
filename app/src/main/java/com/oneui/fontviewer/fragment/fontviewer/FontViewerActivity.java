@@ -228,7 +228,7 @@ public class FontViewerActivity extends BaseActivity
                         dismissLoadingDialog();
                         if ("NO_INTERNET".equals(error)) {
                             Toast.makeText(FontViewerActivity.this,
-                                    R.string.toast_no_internit_connection,
+                                    R.string.toast_no_internet_connection,
                                     Toast.LENGTH_LONG).show();
                         }
                         showFontInfoDialog(meta);
