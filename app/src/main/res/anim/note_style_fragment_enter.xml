@@ -4,7 +4,7 @@
     android:startOffset="100">
     <alpha
         android:interpolator="@android:anim/linear_interpolator"
-        android:duration="200"
+        android:duration="500"
         android:fromAlpha="0"
         android:toAlpha="1"/>
     <scale
