@@ -16,8 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="13sp"
-        
-        android:lineSpacingExtra="4sp"
+        android:textDirection="locale"
         android:textColor="?android:attr/textColorSecondary" />
 
     <TextView
@@ -25,8 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="17sp"
-        android:textAlignment="viewStart"
-        
+        android:textDirection="locale"
         android:lineSpacingExtra="4sp"
         android:textColor="?android:attr/textColorPrimary"
         android:autoLink="web|email"
