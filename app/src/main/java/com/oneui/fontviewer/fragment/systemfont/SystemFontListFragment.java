@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
 
-import dev.oneuiproject.oneui.layout.DrawerLayout;
+import com.oneui.fontviewer.widget.OneUiDrawerLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     private Handler mMainHandler;
     private ExecutorService mExecutor;
     private AppBarLayout mAppBarLayout;
-    private DrawerLayout mDrawerLayout;
+    private OneUiDrawerLayout mDrawerLayout;
 
     private FontSearchManager mSearchManager;
     private FontSortManager mSortManager;
@@ -299,8 +299,8 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     private void setupAppBarLayout() {
         if (getActivity() != null) {
             View drawer = getActivity().findViewById(R.id.drawer_layout);
-            if (drawer instanceof DrawerLayout) {
-                mDrawerLayout = (DrawerLayout) drawer;
+            if (drawer instanceof OneUiDrawerLayout) {
+                mDrawerLayout = (OneUiDrawerLayout) drawer;
                 mAppBarLayout = mDrawerLayout.getAppBarLayout();
                 if (mAppBarLayout != null) {
                     mAppBarLayout.addOnOffsetChangedListener(this);
