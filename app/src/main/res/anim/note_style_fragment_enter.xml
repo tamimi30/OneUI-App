@@ -9,11 +9,11 @@
         android:toAlpha="1"/>
     <scale
         android:interpolator="@anim/one_easing_interpolator"
-        android:duration="550"
+        android:duration="450"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:fromXScale="0.80"
+        android:fromXScale="0.95"
         android:toXScale="1"
-        android:fromYScale="0.80"
+        android:fromYScale="0.95"
         android:toYScale="1"/>
 </set>
