@@ -56,6 +56,7 @@
     <string name="translating">جارٍ الترجمة...</string>
     <string name="font_metadata_error">لا يمكن عرض البيانات الوصفية للخط، ربما ملف الخط تالف أو لا يحتوي على بيانات وصفية</string>
 	<string name="font_viewer_error_loading_font">حدث خطأ أثناء تحميل ملف الخط</string>
+	<string name="toast_no_internet_connection">لم تتم ترجمة البيانات الوصفية، لا يتوفر اتصال بالانترنت</string>
     
     <!-- الخطوط المحلية -->
     <string name="drawer_local_fonts">الخطوط المحلية</string>
