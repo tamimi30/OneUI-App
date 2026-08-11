@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import dev.oneuiproject.oneui.layout.DrawerLayout;
+import com.oneui.fontviewer.widget.OneUiDrawerLayout;
 
 import com.oneui.fontviewer.fragment.localfont.LocalFontListFragment;
 import com.oneui.fontviewer.fragment.favorite.FavoriteFontListFragment;
@@ -24,7 +24,7 @@ public class NavManager {
         Fragment getFragment(AppScreen screen);
         AppScreen getCurrentScreen();
         void setCurrentScreen(AppScreen screen);
-        DrawerLayout getDrawerLayout();
+        OneUiDrawerLayout getDrawerLayout();
         DrawerListAdapter getDrawerAdapter();
         SearchCoordinator getSearchCoordinator();
         void updateDrawerTitle(AppScreen screen);
@@ -38,7 +38,7 @@ public class NavManager {
         mHost = host;
     }
 
-    public void setup(DrawerLayout drawerLayout) {
+    public void setup(OneUiDrawerLayout drawerLayout) {
         if (drawerLayout != null) {
             mInnerDrawer = findInnerDrawerLayout(drawerLayout);
         }
