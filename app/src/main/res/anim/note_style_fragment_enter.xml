@@ -5,11 +5,11 @@
     <alpha
         android:interpolator="@android:anim/linear_interpolator"
         android:duration="200"
-        android:fromAlpha="0"
+        android:fromAlpha="1"
         android:toAlpha="1"/>
     <scale
         android:interpolator="@anim/one_easing_interpolator"
-        android:duration="450"
+        android:duration="500"
         android:pivotX="50%"
         android:pivotY="50%"
         android:fromXScale="0.90"
