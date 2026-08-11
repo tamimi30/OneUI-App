@@ -1,4 +1,4 @@
-package dev.oneuiproject.oneui.layout;
+package com.oneui.fontviewer.widget;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -50,8 +50,8 @@ import dev.oneuiproject.oneui.view.internal.NavigationBadgeIcon;
 /**
  * Custom collapsing Appbar like in any App from Samsung. Includes a {@link SearchView} and Samsung's ActionMode.
  */
-public class ToolbarLayout extends LinearLayout {
-    private static final String TAG = "ToolbarLayout";
+public class OneUiToolBarLayout extends LinearLayout {
+    private static final String TAG = "OneUiToolBarLayout";
 
 
     public static final int AMT_GROUP_MENU_ID = 9999;
@@ -60,8 +60,8 @@ public class ToolbarLayout extends LinearLayout {
     private int mSelectedItemsCount = 0;
 
     public interface ActionModeCallback {
-        void onShow(ToolbarLayout toolbarLayout);
-        void onDismiss(ToolbarLayout toolbarLayout);
+        void onShow(OneUiToolBarLayout toolbarLayout);
+        void onDismiss(OneUiToolBarLayout toolbarLayout);
     }
 
     private ActionModeCallback mActionModeCallback;
@@ -134,7 +134,7 @@ public class ToolbarLayout extends LinearLayout {
         void onSearchModeToggle(SearchView searchView, boolean visible);
     }
 
-    public ToolbarLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public OneUiToolBarLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mActivity = getActivity();
         mContext = context;
