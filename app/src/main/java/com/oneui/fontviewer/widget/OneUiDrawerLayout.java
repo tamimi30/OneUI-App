@@ -1,4 +1,4 @@
-package dev.oneuiproject.oneui.layout;
+package com.oneui.fontviewer.widget;
 
 import static androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED;
 import static androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED;
@@ -42,10 +42,10 @@ import dev.oneuiproject.oneui.design.R;
 import dev.oneuiproject.oneui.utils.ViewUtils;
 
 /**
- * Custom DrawerLayout extending {@link ToolbarLayout}. Looks and behaves the same as the one in Apps from Samsung.
+ * Custom DrawerLayout extending {@link OneUiToolBarLayout}. Looks and behaves the same as the one in Apps from Samsung.
  */
-public class DrawerLayout extends ToolbarLayout {
-    private static final String TAG = "DrawerLayout";
+public class OneUiDrawerLayout extends OneUiToolBarLayout {
+    private static final String TAG = "OneUiDrawerLayout";
 
     private static final float DEFAULT_DRAWER_RADIUS = 15.f;
 
@@ -82,7 +82,7 @@ public class DrawerLayout extends ToolbarLayout {
     private float scrimAlpha;
     private int systemBarsColor;
 
-    public DrawerLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public OneUiDrawerLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initDrawer();
 
