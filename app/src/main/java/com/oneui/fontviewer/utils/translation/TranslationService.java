@@ -1,6 +1,8 @@
 package com.oneui.fontviewer.utils.translation;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -45,6 +47,11 @@ public class TranslationService {
         
         if (targetLanguage.equals("en")) {
             callback.onTranslationComplete(metadata);
+            return;
+        }
+        
+        if (!isInternetAvailable()) {
+            callback.onTranslationFailed("NO_INTERNET");
             return;
         }
         
@@ -191,6 +198,21 @@ public class TranslationService {
             return settingsDataStore.getTranslationEnabled().blockingFirst();
         } catch (Exception e) {
             Log.e(TAG, "Error checking translation enabled: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean isInternetAvailable() {
+        try {
+            ConnectivityManager connectivityManager =
+                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivityManager == null) {
+                return false;
+            }
+            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+            return activeNetwork != null && activeNetwork.isConnected();
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking internet connection: " + e.getMessage());
             return false;
         }
     }
