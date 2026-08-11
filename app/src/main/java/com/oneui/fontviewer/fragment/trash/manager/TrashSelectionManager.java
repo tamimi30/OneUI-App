@@ -19,13 +19,13 @@ import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.oneuiproject.oneui.layout.DrawerLayout;
+import com.oneui.fontviewer.widget.OneUiDrawerLayout;
 
 public class TrashSelectionManager {
 
 
     private final FragmentActivity activity;
-    private final DrawerLayout     drawerLayout;
+    private final OneUiDrawerLayout drawerLayout;
     private final TrashListAdapter adapter;
     private final RecyclerView     recyclerView;
 
@@ -47,7 +47,7 @@ public class TrashSelectionManager {
 
     public TrashSelectionManager(
             FragmentActivity activity,
-            DrawerLayout     drawerLayout,
+            OneUiDrawerLayout drawerLayout,
             TrashListAdapter adapter,
             RecyclerView     recyclerView) {
 
