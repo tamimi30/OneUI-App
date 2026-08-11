@@ -23,5 +23,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "FontViewer"
 include ':app'
-include ':lib'
 
