@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
-import dev.oneuiproject.oneui.layout.DrawerLayout;
+import com.oneui.fontviewer.widget.OneUiDrawerLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.AppScreen;           
@@ -51,7 +51,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     private View         mMainContentLayout;
     private View         mEmptyView;
 
-    private DrawerLayout mDrawerLayout;
+    private OneUiDrawerLayout mDrawerLayout;
     private AppBarLayout mAppBarLayout;
 
     private TrashListAdapter       mAdapter;
@@ -162,8 +162,8 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     private void setupDrawerLayout() {
         if (getActivity() == null) return;
         View drawerView = getActivity().findViewById(R.id.drawer_layout);
-        if (drawerView instanceof DrawerLayout) {
-            mDrawerLayout = (DrawerLayout) drawerView;
+        if (drawerView instanceof OneUiDrawerLayout) {
+            mDrawerLayout = (OneUiDrawerLayout) drawerView;
             mAppBarLayout = mDrawerLayout.getAppBarLayout();
             if (mAppBarLayout != null) {
                 mAppBarLayout.addOnOffsetChangedListener(this);
