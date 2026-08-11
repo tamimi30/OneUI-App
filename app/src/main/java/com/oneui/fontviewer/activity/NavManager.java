@@ -105,7 +105,7 @@ public class NavManager {
     public void showFragmentAnimated(AppScreen screen) {
         FragmentManager fm = mHost.getAppFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.setCustomAnimations(R.anim.fragment_close_enter, R.anim.fragment_close_exit);
+        transaction.setCustomAnimations(R.anim.note_style_fragment_enter, R.anim.fragment_close_exit);
 
         for (AppScreen s : AppScreen.values()) {
             Fragment frag = mHost.getFragment(s);
