@@ -4,7 +4,7 @@
         android:interpolator="@android:anim/linear_interpolator"
         android:duration="200"
         android:fromAlpha="1"
-        android:toAlpha="1"/>
+        android:toAlpha="0"/>
     <scale
         android:interpolator="@anim/one_easing_interpolator"
         android:duration="600"
