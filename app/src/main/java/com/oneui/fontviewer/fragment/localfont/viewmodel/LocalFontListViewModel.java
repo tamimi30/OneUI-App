@@ -366,10 +366,14 @@ public class LocalFontListViewModel extends AndroidViewModel {
             return;
         }
         
-        loadFontsFromPath(folderPath);
+        loadFontsFromPath(folderPath, false);
     }
     
     public void loadFontsFromPath(String folderPath) {
+        loadFontsFromPath(folderPath, true);
+    }
+
+    public void loadFontsFromPath(String folderPath, boolean showLoading) {
         if (folderPath == null || folderPath.isEmpty()) {
             return;
         }
@@ -379,7 +383,9 @@ public class LocalFontListViewModel extends AndroidViewModel {
             return;
         }
 
-        isLoadingLiveData.postValue(true);
+        if (showLoading) {
+            isLoadingLiveData.postValue(true);
+        }
 
         mIsFolderSyncing = true;
 
@@ -396,7 +402,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
             @Override
             public void onFullExtractionComplete() {
                 long elapsedTime = System.currentTimeMillis() - startTime;
-                long delay = Math.max(0, 2500 - elapsedTime);
+                long delay = showLoading ? Math.max(0, 2500 - elapsedTime) : 0;
 
                 new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                     mIsFolderSyncing = false;
@@ -409,7 +415,9 @@ public class LocalFontListViewModel extends AndroidViewModel {
                         fontsLiveData.postValue(currentFonts != null ? currentFonts : new java.util.ArrayList<>());
                     }
 
-                    isLoadingLiveData.postValue(false);
+                    if (showLoading) {
+                        isLoadingLiveData.postValue(false);
+                    }
                 }, delay);
             }
         });
