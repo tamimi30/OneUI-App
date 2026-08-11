@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
-import dev.oneuiproject.oneui.layout.DrawerLayout;
+import com.oneui.fontviewer.widget.OneUiDrawerLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.AppScreen;
@@ -30,7 +30,7 @@ public class SearchCoordinator {
     private static final String KEY_SEARCH_EXPANDED = "search_expanded";
 
     private final Activity     activity;
-    private final DrawerLayout drawerLayout;
+    private final OneUiDrawerLayout drawerLayout;
 
     private MenuItem       searchMenuItem;
     private SearchView     searchView;
@@ -61,7 +61,7 @@ public class SearchCoordinator {
     }
 
 
-    public SearchCoordinator(@NonNull Activity activity, @NonNull DrawerLayout drawerLayout) {
+    public SearchCoordinator(@NonNull Activity activity, @NonNull OneUiDrawerLayout drawerLayout) {
         this.activity     = activity;
         this.drawerLayout = drawerLayout;
     }
@@ -116,7 +116,7 @@ public class SearchCoordinator {
 
         searchView.setImeOptions(searchView.getImeOptions() | android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI | android.view.inputmethod.EditorInfo.IME_FLAG_NO_FULLSCREEN);
 
-        drawerLayout.setSearchModeListener(new dev.oneuiproject.oneui.layout.ToolbarLayout.SearchModeListener() {
+        drawerLayout.setSearchModeListener(new com.oneui.fontviewer.widget.OneUiToolBarLayout.SearchModeListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 performSearch(query);
