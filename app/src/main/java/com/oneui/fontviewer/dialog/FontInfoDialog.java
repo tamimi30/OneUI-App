@@ -196,12 +196,16 @@ public class FontInfoDialog {
             if (isLinklessField(key)) {
                 valueView.setAutoLinkMask(0);
             }
-            valueView.setText(value + debugCodepoints(value));
-            valueView.setMovementMethod(LinkMovementMethod.getInstance());
-
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
-            valueView.setLayerType(View.LAYER_TYPE_SOFTWARE, null); 
+
+            Typeface forcedTypeface = Typeface.DEFAULT;
+            valueView.setTypeface(forcedTypeface);
+            valueView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                if (((TextView) v).getTypeface() != forcedTypeface) {
+                    ((TextView) v).setTypeface(forcedTypeface);
+                }
+            });
 
             itemsContainer.addView(itemView);
             hasContent = true;
@@ -262,23 +266,6 @@ public class FontInfoDialog {
                 .trim();
     }
 
-    // كود تشخيصي مؤقت لمعرفة رقم الرمز الحقيقي - سنحذفه لاحقاً
-    private static String debugCodepoints(String value) {
-        if (value == null) return " [NULL]";
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        while (i < value.length()) {
-            int cp = value.codePointAt(i);
-            if (cp < 0x20 || cp > 0x7E) {
-                if (sb.length() > 0) sb.append(' ');
-                sb.append(String.format("U+%04X", cp));
-            }
-            i += Character.charCount(cp);
-        }
-        String found = sb.length() > 0 ? sb.toString() : "NONE";
-        return " [len=" + value.length() + " | " + found + "]";
-    }
-
     private static boolean isLinklessField(String key) {
         switch (key) {
             case "FullName":
@@ -303,4 +290,4 @@ public class FontInfoDialog {
                 return false;
         }
     }
-                                                 }
+        }
