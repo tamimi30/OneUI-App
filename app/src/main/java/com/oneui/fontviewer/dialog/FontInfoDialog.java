@@ -199,8 +199,7 @@ public class FontInfoDialog {
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
 
-            Typeface forcedTypeface = Typeface.DEFAULT;
-            valueView.setTypeface(forcedTypeface);
+            
             valueView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
                 if (((TextView) v).getTypeface() != forcedTypeface) {
                     ((TextView) v).setTypeface(forcedTypeface);
