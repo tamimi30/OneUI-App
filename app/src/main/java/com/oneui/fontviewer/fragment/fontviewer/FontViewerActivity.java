@@ -50,6 +50,8 @@ public class FontViewerActivity extends BaseActivity
     private String currentFontFileName;
 
     private ProgressDialog loadingDialog;
+    private long loadingDialogShownAt = 0L;
+    private static final long MIN_LOADING_DIALOG_MS = 400;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -223,8 +225,7 @@ public class FontViewerActivity extends BaseActivity
                 public void onTranslationComplete(Map<String, String> translatedData) {
                     runOnUiThread(() -> {
                         isFinished[0] = true;
-                        dismissLoadingDialog();
-                        showFontInfoDialog(translatedData);
+                        dismissLoadingDialogThenRun(() -> showFontInfoDialog(translatedData));
                     });
                 }
 
@@ -232,13 +233,14 @@ public class FontViewerActivity extends BaseActivity
                 public void onTranslationFailed(String error) {
                     runOnUiThread(() -> {
                         isFinished[0] = true;
-                        dismissLoadingDialog();
-                        if ("NO_INTERNET".equals(error)) {
-                            Toast.makeText(FontViewerActivity.this,
-                                    R.string.toast_no_internet_connection,
-                                    Toast.LENGTH_LONG).show();
-                        }
-                        showFontInfoDialog(meta);
+                        dismissLoadingDialogThenRun(() -> {
+                            if ("NO_INTERNET".equals(error)) {
+                                Toast.makeText(FontViewerActivity.this,
+                                        R.string.toast_no_internet_connection,
+                                        Toast.LENGTH_LONG).show();
+                            }
+                            showFontInfoDialog(meta);
+                        });
                     });
                 }
             });
@@ -278,6 +280,7 @@ public class FontViewerActivity extends BaseActivity
         loadingDialog.setMessage(getString(R.string.translating));
         loadingDialog.setCancelable(false);
         loadingDialog.show();
+        loadingDialogShownAt = System.currentTimeMillis();
         } catch (Exception ignored) {}
     }
 
@@ -288,6 +291,22 @@ public class FontViewerActivity extends BaseActivity
             } catch (Exception ignored) {}
             loadingDialog = null;
         }
+    }
+
+    private void dismissLoadingDialogThenRun(Runnable action) {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            long elapsed = System.currentTimeMillis() - loadingDialogShownAt;
+            long remaining = MIN_LOADING_DIALOG_MS - elapsed;
+            if (remaining > 0) {
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    dismissLoadingDialog();
+                    action.run();
+                }, remaining);
+                return;
+            }
+        }
+        dismissLoadingDialog();
+        action.run();
     }
 
     @Override
