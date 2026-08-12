@@ -24,12 +24,9 @@
         android:id="@+id/font_info_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="17sp"
-        style="?android:attr/textAppearance"
         android:textDirection="locale"
-        
+        android:textAppearance="?attr/textAppearanceListItem"
         android:lineSpacingExtra="4sp"
-        android:textColor="?android:attr/textColorPrimary"
         android:autoLink="web|email"
         android:textColorLink="?attr/colorPrimary" />
 
