@@ -20,6 +20,7 @@
         android:id="@+id/font_info_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="?android:attr/textAppearance"
         android:autoLink="web|email"
         android:textColorLink="?attr/colorPrimary" />
 
