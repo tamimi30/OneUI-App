@@ -6,18 +6,32 @@
     android:minHeight="69.75dp"
     android:gravity="center_vertical"
     android:orientation="vertical"
+    android:focusable="true"
+    android:clickable="false"
     android:paddingTop="14dp"
     android:paddingBottom="14dp">
 
     <TextView
         android:id="@+id/font_info_label"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textDirecict="locale"
+        android:fontFamily="sec-roboto-light"
+        android:textStyle="normal"
+        android:textColor="?android:attr/textColorSecondary" />
 
     <TextView
         android:id="@+id/font_info_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="?android:attr/textAppearance" />
+        android:textSize="17sp"
+        android:textDirecict="locale"
+        android:fontFamily="sec-roboto-light"
+        android:textStyle="normal"
+        android:lineSpacingExtra="4sp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:autoLink="web|email"
+        android:textColorLink="?attr/colorPrimary" />
 
 </LinearLayout>
