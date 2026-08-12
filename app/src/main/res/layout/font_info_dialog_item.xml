@@ -25,9 +25,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="17sp"
-        
+        style="?android:attr/textAppearance"
         android:textDirection="locale"
-        android:fontFamily="sans-serif"
+        
         android:lineSpacingExtra="4sp"
         android:textColor="?android:attr/textColorPrimary"
         android:autoLink="web|email"
