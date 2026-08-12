@@ -88,6 +88,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="true"
             android:noHistory="true"
+            android:parentActivityName=".fragment.fontviewer.FontViewerActivity"
             android:launchMode="singleTask">
             
             <intent-filter>
@@ -125,7 +126,6 @@
         <activity
             android:name=".fragment.fontviewer.FontViewerActivity"
             android:noHistory="true"
-            android:launchMode="singleTop"
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
