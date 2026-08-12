@@ -86,7 +86,7 @@
 
             <TextView
                 android:id="@android:id/message"
-                style="?android:attr/textAppearance"
+                
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/sesl_dialog_body_text_margin_start"
