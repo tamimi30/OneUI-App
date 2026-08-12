@@ -125,7 +125,7 @@
         <activity
             android:name=".fragment.fontviewer.FontViewerActivity"
             android:noHistory="true"
-            android:launchMode="singleTask"
+            
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
         <activity
