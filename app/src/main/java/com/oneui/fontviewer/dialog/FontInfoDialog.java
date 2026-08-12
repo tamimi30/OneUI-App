@@ -199,9 +199,13 @@ public class FontInfoDialog {
             valueView.setText(value + debugCodepoints(value));
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
 
-            valueView.setText(value);
-            valueView.setMovementMethod(LinkMovementMethod.getInstance());
-            valueView.setLayerType(View.LAYER_TYPE_SOFTWARE, null); 
+            Typeface forcedTypeface = Typeface.DEFAULT;
+            valueView.setTypeface(forcedTypeface);
+            valueView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                if (((TextView) v).getTypeface() != forcedTypeface) {
+                    ((TextView) v).setTypeface(forcedTypeface);
+                }
+            });
 
             itemsContainer.addView(itemView);
             hasContent = true;
@@ -303,4 +307,4 @@ public class FontInfoDialog {
                 return false;
         }
     }
-    }
+                 }
