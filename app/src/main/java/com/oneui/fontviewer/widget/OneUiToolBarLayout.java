@@ -916,6 +916,7 @@ public class OneUiToolBarLayout extends LinearLayout {
      * Set the listener for the ActionMode's {@link BottomNavigationView}.
      * @deprecated See {@link #setActionModeMenuListener(NavigationBarView.OnItemSelectedListener)}
      */
+    @Deprecated
     public void setActionModeBottomMenuListener(NavigationBarView.OnItemSelectedListener listener) {
         mBottomActionModeBar.setOnItemSelectedListener(listener);
     }
