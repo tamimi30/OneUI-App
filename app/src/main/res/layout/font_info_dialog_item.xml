@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="17sp"
-        style="?android:attr/textAppearance"
+        
         android:textDirection="locale"
         android:fontFamily="serif-monospace"
         android:lineSpacingExtra="4sp"
