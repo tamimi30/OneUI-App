@@ -15,19 +15,16 @@
         android:id="@+id/font_info_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="13sp"
-        android:textAlignment="viewStart"
-        
-        android:textColor="?android:attr/textColorSecondary" />
+        style="?android:attr/textAppearance"
+        android:textAlignment="viewStart" />
 
     <TextView
         android:id="@+id/font_info_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="17sp"
+        style="?android:attr/textAppearance"
         android:textAlignment="viewStart"
         android:lineSpacingExtra="4sp"
-        android:textColor="?android:attr/textColorPrimary"
         android:autoLink="web|email"
         android:textColorLink="?attr/colorPrimary" />
 
