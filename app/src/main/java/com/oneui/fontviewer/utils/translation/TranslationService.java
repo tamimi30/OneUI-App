@@ -93,6 +93,9 @@ public class TranslationService {
                                     translationCache.saveTranslation(cacheKey, translatedText);
                                     translatedData.put(field, translatedText);
                                     Log.d(TAG, "Translated and cached field: " + field);
+                                } else {
+                                    networkNeededButUnavailable = true;
+                                    break;
                                 }
                                 
                                 Thread.sleep(100);
