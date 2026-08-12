@@ -293,14 +293,6 @@ public class FontMetaData {
                     
                     if (weight != null) data.put("Weight", weight);
                     if (width != null) data.put("Width", width);
-                    
-                    raf.skipBytes(54);
-                    byte[] vendorID = new byte[4];
-                    raf.read(vendorID);
-                    String vendorId = new String(vendorID, "ISO-8859-1").trim();
-                    if (!vendorId.isEmpty()) {
-                        data.put("VendorID", vendorId);
-                    }
                 } catch (Exception e) {
                     Log.w(TAG, "Failed to read OS/2 table: " + e.getMessage());
                 }
@@ -323,7 +315,7 @@ public class FontMetaData {
                     try {
                         long createdMs = (created - 2082844800L) * 1000L;
                         Date createdDate = new Date(createdMs);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
                         data.put("CreatedDate", sdf.format(createdDate));
                     } catch (Exception e) {
                         Log.w(TAG, "Failed to parse created date: " + e.getMessage());
@@ -332,7 +324,7 @@ public class FontMetaData {
                     try {
                         long modifiedMs = (modified - 2082844800L) * 1000L;
                         Date modifiedDate = new Date(modifiedMs);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
                         data.put("ModifiedDate", sdf.format(modifiedDate));
                     } catch (Exception e) {
                         Log.w(TAG, "Failed to parse modified date: " + e.getMessage());
