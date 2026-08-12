@@ -27,7 +27,7 @@
         android:textSize="17sp"
         style="?android:attr/textAppearance"
         android:textDirection="locale"
-    
+        android:fontFamily="serif-monospace"
         android:lineSpacingExtra="4sp"
         android:textColor="?android:attr/textColorPrimary"
         android:autoLink="web|email"
