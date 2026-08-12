@@ -196,9 +196,6 @@ public class FontInfoDialog {
             if (isLinklessField(key)) {
                 valueView.setAutoLinkMask(0);
             }
-            valueView.setText(value + debugCodepoints(value));
-            valueView.setMovementMethod(LinkMovementMethod.getInstance());
-
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
             valueView.setLayerType(View.LAYER_TYPE_SOFTWARE, null); 
