@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:textSize="17sp"
         android:textDirection="locale"
-        android:lineSpacingExtra="4sp"
+        android:lineSpacingExtra="49sp"
         android:textColor="?android:attr/textColorPrimary"
         android:autoLink="web|email"
         android:textColorLink="?attr/colorPrimary" />
