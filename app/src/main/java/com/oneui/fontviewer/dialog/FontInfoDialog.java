@@ -1,7 +1,6 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.res.ResourcesCompat;
 
 import java.util.Map;
 
@@ -198,7 +196,6 @@ public class FontInfoDialog {
             }
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
-            valueView.setLayerType(View.LAYER_TYPE_SOFTWARE, null); 
 
             itemsContainer.addView(itemView);
             hasContent = true;
@@ -259,23 +256,6 @@ public class FontInfoDialog {
                 .trim();
     }
 
-    // كود تشخيصي مؤقت لمعرفة رقم الرمز الحقيقي - سنحذفه لاحقاً
-    private static String debugCodepoints(String value) {
-        if (value == null) return " [NULL]";
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        while (i < value.length()) {
-            int cp = value.codePointAt(i);
-            if (cp < 0x20 || cp > 0x7E) {
-                if (sb.length() > 0) sb.append(' ');
-                sb.append(String.format("U+%04X", cp));
-            }
-            i += Character.charCount(cp);
-        }
-        String found = sb.length() > 0 ? sb.toString() : "NONE";
-        return " [len=" + value.length() + " | " + found + "]";
-    }
-
     private static boolean isLinklessField(String key) {
         switch (key) {
             case "FullName":
@@ -300,4 +280,4 @@ public class FontInfoDialog {
                 return false;
         }
     }
-                                   }
+}
