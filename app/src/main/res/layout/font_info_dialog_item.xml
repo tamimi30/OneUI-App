@@ -6,8 +6,6 @@
     android:minHeight="69.75dp"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:focusable="true"
-    android:clickable="false"
     android:paddingTop="14dp"
     android:paddingBottom="14dp">
 
@@ -20,8 +18,6 @@
         android:id="@+id/font_info_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="?android:attr/textAppearance"
-        android:autoLink="web|email"
-        android:textColorLink="?attr/colorPrimary" />
+        style="?android:attr/textAppearance" />
 
 </LinearLayout>
