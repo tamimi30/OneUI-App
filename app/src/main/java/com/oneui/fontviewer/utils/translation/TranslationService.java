@@ -50,14 +50,10 @@ public class TranslationService {
             return;
         }
         
-        if (!isInternetAvailable()) {
-            callback.onTranslationFailed("NO_INTERNET");
-            return;
-        }
-        
         new Thread(() -> {
             try {
                 Map<String, String> translatedData = new HashMap<>(metadata);
+                boolean networkNeededButUnavailable = false;
                 
                 String[] fieldsToTranslate = {
                     "Copyright", 
@@ -88,6 +84,8 @@ public class TranslationService {
                             if (cachedTranslation != null && !cachedTranslation.isEmpty()) {
                                 translatedData.put(field, cachedTranslation);
                                 Log.d(TAG, "Using cached translation for field: " + field);
+                            } else if (!isInternetAvailable()) {
+                                networkNeededButUnavailable = true;
                             } else {
                                 String translatedText = translateText(originalText, "en", targetLanguage);
                                 
@@ -103,7 +101,11 @@ public class TranslationService {
                     }
                 }
                 
-                callback.onTranslationComplete(translatedData);
+                if (networkNeededButUnavailable) {
+                    callback.onTranslationFailed("NO_INTERNET");
+                } else {
+                    callback.onTranslationComplete(translatedData);
+                }
                 
             } catch (Exception e) {
                 Log.e(TAG, "Translation failed: " + e.getMessage(), e);
