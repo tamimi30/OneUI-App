@@ -203,6 +203,13 @@ public class FontViewerActivity extends BaseActivity
 
         Map<String, String> meta = mFontViewerFragment.getFontMetaData();
 
+        boolean isFontInvalid = currentFontRealName == null || currentFontRealName.isEmpty()
+                || meta == null || meta.isEmpty();
+        if (isFontInvalid) {
+            showFontInfoDialog(meta);
+            return;
+        }
+
         TranslationService translationService = new TranslationService(this);
         if (translationService.isTranslationEnabled()) {
             boolean[] isFinished = {false};
