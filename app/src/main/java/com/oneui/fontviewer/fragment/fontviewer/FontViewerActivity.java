@@ -51,7 +51,7 @@ public class FontViewerActivity extends BaseActivity
 
     private ProgressDialog loadingDialog;
     private long loadingDialogShownAt = 0L;
-    private static final long MIN_LOADING_DIALOG_MS = 400;
+    private static final long MIN_LOADING_DIALOG_MS = 500;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
