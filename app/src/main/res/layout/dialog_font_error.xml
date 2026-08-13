@@ -7,7 +7,7 @@
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
     android:paddingTop="26dp"
-    android:paddingBottom="24dp">
+    android:paddingBottom="22dp">
 
     <ImageView
         android:id="@+id/font_error_icon"
