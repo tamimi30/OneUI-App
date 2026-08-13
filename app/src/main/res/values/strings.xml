@@ -29,7 +29,7 @@
 	
 	<!-- حول التطبيق -->
 	<string name="about_title">About Font Viewer Plus</string>
-	<string name="about_button_licenses">Source licenses</string>
+	<string name="about_button_licenses">Open Source licenses</string>
 	<string name="about_button_status">Status</string>
     
     <!-- الرئيسية -->
