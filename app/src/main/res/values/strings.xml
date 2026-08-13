@@ -54,7 +54,7 @@
     <string name="btn_bold">Bold</string>
     <string name="btn_italic">Italic</string>
     <string name="translating">Translating...</string>
-    <string name="font_metadata_error">The font metadata cannot be displayed, the font file may be corrupted or lack metadata or not supported.</string>
+    <string name="font_metadata_error">The font metadata cannot be displayed, the font may be corrupted or lack metadata or unpported.</string>
 	<string name="font_metadata_error_title">No font metadata</string>
 	<string name="font_viewer_error_loading_font">Error loading font file</string>
 	<string name="toast_no_internet_connection">The metadata has not been translated, no internet connection.</string>
