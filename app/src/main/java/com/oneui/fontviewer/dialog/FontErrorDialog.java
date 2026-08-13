@@ -42,7 +42,7 @@ public class FontErrorDialog {
         errorTitle.setTextColor(resolveThemeColor(context, android.R.attr.textColorPrimary));
 
         // إضافة الخط المخصص (sec-roboto-light) بنمط عادي (NORMAL)
-        Typeface titleTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
+        Typeface titleTypeface = Typeface.create("sec-roboto-light", Typeface.BOLD);
         errorTitle.setTypeface(titleTypeface);
 
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
