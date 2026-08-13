@@ -4,10 +4,10 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
-    android:paddingLeft="50dp"
-    android:paddingRight="50dp"
-    android:paddingTop="80dp"
-    android:paddingBottom="50dp">
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp">
 
     <ImageView
         android:id="@+id/font_error_icon"
