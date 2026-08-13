@@ -6,7 +6,7 @@
     android:gravity="center"
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
-    android:paddingTop="30dp"
+    android:paddingTop="80dp"
     android:paddingBottom="22dp">
 
     <ImageView
