@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:paddingLeft="50dp"
+    android:paddingRight="50dp"
+    android:paddingTop="80dp"
+    android:paddingBottom="50dp">
+
+    <ImageView
+        android:id="@+id/font_error_icon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_oui_error" />
+
+    <TextView
+        android:id="@+id/font_error_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:gravity="center"
+        android:text="@string/font_metadata_error_title"
+        android:textSize="17sp"
+        android:fontFamily="sec-roboto-light"
+        android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary" />
+
+    <TextView
+        android:id="@+id/font_error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/font_metadata_error_message"
+        android:textSize="13sp"
+        android:fontFamily="sec-roboto-light"
+        android:textStyle="normal"
+        android:textColor="?android:attr/textColorSecondary"
+        android:lineSpacingExtra="2sp" />
+
+</LinearLayout>
