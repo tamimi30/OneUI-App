@@ -13,7 +13,7 @@
         android:id="@+id/font_error_icon"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="18dp"
         android:src="@drawable/ic_oui_error" />
 
     <TextView
@@ -38,6 +38,6 @@
         android:fontFamily="sec-roboto-light"
         android:textStyle="normal"
         android:textColor="?android:attr/textColorSecondary"
-        android:lineSpacingExtra="2sp" />
+        android:lineSpacingExtra="3sp" />
 
 </LinearLayout>
