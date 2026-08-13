@@ -34,16 +34,16 @@ public class FontErrorDialog {
         iconParams.bottomMargin = (int) (20 * density);
         errorIcon.setLayoutParams(iconParams);
 
-        // الخط المخصص (sec-roboto-light) بنمط عادي (NORMAL) - يُستخدم في العنوان والرسالة
-        Typeface customTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
-
         // العنوان أسفل الأيقونة
         TextView errorTitle = new TextView(context);
         errorTitle.setText(R.string.font_metadata_error_title);
         errorTitle.setGravity(Gravity.CENTER);
-        errorTitle.setTypeface(customTypeface);
         errorTitle.setTextSize(17f);
         errorTitle.setTextColor(resolveThemeColor(context, android.R.attr.textColorPrimary));
+
+        // إضافة الخط المخصص (sec-roboto-light) بنمط عادي (NORMAL)
+        Typeface titleTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
+        errorTitle.setTypeface(titleTypeface);
 
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -62,7 +62,9 @@ public class FontErrorDialog {
                         context.getResources().getDisplayMetrics()),
                 1f);
 
-        errorMessage.setTypeface(customTypeface);
+        // إضافة الخط المخصص (sec-roboto-light) بنمط عادي (NORMAL)
+        Typeface messageTypeface = Typeface.create("sec-roboto-light", Typeface.NORMAL);
+        errorMessage.setTypeface(messageTypeface);
 
         layout.addView(errorIcon);
         layout.addView(errorTitle);
