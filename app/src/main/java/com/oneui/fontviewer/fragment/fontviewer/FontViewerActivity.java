@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.view.animation.OvershootInterpolator;
+import android.view.animation.AnimationUtils;
 
 import java.util.Map;
 
@@ -66,15 +66,9 @@ public class FontViewerActivity extends BaseActivity
 
         if (fabFontSize != null) {
             fabFontSize.setVisibility(View.INVISIBLE);
-            fabFontSize.setAlpha(0f);
-            fabFontSize.setScaleX(0f);
-            fabFontSize.setScaleY(0f);
         }
         if (formatBar != null) {
             formatBar.setVisibility(View.INVISIBLE);
-            formatBar.setAlpha(0f);
-            formatBar.setScaleX(0f);
-            formatBar.setScaleY(0f);
         }
 
         if (mToolbarLayout != null) {
@@ -100,14 +94,7 @@ public class FontViewerActivity extends BaseActivity
     private void setupFab() {
         if (fabFontSize != null) {
             fabFontSize.setVisibility(View.VISIBLE);
-            fabFontSize.setAlpha(0f);
-            fabFontSize.setScaleX(0f);
-            fabFontSize.setScaleY(0f);
-            fabFontSize.animate()
-                     .alpha(1f).scaleX(1f).scaleY(1f)
-                     .setDuration(750)
-                     .setInterpolator(new OvershootInterpolator(1.2f))
-                     .start();
+            fabFontSize.startAnimation(AnimationUtils.loadAnimation(this, R.anim.font_viewer_controls_enter));
             fabFontSize.setOnClickListener(v -> {
                 if (mFontViewerFragment != null) {
                     mFontViewerFragment.showFontSizeDialogPublic();
@@ -116,14 +103,7 @@ public class FontViewerActivity extends BaseActivity
         }
         if (formatBar != null) {
             formatBar.setVisibility(View.VISIBLE);
-            formatBar.setAlpha(0f);
-            formatBar.setScaleX(0f);
-            formatBar.setScaleY(0f);
-            formatBar.animate()
-                     .alpha(1f).scaleX(1f).scaleY(1f)
-                     .setDuration(750)
-                     .setInterpolator(new OvershootInterpolator(1.2f))
-                     .start();
+            formatBar.startAnimation(AnimationUtils.loadAnimation(this, R.anim.font_viewer_controls_enter));
         }
     }
 
