@@ -19,8 +19,8 @@ public class SplashUtils {
             ObjectAnimator splashAnimator = ObjectAnimator.ofPropertyValuesHolder(
                     splashView,
                     PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f),
-                    PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.95f),
-                    PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.95f)
+                    PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.90f),
+                    PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.90f)
             );
             splashAnimator.setDuration(500);
             splashAnimator.addListener(new AnimatorListenerAdapter() {
@@ -38,8 +38,8 @@ public class SplashUtils {
             ObjectAnimator contentAnimator = ObjectAnimator.ofPropertyValuesHolder(
                     root,
                     PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f),
-                    PropertyValuesHolder.ofFloat(View.SCALE_X, 0.95f, 1f),
-                    PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.95f, 1f)
+                    PropertyValuesHolder.ofFloat(View.SCALE_X, 0.90f, 1f),
+                    PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.90f, 1f)
             );
             contentAnimator.setDuration(450);
             contentAnimator.setStartDelay(100);
