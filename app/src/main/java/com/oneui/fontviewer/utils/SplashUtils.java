@@ -68,8 +68,8 @@ public class SplashUtils {
                         PropertyValuesHolder.ofFloat(View.SCALE_X, 0.90f, 1f),
                         PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.90f, 1f)
                 );
-                contentAnimator.setDuration(450);
-                contentAnimator.setStartDelay(100);
+                contentAnimator.setDuration(500);
+                contentAnimator.setStartDelay(0);
             }
 
             long iconAnimDuration = splashScreenViewProvider.getIconAnimationDurationMillis();
