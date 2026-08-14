@@ -7,8 +7,6 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
@@ -81,25 +79,6 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
 
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
-
-        splashScreen.setOnExitAnimationListener(splashScreenViewProvider -> {
-            View splashView = splashScreenViewProvider.getView();
-
-            Animation exitAnim = AnimationUtils.loadAnimation(this, R.anim.note_style_fragment_exit);
-            exitAnim.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {}
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    splashScreenViewProvider.remove();
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {}
-            });
-            splashView.startAnimation(exitAnim);
-        });
 
         if (android.os.Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out);
