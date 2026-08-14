@@ -83,11 +83,7 @@ public class MainActivity extends BaseActivity
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
         splashScreen.setOnExitAnimationListener(splashScreenViewProvider -> {
-            View iconView = splashScreenViewProvider.getIconView();
-            if (iconView == null) {
-                splashScreenViewProvider.remove();
-                return;
-            }
+            View splashView = splashScreenViewProvider.getView();
 
             Animation exitAnim = AnimationUtils.loadAnimation(this, R.anim.note_style_fragment_exit);
             exitAnim.setAnimationListener(new Animation.AnimationListener() {
@@ -102,7 +98,7 @@ public class MainActivity extends BaseActivity
                 @Override
                 public void onAnimationRepeat(Animation animation) {}
             });
-            iconView.startAnimation(exitAnim);
+            splashView.startAnimation(exitAnim);
         });
 
         if (android.os.Build.VERSION.SDK_INT >= 34) {
