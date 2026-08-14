@@ -80,6 +80,39 @@ public class MainActivity extends BaseActivity
 
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
+        // --- بداية الكود الجديد لإضافة الأنيميشن ---
+        splashScreen.setOnExitAnimationListener(splashScreenViewProvider -> {
+            
+            // 1. تشغيل أنيميشن "الخروج" على أيقونة الـ Splash Screen كما طلبت
+            android.view.View iconView = splashScreenViewProvider.getIconView();
+            android.view.animation.Animation iconAnim = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.note_style_fragment_exit);
+            
+            // 2. تشغيل أنيميشن "الدخول" فقط على محتوى التطبيق (شاشة الخطوط المحلية)
+            android.view.View mainContent = findViewById(R.id.main_content);
+            android.view.animation.Animation mainAnim = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.note_style_fragment_enter);
+            
+            // 3. إزالة شاشة البداية بالكامل بمجرد انتهاء حركة الأيقونة
+            iconAnim.setAnimationListener(new android.view.animation.Animation.AnimationListener() {
+                @Override public void onAnimationStart(android.view.animation.Animation animation) {}
+                @Override public void onAnimationRepeat(android.view.animation.Animation animation) {}
+                @Override public void onAnimationEnd(android.view.animation.Animation animation) {
+                    splashScreenViewProvider.remove(); 
+                }
+            });
+            
+            // إعطاء أمر البدء للحركات
+            if (iconView != null) {
+                iconView.startAnimation(iconAnim);
+            } else {
+                splashScreenViewProvider.remove();
+            }
+            
+            if (mainContent != null) {
+                mainContent.startAnimation(mainAnim);
+            }
+        });
+        // --- نهاية الكود الجديد ---
+
         if (android.os.Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out);
         }
