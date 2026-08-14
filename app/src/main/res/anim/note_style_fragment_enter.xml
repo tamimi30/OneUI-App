@@ -4,7 +4,7 @@
     android:startOffset="100">
     <alpha
         android:interpolator="@android:anim/linear_interpolator"
-        android:duration="450"
+        android:duration="200"
         android:fromAlpha="0"
         android:toAlpha="1"/>
     <scale
@@ -12,8 +12,8 @@
         android:duration="450"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:fromXScale="0.80"
+        android:fromXScale="0.90"
         android:toXScale="1"
-        android:fromYScale="0.80"
+        android:fromYScale="0.90"
         android:toYScale="1"/>
 </set>
