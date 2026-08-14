@@ -105,6 +105,7 @@ public class MainActivity extends BaseActivity
         } else {
             addAllFragments();
             mCurrentScreen = AppScreen.LOCAL_FONTS;
+            mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
             warmUpOtherScreens();
         }
 
@@ -119,9 +120,6 @@ public class MainActivity extends BaseActivity
         long remainingDelay = Math.max(0L, 800L - elapsedTime);
 
         new Handler(getMainLooper()).postDelayed(() -> {
-            if (savedInstanceState == null && mCurrentScreen == AppScreen.LOCAL_FONTS) {
-                mNavManager.showFragmentAnimated(AppScreen.LOCAL_FONTS);
-            }
             isUIReady = true;
         }, remainingDelay);
     }
@@ -306,7 +304,9 @@ public class MainActivity extends BaseActivity
             AppScreen screen = entry.getKey();
             Fragment fragment = entry.getValue();
             transaction.add(R.id.main_content, fragment, screen.name());
-            transaction.hide(fragment);
+            if (screen != mCurrentScreen) {
+                transaction.hide(fragment);
+            }
         }
 
         transaction.commitNow();
