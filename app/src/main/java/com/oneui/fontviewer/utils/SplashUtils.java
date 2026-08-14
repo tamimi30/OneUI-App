@@ -4,18 +4,48 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import androidx.core.splashscreen.SplashScreen;
-import androidx.core.splashscreen.SplashScreenViewProvider;
 
 public class SplashUtils {
 
-    public static void configureSplashScreen(SplashScreen splashScreen, View root) {
+    private static boolean isUIReady = false;
+    private static long splashStartTime = 0L;
+
+    // 1. تنصيب شاشة البداية وحفظ وقت البدء
+    public static SplashScreen install(Activity activity) {
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(activity);
+        splashStartTime = System.currentTimeMillis();
+        return splashScreen;
+    }
+
+    // 2. إعداد المنطق بالكامل (التأخير + الأنيميشن)
+    public static void setupSplashLogic(SplashScreen splashScreen, View root) {
+        
+        // [حل مشكلة الوميض]: إخفاء الواجهة فوراً بمجرد تمريرها قبل أن يتم رسمها على الشاشة
+        if (root != null) {
+            root.setAlpha(0f);
+        }
+
+        // إبقاء شاشة البداية ظاهرة حتى تصبح الواجهة جاهزة
+        splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
+
+        // حساب وقت التأخير لضمان بقاء شاشة البداية الوقت المطلوب
+        long elapsedTime = System.currentTimeMillis() - splashStartTime;
+        long remainingDelay = Math.max(0L, 800L - elapsedTime);
+
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            isUIReady = true;
+        }, remainingDelay);
+
+        // إعداد أنيميشن الخروج
         splashScreen.setOnExitAnimationListener(splashScreenViewProvider -> {
             View splashView = splashScreenViewProvider.getView();
 
-            // 1. إعداد أنيميشن الخروج لشاشة البداية (مطابق لملف note_style_fragment_exit)
             ObjectAnimator splashAnimator = ObjectAnimator.ofPropertyValuesHolder(
                     splashView,
                     PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f),
@@ -26,37 +56,34 @@ public class SplashUtils {
             splashAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    splashScreenViewProvider.remove(); // إزالة شاشة البداية بعد انتهاء الحركة
+                    splashScreenViewProvider.remove();
                 }
             });
 
-            // 2. إعداد أنيميشن الدخول لشاشة التطبيق (مطابق لملف note_style_fragment_enter)
+            ObjectAnimator contentAnimator = null;
             if (root != null) {
-                root.setAlpha(0f); // إخفاء التطبيق في البداية حتى تظهر الحركة بشكل سليم
+                contentAnimator = ObjectAnimator.ofPropertyValuesHolder(
+                        root,
+                        PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f),
+                        PropertyValuesHolder.ofFloat(View.SCALE_X, 0.90f, 1f),
+                        PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.90f, 1f)
+                );
+                contentAnimator.setDuration(450);
+                contentAnimator.setStartDelay(100);
             }
-            
-            ObjectAnimator contentAnimator = ObjectAnimator.ofPropertyValuesHolder(
-                    root,
-                    PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f),
-                    PropertyValuesHolder.ofFloat(View.SCALE_X, 0.90f, 1f),
-                    PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.90f, 1f)
-            );
-            contentAnimator.setDuration(450);
-            contentAnimator.setStartDelay(100);
 
-            // 3. حساب وقت انتهاء حركة الأيقونة (كما في التطبيق الآخر بالضبط)
             long iconAnimDuration = splashScreenViewProvider.getIconAnimationDurationMillis();
             long iconAnimStart = splashScreenViewProvider.getIconAnimationStartMillis();
             long currentTime = System.currentTimeMillis();
-            long remainingDuration = Math.max(0, iconAnimDuration - (currentTime - iconAnimStart));
+            long remainingIconDelay = Math.max(0, iconAnimDuration - (currentTime - iconAnimStart));
 
-            // 4. تشغيل الأنيميشن بانسيابية
+            final ObjectAnimator finalContentAnimator = contentAnimator;
             splashView.postDelayed(() -> {
                 splashAnimator.start();
-                if (root != null) {
-                    contentAnimator.start();
+                if (finalContentAnimator != null) {
+                    finalContentAnimator.start();
                 }
-            }, remainingDuration);
+            }, remainingIconDelay);
         });
     }
 }
