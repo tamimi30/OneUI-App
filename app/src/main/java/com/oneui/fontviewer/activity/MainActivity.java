@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
@@ -80,6 +82,29 @@ public class MainActivity extends BaseActivity
 
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
+        splashScreen.setOnExitAnimationListener(splashScreenViewProvider -> {
+            View iconView = splashScreenViewProvider.getIconView();
+            if (iconView == null) {
+                splashScreenViewProvider.remove();
+                return;
+            }
+
+            Animation exitAnim = AnimationUtils.loadAnimation(this, R.anim.note_style_fragment_exit);
+            exitAnim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    splashScreenViewProvider.remove();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            iconView.startAnimation(exitAnim);
+        });
+
         if (android.os.Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out);
         }
@@ -105,7 +130,6 @@ public class MainActivity extends BaseActivity
         } else {
             addAllFragments();
             mCurrentScreen = AppScreen.LOCAL_FONTS;
-            mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
             warmUpOtherScreens();
         }
 
@@ -120,6 +144,9 @@ public class MainActivity extends BaseActivity
         long remainingDelay = Math.max(0L, 800L - elapsedTime);
 
         new Handler(getMainLooper()).postDelayed(() -> {
+            if (savedInstanceState == null && mCurrentScreen == AppScreen.LOCAL_FONTS) {
+                mNavManager.showFragmentAnimated(AppScreen.LOCAL_FONTS);
+            }
             isUIReady = true;
         }, remainingDelay);
     }
@@ -304,9 +331,7 @@ public class MainActivity extends BaseActivity
             AppScreen screen = entry.getKey();
             Fragment fragment = entry.getValue();
             transaction.add(R.id.main_content, fragment, screen.name());
-            if (screen != mCurrentScreen) {
-                transaction.hide(fragment);
-            }
+            transaction.hide(fragment);
         }
 
         transaction.commitNow();
