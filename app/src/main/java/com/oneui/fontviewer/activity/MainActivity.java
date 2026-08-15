@@ -42,6 +42,8 @@ public class MainActivity extends BaseActivity
     FavoriteFontListFragment.OnFontSelectedListener,
     NavManager.Host {
 
+    private boolean isUIReady = false;
+    private long mSplashStartTime = 0L;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
@@ -71,20 +73,18 @@ public class MainActivity extends BaseActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // نقلنا التنصيب وحفظ الوقت لملف SplashUtils
-        SplashScreen splashScreen = com.oneui.fontviewer.utils.SplashUtils.install(this);
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+        mSplashStartTime = System.currentTimeMillis();
 
         super.onCreate(savedInstanceState);
+
+        splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
         if (android.os.Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out);
         }
 
-        // تحميل واجهة التطبيق أولاً
         setContentView(R.layout.activity_main);
-
-        // إعداد وتشغيل شاشة البداية (إخفاء الشاشة الفوري، الأنيميشن، والتأخير الزمني)
-        com.oneui.fontviewer.utils.SplashUtils.setupSplashLogic(splashScreen, findViewById(android.R.id.content));
 
         mNavManager = new NavManager(this);
 
@@ -115,6 +115,13 @@ public class MainActivity extends BaseActivity
         handleIntent(getIntent());
 
         requestNotificationPermissionIfNeeded();
+
+        long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
+        long remainingDelay = Math.max(0L, 800L - elapsedTime);
+
+        new Handler(getMainLooper()).postDelayed(() -> {
+            isUIReady = true;
+        }, remainingDelay);
     }
 
     @Override
