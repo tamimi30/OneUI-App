@@ -66,8 +66,8 @@ public class SplashUtils {
                 ObjectAnimator contentScaleY = ObjectAnimator.ofFloat(root, View.SCALE_Y, 0.90f, 1f);
                 contentScaleX.setInterpolator(oneEasingInterpolator);
                 contentScaleY.setInterpolator(oneEasingInterpolator);
-                contentScaleX.setDuration(450);
-                contentScaleY.setDuration(450);
+                contentScaleX.setDuration(500);
+                contentScaleY.setDuration(500);
 
                 AnimatorSet contentAnimSet = new AnimatorSet();
                 contentAnimSet.playTogether(contentAlpha, contentScaleX, contentScaleY);
