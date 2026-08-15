@@ -71,7 +71,7 @@ public class SplashUtils {
 
                 AnimatorSet contentAnimSet = new AnimatorSet();
                 contentAnimSet.playTogether(contentAlpha, contentScaleX, contentScaleY);
-                contentAnimSet.setStartDelay(0); // التأخير الزمني
+                contentAnimSet.setStartDelay(200); // التأخير الزمني
 
                 splashAnimSet.start();
                 contentAnimSet.start();
