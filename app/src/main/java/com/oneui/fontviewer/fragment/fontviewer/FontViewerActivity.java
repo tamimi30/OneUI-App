@@ -94,7 +94,7 @@ public class FontViewerActivity extends BaseActivity
     private void setupFab() {
         if (fabFontSize != null) {
             fabFontSize.setVisibility(View.VISIBLE);
-            fabFontSize.startAnimation(AnimationUtils.loadAnimation(this, R.anim.font_viewer_controls_enter));
+            fabFontSize.startAnimation(AnimationUtils.loadAnimation(this, R.animator.design_fab_show_motion_spec));
             fabFontSize.setOnClickListener(v -> {
                 if (mFontViewerFragment != null) {
                     mFontViewerFragment.showFontSizeDialogPublic();
