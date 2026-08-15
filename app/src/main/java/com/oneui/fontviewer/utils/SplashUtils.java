@@ -2,81 +2,79 @@ package com.oneui.fontviewer.utils;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.PathInterpolator;
 
+import androidx.annotation.NonNull;
 import androidx.core.splashscreen.SplashScreen;
 
-/**
- * يتحكم في طريقة اختفاء شاشة السبلاش وظهور أول شاشة في التطبيق،
- * باستخدام نفس حركة "note style" المستخدمة في تبديل الشاشات
- * (note_style_fragment_enter.xml / note_style_fragment_exit.xml)
- * لكن مكتوبة مباشرة بالكود بدل تحميل ملفات anim.
- */
-public class SplashUtils {
+public final class SplashUtils {
 
-    // نفس المدة الموجودة في note_style_fragment_enter.xml / note_style_fragment_exit.xml
-    private static final long ANIM_DURATION_MS = 500L;
+    // نفس أرقام note_style_fragment_exit.xml (اختفاء أيقونة شاشة البداية)
+    private static final long EXIT_ALPHA_DURATION = 100L;
+    private static final long EXIT_SCALE_DURATION = 500L;
 
-    // نفس نسبة التكبير/التصغير الموجودة في نفس الملفين
-    private static final float SCALE_SMALL = 0.90f;
-    private static final float SCALE_NORMAL = 1f;
+    // نفس أرقام note_style_fragment_enter.xml (ظهور محتوى التطبيق)
+    private static final long ENTER_START_OFFSET = 100L;
+    private static final long ENTER_ALPHA_DURATION = 200L;
+    private static final long ENTER_SCALE_DURATION = 450L;
 
-    // نفس منحنى الحركة الموجود في one_easing_interpolator.xml
-    private static final PathInterpolator NOTE_EASING_INTERPOLATOR =
-            new PathInterpolator(0.22f, 0.25f, 0f, 1f);
+    private static final float SCALE_MIN = 0.90f;
 
-    public static void configureSplashScreen(SplashScreen splashScreen, View root) {
+    private SplashUtils() {
+    }
+
+    public static void configureSplashScreen(@NonNull SplashScreen splashScreen, @NonNull View contentRoot) {
+
+        contentRoot.setAlpha(0f);
+        contentRoot.setScaleX(SCALE_MIN);
+        contentRoot.setScaleY(SCALE_MIN);
+
         splashScreen.setOnExitAnimationListener(splashScreenView -> {
-            View splashIcon = splashScreenView.getView();
 
-            // ---- اختفاء أيقونة السبلاش (نفس note_style_fragment_exit) ----
-            ObjectAnimator splashFade = ObjectAnimator.ofFloat(splashIcon, View.ALPHA, 1f, 0f);
-            splashFade.setInterpolator(new LinearInterpolator());
-            splashFade.setDuration(ANIM_DURATION_MS);
+            PathInterpolator easing = new PathInterpolator(0.22f, 0.25f, 0f, 1f);
+            View splashView = splashScreenView.getView();
 
-            ObjectAnimator splashShrink = ObjectAnimator.ofPropertyValuesHolder(
-                    splashIcon,
-                    PropertyValuesHolder.ofFloat(View.SCALE_X, SCALE_NORMAL, SCALE_SMALL),
-                    PropertyValuesHolder.ofFloat(View.SCALE_Y, SCALE_NORMAL, SCALE_SMALL)
-            );
-            splashShrink.setInterpolator(NOTE_EASING_INTERPOLATOR);
-            splashShrink.setDuration(ANIM_DURATION_MS);
-            splashShrink.addListener(new AnimatorListenerAdapter() {
+            ObjectAnimator splashAlpha = ObjectAnimator.ofFloat(splashView, View.ALPHA, 1f, 0f);
+            splashAlpha.setDuration(EXIT_ALPHA_DURATION);
+            splashAlpha.setInterpolator(new LinearInterpolator());
+
+            ObjectAnimator splashScaleX = ObjectAnimator.ofFloat(splashView, View.SCALE_X, 1f, SCALE_MIN);
+            ObjectAnimator splashScaleY = ObjectAnimator.ofFloat(splashView, View.SCALE_Y, 1f, SCALE_MIN);
+            splashScaleX.setDuration(EXIT_SCALE_DURATION);
+            splashScaleY.setDuration(EXIT_SCALE_DURATION);
+            splashScaleX.setInterpolator(easing);
+            splashScaleY.setInterpolator(easing);
+
+            AnimatorSet exitSet = new AnimatorSet();
+            exitSet.playTogether(splashAlpha, splashScaleX, splashScaleY);
+            exitSet.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     splashScreenView.remove();
                 }
             });
 
-            // ---- ظهور شاشة التطبيق (نفس note_style_fragment_enter) ----
-            ObjectAnimator contentFade = ObjectAnimator.ofFloat(root, View.ALPHA, 0f, 1f);
-            contentFade.setInterpolator(new LinearInterpolator());
-            contentFade.setDuration(ANIM_DURATION_MS);
+            ObjectAnimator contentAlpha = ObjectAnimator.ofFloat(contentRoot, View.ALPHA, 0f, 1f);
+            contentAlpha.setDuration(ENTER_ALPHA_DURATION);
+            contentAlpha.setInterpolator(new LinearInterpolator());
 
-            ObjectAnimator contentGrow = ObjectAnimator.ofPropertyValuesHolder(
-                    root,
-                    PropertyValuesHolder.ofFloat(View.SCALE_X, SCALE_SMALL, SCALE_NORMAL),
-                    PropertyValuesHolder.ofFloat(View.SCALE_Y, SCALE_SMALL, SCALE_NORMAL)
-            );
-            contentGrow.setInterpolator(NOTE_EASING_INTERPOLATOR);
-            contentGrow.setDuration(ANIM_DURATION_MS);
+            ObjectAnimator contentScaleX = ObjectAnimator.ofFloat(contentRoot, View.SCALE_X, SCALE_MIN, 1f);
+            ObjectAnimator contentScaleY = ObjectAnimator.ofFloat(contentRoot, View.SCALE_Y, SCALE_MIN, 1f);
+            contentScaleX.setDuration(ENTER_SCALE_DURATION);
+            contentScaleY.setDuration(ENTER_SCALE_DURATION);
+            contentScaleX.setInterpolator(easing);
+            contentScaleY.setInterpolator(easing);
 
-            // ننتظر انتهاء أنيميشن الأيقونة الأصلي أولاً (نفس أسلوب التطبيق المرجعي)
-            long elapsedSinceIconStart = System.currentTimeMillis() - splashScreenView.getIconAnimationStartMillis();
-            long remainingDelay = Math.max(0L, splashScreenView.getIconAnimationDurationMillis() - elapsedSinceIconStart);
+            AnimatorSet enterSet = new AnimatorSet();
+            enterSet.playTogether(contentAlpha, contentScaleX, contentScaleY);
+            enterSet.setStartDelay(ENTER_START_OFFSET);
 
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                splashFade.start();
-                splashShrink.start();
-                contentFade.start();
-                contentGrow.start();
-            }, remainingDelay);
+            exitSet.start();
+            enterSet.start();
         });
     }
 }
