@@ -12,6 +12,7 @@
         <item name="elevation">4dp</item>
         <item name="borderWidth">1dp</item>
         <item name="rippleColor">@color/ripple_color</item>
+        <item name="showMotionSpec">@animator/design_fab_show_motion_spec</item>
     </style>
 
 </resources>
