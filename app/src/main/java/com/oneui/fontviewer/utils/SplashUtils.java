@@ -31,7 +31,7 @@ public class SplashUtils {
                 // الشفافية تُطبق على الخلفية بالكامل
                 ObjectAnimator splashAlpha = ObjectAnimator.ofFloat(splashView, View.ALPHA, 1f, 0f);
                 splashAlpha.setInterpolator(linearInterpolator);
-                splashAlpha.setDuration(100);
+                splashAlpha.setDuration(500);
 
                 // التصغير يُطبق على الأيقونة فقط
                 ObjectAnimator iconScaleX = ObjectAnimator.ofFloat(splashIconView, View.SCALE_X, 1f, 0.90f);
