@@ -14,12 +14,12 @@ import androidx.core.splashscreen.SplashScreen;
 public final class SplashUtils {
 
     // نفس أرقام note_style_fragment_exit.xml (اختفاء أيقونة شاشة البداية)
-    private static final long EXIT_ALPHA_DURATION = 100L;
+    private static final long EXIT_ALPHA_DURATION = 500L;
     private static final long EXIT_SCALE_DURATION = 500L;
 
     // نفس أرقام note_style_fragment_enter.xml (ظهور محتوى التطبيق)
     private static final long ENTER_START_OFFSET = 100L;
-    private static final long ENTER_ALPHA_DURATION = 200L;
+    private static final long ENTER_ALPHA_DURATION = 450L;
     private static final long ENTER_SCALE_DURATION = 450L;
 
     private static final float SCALE_MIN = 0.90f;
@@ -28,10 +28,6 @@ public final class SplashUtils {
     }
 
     public static void configureSplashScreen(@NonNull SplashScreen splashScreen, @NonNull View contentRoot) {
-
-        contentRoot.setAlpha(0f);
-        contentRoot.setScaleX(SCALE_MIN);
-        contentRoot.setScaleY(SCALE_MIN);
 
         splashScreen.setOnExitAnimationListener(splashScreenView -> {
 
