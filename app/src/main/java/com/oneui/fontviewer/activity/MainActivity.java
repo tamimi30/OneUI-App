@@ -81,12 +81,17 @@ public class MainActivity extends BaseActivity
 
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+
         setContentView(R.layout.activity_main);
+        
+        SplashUtils.configureSplashScreen(splashScreen, findViewById(android.R.id.content));
 
         mNavManager = new NavManager(this);
 
         initViews();
-        SplashUtils.configureSplashScreen(splashScreen, mDrawerLayout);
         initFragmentsList();
 
         setupSearchCoordinator();
@@ -103,7 +108,7 @@ public class MainActivity extends BaseActivity
         } else {
             addAllFragments();
             mCurrentScreen = AppScreen.LOCAL_FONTS;
-            mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
+            mNavManager.showFragmentAnimated(AppScreen.LOCAL_FONTS);
             warmUpOtherScreens();
         }
 
