@@ -34,8 +34,8 @@ public class SplashUtils {
                 splashAlpha.setDuration(500);
 
                 // التصغير يُطبق على الأيقونة فقط
-                ObjectAnimator iconScaleX = ObjectAnimator.ofFloat(splashIconView, View.SCALE_X, 1f, 0.90f);
-                ObjectAnimator iconScaleY = ObjectAnimator.ofFloat(splashIconView, View.SCALE_Y, 1f, 0.90f);
+                ObjectAnimator iconScaleX = ObjectAnimator.ofFloat(splashIconView, View.SCALE_X, 1f, 0.80f);
+                ObjectAnimator iconScaleY = ObjectAnimator.ofFloat(splashIconView, View.SCALE_Y, 1f, 0.80f);
                 iconScaleX.setInterpolator(oneEasingInterpolator);
                 iconScaleY.setInterpolator(oneEasingInterpolator);
                 iconScaleX.setDuration(500);
@@ -53,17 +53,17 @@ public class SplashUtils {
                 // --------------------------------------------------------
                 // الحل الجذري: إخفاء وتصغير الشاشة فوراً قبل بدء التأخير لمنع الوميض
                 root.setAlpha(0f);
-                root.setScaleX(0.90f);
-                root.setScaleY(0.90f);
+                root.setScaleX(0.80f);
+                root.setScaleY(0.80f);
                 // --------------------------------------------------------
 
                 // --- 2. أنيميشن دخول محتوى التطبيق ---
                 ObjectAnimator contentAlpha = ObjectAnimator.ofFloat(root, View.ALPHA, 0f, 1f);
                 contentAlpha.setInterpolator(linearInterpolator);
-                contentAlpha.setDuration(200);
+                contentAlpha.setDuration(500);
 
-                ObjectAnimator contentScaleX = ObjectAnimator.ofFloat(root, View.SCALE_X, 0.90f, 1f);
-                ObjectAnimator contentScaleY = ObjectAnimator.ofFloat(root, View.SCALE_Y, 0.90f, 1f);
+                ObjectAnimator contentScaleX = ObjectAnimator.ofFloat(root, View.SCALE_X, 0.80f, 1f);
+                ObjectAnimator contentScaleY = ObjectAnimator.ofFloat(root, View.SCALE_Y, 0.80f, 1f);
                 contentScaleX.setInterpolator(oneEasingInterpolator);
                 contentScaleY.setInterpolator(oneEasingInterpolator);
                 contentScaleX.setDuration(500);
