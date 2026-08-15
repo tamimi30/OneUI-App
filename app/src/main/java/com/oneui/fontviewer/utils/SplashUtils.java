@@ -25,7 +25,7 @@ public class SplashUtils {
                 // --- 1. أنيميشن خروج أيقونة Splash ---
                 ObjectAnimator splashAlpha = ObjectAnimator.ofFloat(splashView, View.ALPHA, 1f, 0f);
                 splashAlpha.setInterpolator(linearInterpolator);
-                splashAlpha.setDuration(100);
+                splashAlpha.setDuration(500);
 
                 ObjectAnimator splashScaleX = ObjectAnimator.ofFloat(splashView, View.SCALE_X, 1f, 0.90f);
                 ObjectAnimator splashScaleY = ObjectAnimator.ofFloat(splashView, View.SCALE_Y, 1f, 0.90f);
@@ -53,7 +53,7 @@ public class SplashUtils {
                 // --- 2. أنيميشن دخول محتوى التطبيق ---
                 ObjectAnimator contentAlpha = ObjectAnimator.ofFloat(root, View.ALPHA, 0f, 1f);
                 contentAlpha.setInterpolator(linearInterpolator);
-                contentAlpha.setDuration(200);
+                contentAlpha.setDuration(450);
 
                 ObjectAnimator contentScaleX = ObjectAnimator.ofFloat(root, View.SCALE_X, 0.90f, 1f);
                 ObjectAnimator contentScaleY = ObjectAnimator.ofFloat(root, View.SCALE_Y, 0.90f, 1f);
