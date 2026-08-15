@@ -4,86 +4,79 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.PathInterpolator;
 
 import androidx.core.splashscreen.SplashScreen;
 
+/**
+ * يتحكم في طريقة اختفاء شاشة السبلاش وظهور أول شاشة في التطبيق،
+ * باستخدام نفس حركة "note style" المستخدمة في تبديل الشاشات
+ * (note_style_fragment_enter.xml / note_style_fragment_exit.xml)
+ * لكن مكتوبة مباشرة بالكود بدل تحميل ملفات anim.
+ */
 public class SplashUtils {
 
-    private static boolean isUIReady = false;
-    private static long splashStartTime = 0L;
+    // نفس المدة الموجودة في note_style_fragment_enter.xml / note_style_fragment_exit.xml
+    private static final long ANIM_DURATION_MS = 500L;
 
-    // 1. تنصيب شاشة البداية وحفظ وقت البدء
-    public static SplashScreen install(Activity activity) {
-        SplashScreen splashScreen = SplashScreen.installSplashScreen(activity);
-        splashStartTime = System.currentTimeMillis();
-        return splashScreen;
-    }
+    // نفس نسبة التكبير/التصغير الموجودة في نفس الملفين
+    private static final float SCALE_SMALL = 0.90f;
+    private static final float SCALE_NORMAL = 1f;
 
-    // 2. إعداد المنطق بالكامل (التأخير + الأنيميشن)
-    public static void setupSplashLogic(SplashScreen splashScreen, View root) {
-        
-        // [حل مشكلة الوميض]: إخفاء الواجهة فوراً بمجرد تمريرها قبل أن يتم رسمها على الشاشة
-        if (root != null) {
-            root.setAlpha(0f);
-        }
+    // نفس منحنى الحركة الموجود في one_easing_interpolator.xml
+    private static final PathInterpolator NOTE_EASING_INTERPOLATOR =
+            new PathInterpolator(0.22f, 0.25f, 0f, 1f);
 
-        // إبقاء شاشة البداية ظاهرة حتى تصبح الواجهة جاهزة
-        splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
+    public static void configureSplashScreen(SplashScreen splashScreen, View root) {
+        splashScreen.setOnExitAnimationListener(splashScreenView -> {
+            View splashIcon = splashScreenView.getView();
 
-        // حساب وقت التأخير لضمان بقاء شاشة البداية الوقت المطلوب
-        long elapsedTime = System.currentTimeMillis() - splashStartTime;
-        long remainingDelay = Math.max(0L, 800L - elapsedTime);
+            // ---- اختفاء أيقونة السبلاش (نفس note_style_fragment_exit) ----
+            ObjectAnimator splashFade = ObjectAnimator.ofFloat(splashIcon, View.ALPHA, 1f, 0f);
+            splashFade.setInterpolator(new LinearInterpolator());
+            splashFade.setDuration(ANIM_DURATION_MS);
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            isUIReady = true;
-        }, remainingDelay);
-
-        // إعداد أنيميشن الخروج
-        splashScreen.setOnExitAnimationListener(splashScreenViewProvider -> {
-            View splashView = splashScreenViewProvider.getView();
-
-            ObjectAnimator splashAnimator = ObjectAnimator.ofPropertyValuesHolder(
-                    splashView,
-                    PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f),
-                    PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.90f),
-                    PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.90f)
+            ObjectAnimator splashShrink = ObjectAnimator.ofPropertyValuesHolder(
+                    splashIcon,
+                    PropertyValuesHolder.ofFloat(View.SCALE_X, SCALE_NORMAL, SCALE_SMALL),
+                    PropertyValuesHolder.ofFloat(View.SCALE_Y, SCALE_NORMAL, SCALE_SMALL)
             );
-            splashAnimator.setDuration(500);
-            splashAnimator.addListener(new AnimatorListenerAdapter() {
+            splashShrink.setInterpolator(NOTE_EASING_INTERPOLATOR);
+            splashShrink.setDuration(ANIM_DURATION_MS);
+            splashShrink.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    splashScreenViewProvider.remove();
+                    splashScreenView.remove();
                 }
             });
 
-            ObjectAnimator contentAnimator = null;
-            if (root != null) {
-                contentAnimator = ObjectAnimator.ofPropertyValuesHolder(
-                        root,
-                        PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f),
-                        PropertyValuesHolder.ofFloat(View.SCALE_X, 0.90f, 1f),
-                        PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.90f, 1f)
-                );
-                contentAnimator.setDuration(500);
-                contentAnimator.setStartDelay(0);
-            }
+            // ---- ظهور شاشة التطبيق (نفس note_style_fragment_enter) ----
+            ObjectAnimator contentFade = ObjectAnimator.ofFloat(root, View.ALPHA, 0f, 1f);
+            contentFade.setInterpolator(new LinearInterpolator());
+            contentFade.setDuration(ANIM_DURATION_MS);
 
-            long iconAnimDuration = splashScreenViewProvider.getIconAnimationDurationMillis();
-            long iconAnimStart = splashScreenViewProvider.getIconAnimationStartMillis();
-            long currentTime = System.currentTimeMillis();
-            long remainingIconDelay = Math.max(0, iconAnimDuration - (currentTime - iconAnimStart));
+            ObjectAnimator contentGrow = ObjectAnimator.ofPropertyValuesHolder(
+                    root,
+                    PropertyValuesHolder.ofFloat(View.SCALE_X, SCALE_SMALL, SCALE_NORMAL),
+                    PropertyValuesHolder.ofFloat(View.SCALE_Y, SCALE_SMALL, SCALE_NORMAL)
+            );
+            contentGrow.setInterpolator(NOTE_EASING_INTERPOLATOR);
+            contentGrow.setDuration(ANIM_DURATION_MS);
 
-            final ObjectAnimator finalContentAnimator = contentAnimator;
-            splashView.postDelayed(() -> {
-                splashAnimator.start();
-                if (finalContentAnimator != null) {
-                    finalContentAnimator.start();
-                }
-            }, remainingIconDelay);
+            // ننتظر انتهاء أنيميشن الأيقونة الأصلي أولاً (نفس أسلوب التطبيق المرجعي)
+            long elapsedSinceIconStart = System.currentTimeMillis() - splashScreenView.getIconAnimationStartMillis();
+            long remainingDelay = Math.max(0L, splashScreenView.getIconAnimationDurationMillis() - elapsedSinceIconStart);
+
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                splashFade.start();
+                splashShrink.start();
+                contentFade.start();
+                contentGrow.start();
+            }, remainingDelay);
         });
     }
 }
