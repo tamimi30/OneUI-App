@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity
         } else {
             addAllFragments();
             mCurrentScreen = AppScreen.LOCAL_FONTS;
-            mNavManager.showFragmentAnimated(AppScreen.LOCAL_FONTS);
+            mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
             warmUpOtherScreens();
         }
 
