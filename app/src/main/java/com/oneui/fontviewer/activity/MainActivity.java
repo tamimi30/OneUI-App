@@ -35,6 +35,7 @@ import com.oneui.fontviewer.widget.search.SearchCoordinator;
 import com.oneui.fontviewer.fragment.settings.SettingsActivity;
 import com.oneui.fontviewer.fragment.home.HomeActivity;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
+import com.oneui.fontviewer.utils.SplashUtils;
 
 public class MainActivity extends BaseActivity
     implements LocalFontListFragment.OnFontSelectedListener,
@@ -89,6 +90,7 @@ public class MainActivity extends BaseActivity
         mNavManager = new NavManager(this);
 
         initViews();
+        SplashUtils.configureSplashScreen(splashScreen, mDrawerLayout);
         initFragmentsList();
 
         setupSearchCoordinator();
