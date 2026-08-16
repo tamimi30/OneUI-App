@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:textSize="17sp"
         android:textDirection="locale"
-        app:fontFamily="@font/din"
+        app:fontFamily="@font/roboto"
         android:textStyle="normal"
         android:lineSpacingExtra="4sp"
         android:textColor="?android:attr/textColorPrimary"
