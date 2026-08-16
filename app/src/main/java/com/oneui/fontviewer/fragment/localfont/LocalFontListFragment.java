@@ -517,9 +517,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         if (mRecyclerView == null) return;
         com.oneui.fontviewer.widget.FixedDurationItemAnimator animator =
             new com.oneui.fontviewer.widget.FixedDurationItemAnimator();
-        animator.setAddDuration(150);
-        animator.setRemoveDuration(2000);
-        animator.setMoveDuration(2000);
+        animator.setAddDuration(200);
+        animator.setRemoveDuration(200);
+        animator.setMoveDuration(600);
         animator.setSupportsChangeAnimations(false);
         animator.enableRemoveDelay(true);
         mRecyclerView.setItemAnimator(animator);
