@@ -7,26 +7,26 @@
     android:layout_height="match_parent"
     android:overScrollMode="ifContentScrolls">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/rename_input_layout"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/rename_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="34dp"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="34dp"
+        app:errorEnabled="true"
+        app:endIconMode="clear_text"
+        app:hintEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/rename_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="34dp"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="34dp"
-            app:errorEnabled="true"
-            app:endIconMode="clear_text"
-            app:hintEnabled="false">
+            android:hint="@string/rename_dialog_hint"
+            android:inputType="textCapSentences"
+            android:imeOptions="flagNoExtractUi|actionDone"
+            android:singleLine="true" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/rename_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/rename_dialog_hint"
-                android:inputType="textCapSentences"
-                android:imeOptions="flagNoExtractUi|actionDone"
-                android:singleLine="true" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </ScrollView>
