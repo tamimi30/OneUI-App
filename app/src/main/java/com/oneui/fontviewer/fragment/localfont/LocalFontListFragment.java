@@ -36,7 +36,7 @@ import com.oneui.fontviewer.widget.OneUiDrawerLayout;
 import com.oneui.fontviewer.activity.AppScreen;           
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
-import com.oneui.fontviewer.dialog.FontActionDialogs;
+import com.oneui.fontviewer.dialog.RenameFontDialog;
 import com.oneui.fontviewer.dialog.TrashActionDialogs; 
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontSelectionManager;
@@ -587,7 +587,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         String path = mAdapter.getFilePath(position);
         if (path == null) return;
 
-        FontActionDialogs.showRenameDialog(mContext, path, (oldPath, newFileName) -> {
+        RenameFontDialog.show(mContext, path, (oldPath, newFileName) -> {
             boolean success = mViewModel.renameFontInMemory(oldPath, newFileName);
 
             if (success) {
