@@ -24,6 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/rename_dialog_hint"
+                app:hintEnabled="false"
                 android:inputType="textCapSentences"
                 android:imeOptions="flagNoExtractUi|actionDone"
                 android:singleLine="true" />
