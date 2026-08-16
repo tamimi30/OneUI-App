@@ -12,19 +12,20 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="20dp"
         android:paddingTop="34dp"
+        android:paddingBottom="34dp"
         android:orientation="vertical">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/rename_input_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/rename_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/rename_dialog_hint"
-                app:hintEnabled="false"
                 android:inputType="textCapSentences"
                 android:imeOptions="flagNoExtractUi|actionDone"
                 android:singleLine="true" />
