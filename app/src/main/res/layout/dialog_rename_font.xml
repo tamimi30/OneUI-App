@@ -19,7 +19,6 @@
             android:id="@+id/rename_edit_text"
             android:hint="@string/rename_dialog_hint"
             android:inputType="textCapSentences"
-			android:textColorHighlight="@color/sesl_number_picker_text_highlight_color"
             android:imeOptions="flagNoExtractUi|actionDone"
             android:singleLine="true" />
             
@@ -34,7 +33,6 @@
                 android:id="@+id/rename_error_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="?android:attr/textAppearanceSmall"
                 android:textSize="12sp"
                 android:textColor="@color/oui_functional_red_color"
                 android:visibility="gone"/>
