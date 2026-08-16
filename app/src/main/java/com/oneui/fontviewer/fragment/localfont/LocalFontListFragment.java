@@ -518,8 +518,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         androidx.recyclerview.widget.DefaultItemAnimator animator =
             new androidx.recyclerview.widget.DefaultItemAnimator();
         animator.setAddDuration(150);
-        animator.setRemoveDuration(250);
-        animator.setMoveDuration(500);
+        animator.setRemoveDuration(2000);
+        animator.setMoveDuration(2000);
         animator.setSupportsChangeAnimations(false);
         mRecyclerView.setItemAnimator(animator);
     }
