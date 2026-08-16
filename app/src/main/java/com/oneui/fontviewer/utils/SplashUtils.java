@@ -31,15 +31,15 @@ public class SplashUtils {
                 // الشفافية تُطبق على الخلفية بالكامل
                 ObjectAnimator splashAlpha = ObjectAnimator.ofFloat(splashView, View.ALPHA, 1f, 0f);
                 splashAlpha.setInterpolator(linearInterpolator);
-                splashAlpha.setDuration(500);
+                splashAlpha.setDuration(300);
 
                 // التصغير يُطبق على الأيقونة فقط
                 ObjectAnimator iconScaleX = ObjectAnimator.ofFloat(splashIconView, View.SCALE_X, 1f, 0.80f);
                 ObjectAnimator iconScaleY = ObjectAnimator.ofFloat(splashIconView, View.SCALE_Y, 1f, 0.80f);
                 iconScaleX.setInterpolator(oneEasingInterpolator);
                 iconScaleY.setInterpolator(oneEasingInterpolator);
-                iconScaleX.setDuration(500);
-                iconScaleY.setDuration(500);
+                iconScaleX.setDuration(300);
+                iconScaleY.setDuration(300);
 
                 AnimatorSet splashAnimSet = new AnimatorSet();
                 splashAnimSet.playTogether(splashAlpha, iconScaleX, iconScaleY);
@@ -71,7 +71,7 @@ public class SplashUtils {
 
                 AnimatorSet contentAnimSet = new AnimatorSet();
                 contentAnimSet.playTogether(contentAlpha, contentScaleX, contentScaleY);
-                contentAnimSet.setStartDelay(200); // التأخير الزمني
+                contentAnimSet.setStartDelay(100); // التأخير الزمني
 
                 splashAnimSet.start();
                 contentAnimSet.start();
