@@ -22,10 +22,11 @@
             android:id="@+id/rename_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:scrollHorizontally="true"
             android:hint="@string/rename_dialog_hint"
             android:inputType="textCapSentences"
             android:imeOptions="flagNoExtractUi|actionDone"
-            android:singleLine="true" />
+            android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
