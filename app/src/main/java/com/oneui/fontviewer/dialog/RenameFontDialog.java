@@ -84,7 +84,7 @@ public class RenameFontDialog {
                         inputLayout.setError(context.getString(R.string.error_file_exists));
                         positiveButton.setEnabled(false);
                     } else {
-                        inputLayout.setErrorEnabled(false);
+                        inputLayout.setError(null);
 
                         boolean isValid = !isEmpty && !isSameName && !isInvalid;
                         positiveButton.setEnabled(isValid);
