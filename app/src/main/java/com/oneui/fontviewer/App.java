@@ -20,6 +20,7 @@ import com.oneui.fontviewer.utils.CrashHandler;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * App - النسخة المحسّنة لحل مشكلة وميض الثيم
@@ -131,7 +132,7 @@ public class App extends Application {
     private void applyInitialTheme() {
         try {
             // قراءة إعداد الثيم التلقائي بشكل متزامن
-            Boolean isAuto = settingsDataStore.getThemeAuto().blockingFirst();
+            Boolean isAuto = settingsDataStore.getThemeAuto().timeout(300, TimeUnit.MILLISECONDS).blockingFirst();
             
             if (isAuto != null && isAuto) {
                 // الثيم تلقائي - اتبع إعدادات النظام
@@ -140,7 +141,7 @@ public class App extends Application {
                 Log.d(TAG, "✓ Theme set to FOLLOW_SYSTEM (Blocking Mode)");
             } else {
                 // الثيم يدوي - اقرأ الوضع المحدد
-                Integer themeMode = settingsDataStore.getThemeMode().blockingFirst();
+                Integer themeMode = settingsDataStore.getThemeMode().timeout(300, TimeUnit.MILLISECONDS).blockingFirst();
                 
                 if (themeMode != null && themeMode == 1) {
                     // وضع داكن
