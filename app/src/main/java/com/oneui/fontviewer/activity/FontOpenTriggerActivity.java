@@ -1,12 +1,14 @@
 package com.oneui.fontviewer.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 
 import com.oneui.fontviewer.fragment.fontviewer.FontViewerActivity;
-import com.oneui.fontviewer.utils.ExternalFontIntentHandler;
 
 public class FontOpenTriggerActivity extends Activity {
 
@@ -16,9 +18,9 @@ public class FontOpenTriggerActivity extends Activity {
 
         Intent sourceIntent = getIntent();
 
-        if (ExternalFontIntentHandler.isFontViewIntent(sourceIntent)) {
+        if (isFontViewIntent(sourceIntent)) {
             Uri fontUri = sourceIntent.getData();
-            String fileName = ExternalFontIntentHandler.getFileName(this, fontUri);
+            String fileName = getFileName(this, fontUri);
 
             Intent viewerIntent = new Intent(this, FontViewerActivity.class);
             viewerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -28,5 +30,33 @@ public class FontOpenTriggerActivity extends Activity {
         }
 
         finish();
+    }
+
+    private static boolean isFontViewIntent(Intent intent) {
+        return intent != null && Intent.ACTION_VIEW.equals(intent.getAction()) && intent.getData() != null;
+    }
+
+    private static String getFileName(Context context, Uri uri) {
+        String result = null;
+        if ("content".equals(uri.getScheme())) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (index != -1) {
+                        result = cursor.getString(index);
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+        if (result == null) {
+            result = uri.getPath();
+            if (result != null) {
+                int cut = result.lastIndexOf('/');
+                if (cut != -1) {
+                    result = result.substring(cut + 1);
+                }
+            }
+        }
+        return result != null ? result : "Unknown Font";
     }
 }
