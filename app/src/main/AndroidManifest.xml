@@ -58,7 +58,7 @@
 
         <activity
             android:name=".activity.MainActivity"
-            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
+            android:configChanges="orientation|screenLayout|screenSize"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Starting">
@@ -76,7 +76,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
 
                 <action android:name="android.intent.action.SEARCH" />
-                <action android:name="com.oneui.fontviewer.WIDGETACTION" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -120,22 +119,22 @@
 
         <activity
             android:name=".fragment.home.HomeActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+            android:configChanges="orientation|screenSize|screenLayout" />
 
         <activity
             android:name=".fragment.fontviewer.FontViewerActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+            android:configChanges="orientation|screenSize|screenLayout" />
 
         <activity
             android:name=".fragment.settings.about.AboutActivity" />
 
         <activity
             android:name=".fragment.settings.about.LicensesActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+            android:configChanges="orientation|screenSize|screenLayout" />
 
         <activity
             android:name=".fragment.settings.SettingsActivity"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+            android:configChanges="orientation|screenSize|screenLayout" />
 
         <service
             android:name=".utils.notification.OperationForegroundService"
