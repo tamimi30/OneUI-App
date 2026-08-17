@@ -13,8 +13,7 @@
         android:orientation="vertical"
         android:paddingStart="18dp"
         android:paddingEnd="24dp"
-        android:paddingTop="21dp"
-        android:paddingBottom="8dp">
+        android:paddingTop="23dp">
         
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/rename_input_layout"
