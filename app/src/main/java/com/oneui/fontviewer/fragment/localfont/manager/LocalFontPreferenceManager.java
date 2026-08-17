@@ -7,6 +7,8 @@ import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+import java.util.concurrent.TimeUnit;
+
 public class LocalFontPreferenceManager {
     
     private static final String TAG = "LocalFontPreferenceManager";
@@ -25,8 +27,8 @@ public class LocalFontPreferenceManager {
         
         try {
             cachedLastOpenedPath = isFavoritesList
-                    ? dataStore.getLastOpenedFavoriteFontPath().blockingFirst()
-                    : dataStore.getLastOpenedFontPath().blockingFirst();
+                    ? dataStore.getLastOpenedFavoriteFontPath().timeout(300, TimeUnit.MILLISECONDS).blockingFirst()
+                    : dataStore.getLastOpenedFontPath().timeout(300, TimeUnit.MILLISECONDS).blockingFirst();
         } catch (Exception e) {
             cachedLastOpenedPath = null;
             Log.d(TAG, "No cached last opened font");
