@@ -387,7 +387,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
             isLoadingLiveData.postValue(true);
         }
 
-        mIsFolderSyncing = true;
+        mIsFolderSyncing = showLoading;
 
         final long startTime = System.currentTimeMillis();
         
