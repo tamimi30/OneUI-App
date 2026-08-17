@@ -15,7 +15,6 @@
         android:paddingEnd="24dp"
         android:paddingTop="18dp"
         app:errorEnabled="true"
-        app:endIconMode="clear_text"
         app:hintEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
