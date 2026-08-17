@@ -17,6 +17,13 @@ public class SplashUtils {
         splashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
             @Override
             public void onSplashScreenExit(SplashScreenViewProvider splashScreenViewProvider) {
+                // حماية: لو الشاشة في طريقها للإغلاق/إعادة الإنشاء، لا تُظهر أنيميشن
+                // كشف المحتوى، فقط أزل شاشة البداية بهدوء لمنع أي ومضة
+                if (!root.isAttachedToWindow()) {
+                    splashScreenViewProvider.remove();
+                    return;
+                }
+
                 // 1. جلب الخلفية لتطبيق التلاشي عليها فقط
                 View splashView = splashScreenViewProvider.getView();
                 
