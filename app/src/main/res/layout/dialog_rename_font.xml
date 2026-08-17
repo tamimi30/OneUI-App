@@ -13,9 +13,8 @@
         android:layout_height="wrap_content"
         android:paddingStart="18dp"
         android:paddingEnd="24dp"
-        android:paddingTop="16dp"
+        android:paddingTop="18dp"
         app:errorEnabled="true"
-        app:hintAnimationEnabled="true"
         app:endIconMode="clear_text"
         app:hintEnabled="false">
 
