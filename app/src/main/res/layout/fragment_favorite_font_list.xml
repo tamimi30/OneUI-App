@@ -63,7 +63,7 @@
                     android:fontFamily="sec-roboto-light"
                     android:textStyle="normal"
                     android:gravity="center"
-                    android:lineSpacingExtra="3sp"
+                    android:lineSpacingExtra="4sp"
                     android:text="@string/favorites_empty_message"
                     android:textSize="13sp"
                     android:textColor="?android:attr/textColorSecondary" />
