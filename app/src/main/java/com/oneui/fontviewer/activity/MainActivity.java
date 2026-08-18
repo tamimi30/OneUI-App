@@ -44,6 +44,8 @@ public class MainActivity extends BaseActivity
     NavManager.Host {
 
     private boolean isUIReady = false;
+    private boolean mIsMinSplashTimeElapsed = false;
+    private boolean mIsInitialDataReady = false;
     private long mSplashStartTime = 0L;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
@@ -118,9 +120,29 @@ public class MainActivity extends BaseActivity
         long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
         long remainingDelay = Math.max(0L, 800L - elapsedTime);
 
-        new Handler(getMainLooper()).postDelayed(() -> {
-            isUIReady = true;
+        Handler splashHandler = new Handler(getMainLooper());
+
+        splashHandler.postDelayed(() -> {
+            mIsMinSplashTimeElapsed = true;
+            checkSplashReadyState();
         }, remainingDelay);
+
+        // شبكة أمان: لا تُبقي الشاشة أكثر من هذه المدة حتى لو لم تصل إشارة الجاهزية
+        splashHandler.postDelayed(() -> {
+            mIsInitialDataReady = true;
+            checkSplashReadyState();
+        }, 3000L);
+    }
+
+    private void checkSplashReadyState() {
+        if (mIsMinSplashTimeElapsed && mIsInitialDataReady) {
+            isUIReady = true;
+        }
+    }
+
+    public void setAppReady() {
+        mIsInitialDataReady = true;
+        checkSplashReadyState();
     }
 
     @Override
