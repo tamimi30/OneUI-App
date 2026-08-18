@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_vertical"
-    android:background="@color/oui_round_and_bgcolor"
+    android:background="@android:color/transparent"
     android:paddingStart="25dp"
     android:paddingEnd="25dp"
     android:paddingTop="12dp"
@@ -21,7 +21,7 @@
         android:textStyle="normal"
         android:textSize="13sp"
         android:textColor="@color/sesl_description_text_color"
-        android:lineSpacingExtra="4dp"
+        android:lineSpacingExtra="3sp"
         tools:text="تظهر العناصر الأيام المتبقية حتى يتم حذفها نهائياً" />
 
 </LinearLayout>
