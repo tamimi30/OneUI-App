@@ -39,15 +39,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="11dp"
                 android:visibility="gone" />             
                 
             <TextView
                 android:id="@+id/preview_sentence"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:lineSpacingExtra="7dp"
-                android:includeFontPadding="false"
+                android:lineSpacingExtra="4sp"
                 android:textSize="34dp"
                 android:textColor="@color/font_preview_text_color" />
         
