@@ -6,4 +6,4 @@
     android:id="@+id/sort_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/oui_round_and_bgcolor" />
+    android:background="@android:color/transparent" />
