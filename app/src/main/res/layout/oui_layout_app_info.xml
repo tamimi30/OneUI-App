@@ -25,11 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="8dp"
-            android:textSize="34sp"
-            app:maxFontLevel="large"
-            app:minFontLevel="large"
-            android:fontFamily="sans-serif"
-            android:textStyle="bold"
+            android:textSize="37sp"
             android:textColor="@color/oui_primary_text_color"
             android:textAlignment="center" />
 
