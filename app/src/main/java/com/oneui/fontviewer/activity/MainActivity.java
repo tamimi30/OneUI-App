@@ -118,8 +118,7 @@ public class MainActivity extends BaseActivity
         requestNotificationPermissionIfNeeded();
 
         long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
-        // إذا كان savedInstanceState ليس null (يعني تم إعادة إنشاء الواجهة)، نلغي وقت الانتظار
-        long remainingDelay = (savedInstanceState != null) ? 0L : Math.max(0L, 800L - elapsedTime);
+        long remainingDelay = Math.max(0L, 800L - elapsedTime);
 
         Handler splashHandler = new Handler(getMainLooper());
 
@@ -627,4 +626,4 @@ public class MainActivity extends BaseActivity
         mNavManager.handleBackPressed();
     }
     
-                }
+    }
