@@ -56,7 +56,7 @@ public class RenameFontDialog {
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) imm.showSoftInput(input, InputMethodManager.SHOW_FORCED);
+                if (imm != null) imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
             }, 100);
 
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
