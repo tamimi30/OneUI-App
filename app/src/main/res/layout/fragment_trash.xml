@@ -45,7 +45,7 @@
                 android:fontFamily="sec-roboto-light"
                 android:textStyle="normal"
                 android:gravity="center"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="7dp"
                 android:text="@string/trash_empty_title"
                 android:textSize="17sp"
                 android:textColor="@color/drawer_icon_color" />
@@ -57,7 +57,7 @@
                 android:fontFamily="sec-roboto-light"
                 android:textStyle="normal"
                 android:gravity="center"
-                android:lineSpacingExtra="6dp"
+                android:lineSpacingExtra="4sp"
                 android:text="@string/trash_empty_description"
                 android:textSize="13sp"
                 android:textColor="?android:attr/textColorSecondary" />
