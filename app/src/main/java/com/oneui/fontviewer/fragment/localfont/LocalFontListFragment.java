@@ -82,6 +82,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private List<LocalFontListViewModel.FontFileInfoWithMetadata> mCurrentFontsList = new ArrayList<>();
 
     private boolean mIsFirstLoad = true;
+    private boolean mHasNotifiedReady = false;
 
     private boolean mNeedsScrollRestore = false;
 
@@ -253,6 +254,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private void setupViewModelObservers() {
         mViewModel.getFontsLiveData().observe(this, fonts -> {
             if (fonts != null) {
+                notifyMainActivityReadyOnce();
+
                 if (mIsBatchOperationRunning) {
                     mPendingFontsUpdate = new ArrayList<>(fonts);
                     return;
@@ -406,8 +409,12 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         initializeSelectionManager();
 
 
-        if (mIsFirstLoad && mViewModel.hasSavedFolder()) {
-            mViewModel.loadFonts();
+        if (mIsFirstLoad) {
+            if (mViewModel.hasSavedFolder()) {
+                mViewModel.loadFonts();
+            } else {
+                notifyMainActivityReadyOnce();
+            }
             mIsFirstLoad = false;
         }
     }
@@ -878,6 +885,14 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         super.onActivityResult(requestCode, resultCode, data);
         if (!mLocalFontDirectoryPicker.handleActivityResult(requestCode, resultCode, data)) {
             mLocalFontPermissionManager.handleActivityResult(requestCode);
+        }
+    }
+
+    private void notifyMainActivityReadyOnce() {
+        if (mHasNotifiedReady) return;
+        mHasNotifiedReady = true;
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setAppReady();
         }
     }
 
