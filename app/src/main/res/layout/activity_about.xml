@@ -20,8 +20,6 @@
         style="@style/OneUI.AppInfoButton"
         android:minHeight="52dp"
         android:onClick="openLicensesPage"
-        android:textSize="18sp"
-        app:maxFontLevel="large"
         android:text="@string/about_button_licenses" />
 
 </dev.oneuiproject.oneui.layout.AppInfoLayout>
