@@ -51,7 +51,7 @@
          android:layout_height="34dp"
          android:layout_gravity="center_vertical"
          android:padding="8dp"
-         android:layout_marginEnd="9dp"
+         android:layout_marginEnd="8dp"
          android:tint="@color/sort_bar_text_color"
          android:background="@drawable/sort_btn_ripple_oval" />
 
