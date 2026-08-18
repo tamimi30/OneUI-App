@@ -131,7 +131,7 @@ public class MainActivity extends BaseActivity
         splashHandler.postDelayed(() -> {
             mIsInitialDataReady = true;
             checkSplashReadyState();
-        }, 3000L);
+        }, 15000L);
     }
 
     private void checkSplashReadyState() {
