@@ -132,7 +132,7 @@
                     android:text="@string/title_features"
                     android:textSize="20sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    abdroid:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif-medium"
                     android:layout_marginBottom="7dp" />
 
                 <TextView
