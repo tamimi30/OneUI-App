@@ -40,7 +40,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginBottom="7dp"
                     android:tint="#D4AF37"
                     android:src="@drawable/ic_oui_favorite_off" />
 
@@ -51,7 +51,7 @@
                     android:fontFamily="sec-roboto-light"
                     android:textStyle="normal"
                     android:gravity="center"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="7dp"
                     android:text="@string/favorites_empty_title"
                     android:textSize="17sp"
                     android:textColor="@color/drawer_icon_color" />
@@ -63,7 +63,7 @@
                     android:fontFamily="sec-roboto-light"
                     android:textStyle="normal"
                     android:gravity="center"
-                    android:lineSpacingExtra="6dp"
+                    android:lineSpacingExtra="3sp"
                     android:text="@string/favorites_empty_message"
                     android:textSize="13sp"
                     android:textColor="?android:attr/textColorSecondary" />
@@ -74,6 +74,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/no_results_found"
+                    android:fontFamily="sec-roboto-light"
+                    android:textStyle="normal"
                     android:textSize="17sp"
                     android:textColor="@color/drawer_icon_color"
                     android:visibility="gone" />
