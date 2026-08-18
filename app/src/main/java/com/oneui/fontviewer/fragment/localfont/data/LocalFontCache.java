@@ -128,10 +128,30 @@ public class LocalFontCache {
                 return null;
             }
             
-            return Typeface.createFromFile(fontFile);
+            return loadTypefaceUsingBuilder(fontFile);
         } catch (Exception e) {
             Log.e(TAG, "Error loading font from file: " + fontPath, e);
             return null;
+        }
+    }
+
+    private Typeface loadTypefaceUsingBuilder(File fontFile) {
+        try {
+            android.graphics.fonts.Font.Builder fontBuilder =
+                new android.graphics.fonts.Font.Builder(fontFile);
+
+            android.graphics.fonts.Font font = fontBuilder.build();
+
+            Typeface.CustomFallbackBuilder fallbackBuilder =
+                new Typeface.CustomFallbackBuilder(
+                    new android.graphics.fonts.FontFamily.Builder(font).build()
+                );
+
+            return fallbackBuilder.build();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Font.Builder failed, falling back to createFromFile", e);
+            return Typeface.createFromFile(fontFile);
         }
     } 
     
