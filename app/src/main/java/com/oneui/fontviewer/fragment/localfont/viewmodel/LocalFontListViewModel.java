@@ -88,7 +88,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
         isLoadingLiveData    = new MutableLiveData<>(false);
         errorMessageLiveData = new MutableLiveData<>();
         
-        fontsLiveData = new MutableLiveData<>(new ArrayList<>());
+        fontsLiveData = new MutableLiveData<>();
 
         favoritesLiveData = new MutableLiveData<>(new ArrayList<>());
         
