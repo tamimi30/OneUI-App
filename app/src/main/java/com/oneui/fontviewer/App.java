@@ -131,7 +131,7 @@ public class App extends Application {
     private void applyInitialTheme() {
         try {
             // قراءة إعداد الثيم التلقائي بشكل متزامن
-            Boolean isAuto = settingsDataStore.getThemeAuto().blockingFirst();
+            Boolean isAuto = settingsDataStore.getThemeAuto().subscribeOn(io.reactivex.rxjava3.schedulers.Schedulers.io()).blockingFirst();
             
             if (isAuto != null && isAuto) {
                 // الثيم تلقائي - اتبع إعدادات النظام
@@ -140,7 +140,7 @@ public class App extends Application {
                 Log.d(TAG, "✓ Theme set to FOLLOW_SYSTEM (Blocking Mode)");
             } else {
                 // الثيم يدوي - اقرأ الوضع المحدد
-                Integer themeMode = settingsDataStore.getThemeMode().blockingFirst();
+                Integer themeMode = settingsDataStore.getThemeMode().subscribeOn(io.reactivex.rxjava3.schedulers.Schedulers.io()).blockingFirst();
                 
                 if (themeMode != null && themeMode == 1) {
                     // وضع داكن
