@@ -38,6 +38,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:paddingBottom="4sp"
+                android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Font Name Example" />
