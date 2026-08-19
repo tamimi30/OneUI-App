@@ -14,9 +14,21 @@ import androidx.core.splashscreen.SplashScreenViewProvider;
 public class SplashUtils {
 
     public static void configureSplashScreen(SplashScreen splashScreen, View root) {
+        final boolean[] hasExited = {false};
         splashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
             @Override
             public void onSplashScreenExit(SplashScreenViewProvider splashScreenViewProvider) {
+
+                SplashDiagnostics.log("SplashUtils.onSplashScreenExit called, provider=#"
+                        + System.identityHashCode(splashScreenViewProvider)
+                        + ", alreadyExitedBefore=" + hasExited[0]);
+
+                if (hasExited[0]) {
+                    splashScreenViewProvider.remove();
+                    return;
+                }
+                hasExited[0] = true;
+
                 // 1. جلب الخلفية لتطبيق التلاشي عليها فقط
                 View splashView = splashScreenViewProvider.getView();
                 
@@ -46,6 +58,8 @@ public class SplashUtils {
                 splashAnimSet.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        SplashDiagnostics.log("SplashUtils exit animation finished, removing splash view, provider=#"
+                                + System.identityHashCode(splashScreenViewProvider));
                         splashScreenViewProvider.remove();
                     }
                 });
