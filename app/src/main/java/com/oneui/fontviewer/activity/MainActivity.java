@@ -36,7 +36,6 @@ import com.oneui.fontviewer.fragment.settings.SettingsActivity;
 import com.oneui.fontviewer.fragment.home.HomeActivity;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
 import com.oneui.fontviewer.utils.SplashUtils;
-import com.oneui.fontviewer.utils.SplashDiagnostics;
 
 public class MainActivity extends BaseActivity
     implements LocalFontListFragment.OnFontSelectedListener,
@@ -47,7 +46,6 @@ public class MainActivity extends BaseActivity
     private boolean isUIReady = false;
     private boolean mIsMinSplashTimeElapsed = false;
     private boolean mIsInitialDataReady = false;
-    private boolean mIsDuplicateInstance = false;
     private long mSplashStartTime = 0L;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
@@ -76,45 +74,8 @@ public class MainActivity extends BaseActivity
 
     private SearchCoordinator mSearchCoordinator;
 
-    private static int sOnCreateCallCount = 0;
-    private static java.lang.ref.WeakReference<MainActivity> sActiveInstance;
-    private static boolean sSplashDiagnosticsFlushScheduled = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        sOnCreateCallCount++;
-        SplashDiagnostics.log("onCreate #" + sOnCreateCallCount
-                + " start, instance=#" + System.identityHashCode(this)
-                + ", savedInstanceState=" + (savedInstanceState != null)
-                + ", taskId=" + getTaskId());
-
-        MainActivity previousInstance = sActiveInstance != null ? sActiveInstance.get() : null;
-        boolean isDuplicateLaunch = previousInstance != null
-                && previousInstance != this
-                && !previousInstance.isFinishing()
-                && !previousInstance.isDestroyed();
-
-        if (previousInstance != null && previousInstance != this) {
-            SplashDiagnostics.log("onCreate #" + sOnCreateCallCount
-                    + " found previousInstance=#" + System.identityHashCode(previousInstance)
-                    + " isFinishing=" + previousInstance.isFinishing()
-                    + " isDestroyed=" + previousInstance.isDestroyed()
-                    + " -> treatedAsDuplicate=" + isDuplicateLaunch);
-        }
-
-        if (isDuplicateLaunch) {
-            SplashDiagnostics.log("onCreate #" + sOnCreateCallCount
-                    + " DUPLICATE MainActivity instance detected while previous instance=#"
-                    + System.identityHashCode(previousInstance)
-                    + " is still alive -> finishing this new instance immediately, no UI shown");
-            mIsDuplicateInstance = true;
-            super.onCreate(savedInstanceState);
-            finish();
-            return;
-        }
-
-        sActiveInstance = new java.lang.ref.WeakReference<>(this);
-
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         mSplashStartTime = System.currentTimeMillis();
 
@@ -123,19 +84,8 @@ public class MainActivity extends BaseActivity
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
         setContentView(R.layout.activity_main);
-
-        // ★ نفعّل أنيميشن أيقونة السبلاش المخصصة فقط بدءاً من أندرويد 12 (API 31)،
-        // لأن هذا بالضبط الحد الذي تستخدمه مكتبة SplashScreen داخلياً:
-        // من API 31 فما فوق تُدار الشاشة بالكامل من نظام أندرويد نفسه (أكثر أماناً).
-        // أما قبل API 31 فمكتبة التوافق تضيف يدوياً View خاصة بها فوق واجهتنا لمحاكاة الشكل نفسه،
-        // وهذه بالضبط الآلية التي بدأت المشكلة معها بعد إضافة SplashUtils.java.
-        if (Build.VERSION.SDK_INT >= 31) {
-            SplashUtils.configureSplashScreen(splashScreen, findViewById(R.id.drawer_layout));
-        } else {
-            SplashDiagnostics.log("onCreate #" + sOnCreateCallCount
-                    + " skipping custom exit animation on API " + Build.VERSION.SDK_INT
-                    + " (pre-31), using default splash behavior instead");
-        }
+        
+        SplashUtils.configureSplashScreen(splashScreen, findViewById(R.id.drawer_layout));
 
         mNavManager = new NavManager(this);
 
@@ -185,15 +135,8 @@ public class MainActivity extends BaseActivity
     }
 
     private void checkSplashReadyState() {
-        SplashDiagnostics.log("checkSplashReadyState instance=#" + System.identityHashCode(this)
-                + " minTime=" + mIsMinSplashTimeElapsed
-                + " dataReady=" + mIsInitialDataReady
-                + " alreadyReady=" + isUIReady);
         if (mIsMinSplashTimeElapsed && mIsInitialDataReady) {
             isUIReady = true;
-            SplashDiagnostics.log("isUIReady=true instance=#" + System.identityHashCode(this)
-                    + " (minTime=" + mIsMinSplashTimeElapsed
-                    + ", dataReady=" + mIsInitialDataReady + ")");
         }
     }
 
@@ -673,33 +616,8 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (!mIsDuplicateInstance && !sSplashDiagnosticsFlushScheduled) {
-            sSplashDiagnosticsFlushScheduled = true;
-            new Handler(getMainLooper()).postDelayed(() ->
-                    SplashDiagnostics.flush(getApplicationContext()), 3000L);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // شبكة أمان: نكتب السجل فوراً هنا أيضاً، حتى لو تم إيقاف التطبيق
-        // أو قُتلت العملية بسبب ضغط الذاكرة قبل مرور 3 ثوانٍ على onResume.
-        SplashDiagnostics.flush(getApplicationContext());
-    }
-
-    @Override
     protected void onDestroy() {
-        SplashDiagnostics.log("onDestroy instance=#" + System.identityHashCode(this)
-                + ", isFinishing=" + isFinishing());
-        if (mSearchCoordinator != null) {
-            mSearchCoordinator.cleanup();
-        }
-        if (sActiveInstance != null && sActiveInstance.get() == this) {
-            sActiveInstance = null;
-        }
+        mSearchCoordinator.cleanup();
         super.onDestroy();
     }
 
