@@ -16,6 +16,7 @@ import com.oneui.fontviewer.fragment.systemfont.data.SystemFontRepository;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
 import com.oneui.fontviewer.utils.CrashHandler;
+import com.oneui.fontviewer.utils.SplashDiagnostics;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sInstance = this;
+
+        SplashDiagnostics.log("App.onCreate start, pid=" + android.os.Process.myPid());
         
         // Initialize crash handler first
         CrashHandler.init(this);
@@ -68,6 +71,7 @@ public class App extends Application {
         }).start();
         
         setupActivityTracking();
+        SplashDiagnostics.log("App.onCreate end");
     }
     
     /**
@@ -166,11 +170,17 @@ public class App extends Application {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+                SplashDiagnostics.log("ActivityLifecycle onCreated " + activity.getClass().getSimpleName()
+                        + "#" + System.identityHashCode(activity)
+                        + " savedState=" + (savedInstanceState != null));
                 activities.add(new WeakReference<>(activity));
             }
 
             @Override
             public void onActivityDestroyed(@NonNull Activity activity) {
+                SplashDiagnostics.log("ActivityLifecycle onDestroyed " + activity.getClass().getSimpleName()
+                        + "#" + System.identityHashCode(activity)
+                        + " isFinishing=" + activity.isFinishing());
                 for (int i = activities.size() - 1; i >= 0; i--) {
                     Activity a = activities.get(i).get();
                     if (a == null || a == activity) {
@@ -179,10 +189,19 @@ public class App extends Application {
                 }
             }
 
-            @Override public void onActivityStarted(@NonNull Activity activity) {}
-            @Override public void onActivityResumed(@NonNull Activity activity) {}
+            @Override public void onActivityStarted(@NonNull Activity activity) {
+                SplashDiagnostics.log("ActivityLifecycle onStarted " + activity.getClass().getSimpleName()
+                        + "#" + System.identityHashCode(activity));
+            }
+            @Override public void onActivityResumed(@NonNull Activity activity) {
+                SplashDiagnostics.log("ActivityLifecycle onResumed " + activity.getClass().getSimpleName()
+                        + "#" + System.identityHashCode(activity));
+            }
             @Override public void onActivityPaused(@NonNull Activity activity) {}
-            @Override public void onActivityStopped(@NonNull Activity activity) {}
+            @Override public void onActivityStopped(@NonNull Activity activity) {
+                SplashDiagnostics.log("ActivityLifecycle onStopped " + activity.getClass().getSimpleName()
+                        + "#" + System.identityHashCode(activity));
+            }
             @Override public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
         });
     }
