@@ -85,7 +85,13 @@ public class MainActivity extends BaseActivity
 
         setContentView(R.layout.activity_main);
         
-        SplashUtils.configureSplashScreen(splashScreen, findViewById(R.id.drawer_layout));
+        // إخفاء وتصغير الشاشة فوراً هنا لمنع ظهورها لأجزاء من الثانية تحت الضغط
+        View rootView = findViewById(R.id.drawer_layout);
+        rootView.setAlpha(0f);
+        rootView.setScaleX(0.80f);
+        rootView.setScaleY(0.80f);
+        
+        SplashUtils.configureSplashScreen(splashScreen, rootView);
 
         mNavManager = new NavManager(this);
 
