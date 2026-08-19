@@ -36,6 +36,7 @@ import com.oneui.fontviewer.fragment.settings.SettingsActivity;
 import com.oneui.fontviewer.fragment.home.HomeActivity;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
 import com.oneui.fontviewer.utils.SplashUtils;
+import com.oneui.fontviewer.utils.SplashDiagnostics;
 
 public class MainActivity extends BaseActivity
     implements LocalFontListFragment.OnFontSelectedListener,
@@ -74,8 +75,14 @@ public class MainActivity extends BaseActivity
 
     private SearchCoordinator mSearchCoordinator;
 
+    private static int sOnCreateCallCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sOnCreateCallCount++;
+        SplashDiagnostics.log("onCreate #" + sOnCreateCallCount
+                + " start, savedInstanceState=" + (savedInstanceState != null));
+
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         mSplashStartTime = System.currentTimeMillis();
 
@@ -137,6 +144,8 @@ public class MainActivity extends BaseActivity
     private void checkSplashReadyState() {
         if (mIsMinSplashTimeElapsed && mIsInitialDataReady) {
             isUIReady = true;
+            SplashDiagnostics.log("isUIReady=true (minTime=" + mIsMinSplashTimeElapsed
+                    + ", dataReady=" + mIsInitialDataReady + ")");
         }
     }
 
