@@ -14,6 +14,8 @@ import androidx.core.splashscreen.SplashScreenViewProvider;
 public class SplashUtils {
 
     public static void configureSplashScreen(SplashScreen splashScreen, View root) {
+        SplashDiagnostics.log("SplashUtils.configureSplashScreen called, splashScreen=#"
+                + System.identityHashCode(splashScreen));
         final boolean[] hasExited = {false};
         splashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
             @Override
