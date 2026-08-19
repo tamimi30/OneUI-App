@@ -43,7 +43,11 @@ public class App extends Application {
         super.onCreate();
         sInstance = this;
 
-        SplashDiagnostics.log("App.onCreate start, pid=" + android.os.Process.myPid());
+        SplashDiagnostics.log("App.onCreate start, pid=" + android.os.Process.myPid()
+                + ", sdkInt=" + android.os.Build.VERSION.SDK_INT
+                + ", device=" + android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL
+                + ", processStartUptimeMs=" + (android.os.SystemClock.elapsedRealtime()
+                        - android.os.Process.getStartElapsedRealtime()));
         
         // Initialize crash handler first
         CrashHandler.init(this);
@@ -56,7 +60,10 @@ public class App extends Application {
         initializeDataStore();
         
         // ★★★ تطبيق الثيم بشكل متزامن لمنع الوميض ★★★
+        long themeStartTime = System.currentTimeMillis();
         applyInitialTheme();
+        SplashDiagnostics.log("applyInitialTheme took "
+                + (System.currentTimeMillis() - themeStartTime) + "ms");
         
         // Initialize other components in background thread
         new Thread(() -> {
@@ -229,6 +236,13 @@ public class App extends Application {
     public void onLowMemory() {
         super.onLowMemory();
         Log.w(TAG, "Low memory warning received");
+        SplashDiagnostics.log("App.onLowMemory pid=" + android.os.Process.myPid());
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        SplashDiagnostics.log("App.onTrimMemory level=" + level);
     }
     
     @Override
