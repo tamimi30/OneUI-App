@@ -47,6 +47,7 @@ public class MainActivity extends BaseActivity
     private boolean isUIReady = false;
     private boolean mIsMinSplashTimeElapsed = false;
     private boolean mIsInitialDataReady = false;
+    private boolean mIsDuplicateInstance = false;
     private long mSplashStartTime = 0L;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
@@ -76,12 +77,35 @@ public class MainActivity extends BaseActivity
     private SearchCoordinator mSearchCoordinator;
 
     private static int sOnCreateCallCount = 0;
+    private static java.lang.ref.WeakReference<MainActivity> sActiveInstance;
+    private static boolean sSplashDiagnosticsFlushScheduled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sOnCreateCallCount++;
         SplashDiagnostics.log("onCreate #" + sOnCreateCallCount
-                + " start, savedInstanceState=" + (savedInstanceState != null));
+                + " start, instance=#" + System.identityHashCode(this)
+                + ", savedInstanceState=" + (savedInstanceState != null)
+                + ", taskId=" + getTaskId());
+
+        MainActivity previousInstance = sActiveInstance != null ? sActiveInstance.get() : null;
+        boolean isDuplicateLaunch = previousInstance != null
+                && previousInstance != this
+                && !previousInstance.isFinishing()
+                && !previousInstance.isDestroyed();
+
+        if (isDuplicateLaunch) {
+            SplashDiagnostics.log("onCreate #" + sOnCreateCallCount
+                    + " DUPLICATE MainActivity instance detected while previous instance=#"
+                    + System.identityHashCode(previousInstance)
+                    + " is still alive -> finishing this new instance immediately, no UI shown");
+            mIsDuplicateInstance = true;
+            super.onCreate(savedInstanceState);
+            finish();
+            return;
+        }
+
+        sActiveInstance = new java.lang.ref.WeakReference<>(this);
 
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         mSplashStartTime = System.currentTimeMillis();
@@ -144,7 +168,8 @@ public class MainActivity extends BaseActivity
     private void checkSplashReadyState() {
         if (mIsMinSplashTimeElapsed && mIsInitialDataReady) {
             isUIReady = true;
-            SplashDiagnostics.log("isUIReady=true (minTime=" + mIsMinSplashTimeElapsed
+            SplashDiagnostics.log("isUIReady=true instance=#" + System.identityHashCode(this)
+                    + " (minTime=" + mIsMinSplashTimeElapsed
                     + ", dataReady=" + mIsInitialDataReady + ")");
         }
     }
@@ -625,8 +650,25 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (!mIsDuplicateInstance && !sSplashDiagnosticsFlushScheduled) {
+            sSplashDiagnosticsFlushScheduled = true;
+            new Handler(getMainLooper()).postDelayed(() ->
+                    SplashDiagnostics.flush(getApplicationContext()), 3000L);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
-        mSearchCoordinator.cleanup();
+        SplashDiagnostics.log("onDestroy instance=#" + System.identityHashCode(this)
+                + ", isFinishing=" + isFinishing());
+        if (mSearchCoordinator != null) {
+            mSearchCoordinator.cleanup();
+        }
+        if (sActiveInstance != null && sActiveInstance.get() == this) {
+            sActiveInstance = null;
+        }
         super.onDestroy();
     }
 
