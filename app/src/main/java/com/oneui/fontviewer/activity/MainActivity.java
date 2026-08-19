@@ -85,7 +85,7 @@ public class MainActivity extends BaseActivity
 
         setContentView(R.layout.activity_main);
         
-        SplashUtils.configureSplashScreen(splashScreen, findViewById(android.R.id.content));
+        SplashUtils.configureSplashScreen(splashScreen, findViewById(R.id.drawer_layout));
 
         mNavManager = new NavManager(this);
 
