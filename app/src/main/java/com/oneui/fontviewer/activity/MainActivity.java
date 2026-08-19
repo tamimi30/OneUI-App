@@ -94,6 +94,14 @@ public class MainActivity extends BaseActivity
                 && !previousInstance.isFinishing()
                 && !previousInstance.isDestroyed();
 
+        if (previousInstance != null && previousInstance != this) {
+            SplashDiagnostics.log("onCreate #" + sOnCreateCallCount
+                    + " found previousInstance=#" + System.identityHashCode(previousInstance)
+                    + " isFinishing=" + previousInstance.isFinishing()
+                    + " isDestroyed=" + previousInstance.isDestroyed()
+                    + " -> treatedAsDuplicate=" + isDuplicateLaunch);
+        }
+
         if (isDuplicateLaunch) {
             SplashDiagnostics.log("onCreate #" + sOnCreateCallCount
                     + " DUPLICATE MainActivity instance detected while previous instance=#"
@@ -115,8 +123,19 @@ public class MainActivity extends BaseActivity
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
         setContentView(R.layout.activity_main);
-        
-        SplashUtils.configureSplashScreen(splashScreen, findViewById(R.id.drawer_layout));
+
+        // ★ نفعّل أنيميشن أيقونة السبلاش المخصصة فقط بدءاً من أندرويد 12 (API 31)،
+        // لأن هذا بالضبط الحد الذي تستخدمه مكتبة SplashScreen داخلياً:
+        // من API 31 فما فوق تُدار الشاشة بالكامل من نظام أندرويد نفسه (أكثر أماناً).
+        // أما قبل API 31 فمكتبة التوافق تضيف يدوياً View خاصة بها فوق واجهتنا لمحاكاة الشكل نفسه،
+        // وهذه بالضبط الآلية التي بدأت المشكلة معها بعد إضافة SplashUtils.java.
+        if (Build.VERSION.SDK_INT >= 31) {
+            SplashUtils.configureSplashScreen(splashScreen, findViewById(R.id.drawer_layout));
+        } else {
+            SplashDiagnostics.log("onCreate #" + sOnCreateCallCount
+                    + " skipping custom exit animation on API " + Build.VERSION.SDK_INT
+                    + " (pre-31), using default splash behavior instead");
+        }
 
         mNavManager = new NavManager(this);
 
@@ -166,6 +185,10 @@ public class MainActivity extends BaseActivity
     }
 
     private void checkSplashReadyState() {
+        SplashDiagnostics.log("checkSplashReadyState instance=#" + System.identityHashCode(this)
+                + " minTime=" + mIsMinSplashTimeElapsed
+                + " dataReady=" + mIsInitialDataReady
+                + " alreadyReady=" + isUIReady);
         if (mIsMinSplashTimeElapsed && mIsInitialDataReady) {
             isUIReady = true;
             SplashDiagnostics.log("isUIReady=true instance=#" + System.identityHashCode(this)
@@ -657,6 +680,14 @@ public class MainActivity extends BaseActivity
             new Handler(getMainLooper()).postDelayed(() ->
                     SplashDiagnostics.flush(getApplicationContext()), 3000L);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // شبكة أمان: نكتب السجل فوراً هنا أيضاً، حتى لو تم إيقاف التطبيق
+        // أو قُتلت العملية بسبب ضغط الذاكرة قبل مرور 3 ثوانٍ على onResume.
+        SplashDiagnostics.flush(getApplicationContext());
     }
 
     @Override
