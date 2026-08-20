@@ -43,16 +43,17 @@ public class SplashUtils {
                         .alpha(0f)
                         .setDuration(500)
                         .setInterpolator(linearInterpolator)
-                        .withLayer()
+                        // أزلنا withLayer لمنع الرمشة في الإطار الأول
                         .withEndAction(() -> splashScreenViewProvider.remove())
                         .start();
 
                 splashIconView.animate()
+                        .alpha(1f) // السر هنا: إجبار الأيقونة على البقاء بشفافية 1 لمنع النظام من تطبيق تلاشي إضافي عليها
                         .scaleX(0.80f)
                         .scaleY(0.80f)
                         .setDuration(500)
                         .setInterpolator(oneEasingInterpolator)
-                        .withLayer()
+                        // أزلنا withLayer
                         .start();
 
                 // --- 2. أنيميشن دخول محتوى التطبيق ---
@@ -61,9 +62,9 @@ public class SplashUtils {
                         .scaleX(1f)
                         .scaleY(1f)
                         .setDuration(500)
-                        .setStartDelay(200)
+                        // أزلنا setStartDelay(200) لتبدأ الشاشتان بالتداخل معاً فوراً، مما يمنع الفجوة السوداء
                         .setInterpolator(oneEasingInterpolator)
-                        .withLayer()
+                        // أزلنا withLayer
                         .start();
             }
         });
