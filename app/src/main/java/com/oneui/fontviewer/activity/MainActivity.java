@@ -85,13 +85,7 @@ public class MainActivity extends BaseActivity
 
         setContentView(R.layout.activity_main);
         
-        // إخفاء وتصغير الشاشة فوراً هنا لمنع ظهورها لأجزاء من الثانية تحت الضغط
-        View rootView = findViewById(R.id.drawer_layout);
-        rootView.setAlpha(0f);
-        rootView.setScaleX(0.80f);
-        rootView.setScaleY(0.80f);
-        
-        SplashUtils.configureSplashScreen(splashScreen, rootView);
+        SplashUtils.configureSplashScreen(splashScreen, findViewById(R.id.drawer_layout));
 
         mNavManager = new NavManager(this);
 
@@ -124,7 +118,7 @@ public class MainActivity extends BaseActivity
         requestNotificationPermissionIfNeeded();
 
         long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
-        long remainingDelay = Math.max(0L, 0L - elapsedTime);
+        long remainingDelay = Math.max(0L, 800L - elapsedTime);
 
         Handler splashHandler = new Handler(getMainLooper());
 

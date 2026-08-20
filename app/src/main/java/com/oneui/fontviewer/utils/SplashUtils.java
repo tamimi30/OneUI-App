@@ -50,7 +50,12 @@ public class SplashUtils {
                     }
                 });
 
-                // تم نقل إخفاء الشاشة إلى MainActivity لمنع الوميض المبكر
+                // --------------------------------------------------------
+                // الحل الجذري: إخفاء وتصغير الشاشة فوراً قبل بدء التأخير لمنع الوميض
+                root.setAlpha(0f);
+                root.setScaleX(0.80f);
+                root.setScaleY(0.80f);
+                // --------------------------------------------------------
 
                 // --- 2. أنيميشن دخول محتوى التطبيق ---
                 ObjectAnimator contentAlpha = ObjectAnimator.ofFloat(root, View.ALPHA, 0f, 1f);
