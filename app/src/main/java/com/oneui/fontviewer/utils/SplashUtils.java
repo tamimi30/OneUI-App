@@ -30,6 +30,14 @@ public class SplashUtils {
                 // نقل الأنيميشن بالكامل من مسار المعالج (UI Thread) إلى معالج الرسوميات (RenderThread)
                 // باستخدام ViewPropertyAnimator بدلاً من ObjectAnimator و AnimatorSet المعقدة.
 
+                // إيقاف أي أنيميشن خفي فرضه نظام الأندرويد أو الواجهة على الأيقونة لحظة التسليم
+                splashView.clearAnimation();
+                splashIconView.clearAnimation();
+                
+                // إجبار الأيقونة والنافذة على البدء بسطوع كامل قبل أن يبدأ كودك بتخفيتهم (لمنع الشفافية المزدوجة)
+                splashView.setAlpha(1f);
+                splashIconView.setAlpha(1f);
+
                 // --- 1. أنيميشن خروج أيقونة Splash ---
                 splashView.animate()
                         .alpha(0f)
