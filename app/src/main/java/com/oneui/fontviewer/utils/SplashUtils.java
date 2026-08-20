@@ -34,8 +34,8 @@ public class SplashUtils {
                 splashAlpha.setDuration(500);
 
                 // التصغير يُطبق على الأيقونة فقط
-                ObjectAnimator iconScaleX = ObjectAnimator.ofFloat(splashIconView, View.SCALE_X, 1f, 0.80f);
-                ObjectAnimator iconScaleY = ObjectAnimator.ofFloat(splashIconView, View.SCALE_Y, 1f, 0.80f);
+                ObjectAnimator iconScaleX = ObjectAnimator.ofFloat(splashIconView, View.SCALE_X, 1f, 1f);
+                ObjectAnimator iconScaleY = ObjectAnimator.ofFloat(splashIconView, View.SCALE_Y, 1f, 1f);
                 iconScaleX.setInterpolator(oneEasingInterpolator);
                 iconScaleY.setInterpolator(oneEasingInterpolator);
                 iconScaleX.setDuration(500);
@@ -57,8 +57,8 @@ public class SplashUtils {
                 contentAlpha.setInterpolator(linearInterpolator);
                 contentAlpha.setDuration(500);
 
-                ObjectAnimator contentScaleX = ObjectAnimator.ofFloat(root, View.SCALE_X, 1f, 1f);
-                ObjectAnimator contentScaleY = ObjectAnimator.ofFloat(root, View.SCALE_Y, 1f, 1f);
+                ObjectAnimator contentScaleX = ObjectAnimator.ofFloat(root, View.SCALE_X, 0.80f, 1f);
+                ObjectAnimator contentScaleY = ObjectAnimator.ofFloat(root, View.SCALE_Y, 0.80f, 1f);
                 contentScaleX.setInterpolator(oneEasingInterpolator);
                 contentScaleY.setInterpolator(oneEasingInterpolator);
                 contentScaleX.setDuration(500);
