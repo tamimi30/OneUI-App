@@ -33,16 +33,22 @@ public class SplashUtils {
                 splashAlpha.setInterpolator(linearInterpolator);
                 splashAlpha.setDuration(500);
 
-                // التصغير يُطبق على الأيقونة فقط
-                ObjectAnimator iconScaleX = ObjectAnimator.ofFloat(splashIconView, View.SCALE_X, 1f, 1f);
-                ObjectAnimator iconScaleY = ObjectAnimator.ofFloat(splashIconView, View.SCALE_Y, 1f, 1f);
+                // الشفافية تُطبق صراحةً على الأيقونة أيضاً (هذا هو السر لمنع الوميض)
+                ObjectAnimator iconAlpha = ObjectAnimator.ofFloat(splashIconView, View.ALPHA, 1f, 0f);
+                iconAlpha.setInterpolator(linearInterpolator);
+                iconAlpha.setDuration(500);
+
+                // التصغير يُطبق على الأيقونة (تم تصحيح القيم من 1f إلى 0.80f لكي تعمل بشكل صحيح)
+                ObjectAnimator iconScaleX = ObjectAnimator.ofFloat(splashIconView, View.SCALE_X, 1f, 0.80f);
+                ObjectAnimator iconScaleY = ObjectAnimator.ofFloat(splashIconView, View.SCALE_Y, 1f, 0.80f);
                 iconScaleX.setInterpolator(oneEasingInterpolator);
                 iconScaleY.setInterpolator(oneEasingInterpolator);
                 iconScaleX.setDuration(500);
                 iconScaleY.setDuration(500);
 
                 AnimatorSet splashAnimSet = new AnimatorSet();
-                splashAnimSet.playTogether(splashAlpha, iconScaleX, iconScaleY);
+                // دمج أنيميشن الشفافية للأيقونة مع باقي الحركات
+                splashAnimSet.playTogether(splashAlpha, iconAlpha, iconScaleX, iconScaleY);
                 splashAnimSet.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
