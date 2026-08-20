@@ -30,11 +30,18 @@ public class SplashUtils {
                 // نقل الأنيميشن بالكامل من مسار المعالج (UI Thread) إلى معالج الرسوميات (RenderThread)
                 // باستخدام ViewPropertyAnimator بدلاً من ObjectAnimator و AnimatorSet المعقدة.
 
+                // إيقاف أي أنيميشن عالق وتجهيز الشفافية الابتدائية لمنع الوميض
+                splashView.clearAnimation();
+                splashIconView.clearAnimation();
+                splashView.setAlpha(1f);
+                splashIconView.setAlpha(1f);
+
                 // --- 1. أنيميشن خروج أيقونة Splash ---
                 splashView.animate()
                         .alpha(0f)
                         .setDuration(500)
                         .setInterpolator(linearInterpolator)
+                        .withLayer() // تفعيل تسريع الأجهزة (Hardware Acceleration)
                         .withEndAction(() -> splashScreenViewProvider.remove())
                         .start();
 
@@ -43,6 +50,7 @@ public class SplashUtils {
                         .scaleY(0.80f)
                         .setDuration(500)
                         .setInterpolator(oneEasingInterpolator)
+                        .withLayer()
                         .start();
 
                 // --- 2. أنيميشن دخول محتوى التطبيق ---
@@ -53,6 +61,7 @@ public class SplashUtils {
                         .setDuration(500)
                         .setStartDelay(200)
                         .setInterpolator(oneEasingInterpolator)
+                        .withLayer() // تسريع دخول واجهة التطبيق
                         .start();
             }
         });
