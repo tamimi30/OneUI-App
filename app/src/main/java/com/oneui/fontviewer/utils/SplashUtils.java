@@ -66,7 +66,7 @@ public class SplashUtils {
 
                 AnimatorSet contentAnimSet = new AnimatorSet();
                 contentAnimSet.playTogether(contentAlpha, contentScaleX, contentScaleY);
-                contentAnimSet.setStartDelay(100); // التأخير الزمني
+                contentAnimSet.setStartDelay(0); // التأخير الزمني
 
                 long elapsed = Math.max(0L,
                         System.currentTimeMillis() - splashScreenViewProvider.getIconAnimationStartMillis());
