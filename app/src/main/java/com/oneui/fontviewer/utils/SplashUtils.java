@@ -68,15 +68,9 @@ public class SplashUtils {
                 contentAnimSet.playTogether(contentAlpha, contentScaleX, contentScaleY);
                 contentAnimSet.setStartDelay(200); // التأخير الزمني
 
-                long elapsed = Math.max(0L,
-                        System.currentTimeMillis() - splashScreenViewProvider.getIconAnimationStartMillis());
-                long remainingIconDelay = Math.max(0L,
-                        splashScreenViewProvider.getIconAnimationDurationMillis() - elapsed);
-
-                root.postOnAnimationDelayed(() -> {
-                    splashAnimSet.start();
-                    contentAnimSet.start();
-                }, remainingIconDelay);
+                // بدء الأنيميشن فوراً دون انتظار النظام لتجنب الوميض تحت الضغط
+                splashAnimSet.start();
+                contentAnimSet.start();
             }
         });
     }
