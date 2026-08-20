@@ -354,6 +354,7 @@ public class MainActivity extends BaseActivity
 
     private void warmUpOtherScreens() {
         Handler warmupHandler = new Handler(getMainLooper());
+        // تأخير بناء الشاشات الخلفية لمدة 1500 ملي ثانية (حتى ينتهي أنيميشن البداية بالكامل)
         warmupHandler.postDelayed(() -> {
             if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
             warmUpScreenSilently(AppScreen.SYSTEM_FONTS);
