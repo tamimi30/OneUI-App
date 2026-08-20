@@ -30,12 +30,6 @@ public class SplashUtils {
                 // نقل الأنيميشن بالكامل من مسار المعالج (UI Thread) إلى معالج الرسوميات (RenderThread)
                 // باستخدام ViewPropertyAnimator بدلاً من ObjectAnimator و AnimatorSet المعقدة.
 
-                // إيقاف أي أنيميشن عالق وتجهيز الشفافية الابتدائية لمنع الوميض
-                splashView.clearAnimation();
-                splashIconView.clearAnimation();
-                splashView.setAlpha(1f);
-                splashIconView.setAlpha(1f);
-
                 // --- 1. أنيميشن خروج أيقونة Splash ---
                 splashView.animate()
                         .alpha(0f)
