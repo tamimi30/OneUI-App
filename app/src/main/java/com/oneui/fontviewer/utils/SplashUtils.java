@@ -20,8 +20,14 @@ public class SplashUtils {
                 // 1. جلب الخلفية لتطبيق التلاشي عليها فقط
                 View splashView = splashScreenViewProvider.getView();
                 
-                // 2. جلب الأيقونة لتطبيق التصغير عليها لمنع تقلص الخلفية وظهور الإطار
+                // 2. جلب الأيقونة لتطبيق التصغير عليها
                 View splashIconView = splashScreenViewProvider.getIconView();
+
+                // --- السر الجذري لمنع الوميض وتغير اللون تحت الضغط ---
+                // تحويل الواجهات إلى Hardware Layers لتسريع الأنيميشن عبر GPU وعزله عن ضغط الـ CPU
+                splashView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                splashIconView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                root.setLayerType(View.LAYER_TYPE_HARDWARE, null);
                 
                 PathInterpolator oneEasingInterpolator = new PathInterpolator(0.22f, 0.25f, 0f, 1f);
                 LinearInterpolator linearInterpolator = new LinearInterpolator();
@@ -33,12 +39,7 @@ public class SplashUtils {
                 splashAlpha.setInterpolator(linearInterpolator);
                 splashAlpha.setDuration(500);
 
-                // الشفافية تُطبق صراحةً على الأيقونة أيضاً (هذا هو السر لمنع الوميض)
-                ObjectAnimator iconAlpha = ObjectAnimator.ofFloat(splashIconView, View.ALPHA, 1f, 0f);
-                iconAlpha.setInterpolator(linearInterpolator);
-                iconAlpha.setDuration(500);
-
-                // التصغير يُطبق على الأيقونة (تم تصحيح القيم من 1f إلى 0.80f لكي تعمل بشكل صحيح)
+                // التصغير يُطبق على الأيقونة
                 ObjectAnimator iconScaleX = ObjectAnimator.ofFloat(splashIconView, View.SCALE_X, 1f, 0.80f);
                 ObjectAnimator iconScaleY = ObjectAnimator.ofFloat(splashIconView, View.SCALE_Y, 1f, 0.80f);
                 iconScaleX.setInterpolator(oneEasingInterpolator);
@@ -47,16 +48,14 @@ public class SplashUtils {
                 iconScaleY.setDuration(500);
 
                 AnimatorSet splashAnimSet = new AnimatorSet();
-                // دمج أنيميشن الشفافية للأيقونة مع باقي الحركات
-                splashAnimSet.playTogether(splashAlpha, iconAlpha, iconScaleX, iconScaleY);
+                // قمنا بإزالة شفافية الأيقونة المزدوجة التي كانت تزيد من مشكلة اللون
+                splashAnimSet.playTogether(splashAlpha, iconScaleX, iconScaleY);
                 splashAnimSet.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         splashScreenViewProvider.remove();
                     }
                 });
-
-                // تم نقل إخفاء الشاشة إلى MainActivity لمنع الوميض المبكر
 
                 // --- 2. أنيميشن دخول محتوى التطبيق ---
                 ObjectAnimator contentAlpha = ObjectAnimator.ofFloat(root, View.ALPHA, 0f, 1f);
@@ -72,9 +71,17 @@ public class SplashUtils {
 
                 AnimatorSet contentAnimSet = new AnimatorSet();
                 contentAnimSet.playTogether(contentAlpha, contentScaleX, contentScaleY);
-                contentAnimSet.setStartDelay(200); // التأخير الزمني
+                contentAnimSet.setStartDelay(200); 
 
-                // بدء الأنيميشن فوراً دون انتظار النظام لتجنب الوميض تحت الضغط
+                // إعادة LayerType إلى طبيعته بعد انتهاء الحركة لتحرير ذاكرة الـ GPU
+                contentAnimSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        root.setLayerType(View.LAYER_TYPE_NONE, null);
+                    }
+                });
+
+                // بدء الأنيميشن فوراً
                 splashAnimSet.start();
                 contentAnimSet.start();
             }
