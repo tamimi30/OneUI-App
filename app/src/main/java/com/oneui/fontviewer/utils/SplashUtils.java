@@ -35,6 +35,7 @@ public class SplashUtils {
                         .alpha(0f)
                         .setDuration(500)
                         .setInterpolator(linearInterpolator)
+                        .withLayer()
                         .withEndAction(() -> splashScreenViewProvider.remove())
                         .start();
 
@@ -43,6 +44,7 @@ public class SplashUtils {
                         .scaleY(0.80f)
                         .setDuration(500)
                         .setInterpolator(oneEasingInterpolator)
+                        .withLayer()
                         .start();
 
                 // --- 2. أنيميشن دخول محتوى التطبيق ---
@@ -53,6 +55,7 @@ public class SplashUtils {
                         .setDuration(500)
                         .setStartDelay(200)
                         .setInterpolator(oneEasingInterpolator)
+                        .withLayer()
                         .start();
             }
         });
