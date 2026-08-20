@@ -30,30 +30,19 @@ public class SplashUtils {
                 // نقل الأنيميشن بالكامل من مسار المعالج (UI Thread) إلى معالج الرسوميات (RenderThread)
                 // باستخدام ViewPropertyAnimator بدلاً من ObjectAnimator و AnimatorSet المعقدة.
 
-                // إيقاف أي أنيميشن خفي فرضه نظام الأندرويد أو الواجهة على الأيقونة لحظة التسليم
-                splashView.clearAnimation();
-                splashIconView.clearAnimation();
-                
-                // إجبار الأيقونة والنافذة على البدء بسطوع كامل قبل أن يبدأ كودك بتخفيتهم (لمنع الشفافية المزدوجة)
-                splashView.setAlpha(1f);
-                splashIconView.setAlpha(1f);
-
                 // --- 1. أنيميشن خروج أيقونة Splash ---
                 splashView.animate()
                         .alpha(0f)
                         .setDuration(500)
                         .setInterpolator(linearInterpolator)
-                        // أزلنا withLayer لمنع الرمشة في الإطار الأول
                         .withEndAction(() -> splashScreenViewProvider.remove())
                         .start();
 
                 splashIconView.animate()
-                        .alpha(1f) // السر هنا: إجبار الأيقونة على البقاء بشفافية 1 لمنع النظام من تطبيق تلاشي إضافي عليها
                         .scaleX(0.80f)
                         .scaleY(0.80f)
                         .setDuration(500)
                         .setInterpolator(oneEasingInterpolator)
-                        // أزلنا withLayer
                         .start();
 
                 // --- 2. أنيميشن دخول محتوى التطبيق ---
@@ -62,9 +51,8 @@ public class SplashUtils {
                         .scaleX(1f)
                         .scaleY(1f)
                         .setDuration(500)
-                        // أزلنا setStartDelay(200) لتبدأ الشاشتان بالتداخل معاً فوراً، مما يمنع الفجوة السوداء
+                        .setStartDelay(200)
                         .setInterpolator(oneEasingInterpolator)
-                        // أزلنا withLayer
                         .start();
             }
         });
