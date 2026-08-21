@@ -30,38 +30,43 @@ public class SplashUtils {
                 // نقل الأنيميشن بالكامل من مسار المعالج (UI Thread) إلى معالج الرسوميات (RenderThread)
                 // باستخدام ViewPropertyAnimator بدلاً من ObjectAnimator و AnimatorSet المعقدة.
 
-                // استخدام post لضمان أن الواجهة الوهمية التي تحقنها المكتبة قد تم رسمها بالكامل
-                // وتطابقت مع شاشة النظام قبل بدء حركتك، مما يمنع وميض الأيقونة لحظة التسليم.
-                splashView.post(() -> {
-                    
-                    // --- 1. أنيميشن خروج أيقونة Splash ---
-                    splashView.animate()
-                            .alpha(0f)
-                            .setDuration(500)
-                            .setInterpolator(linearInterpolator)
-                            .withLayer() // تفعيل تسريع الأجهزة (Hardware Acceleration)
-                            .withEndAction(() -> splashScreenViewProvider.remove())
-                            .start();
-    
-                    splashIconView.animate()
-                            .scaleX(0.80f)
-                            .scaleY(0.80f)
-                            .setDuration(500)
-                            .setInterpolator(oneEasingInterpolator)
-                            .withLayer()
-                            .start();
-    
-                    // --- 2. أنيميشن دخول محتوى التطبيق ---
-                    root.animate()
-                            .alpha(1f)
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .setDuration(500)
-                            .setStartDelay(200)
-                            .setInterpolator(oneEasingInterpolator)
-                            .withLayer() // تسريع دخول واجهة التطبيق
-                            .start();
-                });
+                // إيقاف أي حركة افتراضية مدمجة في الأيقونة (إذا كانت AnimatedVector)
+                // وإجبارها على القفز للحالة النهائية فوراً لمنع وميض إعادة التشغيل.
+                if (splashIconView instanceof android.widget.ImageView) {
+                    android.graphics.drawable.Drawable drawable = ((android.widget.ImageView) splashIconView).getDrawable();
+                    if (drawable != null) {
+                        if (drawable instanceof android.graphics.drawable.Animatable) {
+                            ((android.graphics.drawable.Animatable) drawable).stop();
+                        }
+                        drawable.jumpToCurrentState();
+                    }
+                }
+
+                // --- 1. أنيميشن خروج أيقونة Splash ---
+                // تمت إزالة withLayer() لمنع التأخير الزمني (Frame Drop) لحظة إنشاء الطبقة
+                splashView.animate()
+                        .alpha(0f)
+                        .setDuration(500)
+                        .setInterpolator(linearInterpolator)
+                        .withEndAction(() -> splashScreenViewProvider.remove())
+                        .start();
+
+                splashIconView.animate()
+                        .scaleX(0.80f)
+                        .scaleY(0.80f)
+                        .setDuration(500)
+                        .setInterpolator(oneEasingInterpolator)
+                        .start();
+
+                // --- 2. أنيميشن دخول محتوى التطبيق ---
+                root.animate()
+                        .alpha(1f)
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(500)
+                        .setStartDelay(200)
+                        .setInterpolator(oneEasingInterpolator)
+                        .start();
             }
         });
     }
