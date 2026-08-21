@@ -1,9 +1,5 @@
 package com.oneui.fontviewer.utils;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.PathInterpolator;
@@ -17,43 +13,45 @@ public class SplashUtils {
         splashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
             @Override
             public void onSplashScreenExit(SplashScreenViewProvider splashScreenViewProvider) {
-                // 1. جلب الخلفية لتطبيق التلاشي عليها فقط
-                View splashView = splashScreenViewProvider.getView();
-                
-                // 2. جلب الأيقونة لتطبيق التصغير عليها
-                View splashIconView = splashScreenViewProvider.getIconView();
-                
-                PathInterpolator oneEasingInterpolator = new PathInterpolator(0.22f, 0.25f, 0f, 1f);
-                LinearInterpolator linearInterpolator = new LinearInterpolator();
 
-                // الحل الجذري لمنع الوميض تحت الضغط: 
-                // نقل الأنيميشن بالكامل من مسار المعالج (UI Thread) إلى معالج الرسوميات (RenderThread)
-                // باستخدام ViewPropertyAnimator بدلاً من ObjectAnimator و AnimatorSet المعقدة.
+                long iconStart = splashScreenViewProvider.getIconAnimationStartMillis();
+                long iconDuration = splashScreenViewProvider.getIconAnimationDurationMillis();
+                long remaining = 0L;
+                if (iconStart > 0 && iconDuration > 0) {
+                    long elapsed = System.currentTimeMillis() - iconStart;
+                    remaining = Math.min(400L, Math.max(0L, iconDuration - elapsed));
+                }
 
-                // --- 1. أنيميشن خروج أيقونة Splash ---
-                splashView.animate()
-                        .alpha(0f)
-                        .setDuration(500)
-                        .setInterpolator(linearInterpolator)
-                        .withEndAction(() -> splashScreenViewProvider.remove())
-                        .start();
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    View splashView = splashScreenViewProvider.getView();
+                    View splashIconView = splashScreenViewProvider.getIconView();
 
-                splashIconView.animate()
-                        .scaleX(0.80f)
-                        .scaleY(0.80f)
-                        .setDuration(500)
-                        .setInterpolator(oneEasingInterpolator)
-                        .start();
+                    PathInterpolator oneEasingInterpolator = new PathInterpolator(0.22f, 0.25f, 0f, 1f);
+                    LinearInterpolator linearInterpolator = new LinearInterpolator();
 
-                // --- 2. أنيميشن دخول محتوى التطبيق ---
-                root.animate()
-                        .alpha(1f)
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .setDuration(500)
-                        .setStartDelay(200)
-                        .setInterpolator(oneEasingInterpolator)
-                        .start();
+                    splashView.animate()
+                            .alpha(0f)
+                            .setDuration(500)
+                            .setInterpolator(linearInterpolator)
+                            .withEndAction(() -> splashScreenViewProvider.remove())
+                            .start();
+
+                    splashIconView.animate()
+                            .scaleX(0.80f)
+                            .scaleY(0.80f)
+                            .setDuration(500)
+                            .setInterpolator(oneEasingInterpolator)
+                            .start();
+
+                    root.animate()
+                            .alpha(1f)
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(500)
+                            .setStartDelay(200)
+                            .setInterpolator(oneEasingInterpolator)
+                            .start();
+                }, remaining);
             }
         });
     }
