@@ -43,10 +43,6 @@ public class MainActivity extends BaseActivity
     FavoriteFontListFragment.OnFontSelectedListener,
     NavManager.Host {
 
-    private boolean isUIReady = false;
-    private boolean mIsMinSplashTimeElapsed = false;
-    private boolean mIsInitialDataReady = false;
-    private long mSplashStartTime = 0L;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
@@ -76,43 +72,16 @@ public class MainActivity extends BaseActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
-        mSplashStartTime = System.currentTimeMillis();
-
         super.onCreate(savedInstanceState);
-
-        splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
-
         setContentView(R.layout.activity_main);
+        
         View rootView = findViewById(R.id.drawer_layout);
-
-        // التحقق مما إذا كان التطبيق يفتح لأول مرة أم يعاد بناؤه (مثل تغيير اللغة)
-        if (savedInstanceState == null) {
-            // 1. التطبيق يفتح لأول مرة (Cold Start)
-            // قم بإخفاء الشاشة فوراً لمنع الوميض، لأن الأنيميشن سيعيد إظهارها
-            rootView.setAlpha(0f);
-            rootView.setScaleX(0.80f);
-            rootView.setScaleY(0.80f);
-            SplashUtils.configureSplashScreen(splashScreen, rootView);
-        } else {
-            // 2. تغيير لغة أو إعادة بناء (Hot Start)
-            // النظام لن يعرض Splash Screen ولن يعيد الشفافية، لذا اجعلها مرئية فوراً
-            rootView.setAlpha(1f);
-            rootView.setScaleX(1f);
-            rootView.setScaleY(1f);
-    
-            // (اختياري) يمكنك تخطي الشرط الذي يعلق الشاشة أيضاً لضمان سرعة الفتح
-            isUIReady = true; 
-        }
-
 
         mNavManager = new NavManager(this);
 
         initViews();
         initFragmentsList();
-
         setupSearchCoordinator();
-
         setupDrawerButton();
 
         if (savedInstanceState != null) {
@@ -127,42 +96,25 @@ public class MainActivity extends BaseActivity
             mCurrentScreen = AppScreen.LOCAL_FONTS;
             mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
             warmUpOtherScreens();
+            
+            // إضافة حركة دخول بسيطة وسلسة لواجهة التطبيق
+            rootView.setAlpha(0f);
+            rootView.setScaleX(0.95f);
+            rootView.setScaleY(0.95f);
+            rootView.animate()
+                    .alpha(1f)
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(400)
+                    .start();
         }
 
         setupDrawer();
         updateDrawerTitle(mCurrentScreen);
-
         handleIntent(getIntent());
-
         requestNotificationPermissionIfNeeded();
-
-        long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
-        long remainingDelay = Math.max(0L, 800L - elapsedTime);
-
-        Handler splashHandler = new Handler(getMainLooper());
-
-        splashHandler.postDelayed(() -> {
-            mIsMinSplashTimeElapsed = true;
-            checkSplashReadyState();
-        }, remainingDelay);
-
-        // شبكة أمان: لا تُبقي الشاشة أكثر من هذه المدة حتى لو لم تصل إشارة الجاهزية
-        splashHandler.postDelayed(() -> {
-            mIsInitialDataReady = true;
-            checkSplashReadyState();
-        }, 60000L);
     }
 
-    private void checkSplashReadyState() {
-        if (mIsMinSplashTimeElapsed && mIsInitialDataReady) {
-            isUIReady = true;
-        }
-    }
-
-    public void setAppReady() {
-        mIsInitialDataReady = true;
-        checkSplashReadyState();
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -354,6 +306,7 @@ public class MainActivity extends BaseActivity
 
     private void warmUpOtherScreens() {
         Handler warmupHandler = new Handler(getMainLooper());
+        // تأخير بناء الشاشات الخلفية لمدة 1500 ملي ثانية (حتى ينتهي أنيميشن البداية بالكامل)
         warmupHandler.postDelayed(() -> {
             if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
             warmUpScreenSilently(AppScreen.SYSTEM_FONTS);
@@ -645,4 +598,4 @@ public class MainActivity extends BaseActivity
         mNavManager.handleBackPressed();
     }
     
-                              }
+    }
