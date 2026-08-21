@@ -84,8 +84,27 @@ public class MainActivity extends BaseActivity
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
         setContentView(R.layout.activity_main);
-        
-        SplashUtils.configureSplashScreen(splashScreen, findViewById(R.id.drawer_layout));
+        View rootView = findViewById(R.id.drawer_layout);
+
+        // التحقق مما إذا كان التطبيق يفتح لأول مرة أم يعاد بناؤه (مثل تغيير اللغة)
+        if (savedInstanceState == null) {
+            // 1. التطبيق يفتح لأول مرة (Cold Start)
+            // قم بإخفاء الشاشة فوراً لمنع الوميض، لأن الأنيميشن سيعيد إظهارها
+            rootView.setAlpha(0f);
+            rootView.setScaleX(0.80f);
+            rootView.setScaleY(0.80f);
+            SplashUtils.configureSplashScreen(splashScreen, rootView);
+        } else {
+            // 2. تغيير لغة أو إعادة بناء (Hot Start)
+            // النظام لن يعرض Splash Screen ولن يعيد الشفافية، لذا اجعلها مرئية فوراً
+            rootView.setAlpha(1f);
+            rootView.setScaleX(1f);
+            rootView.setScaleY(1f);
+    
+            // (اختياري) يمكنك تخطي الشرط الذي يعلق الشاشة أيضاً لضمان سرعة الفتح
+            isUIReady = true; 
+        }
+
 
         mNavManager = new NavManager(this);
 
