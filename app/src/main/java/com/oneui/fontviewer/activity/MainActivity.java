@@ -82,9 +82,15 @@ public class MainActivity extends BaseActivity
 
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+
         setContentView(R.layout.activity_main);
 
-        // في حالة إعادة البناء (تغيير لغة/دوران) لا يعرض النظام Splash أصلاً، فلا داعي للانتظار
+        // التحقق مما إذا كان هذا فتحاً جديداً للتطبيق (Cold Start) أم إعادة بناء بسبب تغيير اللغة أو الثيم (Hot Start).
+        // عند إعادة البناء، البيانات والواجهات محفوظة مسبقًا، لذا نتخطى الانتظار الاصطناعي فورًا
+        // لتفادي التأخير الملحوظ عند الضغط على زر الرجوع بعد تغيير اللغة.
         if (savedInstanceState != null) {
             isUIReady = true;
         }
@@ -349,10 +355,10 @@ public class MainActivity extends BaseActivity
                     warmupHandler.postDelayed(() -> {
                         if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
                         warmUpScreenSilently(null);
-                    }, 60);
-                }, 60);
-            }, 60);
-        }, 60);
+                    }, 120);
+                }, 120);
+            }, 120);
+        }, 120);
     }
 
     private void warmUpScreenSilently(AppScreen screenToShow) {
@@ -628,4 +634,4 @@ public class MainActivity extends BaseActivity
         mNavManager.handleBackPressed();
     }
     
-                }
+    }
