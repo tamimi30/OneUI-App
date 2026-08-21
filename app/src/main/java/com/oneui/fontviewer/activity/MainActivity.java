@@ -81,10 +81,10 @@ public class MainActivity extends BaseActivity
 
         super.onCreate(savedInstanceState);
 
-        splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
-
         setContentView(R.layout.activity_main);
         View rootView = findViewById(R.id.drawer_layout);
+
+        splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
         // التحقق مما إذا كان التطبيق يفتح لأول مرة أم يعاد بناؤه (مثل تغيير اللغة)
         if (savedInstanceState == null) {
@@ -645,4 +645,4 @@ public class MainActivity extends BaseActivity
         mNavManager.handleBackPressed();
     }
     
-                            }
+    }
