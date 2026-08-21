@@ -14,34 +14,23 @@ import androidx.core.splashscreen.SplashScreenViewProvider;
 public class SplashUtils {
 
     public static void configureSplashScreen(SplashScreen splashScreen, View root) {
-        final boolean[] alreadyStarted = {false};
-
         splashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
             @Override
             public void onSplashScreenExit(SplashScreenViewProvider splashScreenViewProvider) {
-
-                if (alreadyStarted[0]) {
-                    splashScreenViewProvider.remove();
-                    return;
-                }
-                alreadyStarted[0] = true;
-
+                // 1. جلب الخلفية لتطبيق التلاشي عليها فقط
                 View splashView = splashScreenViewProvider.getView();
+                
+                // 2. جلب الأيقونة لتطبيق التصغير عليها
                 View splashIconView = splashScreenViewProvider.getIconView();
-
-                // إلغاء أي أنيميشن سابق ما زال يعمل على هذه العناصر
-                splashView.animate().cancel();
-                splashIconView.animate().cancel();
-                root.animate().cancel();
-
-                // إعادة ضبط نقطة البداية قبل تشغيل الأنيميشن
-                splashView.setAlpha(1f);
-                splashIconView.setScaleX(1f);
-                splashIconView.setScaleY(1f);
-
+                
                 PathInterpolator oneEasingInterpolator = new PathInterpolator(0.22f, 0.25f, 0f, 1f);
                 LinearInterpolator linearInterpolator = new LinearInterpolator();
 
+                // الحل الجذري لمنع الوميض تحت الضغط: 
+                // نقل الأنيميشن بالكامل من مسار المعالج (UI Thread) إلى معالج الرسوميات (RenderThread)
+                // باستخدام ViewPropertyAnimator بدلاً من ObjectAnimator و AnimatorSet المعقدة.
+
+                // --- 1. أنيميشن خروج أيقونة Splash ---
                 splashView.animate()
                         .alpha(0f)
                         .setDuration(500)
@@ -56,6 +45,7 @@ public class SplashUtils {
                         .setInterpolator(oneEasingInterpolator)
                         .start();
 
+                // --- 2. أنيميشن دخول محتوى التطبيق ---
                 root.animate()
                         .alpha(1f)
                         .scaleX(1f)
