@@ -4,11 +4,11 @@
     <style name="AppTheme" parent="OneUITheme">
     </style>
 
-    <style name="AppTheme.Starting" parent="Theme.SplashScreen">
+    <style name="AppTheme.Starting" parent="Theme.SplashScreen.IconBackground">
         <item name="postSplashScreenTheme">@style/AppTheme</item>
         <item name="windowSplashScreenBackground">@color/oui_round_and_bgcolor</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
-        <item name="splashScreenIconSize">240dp</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/oui_round_and_bgcolor</item>
     </style>
         
 </resources>
