@@ -56,12 +56,24 @@
             android:name="theming-meta-xml"
             android:value="@xml/meta_998_sesl_app" />
 
+        <!-- شاشة Splash الجديدة (هي التي ستفتح أولاً) -->
+        <activity
+            android:name=".activity.SplashActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- MainActivity (بعد إزالة ثيم Splash وفلتر الـ MAIN منها) -->
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenLayout|screenSize"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.Starting">
+            android:theme="@style/AppTheme">
 
             <meta-data
                 android:name="android.app.searchable"
@@ -72,15 +84,10 @@
                 android:value="themeColor" />
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-
                 <action android:name="android.intent.action.SEARCH" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
-            </activity>
+        </activity>
 
         <activity
             android:name=".activity.FontOpenTriggerActivity"
