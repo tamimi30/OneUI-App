@@ -16,7 +16,7 @@
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="wrap_content"
-    android:height=wrap_content"
+    android:height="wrap_content"
     android:viewportWidth="24"
     android:viewportHeight="24">
 
