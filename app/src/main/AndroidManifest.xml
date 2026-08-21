@@ -61,7 +61,7 @@
             android:configChanges="orientation|screenLayout|screenSize"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme.Starting">
 
             <meta-data
                 android:name="android.app.searchable"

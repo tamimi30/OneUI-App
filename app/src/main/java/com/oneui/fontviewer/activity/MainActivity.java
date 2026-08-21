@@ -43,11 +43,10 @@ public class MainActivity extends BaseActivity
     FavoriteFontListFragment.OnFontSelectedListener,
     NavManager.Host {
 
-    private View mSplashOverlay;
+    private boolean isUIReady = false;
     private boolean mIsMinSplashTimeElapsed = false;
     private boolean mIsInitialDataReady = false;
     private long mSplashStartTime = 0L;
-
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
@@ -77,28 +76,27 @@ public class MainActivity extends BaseActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme); // ضمان استخدام الثيم الأساسي
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         mSplashStartTime = System.currentTimeMillis();
 
         super.onCreate(savedInstanceState);
+
+        splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
+
         setContentView(R.layout.activity_main);
+        
+        SplashUtils.configureSplashScreen(splashScreen, findViewById(R.id.drawer_layout));
 
-        // حقن الشاشة المخصصة كطبقة فوق التطبيق
-        mSplashOverlay = getLayoutInflater().inflate(R.layout.activity_splash, null);
-        addContentView(mSplashOverlay, new android.view.ViewGroup.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT));
-
-        View rootView = findViewById(R.id.drawer_layout);
         mNavManager = new NavManager(this);
 
         initViews();
         initFragmentsList();
+
         setupSearchCoordinator();
+
         setupDrawerButton();
 
         if (savedInstanceState != null) {
-            mSplashOverlay.setVisibility(View.GONE); // إخفاء السبلاش فوراً في حالة استعادة الحالة
             mLocalFontsCount    = savedInstanceState.getInt(KEY_LOCAL_FONTS_COUNT, 0);
             mSystemFontsCount   = savedInstanceState.getInt(KEY_SYSTEM_FONTS_COUNT, 0);
             mFavoriteFontsCount = savedInstanceState.getInt(KEY_FAVORITE_FONTS_COUNT, 0);
@@ -114,10 +112,11 @@ public class MainActivity extends BaseActivity
 
         setupDrawer();
         updateDrawerTitle(mCurrentScreen);
+
         handleIntent(getIntent());
+
         requestNotificationPermissionIfNeeded();
 
-        // مؤقتات الانتظار لضمان بقاء الشاشة المخصصة حتى تجهز البيانات
         long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
         long remainingDelay = Math.max(0L, 800L - elapsedTime);
 
@@ -128,43 +127,22 @@ public class MainActivity extends BaseActivity
             checkSplashReadyState();
         }, remainingDelay);
 
-        // شبكة أمان: إخفاء إجباري بعد 6 ثوانٍ في حال تأخرت البيانات
+        // شبكة أمان: لا تُبقي الشاشة أكثر من هذه المدة حتى لو لم تصل إشارة الجاهزية
         splashHandler.postDelayed(() -> {
             mIsInitialDataReady = true;
             checkSplashReadyState();
-        }, 6000L);
+        }, 60000L);
     }
 
+    private void checkSplashReadyState() {
+        if (mIsMinSplashTimeElapsed && mIsInitialDataReady) {
+            isUIReady = true;
+        }
+    }
 
     public void setAppReady() {
         mIsInitialDataReady = true;
         checkSplashReadyState();
-    }
-
-    private void checkSplashReadyState() {
-        if (mIsMinSplashTimeElapsed && mIsInitialDataReady && mSplashOverlay != null && mSplashOverlay.getVisibility() == View.VISIBLE) {
-            
-            View splashIcon = mSplashOverlay.findViewById(R.id.splash_icon);
-            android.view.animation.PathInterpolator interpolator = new android.view.animation.PathInterpolator(0.22f, 0.25f, 0f, 1f);
-
-            // أنيميشن تصغير الأيقونة
-            if (splashIcon != null) {
-                splashIcon.animate()
-                        .scaleX(0.80f)
-                        .scaleY(0.80f)
-                        .setDuration(500)
-                        .setInterpolator(interpolator)
-                        .start();
-            }
-
-            // أنيميشن تلاشي طبقة السبلاش بالكامل
-            mSplashOverlay.animate()
-                    .alpha(0f)
-                    .setDuration(500)
-                    .setInterpolator(interpolator)
-                    .withEndAction(() -> mSplashOverlay.setVisibility(View.GONE))
-                    .start();
-        }
     }
 
     @Override
@@ -357,7 +335,6 @@ public class MainActivity extends BaseActivity
 
     private void warmUpOtherScreens() {
         Handler warmupHandler = new Handler(getMainLooper());
-        // تأخير بناء الشاشات الخلفية لمدة 1500 ملي ثانية (حتى ينتهي أنيميشن البداية بالكامل)
         warmupHandler.postDelayed(() -> {
             if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
             warmUpScreenSilently(AppScreen.SYSTEM_FONTS);
