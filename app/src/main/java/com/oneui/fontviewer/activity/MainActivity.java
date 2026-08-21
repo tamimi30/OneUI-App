@@ -43,6 +43,11 @@ public class MainActivity extends BaseActivity
     FavoriteFontListFragment.OnFontSelectedListener,
     NavManager.Host {
 
+    private View mSplashOverlay;
+    private boolean mIsMinSplashTimeElapsed = false;
+    private boolean mIsInitialDataReady = false;
+    private long mSplashStartTime = 0L;
+
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
@@ -72,11 +77,19 @@ public class MainActivity extends BaseActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme); // ضمان استخدام الثيم الأساسي
+        mSplashStartTime = System.currentTimeMillis();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        View rootView = findViewById(R.id.drawer_layout);
 
+        // حقن الشاشة المخصصة كطبقة فوق التطبيق
+        mSplashOverlay = getLayoutInflater().inflate(R.layout.activity_splash, null);
+        addContentView(mSplashOverlay, new android.view.ViewGroup.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+
+        View rootView = findViewById(R.id.drawer_layout);
         mNavManager = new NavManager(this);
 
         initViews();
@@ -85,6 +98,7 @@ public class MainActivity extends BaseActivity
         setupDrawerButton();
 
         if (savedInstanceState != null) {
+            mSplashOverlay.setVisibility(View.GONE); // إخفاء السبلاش فوراً في حالة استعادة الحالة
             mLocalFontsCount    = savedInstanceState.getInt(KEY_LOCAL_FONTS_COUNT, 0);
             mSystemFontsCount   = savedInstanceState.getInt(KEY_SYSTEM_FONTS_COUNT, 0);
             mFavoriteFontsCount = savedInstanceState.getInt(KEY_FAVORITE_FONTS_COUNT, 0);
@@ -96,25 +110,62 @@ public class MainActivity extends BaseActivity
             mCurrentScreen = AppScreen.LOCAL_FONTS;
             mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
             warmUpOtherScreens();
-            
-            // إضافة حركة دخول بسيطة وسلسة لواجهة التطبيق
-            rootView.setAlpha(0f);
-            rootView.setScaleX(0.95f);
-            rootView.setScaleY(0.95f);
-            rootView.animate()
-                    .alpha(1f)
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setDuration(400)
-                    .start();
         }
 
         setupDrawer();
         updateDrawerTitle(mCurrentScreen);
         handleIntent(getIntent());
         requestNotificationPermissionIfNeeded();
+
+        // مؤقتات الانتظار لضمان بقاء الشاشة المخصصة حتى تجهز البيانات
+        long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
+        long remainingDelay = Math.max(0L, 800L - elapsedTime);
+
+        Handler splashHandler = new Handler(getMainLooper());
+
+        splashHandler.postDelayed(() -> {
+            mIsMinSplashTimeElapsed = true;
+            checkSplashReadyState();
+        }, remainingDelay);
+
+        // شبكة أمان: إخفاء إجباري بعد 6 ثوانٍ في حال تأخرت البيانات
+        splashHandler.postDelayed(() -> {
+            mIsInitialDataReady = true;
+            checkSplashReadyState();
+        }, 6000L);
     }
 
+
+    public void setAppReady() {
+        mIsInitialDataReady = true;
+        checkSplashReadyState();
+    }
+
+    private void checkSplashReadyState() {
+        if (mIsMinSplashTimeElapsed && mIsInitialDataReady && mSplashOverlay != null && mSplashOverlay.getVisibility() == View.VISIBLE) {
+            
+            View splashIcon = mSplashOverlay.findViewById(R.id.splash_icon);
+            android.view.animation.PathInterpolator interpolator = new android.view.animation.PathInterpolator(0.22f, 0.25f, 0f, 1f);
+
+            // أنيميشن تصغير الأيقونة
+            if (splashIcon != null) {
+                splashIcon.animate()
+                        .scaleX(0.80f)
+                        .scaleY(0.80f)
+                        .setDuration(500)
+                        .setInterpolator(interpolator)
+                        .start();
+            }
+
+            // أنيميشن تلاشي طبقة السبلاش بالكامل
+            mSplashOverlay.animate()
+                    .alpha(0f)
+                    .setDuration(500)
+                    .setInterpolator(interpolator)
+                    .withEndAction(() -> mSplashOverlay.setVisibility(View.GONE))
+                    .start();
+        }
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
