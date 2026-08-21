@@ -126,7 +126,6 @@ public class MainActivity extends BaseActivity
             addAllFragments();
             mCurrentScreen = AppScreen.LOCAL_FONTS;
             mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
-            warmUpOtherScreens();
         }
 
         setupDrawer();
@@ -154,8 +153,9 @@ public class MainActivity extends BaseActivity
     }
 
     private void checkSplashReadyState() {
-        if (mIsMinSplashTimeElapsed && mIsInitialDataReady) {
+        if (mIsMinSplashTimeElapsed && mIsInitialDataReady && !isUIReady) {
             isUIReady = true;
+            new Handler(getMainLooper()).postDelayed(this::warmUpOtherScreens, 1000L);
         }
     }
 
