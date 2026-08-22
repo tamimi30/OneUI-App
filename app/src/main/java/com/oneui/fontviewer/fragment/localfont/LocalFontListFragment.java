@@ -198,7 +198,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         setHasOptionsMenu(true);
 
         mMainHandler = new Handler(Looper.getMainLooper());
-        mExecutor    = Executors.newSingleThreadExecutor();
+        mExecutor    = Executors.newFixedThreadPool(4);
 
         initializeViewModels();
         setupViewModelObservers();
