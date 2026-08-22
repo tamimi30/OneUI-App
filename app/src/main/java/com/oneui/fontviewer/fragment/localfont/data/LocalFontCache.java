@@ -159,20 +159,14 @@ public class LocalFontCache {
         if (fontPaths == null || fontPaths.isEmpty()) {
             return;
         }
-        
-        fontLoaderExecutor.execute(() -> {
-            int loadedCount = 0;
-            for (String fontPath : fontPaths) {
+
+        for (String fontPath : fontPaths) {
+            fontLoaderExecutor.execute(() -> {
                 if (getIfCached(fontPath) == null) {
-                    Typeface typeface = getTypeface(fontPath);
-                    if (typeface != null) {
-                        loadedCount++;
-                    }
+                    getTypeface(fontPath);
                 }
-            }
-            
-            Log.d(TAG, "Preloaded " + loadedCount + " fonts into memory");
-        });
+            });
+        }
     }
     
     
