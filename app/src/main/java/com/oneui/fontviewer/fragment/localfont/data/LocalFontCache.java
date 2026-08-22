@@ -8,6 +8,7 @@ import com.oneui.fontviewer.data.database.AppDatabase;
 import com.oneui.fontviewer.data.entity.FontEntity;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -166,6 +167,34 @@ public class LocalFontCache {
                     getTypeface(fontPath);
                 }
             });
+        }
+    }
+
+    /**
+     * يحمّل كل الخطوط المُعطاة داخل الذاكرة المؤقتة بشكل متزامن (Blocking)
+     * قبل أن يعود للمستدعي. يجب استدعاؤها من خيط خلفي فقط، لأنها تنتظر
+     * انتهاء التحميل الفعلي لكل خط. الهدف: ضمان أن القائمة لا تُعرض على
+     * المستخدم إلا وكل معاينات خطوطها جاهزة، لتفادي وميض التبديل.
+     */
+    public void preloadFontsBlocking(List<String> fontPaths) {
+        if (fontPaths == null || fontPaths.isEmpty()) {
+            return;
+        }
+
+        List<java.util.concurrent.Future<?>> futures = new ArrayList<>();
+        for (String fontPath : fontPaths) {
+            if (getIfCached(fontPath) != null) {
+                continue;
+            }
+            futures.add(fontLoaderExecutor.submit(() -> getTypeface(fontPath)));
+        }
+
+        for (java.util.concurrent.Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (Exception e) {
+                Log.w(TAG, "preloadFontsBlocking: failed while waiting for a font to load", e);
+            }
         }
     }
     
