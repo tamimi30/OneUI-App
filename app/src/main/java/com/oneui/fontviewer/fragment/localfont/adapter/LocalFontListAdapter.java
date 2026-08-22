@@ -598,7 +598,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                                 holder.fontNameTextView.animate().cancel();
                                 holder.fontNameTextView.setAlpha(0f);
                                 holder.setTypeface(loaded);
-                                holder.fontNameTextView.animate().alpha(1f).setDuration(150).start();
+                                holder.fontNameTextView.animate().alpha(1f).setDuration(500).start();
                             }
                         });
                     }
