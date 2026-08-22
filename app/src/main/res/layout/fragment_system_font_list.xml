@@ -35,20 +35,26 @@
                 android:paddingEnd="33dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/empty_icon"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="6dp"
+                    android:layout_marginBottom="7dp"
                     android:tint="#ff34a853"
-                    android:src="@drawable/ic_android_3" />
+                    android:src="@drawable/ic_android_3"
+                    android:visibility="gone" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/empty_text"
+                    android:id="@+id/no_results_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:text="@string/no_results_found"
+                    android:fontFamily="sec-roboto-light"
+                    android:textStyle="normal"
                     android:textSize="17sp"
-                    android:textColor="@color/drawer_icon_color" />
+                    android:textColor="@color/drawer_icon_color"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
