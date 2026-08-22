@@ -594,12 +594,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     if (loaded != null) {
                         mainHandler.post(() -> {
                             if (!SettingsHelper.isFontPreviewEnabled(context)) return;
-                            if (path.equals(holder.getTag())) {
-                                holder.fontNameTextView.animate().cancel();
-                                holder.fontNameTextView.setAlpha(0f);
-                                holder.setTypeface(loaded);
-                                holder.fontNameTextView.animate().alpha(1f).setDuration(500).start();
-                            }
+                            if (path.equals(holder.getTag())) holder.setTypeface(loaded);
                         });
                     }
                 });
