@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity
 
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
-        if (android.os.Build.VERSION.SDK_INT >= 34) {
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out);
         }
 
