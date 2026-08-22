@@ -8,9 +8,12 @@ import android.util.Log;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -19,6 +22,7 @@ import androidx.lifecycle.Transformations;
 
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontRepository;
 import com.oneui.fontviewer.fragment.trash.data.TrashRepository;   
 import com.oneui.fontviewer.dialog.TrashActionDialogs;          
@@ -45,6 +49,9 @@ public class LocalFontListViewModel extends AndroidViewModel {
     private List<FontEntity> mPendingSyncFonts = null;
 
     private AtomicBoolean trashCancelFlag = new AtomicBoolean(false);
+
+    // خيط خلفي مخصص لتحميل معاينات الخطوط قبل نشر القائمة للواجهة
+    private final ExecutorService fontPreloadExecutor = Executors.newSingleThreadExecutor();
     
 
     public static class FontFileInfoWithMetadata {
@@ -97,7 +104,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
                 if (mIsFolderSyncing) {
                     mPendingSyncFonts = entities;
                 } else {
-                    fontsLiveData.postValue(entities);
+                    publishFontsAfterPreload(entities, null);
                 }
             }
         });
@@ -108,7 +115,25 @@ public class LocalFontListViewModel extends AndroidViewModel {
             }
         });
     }
-    
+
+    /**
+     * يحمّل معاينات الخطوط لكل عناصر القائمة داخل LocalFontCache على خيط
+     * خلفي، ثم يُرسل القائمة لواجهة المستخدم فقط بعد اكتمال التحميل.
+     */
+    private void publishFontsAfterPreload(List<FontEntity> entities, @Nullable Runnable onPublished) {
+        fontPreloadExecutor.execute(() -> {
+            List<String> paths = new ArrayList<>();
+            for (FontEntity entity : entities) {
+                paths.add(entity.getPath());
+            }
+            LocalFontCache.getInstance().preloadFontsBlocking(paths);
+            fontsLiveData.postValue(entities);
+            if (onPublished != null) {
+                onPublished.run();
+            }
+        });
+    }
+
     public LiveData<List<FontFileInfoWithMetadata>> getFontsLiveData() {
         return Transformations.map(fontsLiveData, entities -> {
             if (entities == null) {
@@ -407,17 +432,20 @@ public class LocalFontListViewModel extends AndroidViewModel {
                 new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                     mIsFolderSyncing = false;
 
+                    List<FontEntity> toPublish;
                     if (mPendingSyncFonts != null) {
-                        fontsLiveData.postValue(mPendingSyncFonts);
+                        toPublish = mPendingSyncFonts;
                         mPendingSyncFonts = null;
                     } else {
                         List<FontEntity> currentFonts = fontsLiveData.getValue();
-                        fontsLiveData.postValue(currentFonts != null ? currentFonts : new java.util.ArrayList<>());
+                        toPublish = currentFonts != null ? currentFonts : new ArrayList<>();
                     }
 
-                    if (showLoading) {
-                        isLoadingLiveData.postValue(false);
-                    }
+                    publishFontsAfterPreload(toPublish, () -> {
+                        if (showLoading) {
+                            isLoadingLiveData.postValue(false);
+                        }
+                    });
                 }, delay);
             }
         });
@@ -443,6 +471,12 @@ public class LocalFontListViewModel extends AndroidViewModel {
     
     public boolean hasSavedFolder() {
         return preferenceManager.hasFontFolderPath();
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        fontPreloadExecutor.shutdownNow();
     }
     
     
