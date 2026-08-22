@@ -242,9 +242,12 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
             null,
             view.findViewById(R.id.main_content_layout),
             view.findViewById(R.id.empty_view),
-            view.findViewById(R.id.empty_text),
+            null,
             mRecyclerView
         );
+
+        mUIManager.setNoResultsTextView(view.findViewById(R.id.no_results_text));
+        mUIManager.setEmptyIconView(view.findViewById(R.id.empty_icon));
     }
 
     private void setupRecyclerView() {
