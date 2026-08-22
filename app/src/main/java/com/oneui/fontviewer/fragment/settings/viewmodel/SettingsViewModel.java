@@ -171,6 +171,10 @@ public class SettingsViewModel extends AndroidViewModel {
                                     localeManager.setApplicationLocales(android.os.LocaleList.getEmptyLocaleList());
                                 }
                             }
+                            // ★ من أندرويد 13 فما فوق، النظام نفسه يعيد إنشاء كل الأنشطة
+                            // تلقائياً بمجرد استدعاء setApplicationLocales، لذلك لا نستدعي
+                            // recreateAllActivities() هنا. استدعاؤها يدوياً هو ما كان يسبب
+                            // الوميض المزدوج (إعادة إنشاء من النظام + إعادة إنشاء يدوية).
                         } else {
                             java.util.Locale locale;
                             if (mode == SettingsHelper.LANGUAGE_ARABIC) {
@@ -181,9 +185,11 @@ public class SettingsViewModel extends AndroidViewModel {
                                 locale = android.content.res.Resources.getSystem().getConfiguration().getLocales().get(0);
                             }
                             java.util.Locale.setDefault(locale);
-                        }
 
-                        settingsEvent.setValue(new SettingsEvent(SettingsEventType.RECREATE_ALL_ACTIVITIES));
+                            // ★ في هذا المسار فقط (ما قبل أندرويد 13) النظام لا يعيد الإنشاء
+                            // تلقائياً، فنحتاج فعلياً لطلبه يدوياً هنا.
+                            settingsEvent.setValue(new SettingsEvent(SettingsEventType.RECREATE_ALL_ACTIVITIES));
+                        }
                     },
                     error -> Log.e(TAG, "Error setting language mode", error)
                 )
