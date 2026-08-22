@@ -31,7 +31,7 @@
                 android:lineSpacingExtra="4dp"
                 android:textAlignment="viewStart"
                 android:autoLink="web"
-                android:fadingEdge="horizontal"
+                android:fadingEdge="vertical"
                 android:textColorLink="@color/primary_dark_color"
                 android:linksClickable="true"/>
 
