@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.widget.search.FontTextHighlighter;
 
-import com.google.android.material.color.MaterialColors;
-
 public class SystemFontViewHolder extends RecyclerView.ViewHolder {
 
     private final TextView nameView;
@@ -54,11 +52,7 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
         if (nameView == null) return;
 
         if (isLastOpened) {
-            int primaryColor = MaterialColors.getColor(
-                nameView.getContext(),
-                androidx.appcompat.R.attr.colorPrimary,
-                nameView.getContext().getColor(android.R.color.holo_blue_light) 
-            );
+            int primaryColor = ContextCompat.getColor(nameView.getContext(), R.color.primary_dark_color);
             nameView.setTextColor(primaryColor);
         } else {
             nameView.setTextColor(
