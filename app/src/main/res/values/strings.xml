@@ -58,6 +58,7 @@
 	<string name="font_metadata_error_title">No font metadata</string>
 	<string name="font_viewer_error_loading_font">Error loading font file</string>
 	<string name="toast_no_internet_connection">The metadata has not been translated, no internet connection.</string>
+	<string name="toast_translation_api_error">Metadata translation failed, translation service unavailable.</string>
     
     <!-- الخطوط المحلية -->
     <string name="drawer_local_fonts">Local fonts</string>
