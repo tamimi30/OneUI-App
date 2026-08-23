@@ -10,8 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.color.MaterialColors;
-
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.widget.search.FontTextHighlighter;
 import com.oneui.fontviewer.widget.SelectableLinearLayout;
@@ -56,11 +54,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         Context context = fontNameTextView.getContext();
 
         if (isLastOpened) {
-            int primaryColor = MaterialColors.getColor(
-                context,
-                androidx.appcompat.R.attr.colorPrimary,
-                context.getColor(android.R.color.holo_blue_light) 
-            );
+            int primaryColor = ContextCompat.getColor(context, R.color.primary_dark_color);
             fontNameTextView.setTextColor(primaryColor);
         } else {
             fontNameTextView.setTextColor(
@@ -83,9 +77,6 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    
-
-
     public void bind(String displayName,
                      String path,
                      boolean isSearchActive,
@@ -98,9 +89,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         bindCore(displayName, path, isSearchActive, searchQuery, isLastOpened,
                  highlighter, isSelectionMode, isSelected, weightWidthLabel);
     }
-
     
-
 
      public void setFavoriteIndicator(boolean isFavorite, boolean animate) {
         if (favoriteIconView != null) {
@@ -130,15 +119,10 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-
     public void updateLastOpenedHighlight(boolean isLastOpened) {
         Context context = fontNameTextView.getContext();
         if (isLastOpened) {
-            int primaryColor = MaterialColors.getColor(
-                context,
-                androidx.appcompat.R.attr.colorPrimary,
-                context.getColor(android.R.color.holo_blue_light) 
-            );
+            int primaryColor = ContextCompat.getColor(context, R.color.primary_dark_color);
             fontNameTextView.setTextColor(primaryColor);
         } else {
             fontNameTextView.setTextColor(
@@ -146,7 +130,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
             );
         }
     }
-
+    
 
     public void setTypeface(Typeface typeface) {
         fontNameTextView.setTypeface(typeface != null ? typeface : originalTypeface);
