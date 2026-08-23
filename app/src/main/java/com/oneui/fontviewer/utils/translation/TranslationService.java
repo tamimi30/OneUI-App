@@ -32,68 +32,68 @@ import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 
 public class TranslationService {
-    
+
     private static final String TAG = "TranslationService";
     private final Context context;
     private final TranslationDataStore translationCache;
     private final SettingsDataStore settingsDataStore;
-    
+
     public interface TranslationCallback {
         void onTranslationComplete(Map<String, String> translatedData);
         void onTranslationFailed(String error);
     }
-    
+
     public TranslationService(Context context) {
         this.context = context;
         this.translationCache = TranslationDataStore.getInstance(context);
         this.settingsDataStore = SettingsDataStore.getInstance(context);
     }
-    
+
     public void translateMetadata(Map<String, String> metadata, TranslationCallback callback) {
         if (!isTranslationEnabled()) {
             callback.onTranslationComplete(metadata);
             return;
         }
-        
+
         String targetLanguage = getCurrentLanguage();
-        
+
         if (targetLanguage.equals("en")) {
             callback.onTranslationComplete(metadata);
             return;
         }
-        
+
         new Thread(() -> {
             try {
                 Map<String, String> translatedData = new HashMap<>(metadata);
                 boolean networkNeededButUnavailable = false;
                 boolean translationApiFailed = false;
-                
+
                 String[] fieldsToTranslate = {
-                    "Copyright", 
-                    "Trademark", 
-                    "Description", 
-                    "LicenseDescription", 
+                    "Copyright",
+                    "Trademark",
+                    "Description",
+                    "LicenseDescription",
                     "SupportedScripts"
                 };
-                
+
                 for (String field : fieldsToTranslate) {
                     if (metadata.containsKey(field)) {
                         String originalText = metadata.get(field);
-                        
+
                         if (originalText != null && !originalText.isEmpty() && originalText.length() < 5000) {
                             String cacheKey = generateCacheKey(originalText, targetLanguage);
-                            
+
                             if (cacheKey == null) {
                                 continue;
                             }
-                            
+
                             String cachedTranslation = "";
                             try {
                                 cachedTranslation = translationCache.getTranslation(cacheKey).blockingGet();
                             } catch (Exception e) {
                                 Log.e(TAG, "Error reading from cache: " + e.getMessage());
                             }
-                            
+
                             if (cachedTranslation != null && !cachedTranslation.isEmpty()) {
                                 translatedData.put(field, cachedTranslation);
                                 Log.d(TAG, "Using cached translation for field: " + field);
@@ -102,7 +102,7 @@ public class TranslationService {
                             } else {
                                 boolean[] isConnectivityIssue = new boolean[]{false};
                                 String translatedText = translateText(originalText, "en", targetLanguage, isConnectivityIssue);
-                                
+
                                 if (translatedText != null && !translatedText.isEmpty()) {
                                     translationCache.saveTranslation(cacheKey, translatedText);
                                     translatedData.put(field, translatedText);
@@ -116,13 +116,13 @@ public class TranslationService {
                                     translationApiFailed = true;
                                     break;
                                 }
-                                
+
                                 Thread.sleep(100);
                             }
                         }
                     }
                 }
-                
+
                 if (networkNeededButUnavailable) {
                     callback.onTranslationFailed("NO_INTERNET");
                 } else if (translationApiFailed) {
@@ -130,7 +130,7 @@ public class TranslationService {
                 } else {
                     callback.onTranslationComplete(translatedData);
                 }
-                
+
             } catch (Exception e) {
                 Log.e(TAG, "Translation failed: " + e.getMessage(), e);
                 callback.onTranslationFailed(e.getMessage());
@@ -147,16 +147,16 @@ public class TranslationService {
                 "https://translate.googleapis.com/translate_a/single?client=gtx&sl=%s&tl=%s&dt=t&q=%s",
                 sourceLang, targetLang, encodedText
             );
-            
+
             URL url = new URL(urlString);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36");
             connection.setConnectTimeout(10000);
             connection.setReadTimeout(10000);
-            
+
             int responseCode = connection.getResponseCode();
-            
+
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 BufferedReader br = new BufferedReader(
                     new InputStreamReader(connection.getInputStream(), "UTF-8"));
@@ -166,16 +166,16 @@ public class TranslationService {
                     response.append(line);
                 }
                 br.close();
-                
+
                 JSONArray jsonArray = new JSONArray(response.toString());
                 JSONArray translationsArray = jsonArray.getJSONArray(0);
-                
+
                 StringBuilder translatedText = new StringBuilder();
                 for (int i = 0; i < translationsArray.length(); i++) {
                     JSONArray translation = translationsArray.getJSONArray(i);
                     translatedText.append(translation.getString(0));
                 }
-                
+
                 return translatedText.toString();
             } else {
                 String errorBody = "";
@@ -194,10 +194,9 @@ public class TranslationService {
                 writeDebugLog("HTTP_ERROR", "code=" + responseCode + " url=" + urlString + " body=" + errorBody);
                 return null;
             }
-            
+
         } catch (java.net.UnknownHostException | java.net.ConnectException
                 | java.net.NoRouteToHostException | java.net.SocketTimeoutException e) {
-            // فشل الوصول للسيرفر أصلاً (لا يوجد إنترنت فعلي رغم أن الواي فاي/البيانات مفعّلة)
             Log.e(TAG, "Real connectivity failure while translating: " + e.getMessage(), e);
             writeDebugLog("CONNECTIVITY_EXCEPTION", e.getClass().getSimpleName() + ": " + e.getMessage());
             if (isConnectivityIssue != null && isConnectivityIssue.length > 0) {
@@ -215,13 +214,10 @@ public class TranslationService {
         }
     }
 
-    // كتابة سجل تفصيلي إلى مجلد Downloads/OneUIApp لتشخيص مشاكل الترجمة بدون Logcat
     private void writeDebugLog(String tag, String message) {
         try {
             String ts = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US).format(new Date());
-            String line = ts + " | " + tag + " | " + message + "
-";
-
+            String line = buildLogLine(ts, tag, message);
             String fileName = "translation_debug_log.txt";
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -259,6 +255,17 @@ public class TranslationService {
         }
     }
 
+    private String buildLogLine(String timestamp, String tag, String message) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(timestamp);
+        sb.append(" | ");
+        sb.append(tag);
+        sb.append(" | ");
+        sb.append(message);
+        sb.append(System.lineSeparator());
+        return sb.toString();
+    }
+
     private Uri findExistingLogUri(String fileName) {
         try {
             String[] projection = {MediaStore.MediaColumns._ID};
@@ -278,12 +285,12 @@ public class TranslationService {
         }
         return null;
     }
-    
+
     private String getCurrentLanguage() {
         try {
             Locale currentLocale = SettingsHelper.getLocale(context);
             String language = currentLocale.getLanguage();
-            
+
             if (language.equals("ar")) {
                 return "ar";
             } else {
@@ -294,7 +301,7 @@ public class TranslationService {
             return "en";
         }
     }
-    
+
     private String generateCacheKey(String text, String targetLang) {
         try {
             String combined = text.substring(0, Math.min(text.length(), 100)) + "_" + targetLang;
@@ -304,8 +311,8 @@ public class TranslationService {
             return null;
         }
     }
-    
-    
+
+
     public boolean isTranslationEnabled() {
         try {
             return settingsDataStore.getTranslationEnabled().blockingFirst();
@@ -331,12 +338,10 @@ public class TranslationService {
             if (capabilities == null) {
                 return false;
             }
-            // NET_CAPABILITY_VALIDATED يعني أن النظام تحقق فعلياً من وجود إنترنت خارجي،
-            // وليس فقط أن الواجهة (واي فاي/بيانات) متصلة بشكل محلي
             return capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED);
         } catch (Exception e) {
             Log.e(TAG, "Error checking internet connection: " + e.getMessage());
             return false;
         }
     }
-    }
+                  }
