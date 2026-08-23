@@ -51,8 +51,7 @@
          android:layout_height="wrap_content"
          android:padding="6dp"
          android:background="@drawable/sort_btn_ripple_oval"
-         android:layout_gravity="center_vertical"
-         android:layout_marginEnd="5dp">
+         android:layout_gravity="center">
 
          <ImageView
              android:id="@+id/sort_order_icon"
