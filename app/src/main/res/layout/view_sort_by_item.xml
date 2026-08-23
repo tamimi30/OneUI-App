@@ -52,7 +52,7 @@
          android:padding="6dp"
          android:background="@drawable/sort_btn_ripple_oval"
          android:layout_gravity="center_vertical"
-         android:layout_marginEnd="6dp">
+         android:layout_marginEnd="5dp">
 
          <ImageView
              android:id="@+id/sort_order_icon"
