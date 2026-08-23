@@ -51,14 +51,14 @@
          android:layout_height="wrap_content"
          android:padding="6dp"
          android:background="@drawable/sort_btn_ripple_oval"
-         android:layout_gravity="center"
+         android:layout_gravity="center_vertical"
          android:layout_marginEnd="7dp">
 
          <ImageView
              android:id="@+id/sort_order_icon"
              android:layout_width="19dp"
              android:layout_height="19dp"
-             android:layout_gravity="center_vertical"
+             android:layout_gravity="center"
              android:tint="@color/sort_bar_text_color" />
 
      </LinearLayout>
