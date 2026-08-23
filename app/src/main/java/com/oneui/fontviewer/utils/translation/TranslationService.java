@@ -53,7 +53,7 @@ public class TranslationService {
         new Thread(() -> {
             try {
                 Map<String, String> translatedData = new HashMap<>(metadata);
-                boolean networkNeededButUnavailable = false;
+                String translationErrorType = null;
                 
                 String[] fieldsToTranslate = {
                     "Copyright", 
@@ -85,17 +85,21 @@ public class TranslationService {
                                 translatedData.put(field, cachedTranslation);
                                 Log.d(TAG, "Using cached translation for field: " + field);
                             } else if (!isInternetAvailable()) {
-                                networkNeededButUnavailable = true;
+                                translationErrorType = "NO_INTERNET";
+                                break;
                             } else {
                                 String translatedText = translateText(originalText, "en", targetLanguage);
                                 
-                                if (translatedText != null && !translatedText.isEmpty()) {
+                                if ("ERROR_NETWORK".equals(translatedText)) {
+                                    translationErrorType = "NO_INTERNET";
+                                    break;
+                                } else if ("ERROR_API".equals(translatedText) || translatedText == null || translatedText.isEmpty()) {
+                                    translationErrorType = "API_ERROR";
+                                    break;
+                                } else {
                                     translationCache.saveTranslation(cacheKey, translatedText);
                                     translatedData.put(field, translatedText);
                                     Log.d(TAG, "Translated and cached field: " + field);
-                                } else {
-                                    networkNeededButUnavailable = true;
-                                    break;
                                 }
                                 
                                 Thread.sleep(100);
@@ -104,8 +108,10 @@ public class TranslationService {
                     }
                 }
                 
-                if (networkNeededButUnavailable) {
+                if ("NO_INTERNET".equals(translationErrorType)) {
                     callback.onTranslationFailed("NO_INTERNET");
+                } else if ("API_ERROR".equals(translationErrorType)) {
+                    callback.onTranslationFailed("API_ERROR");
                 } else {
                     callback.onTranslationComplete(translatedData);
                 }
@@ -158,12 +164,17 @@ public class TranslationService {
                 return translatedText.toString();
             } else {
                 Log.e(TAG, "Translation API returned error code: " + responseCode);
-                return null;
+                return "ERROR_API";
             }
             
+        } catch (java.io.IOException e) {
+            // هذه تلتقط الحالة 2: متصل بالواي فاي ولكن لا يوجد انترنت فعلي
+            Log.e(TAG, "Network error during translation: " + e.getMessage(), e);
+            return "ERROR_NETWORK";
         } catch (Exception e) {
+            // هذه تلتقط الحالة 3: أخطاء برمجية أو تغير في هيكل بيانات جوجل
             Log.e(TAG, "Failed to translate text: " + e.getMessage(), e);
-            return null;
+            return "ERROR_API";
         } finally {
             if (connection != null) {
                 connection.disconnect();
