@@ -54,6 +54,7 @@ public class TranslationService {
             try {
                 Map<String, String> translatedData = new HashMap<>(metadata);
                 boolean networkNeededButUnavailable = false;
+                boolean translationApiFailed = false;
                 
                 String[] fieldsToTranslate = {
                     "Copyright", 
@@ -94,7 +95,8 @@ public class TranslationService {
                                     translatedData.put(field, translatedText);
                                     Log.d(TAG, "Translated and cached field: " + field);
                                 } else {
-                                    networkNeededButUnavailable = true;
+                                    Log.e(TAG, "Translation API call failed for field: " + field);
+                                    translationApiFailed = true;
                                     break;
                                 }
                                 
@@ -106,6 +108,8 @@ public class TranslationService {
                 
                 if (networkNeededButUnavailable) {
                     callback.onTranslationFailed("NO_INTERNET");
+                } else if (translationApiFailed) {
+                    callback.onTranslationFailed("API_ERROR");
                 } else {
                     callback.onTranslationComplete(translatedData);
                 }
@@ -157,7 +161,19 @@ public class TranslationService {
                 
                 return translatedText.toString();
             } else {
-                Log.e(TAG, "Translation API returned error code: " + responseCode);
+                String errorBody = "";
+                try {
+                    java.io.InputStream errStream = connection.getErrorStream();
+                    if (errStream != null) {
+                        BufferedReader ebr = new BufferedReader(new InputStreamReader(errStream, "UTF-8"));
+                        StringBuilder sb = new StringBuilder();
+                        String l;
+                        while ((l = ebr.readLine()) != null) sb.append(l);
+                        ebr.close();
+                        errorBody = sb.toString();
+                    }
+                } catch (Exception ignored) {}
+                Log.e(TAG, "Translation API returned error code: " + responseCode + " body: " + errorBody);
                 return null;
             }
             
