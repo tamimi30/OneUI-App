@@ -2,8 +2,6 @@ package com.oneui.fontviewer.widget.sort;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,15 +49,6 @@ public class SortByItemLayout extends LinearLayout {
     }
 
     private void init(Context context) {
-        setOrientation(HORIZONTAL);
-        setGravity(Gravity.CENTER_VERTICAL | Gravity.END);
-        setPadding(
-            dpToPx(context, 12),
-            dpToPx(context, 8),
-            dpToPx(context, 12),
-            dpToPx(context, 8)
-        );
-
         LayoutInflater.from(context).inflate(R.layout.view_sort_by_item, this, true);
 
         mSortTextView = findViewById(R.id.sort_current_text);
@@ -174,8 +163,4 @@ public class SortByItemLayout extends LinearLayout {
         updateUI();
     }
 
-    private static int dpToPx(Context context, int dp) {
-        return Math.round(TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics()));
-    }
 }
