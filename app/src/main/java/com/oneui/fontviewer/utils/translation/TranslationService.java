@@ -221,6 +221,7 @@ public class TranslationService {
             String ts = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US).format(new Date());
             String line = ts + " | " + tag + " | " + message + "
 ";
+
             String fileName = "translation_debug_log.txt";
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
