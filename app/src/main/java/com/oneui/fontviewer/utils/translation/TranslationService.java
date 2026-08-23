@@ -132,7 +132,7 @@ public class TranslationService {
         try {
             String encodedText = URLEncoder.encode(text, "UTF-8");
             String urlString = String.format(
-                "https://translate.googleapis.com/translate_a/single?client=dict-chrome-ex&sl=%s&tl=%s&dt=t&q=%s",
+                "https://translate.googleapis.com/translate_a/single?client=gtx&sl=%s&tl=%s&dt=t&q=%s",
                 sourceLang, targetLang, encodedText
             );
             
