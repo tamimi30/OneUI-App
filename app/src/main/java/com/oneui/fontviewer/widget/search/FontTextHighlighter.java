@@ -4,7 +4,8 @@ import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import com.google.android.material.color.MaterialColors;
+import androidx.core.content.ContextCompat;
+import com.oneui.fontviewer.R;
 
 import java.util.Locale;
 
@@ -13,11 +14,7 @@ public class FontTextHighlighter {
     private final int highlightColor;
     
     public FontTextHighlighter(Context context) {
-        this.highlightColor = MaterialColors.getColor(
-            context,
-            androidx.appcompat.R.attr.colorPrimary,
-            context.getColor(android.R.color.holo_blue_light) 
-        );
+        this.highlightColor = ContextCompat.getColor(context, R.color.primary_dark_color);
     }
     
     
@@ -47,6 +44,5 @@ public class FontTextHighlighter {
         
         return spannableString;
     }
-    
     
 }
