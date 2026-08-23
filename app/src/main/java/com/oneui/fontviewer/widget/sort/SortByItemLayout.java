@@ -21,6 +21,7 @@ public class SortByItemLayout extends LinearLayout {
     private TextView mSortTextView;
     private View mTextContainer;
     private ImageView mOrderIcon;
+    private View mOrderContainer;
     private OnSortChangeListener mListener;
 
     public enum SortType {
@@ -64,6 +65,7 @@ public class SortByItemLayout extends LinearLayout {
         mSortTextView = findViewById(R.id.sort_current_text);
         mTextContainer = findViewById(R.id.sort_text_container);
         mOrderIcon = findViewById(R.id.sort_order_icon);
+        mOrderContainer = findViewById(R.id.sort_order_container);
 
         setupClickListeners();
 
@@ -75,7 +77,7 @@ public class SortByItemLayout extends LinearLayout {
         super.setEnabled(enabled);
         
         if (mTextContainer != null) mTextContainer.setEnabled(enabled);
-        if (mOrderIcon != null) mOrderIcon.setEnabled(enabled);
+        if (mOrderContainer != null) mOrderContainer.setEnabled(enabled);
         
         setAlpha(enabled ? 1.0f : 0.4f);
     }
@@ -89,11 +91,11 @@ public class SortByItemLayout extends LinearLayout {
             });
         }
 
-        if (mOrderIcon != null) {
-            mOrderIcon.setClickable(true);
-            mOrderIcon.setFocusable(true);
+        if (mOrderContainer != null) {
+            mOrderContainer.setClickable(true);
+            mOrderContainer.setFocusable(true);
 
-            mOrderIcon.setOnClickListener(v -> {
+            mOrderContainer.setOnClickListener(v -> {
                 if (isEnabled()) {
                     mIsAscending = !mIsAscending;
                     updateUI();
@@ -143,12 +145,12 @@ public class SortByItemLayout extends LinearLayout {
 
         if (mIsAscending) {
             mOrderIcon.setImageResource(dev.oneuiproject.oneui.R.drawable.ic_oui_arrow_up);
-            TooltipCompat.setTooltipText(mOrderIcon, getContext().getString(R.string.sort_ascending));
-            mOrderIcon.setContentDescription(getContext().getString(R.string.sort_ascending));
+            TooltipCompat.setTooltipText(mOrderContainer, getContext().getString(R.string.sort_ascending));
+            mOrderContainer.setContentDescription(getContext().getString(R.string.sort_ascending));
         } else {
             mOrderIcon.setImageResource(dev.oneuiproject.oneui.R.drawable.ic_oui_arrow_down);
-            TooltipCompat.setTooltipText(mOrderIcon, getContext().getString(R.string.sort_descending));
-            mOrderIcon.setContentDescription(getContext().getString(R.string.sort_descending));
+            TooltipCompat.setTooltipText(mOrderContainer, getContext().getString(R.string.sort_descending));
+            mOrderContainer.setContentDescription(getContext().getString(R.string.sort_descending));
         }
     }
 
