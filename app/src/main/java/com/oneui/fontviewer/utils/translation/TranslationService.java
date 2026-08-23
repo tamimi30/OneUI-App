@@ -1,17 +1,29 @@
 package com.oneui.fontviewer.utils.translation;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import org.json.JSONArray;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -179,6 +191,7 @@ public class TranslationService {
                     }
                 } catch (Exception ignored) {}
                 Log.e(TAG, "Translation API returned error code: " + responseCode + " body: " + errorBody);
+                writeDebugLog("HTTP_ERROR", "code=" + responseCode + " url=" + urlString + " body=" + errorBody);
                 return null;
             }
             
@@ -186,18 +199,83 @@ public class TranslationService {
                 | java.net.NoRouteToHostException | java.net.SocketTimeoutException e) {
             // فشل الوصول للسيرفر أصلاً (لا يوجد إنترنت فعلي رغم أن الواي فاي/البيانات مفعّلة)
             Log.e(TAG, "Real connectivity failure while translating: " + e.getMessage(), e);
+            writeDebugLog("CONNECTIVITY_EXCEPTION", e.getClass().getSimpleName() + ": " + e.getMessage());
             if (isConnectivityIssue != null && isConnectivityIssue.length > 0) {
                 isConnectivityIssue[0] = true;
             }
             return null;
         } catch (Exception e) {
             Log.e(TAG, "Failed to translate text: " + e.getMessage(), e);
+            writeDebugLog("EXCEPTION", e.getClass().getSimpleName() + ": " + e.getMessage());
             return null;
         } finally {
             if (connection != null) {
                 connection.disconnect();
             }
         }
+    }
+
+    // كتابة سجل تفصيلي إلى مجلد Downloads/OneUIApp لتشخيص مشاكل الترجمة بدون Logcat
+    private void writeDebugLog(String tag, String message) {
+        try {
+            String ts = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US).format(new Date());
+            String line = ts + " | " + tag + " | " + message + "
+";
+            String fileName = "translation_debug_log.txt";
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                Uri existingUri = findExistingLogUri(fileName);
+                if (existingUri != null) {
+                    try (OutputStream os = context.getContentResolver().openOutputStream(existingUri, "wa");
+                         OutputStreamWriter ow = new OutputStreamWriter(os);
+                         BufferedWriter bw = new BufferedWriter(ow)) {
+                        bw.write(line);
+                    }
+                } else {
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+                    values.put(MediaStore.MediaColumns.MIME_TYPE, "text/plain");
+                    values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/OneUIApp");
+                    Uri uri = context.getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                    if (uri != null) {
+                        try (OutputStream os = context.getContentResolver().openOutputStream(uri);
+                             OutputStreamWriter ow = new OutputStreamWriter(os);
+                             BufferedWriter bw = new BufferedWriter(ow)) {
+                            bw.write(line);
+                        }
+                    }
+                }
+            } else {
+                File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "OneUIApp");
+                if (!dir.exists()) dir.mkdirs();
+                File out = new File(dir, fileName);
+                try (FileWriter fw = new FileWriter(out, true)) {
+                    fw.write(line);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "writeDebugLog failed: " + e.getMessage());
+        }
+    }
+
+    private Uri findExistingLogUri(String fileName) {
+        try {
+            String[] projection = {MediaStore.MediaColumns._ID};
+            String selection = MediaStore.MediaColumns.DISPLAY_NAME + "=? AND " +
+                    MediaStore.MediaColumns.RELATIVE_PATH + "=?";
+            String[] selectionArgs = {fileName, Environment.DIRECTORY_DOWNLOADS + "/OneUIApp/"};
+            android.database.Cursor cursor = context.getContentResolver().query(
+                    MediaStore.Downloads.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID));
+                cursor.close();
+                return Uri.withAppendedPath(MediaStore.Downloads.EXTERNAL_CONTENT_URI, String.valueOf(id));
+            }
+            if (cursor != null) cursor.close();
+        } catch (Exception e) {
+            Log.e(TAG, "findExistingLogUri failed: " + e.getMessage());
+        }
+        return null;
     }
     
     private String getCurrentLanguage() {
