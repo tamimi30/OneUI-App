@@ -218,6 +218,10 @@ public class FontViewerActivity extends BaseActivity
                                 Toast.makeText(FontViewerActivity.this,
                                         R.string.toast_no_internet_connection,
                                         Toast.LENGTH_LONG).show();
+                            } else if ("API_ERROR".equals(error)) {
+                                Toast.makeText(FontViewerActivity.this,
+                                        R.string.toast_translation_api_error,
+                                        Toast.LENGTH_LONG).show();
                             }
                             showFontInfoDialog(meta);
                         });
