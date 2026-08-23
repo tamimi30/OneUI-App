@@ -88,12 +88,17 @@ public class TranslationService {
                             } else if (!isInternetAvailable()) {
                                 networkNeededButUnavailable = true;
                             } else {
-                                String translatedText = translateText(originalText, "en", targetLanguage);
+                                boolean[] isConnectivityIssue = new boolean[]{false};
+                                String translatedText = translateText(originalText, "en", targetLanguage, isConnectivityIssue);
                                 
                                 if (translatedText != null && !translatedText.isEmpty()) {
                                     translationCache.saveTranslation(cacheKey, translatedText);
                                     translatedData.put(field, translatedText);
                                     Log.d(TAG, "Translated and cached field: " + field);
+                                } else if (isConnectivityIssue[0]) {
+                                    Log.w(TAG, "Real connectivity issue detected for field: " + field);
+                                    networkNeededButUnavailable = true;
+                                    break;
                                 } else {
                                     Log.e(TAG, "Translation API call failed for field: " + field);
                                     translationApiFailed = true;
@@ -122,7 +127,7 @@ public class TranslationService {
     }
 
     // Translate text using Google Translate API
-    private String translateText(String text, String sourceLang, String targetLang) {
+    private String translateText(String text, String sourceLang, String targetLang, boolean[] isConnectivityIssue) {
         HttpURLConnection connection = null;
         try {
             String encodedText = URLEncoder.encode(text, "UTF-8");
@@ -177,6 +182,14 @@ public class TranslationService {
                 return null;
             }
             
+        } catch (java.net.UnknownHostException | java.net.ConnectException
+                | java.net.NoRouteToHostException | java.net.SocketTimeoutException e) {
+            // فشل الوصول للسيرفر أصلاً (لا يوجد إنترنت فعلي رغم أن الواي فاي/البيانات مفعّلة)
+            Log.e(TAG, "Real connectivity failure while translating: " + e.getMessage(), e);
+            if (isConnectivityIssue != null && isConnectivityIssue.length > 0) {
+                isConnectivityIssue[0] = true;
+            }
+            return null;
         } catch (Exception e) {
             Log.e(TAG, "Failed to translate text: " + e.getMessage(), e);
             return null;
@@ -230,8 +243,18 @@ public class TranslationService {
             if (connectivityManager == null) {
                 return false;
             }
-            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-            return activeNetwork != null && activeNetwork.isConnected();
+            android.net.Network network = connectivityManager.getActiveNetwork();
+            if (network == null) {
+                return false;
+            }
+            android.net.NetworkCapabilities capabilities =
+                    connectivityManager.getNetworkCapabilities(network);
+            if (capabilities == null) {
+                return false;
+            }
+            // NET_CAPABILITY_VALIDATED يعني أن النظام تحقق فعلياً من وجود إنترنت خارجي،
+            // وليس فقط أن الواجهة (واي فاي/بيانات) متصلة بشكل محلي
+            return capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED);
         } catch (Exception e) {
             Log.e(TAG, "Error checking internet connection: " + e.getMessage());
             return false;
