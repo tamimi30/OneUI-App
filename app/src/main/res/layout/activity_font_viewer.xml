@@ -43,28 +43,28 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_vertical"
-            android:paddingHorizontal="8dp"
+            android:paddingHorizontal="12dp"
             android:paddingVertical="5dp">
 
             <ImageView
                 android:id="@+id/btn_bold"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:padding="9dp"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_oui_text_bold"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/sort_btn_ripple_oval"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="12dp"
                 android:layout_gravity="center_vertical"
                 android:tooltipText="@string/btn_bold" />
 
             <ImageView
                 android:id="@+id/btn_italic"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:padding="9dp"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_oui_text_italic"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/sort_btn_ripple_oval"
