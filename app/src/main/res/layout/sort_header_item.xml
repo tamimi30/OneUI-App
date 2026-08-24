@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical|end"
-    android:paddingEnd="16dp"
+    android:paddingEnd="17dp"
     android:paddingTop="8dp"
     android:paddingBottom="6dp"
     android:background="@android:color/transparent" />
