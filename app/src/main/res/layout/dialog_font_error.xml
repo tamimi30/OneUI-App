@@ -39,6 +39,6 @@
         android:fontFamily="sec-roboto-light"
         android:textStyle="normal"
         android:textColor="?android:attr/textColorSecondary"
-        android:lineSpacingExtra="3sp" />
+        android:lineSpacingExtra="4sp" />
 
 </LinearLayout>
