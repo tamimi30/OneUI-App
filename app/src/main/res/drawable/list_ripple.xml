@@ -1,6 +1,6 @@
 <!-- res/drawable/round_linear_ripple.xml -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/ripple_color">
+    android:color="@color/oui_grid_menu_dialog_item_ripple_color">
 
     <!-- الخلفية الأساسية -->
     <item>
