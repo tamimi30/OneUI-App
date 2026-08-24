@@ -43,8 +43,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_vertical"
-            android:paddingHorizontal="5dp"
-            android:paddingVertical="5dp">
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="4dp">
 
             <ImageView
                 android:id="@+id/btn_bold"
