@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_vertical"
-            android:paddingHorizontal="5dp"
+            android:paddingHorizontal="14dp"
             android:paddingVertical="3dp">
 
             <ImageView
@@ -56,7 +56,7 @@
                 android:foreground="@drawable/sort_btn_ripple_oval"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginEnd="24dp"
+                android:layout_marginEnd="12dp"
                 android:layout_gravity="center_vertical"
                 android:tooltipText="@string/btn_bold" />
 
