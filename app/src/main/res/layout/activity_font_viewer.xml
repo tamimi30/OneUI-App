@@ -35,7 +35,7 @@
         app:cardBackgroundColor="@color/fab_bg_color"
         android:layout_margin="24dp"
         app:strokeColor="@color/fab_stroke_color"
-        app:strokeWidth="0.5dip"
+        app:strokeWidth="0.7dip"
         app:cardElevation="4dp">
 
         <LinearLayout
@@ -48,8 +48,8 @@
 
             <ImageView
                 android:id="@+id/btn_bold"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:padding="8dp"
                 android:src="@drawable/ic_oui_text_bold"
                 android:background="@drawable/bg_format_toggle"
@@ -62,8 +62,8 @@
 
             <ImageView
                 android:id="@+id/btn_italic"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:padding="8dp"
                 android:src="@drawable/ic_oui_text_italic"
                 android:background="@drawable/bg_format_toggle"
