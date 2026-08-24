@@ -16,18 +16,16 @@
     </style>
     
     <!-- Format bar -->  
-    <style name="FormatBarStyle" parent="">
+    <style name="FormatBarStyle" parent="Widget.MaterialComponents.CardView">
     	<item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">56dp</item>
         <item name="android:layout_gravity">bottom|start</item>
         <item name="android:layout_margin">24dp</item>
         <item name="cardBackgroundColor">@color/fab_bg_color</item>
-        <item name="elevation">4dp</item>
+        <item name="cardElevation">4dp</item>
         <item name="strokeColor">@color/fab_stroke_color</item>
         <item name="strokeWidth">2.0px</item>
         <item name="cardCornerRadius">28dp</item>
     </style>
-    
-    
 
 </resources>
