@@ -35,14 +35,14 @@
         app:cardBackgroundColor="@color/fab_bg_color"
         android:layout_margin="24dp"
         app:strokeColor="@color/fab_stroke_color"
-        app:strokeWidth="0.5dp"
+        app:strokeWidth="1dp"
         app:cardElevation="4dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="4dp">
+            android:padding="8dp">
 
             <ImageView
                 android:id="@+id/btn_bold"
@@ -54,7 +54,7 @@
                 android:foreground="@drawable/sort_btn_ripple_oval"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="8dp"
                 android:layout_gravity="center_vertical"
                 android:tooltipText="@string/btn_bold" />
 
