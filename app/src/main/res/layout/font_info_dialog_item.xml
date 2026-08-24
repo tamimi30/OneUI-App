@@ -32,6 +32,6 @@
         android:lineSpacingExtra="4sp"
         android:textColor="?android:attr/textColorPrimary"
         android:autoLink="web|email"
-        android:textColorLink="@color/primary_dark_color" />
+        android:textColorLink="@color/oui_primary_color" />
 
 </LinearLayout>
