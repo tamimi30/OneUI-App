@@ -1,80 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<dev.oneuiproject.oneui.layout.ToolbarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toolbar_layout"
+    android:id="@+id/font_viewer_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:expanded="false"
-    app:navigationIcon="@drawable/ic_oui_back"
-    app:title="@string/drawer_font_viewer"
-    app:subtitle="@string/font_viewer_select_description">
-
-    <FrameLayout
-        android:id="@+id/font_viewer_container"
+    android:overScrollMode="always"
+    android:scrollbars="vertical"
+    android:fillViewport="true">
+       
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="104dp">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_font_size"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
-        style="@style/FabStyle"
-        android:scaleType="center"
-        android:visibility="invisible"
-        app:layout_location="root"
-        android:tooltipText="@string/font_size_dialog_title" />
+        <dev.oneuiproject.oneui.widget.RoundLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingVertical="27dp"
+            android:background="@color/oui_background_color"
+            android:orientation="vertical">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/format_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="56dp"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
-        app:layout_location="root"
-        app:cardCornerRadius="28dp"
-        android:visibility="invisible"
-        android:layout_gravity="bottom|start"
-        app:cardBackgroundColor="@color/fab_bg_color"
-        android:layout_margin="24dp"
-        app:strokeColor="@color/fab_stroke_color"
-        app:strokeWidth="2.0px"
-        app:cardElevation="4dp">
+            <!-- وصف الوزن والعرض للخطوط الثابتة -->
+            <TextView
+                android:id="@+id/weight_label_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="17sp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:layout_marginBottom="9dp"
+                android:visibility="gone" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="3dp">
-
-            <ImageView
-                android:id="@+id/btn_bold"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:padding="10dp"
-                android:src="@drawable/ic_oui_text_bold"
-                android:background="@drawable/bg_format_toggle"
-                android:foreground="@drawable/sort_btn_ripple_oval"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_marginEnd="12dp"
-                android:layout_gravity="center_vertical"
-                android:tooltipText="@string/btn_bold" />
-
-            <ImageView
-                android:id="@+id/btn_italic"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:padding="10dp"
-                android:src="@drawable/ic_oui_text_italic"
-                android:background="@drawable/bg_format_toggle"
-                android:foreground="@drawable/sort_btn_ripple_oval"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_gravity="center_vertical"
-                android:tooltipText="@string/btn_italic" />
-            
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
-
-</dev.oneuiproject.oneui.layout.ToolbarLayout>
+            <!-- منتقي الوزن للخطوط المتغيرة -->
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/weight_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginHorizontal="21dp"
+                android:layout_marginBottom="9dp"
+                android:visibility="gone" />             
+                
+            <TextView
+                android:id="@+id/preview_sentence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:lineSpacingExtra="4sp"
+                android:textSize="34dp"
+                android:textColor="@color/font_preview_text_color" />
+        
+        </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+        
+    </LinearLayout>
+    
+</androidx.core.widget.NestedScrollView>
