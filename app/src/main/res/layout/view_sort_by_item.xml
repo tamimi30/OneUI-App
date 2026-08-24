@@ -36,8 +36,8 @@
      </LinearLayout>
 
      <View
-         android:layout_height="22dp"
-         android:layout_width="2dp"
+         android:layout_height="16dp"
+         android:layout_width="1dp"
          android:layout_gravity="center_vertical"
          android:focusable="false"
          android:clickable="false"
