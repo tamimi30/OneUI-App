@@ -27,7 +27,6 @@
         android:id="@+id/format_bar"
         android:layout_width="wrap_content"
         android:layout_height="56dp"
-        android:layout_gravity="center_vertical"
         android:theme="@style/Theme.MaterialComponents.DayNight"
         app:layout_location="root"
         app:cardCornerRadius="28dp"
