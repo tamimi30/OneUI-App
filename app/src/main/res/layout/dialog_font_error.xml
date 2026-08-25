@@ -26,7 +26,7 @@
         android:text="@string/font_metadata_error_title"
         android:textSize="17sp"
         android:fontFamily="sans-serif"
-        app:fontVariationSettings="'wght' 500"
+        android:fontVariationSettings="'wght' 500"
         android:textColor="?android:attr/textColorPrimary" />
 
     <TextView
