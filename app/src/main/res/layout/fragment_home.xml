@@ -133,7 +133,7 @@
                     android:textSize="20sp"
                     android:textColor="?android:attr/textColorPrimary"
                     android:fontFamily="sans-serif"
-                    app:fontVariationSettings="'wght' 500"
+                    android:fontVariationSettings="'wght' 500"
                     android:layout_marginBottom="7dp" />
 
                 <TextView
