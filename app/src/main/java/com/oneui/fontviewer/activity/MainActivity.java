@@ -46,6 +46,7 @@ public class MainActivity extends BaseActivity
     private boolean isUIReady = false;
     private boolean mIsMinSplashTimeElapsed = false;
     private boolean mIsInitialDataReady = false;
+    private boolean mIsMenuReady = false;
     private long mSplashStartTime = 0L;
     private boolean mIsWarmingUpScreens = false;
     private OneUiDrawerLayout mDrawerLayout;
@@ -143,12 +144,13 @@ public class MainActivity extends BaseActivity
         // شبكة أمان: لا تُبقي الشاشة أكثر من هذه المدة حتى لو لم تصل إشارة الجاهزية
         splashHandler.postDelayed(() -> {
             mIsInitialDataReady = true;
+            mIsMenuReady = true;
             checkSplashReadyState();
         }, 60000L);
     }
 
     private void checkSplashReadyState() {
-        if (mIsMinSplashTimeElapsed && mIsInitialDataReady) {
+        if (mIsMinSplashTimeElapsed && mIsInitialDataReady && mIsMenuReady) {
             isUIReady = true;
         }
     }
@@ -157,6 +159,13 @@ public class MainActivity extends BaseActivity
         mIsInitialDataReady = true;
         sHasCompletedInitialLoad = true;
         checkSplashReadyState();
+    }
+
+    public void setMenuReady() {
+        if (!mIsMenuReady) {
+            mIsMenuReady = true;
+            checkSplashReadyState();
+        }
     }
 
     @Override
