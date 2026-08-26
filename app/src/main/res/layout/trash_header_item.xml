@@ -17,8 +17,6 @@
         android:id="@+id/trash_header_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sec-roboto-light"
-        android:textStyle="normal"
         android:textSize="13sp"
         android:textColor="@color/sesl_description_text_color"
         android:lineSpacingExtra="4sp"
