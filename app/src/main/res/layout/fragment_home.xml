@@ -132,7 +132,6 @@
                     android:text="@string/title_features"
                     android:textSize="20sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:fontFamily="tahoma"
                     android:textStyle="bold"
                     android:layout_marginBottom="7dp" />
 
