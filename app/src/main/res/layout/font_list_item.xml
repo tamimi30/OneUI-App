@@ -63,7 +63,8 @@
                     android:id="@+id/font_item_favorite_icon"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/ic_favorite"
+                    android:src="@drawable/ic_oui_favorite_on"
+                    android:tint="#D4AF37"
                     android:visibility="invisible"
                     tools:visibility="visible" />
                     
