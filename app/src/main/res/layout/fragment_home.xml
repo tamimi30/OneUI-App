@@ -130,7 +130,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_features"
-                    android:textSize="34sp"
+                    android:textSize="22sp"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textStyle="bold"
                     android:layout_marginBottom="7dp" />
@@ -175,7 +175,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_about"
-                    android:textSize="34sp"
+                    android:textSize="22sp"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textStyle="bold"
                     android:layout_marginBottom="7dp" />
