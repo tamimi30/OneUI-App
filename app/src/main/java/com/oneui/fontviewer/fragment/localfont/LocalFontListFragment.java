@@ -212,6 +212,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         this.mMenu = menu;
 
+        menu.clear(); 
         inflater.inflate(R.menu.menu_font_list_search, menu);
         inflater.inflate(R.menu.menu_local_fonts_more, menu);
 
@@ -289,8 +290,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 }
             } else {
                 mUIManager.hideLoadingState();
-                // تم إزالة refreshAdapterData() من هنا لمنع وميض الشاشة الفارغة.
-                // الـ Observer الخاص بـ fontsLiveData سيتكفل بتحديث الواجهة بشكل آمن.
+                refreshAdapterData();
                 setDrawerLocked(false); 
                 
                 if (mRecyclerView != null && mRecyclerView.getVisibility() == View.VISIBLE) {
@@ -1077,4 +1077,4 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         return null;
     }
 
-    }
+                }
