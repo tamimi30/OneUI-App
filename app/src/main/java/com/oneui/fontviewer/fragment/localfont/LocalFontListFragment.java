@@ -86,6 +86,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private boolean mNeedsScrollRestore = false;
 
+    // تبقى false حتى تصل أول بيانات فعلية من fontsLiveData لهذا الـ View
+    private boolean mFontsDataReady = false;
+
     private long mBackPressedTime = 0;
     private static final long BACK_PRESS_EXIT_INTERVAL = 2000;
 
@@ -254,6 +257,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private void setupViewModelObservers() {
         mViewModel.getFontsLiveData().observe(this, fonts -> {
             if (fonts != null) {
+                mFontsDataReady = true;
                 notifyMainActivityReadyOnce();
 
                 if (mIsBatchOperationRunning) {
@@ -920,6 +924,10 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     }
 
     private void refreshAdapterData() {
+        if (!mFontsDataReady) {
+            // لا نعرض شاشة فارغة قبل وصول أول نتيجة حقيقية من الـ ViewModel
+            return;
+        }
         if (mCurrentFontsList.isEmpty()) {
             mSearchManager.updateFontsList(new ArrayList<>());
             if (mAdapter != null) {
