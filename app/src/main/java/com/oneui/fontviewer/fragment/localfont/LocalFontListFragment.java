@@ -83,6 +83,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private boolean mIsFirstLoad = true;
     private boolean mHasNotifiedReady = false;
+    private boolean mHasLoadedFontsOnce = false;
 
     private boolean mNeedsScrollRestore = false;
 
@@ -254,6 +255,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private void setupViewModelObservers() {
         mViewModel.getFontsLiveData().observe(this, fonts -> {
             if (fonts != null) {
+                mHasLoadedFontsOnce = true;
                 notifyMainActivityReadyOnce();
 
                 if (mIsBatchOperationRunning) {
@@ -921,6 +923,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private void refreshAdapterData() {
         if (mCurrentFontsList.isEmpty()) {
+            if (!mHasLoadedFontsOnce) {
+                return;
+            }
             mSearchManager.updateFontsList(new ArrayList<>());
             if (mAdapter != null) {
                 mAdapter.updateFilteredFonts(new ArrayList<>(), mSearchManager.getCurrentSearchQuery());
