@@ -130,7 +130,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_features"
-                    android:textSize="200dp"
+                    android:textSize="34sp"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textStyle="bold"
                     android:layout_marginBottom="7dp" />
@@ -175,9 +175,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_about"
-                    android:textSize="20sp"
+                    android:textSize="34sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:fontFamily="sans-serif-medium"
+                    android:textStyle="bold"
                     android:layout_marginBottom="7dp" />
 
                 <TextView
