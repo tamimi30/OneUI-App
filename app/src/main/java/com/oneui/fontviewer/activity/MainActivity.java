@@ -42,14 +42,10 @@ public class MainActivity extends BaseActivity
     FavoriteFontListFragment.OnFontSelectedListener,
     NavManager.Host {
 
-    private static boolean sHasCompletedInitialLoad = false;
     private boolean isUIReady = false;
     private boolean mIsMinSplashTimeElapsed = false;
     private boolean mIsInitialDataReady = false;
-    private boolean mIsMenuReady = false;
     private long mSplashStartTime = 0L;
-    private boolean mIsWarmingUpScreens = false;
-    private boolean mPendingWarmUp = false;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
@@ -93,12 +89,9 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
 
         // التحقق مما إذا كان هذا فتحاً جديداً للتطبيق (Cold Start) أم إعادة بناء بسبب تغيير اللغة أو الثيم (Hot Start).
-        // عند إعادة البناء الحقيقية داخل نفس العملية تكون البيانات محفوظة مسبقًا في الـ ViewModel، لذا نتخطى
-        // الانتظار الاصطناعي فورًا لتفادي التأخير الملحوظ عند الضغط على زر الرجوع بعد تغيير اللغة.
-        // أما إذا كانت العملية قد أُنهيت بواسطة النظام في الخلفية ثم أُعيد إنشاؤها من الصفر، فإن savedInstanceState
-        // يكون أيضاً غير فارغ رغم أن بيانات الخطوط لم تُحمَّل بعد؛ لذا نستخدم sHasCompletedInitialLoad للتفريق
-        // بين الحالتين ومنع اختفاء شاشة البداية قبل وصول قائمة الخطوط الفعلية.
-        if (savedInstanceState != null && sHasCompletedInitialLoad) {
+        // عند إعادة البناء، البيانات والواجهات محفوظة مسبقًا، لذا نتخطى الانتظار الاصطناعي فورًا
+        // لتفادي التأخير الملحوظ عند الضغط على زر الرجوع بعد تغيير اللغة.
+        if (savedInstanceState != null) {
             isUIReady = true;
         }
 
@@ -122,7 +115,7 @@ public class MainActivity extends BaseActivity
             addAllFragments();
             mCurrentScreen = AppScreen.LOCAL_FONTS;
             mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
-            mPendingWarmUp = true;
+            warmUpOtherScreens();
         }
 
         setupDrawer();
@@ -145,36 +138,19 @@ public class MainActivity extends BaseActivity
         // شبكة أمان: لا تُبقي الشاشة أكثر من هذه المدة حتى لو لم تصل إشارة الجاهزية
         splashHandler.postDelayed(() -> {
             mIsInitialDataReady = true;
-            mIsMenuReady = true;
             checkSplashReadyState();
         }, 60000L);
     }
 
     private void checkSplashReadyState() {
-        if (mIsMinSplashTimeElapsed && mIsInitialDataReady && mIsMenuReady) {
-            if (!isUIReady) {
-                isUIReady = true;
-                // نبدأ تحضير الشاشات الأخرى فقط بعد استقرار الشاشة الحالية بالكامل
-                // (بما فيها القائمة)، حتى لا ينافس هذا العمل رسم أيقونات شريط الأدوات
-                if (mPendingWarmUp) {
-                    mPendingWarmUp = false;
-                    warmUpOtherScreens();
-                }
-            }
+        if (mIsMinSplashTimeElapsed && mIsInitialDataReady) {
+            isUIReady = true;
         }
     }
 
     public void setAppReady() {
         mIsInitialDataReady = true;
-        sHasCompletedInitialLoad = true;
         checkSplashReadyState();
-    }
-
-    public void setMenuReady() {
-        if (!mIsMenuReady) {
-            mIsMenuReady = true;
-            checkSplashReadyState();
-        }
     }
 
     @Override
@@ -297,14 +273,6 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
-    @Override
-    public void invalidateOptionsMenu() {
-        if (mIsWarmingUpScreens) {
-            return;
-        }
-        super.invalidateOptionsMenu();
-    }
-
 
     public void setLocalFolderSelected(boolean selected) {
     }
@@ -374,7 +342,6 @@ public class MainActivity extends BaseActivity
     }
 
     private void warmUpOtherScreens() {
-        mIsWarmingUpScreens = true;
         Handler warmupHandler = new Handler(getMainLooper());
         warmupHandler.postDelayed(() -> {
             if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
@@ -388,7 +355,6 @@ public class MainActivity extends BaseActivity
                     warmupHandler.postDelayed(() -> {
                         if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
                         warmUpScreenSilently(null);
-                        mIsWarmingUpScreens = false;
                     }, 120);
                 }, 120);
             }, 120);
