@@ -90,6 +90,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private long mBackPressedTime = 0;
     private static final long BACK_PRESS_EXIT_INTERVAL = 2000;
 
+    private static final long EMPTY_VIEW_SHOW_DELAY_MS = 300L;
+    private Runnable mPendingEmptyViewRunnable;
+
     private Menu mMenu;
 
 
@@ -220,6 +223,10 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         MenuItem searchItem = menu.findItem(R.id.action_search_fonts);
         if (getActivity() instanceof MainActivity && searchItem != null) {
             ((MainActivity) getActivity()).getSearchCoordinator().bindSearchMenuItem(searchItem);
+        }
+
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setMenuReady();
         }
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -934,9 +941,11 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                     mSortManager.isSortAscending()
                 );
             }
-            mUIManager.updateEmptyView(true, mSearchManager.isSearchActive());
+            scheduleEmptyViewShow();
             return;
         }
+
+        cancelPendingEmptyViewShow();
 
         List<FontFileInfo> rawFonts = new ArrayList<>();
         for (LocalFontListViewModel.FontFileInfoWithMetadata font : mCurrentFontsList) {
@@ -973,6 +982,22 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         }
     }
 
+    private void scheduleEmptyViewShow() {
+        cancelPendingEmptyViewShow();
+        mPendingEmptyViewRunnable = () -> {
+            mPendingEmptyViewRunnable = null;
+            mUIManager.updateEmptyView(true, mSearchManager.isSearchActive());
+        };
+        mMainHandler.postDelayed(mPendingEmptyViewRunnable, EMPTY_VIEW_SHOW_DELAY_MS);
+    }
+
+    private void cancelPendingEmptyViewShow() {
+        if (mPendingEmptyViewRunnable != null) {
+            mMainHandler.removeCallbacks(mPendingEmptyViewRunnable);
+            mPendingEmptyViewRunnable = null;
+        }
+    }
+
 
     public void onSearchStateChanged(boolean isExpanded) {
         if (mSearchViewModel != null) {
@@ -1006,6 +1031,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        cancelPendingEmptyViewShow();
 
         if (mSelectionManager != null) {
             mSelectionManager.cleanup();
