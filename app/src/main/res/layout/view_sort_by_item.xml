@@ -29,8 +29,6 @@
             android:layout_marginStart="7dp"
             android:layout_gravity="center_vertical"
             android:textColor="@color/sort_bar_text_color"
-            android:fontFamily="sec-roboto-light"
-            android:textStyle="normal"
             android:textSize="15dp" />
             
      </LinearLayout>
