@@ -634,4 +634,4 @@ public class MainActivity extends BaseActivity
         mNavManager.handleBackPressed();
     }
     
-            }
+    }
