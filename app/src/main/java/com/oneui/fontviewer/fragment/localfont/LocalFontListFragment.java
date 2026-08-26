@@ -83,15 +83,11 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private boolean mIsFirstLoad = true;
     private boolean mHasNotifiedReady = false;
-    private boolean mHasLoadedFontsOnce = false;
 
     private boolean mNeedsScrollRestore = false;
 
     private long mBackPressedTime = 0;
     private static final long BACK_PRESS_EXIT_INTERVAL = 2000;
-
-    private static final long EMPTY_VIEW_SHOW_DELAY_MS = 500L;
-    private Runnable mPendingEmptyViewRunnable;
 
     private Menu mMenu;
 
@@ -216,17 +212,12 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         this.mMenu = menu;
 
-        menu.clear(); 
         inflater.inflate(R.menu.menu_font_list_search, menu);
         inflater.inflate(R.menu.menu_local_fonts_more, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search_fonts);
         if (getActivity() instanceof MainActivity && searchItem != null) {
             ((MainActivity) getActivity()).getSearchCoordinator().bindSearchMenuItem(searchItem);
-        }
-
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).setMenuReady();
         }
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -262,7 +253,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private void setupViewModelObservers() {
         mViewModel.getFontsLiveData().observe(this, fonts -> {
             if (fonts != null) {
-                mHasLoadedFontsOnce = true;
                 notifyMainActivityReadyOnce();
 
                 if (mIsBatchOperationRunning) {
@@ -299,7 +289,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 }
             } else {
                 mUIManager.hideLoadingState();
-                refreshAdapterData();
+                // تم إزالة refreshAdapterData() من هنا لمنع وميض الشاشة الفارغة.
+                // الـ Observer الخاص بـ fontsLiveData سيتكفل بتحديث الواجهة بشكل آمن.
                 setDrawerLocked(false); 
                 
                 if (mRecyclerView != null && mRecyclerView.getVisibility() == View.VISIBLE) {
@@ -930,14 +921,17 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private void refreshAdapterData() {
         if (mCurrentFontsList.isEmpty()) {
-            if (!mHasLoadedFontsOnce) {
-                return;
+            mSearchManager.updateFontsList(new ArrayList<>());
+            if (mAdapter != null) {
+                mAdapter.updateFilteredFonts(new ArrayList<>(), mSearchManager.getCurrentSearchQuery());
+                mAdapter.updateSortOptionsOnly(
+                    mSortManager.getCurrentSortType(),
+                    mSortManager.isSortAscending()
+                );
             }
-            scheduleEmptyViewShow();
+            mUIManager.updateEmptyView(true, mSearchManager.isSearchActive());
             return;
         }
-
-        cancelPendingEmptyViewShow();
 
         List<FontFileInfo> rawFonts = new ArrayList<>();
         for (LocalFontListViewModel.FontFileInfoWithMetadata font : mCurrentFontsList) {
@@ -974,32 +968,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         }
     }
 
-    private void scheduleEmptyViewShow() {
-        cancelPendingEmptyViewShow();
-        mPendingEmptyViewRunnable = () -> {
-            mPendingEmptyViewRunnable = null;
-            // نُفرغ المحول ونعرض الشاشة الفارغة هنا فقط بعد انتهاء فترة الانتظار،
-            // حتى لا تظهر الشاشة الفارغة فوراً إذا وصلت بيانات حقيقية بعد لحظات
-            mSearchManager.updateFontsList(new ArrayList<>());
-            if (mAdapter != null) {
-                mAdapter.updateFilteredFonts(new ArrayList<>(), mSearchManager.getCurrentSearchQuery());
-                mAdapter.updateSortOptionsOnly(
-                    mSortManager.getCurrentSortType(),
-                    mSortManager.isSortAscending()
-                );
-            }
-            mUIManager.updateEmptyView(true, mSearchManager.isSearchActive());
-        };
-        mMainHandler.postDelayed(mPendingEmptyViewRunnable, EMPTY_VIEW_SHOW_DELAY_MS);
-    }
-
-    private void cancelPendingEmptyViewShow() {
-        if (mPendingEmptyViewRunnable != null) {
-            mMainHandler.removeCallbacks(mPendingEmptyViewRunnable);
-            mPendingEmptyViewRunnable = null;
-        }
-    }
-
 
     public void onSearchStateChanged(boolean isExpanded) {
         if (mSearchViewModel != null) {
@@ -1033,8 +1001,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        cancelPendingEmptyViewShow();
 
         if (mSelectionManager != null) {
             mSelectionManager.cleanup();
