@@ -132,8 +132,8 @@
                     android:text="@string/title_features"
                     android:textSize="20sp"
                     android:textColor="?android:attr/textColorPrimary"
-                    app:fontFamily="sans-serif"
-                    app:fontVariationSettings="'wght' 500, 'wdth' 100, 'ital' 0"
+                    android:fontFamily="sans-serif-medium"
+                    android:textStyle="bold"
                     android:layout_marginBottom="7dp" />
 
                 <TextView
