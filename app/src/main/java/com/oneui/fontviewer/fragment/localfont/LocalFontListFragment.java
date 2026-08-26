@@ -90,7 +90,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private long mBackPressedTime = 0;
     private static final long BACK_PRESS_EXIT_INTERVAL = 2000;
 
-    private static final long EMPTY_VIEW_SHOW_DELAY_MS = 300L;
+    private static final long EMPTY_VIEW_SHOW_DELAY_MS = 500L;
     private Runnable mPendingEmptyViewRunnable;
 
     private Menu mMenu;
@@ -933,14 +933,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             if (!mHasLoadedFontsOnce) {
                 return;
             }
-            mSearchManager.updateFontsList(new ArrayList<>());
-            if (mAdapter != null) {
-                mAdapter.updateFilteredFonts(new ArrayList<>(), mSearchManager.getCurrentSearchQuery());
-                mAdapter.updateSortOptionsOnly(
-                    mSortManager.getCurrentSortType(),
-                    mSortManager.isSortAscending()
-                );
-            }
             scheduleEmptyViewShow();
             return;
         }
@@ -986,6 +978,16 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         cancelPendingEmptyViewShow();
         mPendingEmptyViewRunnable = () -> {
             mPendingEmptyViewRunnable = null;
+            // نُفرغ المحول ونعرض الشاشة الفارغة هنا فقط بعد انتهاء فترة الانتظار،
+            // حتى لا تظهر الشاشة الفارغة فوراً إذا وصلت بيانات حقيقية بعد لحظات
+            mSearchManager.updateFontsList(new ArrayList<>());
+            if (mAdapter != null) {
+                mAdapter.updateFilteredFonts(new ArrayList<>(), mSearchManager.getCurrentSearchQuery());
+                mAdapter.updateSortOptionsOnly(
+                    mSortManager.getCurrentSortType(),
+                    mSortManager.isSortAscending()
+                );
+            }
             mUIManager.updateEmptyView(true, mSearchManager.isSearchActive());
         };
         mMainHandler.postDelayed(mPendingEmptyViewRunnable, EMPTY_VIEW_SHOW_DELAY_MS);
