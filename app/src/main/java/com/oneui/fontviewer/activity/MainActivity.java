@@ -49,6 +49,7 @@ public class MainActivity extends BaseActivity
     private boolean mIsMenuReady = false;
     private long mSplashStartTime = 0L;
     private boolean mIsWarmingUpScreens = false;
+    private boolean mPendingWarmUp = false;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
@@ -121,7 +122,7 @@ public class MainActivity extends BaseActivity
             addAllFragments();
             mCurrentScreen = AppScreen.LOCAL_FONTS;
             mNavManager.showFragmentFast(AppScreen.LOCAL_FONTS);
-            warmUpOtherScreens();
+            mPendingWarmUp = true;
         }
 
         setupDrawer();
@@ -151,7 +152,15 @@ public class MainActivity extends BaseActivity
 
     private void checkSplashReadyState() {
         if (mIsMinSplashTimeElapsed && mIsInitialDataReady && mIsMenuReady) {
-            isUIReady = true;
+            if (!isUIReady) {
+                isUIReady = true;
+                // نبدأ تحضير الشاشات الأخرى فقط بعد استقرار الشاشة الحالية بالكامل
+                // (بما فيها القائمة)، حتى لا ينافس هذا العمل رسم أيقونات شريط الأدوات
+                if (mPendingWarmUp) {
+                    mPendingWarmUp = false;
+                    warmUpOtherScreens();
+                }
+            }
         }
     }
 
