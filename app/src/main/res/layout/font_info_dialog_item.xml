@@ -15,7 +15,6 @@
         android:id="@+id/font_info_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="?android:attr/textAppearance"
         android:textSize="13sp"
         android:textDirection="locale"
         android:textColor="?android:attr/textColorSecondary" />
@@ -24,6 +23,7 @@
         android:id="@+id/font_info_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="?android:attr/textAppearance"
         android:textSize="17sp"
         android:textDirection="locale"
         android:lineSpacingExtra="4sp"
