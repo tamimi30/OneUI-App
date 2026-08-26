@@ -17,8 +17,6 @@
         android:layout_height="wrap_content"
         android:textSize="13sp"
         android:textDirection="locale"
-        android:fontFamily="sec-roboto-light"
-        android:textStyle="normal"
         android:textColor="?android:attr/textColorSecondary" />
 
     <TextView
@@ -27,8 +25,6 @@
         android:layout_height="wrap_content"
         android:textSize="17sp"
         android:textDirection="locale"
-        android:fontFamily="sec-roboto-light"
-        android:textStyle="normal"
         android:lineSpacingExtra="4sp"
         android:textColor="?android:attr/textColorPrimary"
         android:autoLink="web|email"
