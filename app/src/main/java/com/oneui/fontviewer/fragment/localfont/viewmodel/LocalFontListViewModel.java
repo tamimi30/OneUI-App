@@ -97,7 +97,10 @@ public class LocalFontListViewModel extends AndroidViewModel {
         
         fontsLiveData = new MutableLiveData<>();
 
-        favoritesLiveData = new MutableLiveData<>(new ArrayList<>());
+        // بلا قيمة ابتدائية (وليس new ArrayList<>() فارغة): القيمة الجاهزة تصل فورًا لأي مراقب
+        // جديد بمجرد تفعيله (سلوك Sticky)، حتى قبل وصول أي شيء حقيقي من
+        // repository.getFavoriteFonts() أدناه — نفس فخ isLoadingLiveData تمامًا.
+        favoritesLiveData = new MutableLiveData<>();
         
         repository.getLocalFonts().observeForever(entities -> {
             if (entities != null) {
