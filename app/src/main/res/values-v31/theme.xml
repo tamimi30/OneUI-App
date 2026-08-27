@@ -4,7 +4,8 @@
     <style name="AppTheme.Starting" parent="Theme.SplashScreen">
         <item name="postSplashScreenTheme">@style/AppTheme</item>
         <item name="windowSplashScreenBackground">@color/oui_round_and_bgcolor</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+       <!-- <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item> -->
+        <item name="<item name="windowSplashScreenIconBackgroundColor">@color/primary_color_themed</item>
     </style>
         
 </resources>
