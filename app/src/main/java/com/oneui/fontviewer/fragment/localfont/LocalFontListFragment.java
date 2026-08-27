@@ -920,6 +920,15 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     }
 
     private void refreshAdapterData() {
+        // لا نحسم حالة العرض (قائمة أم شاشة فارغة) قبل وصول أول دفعة حقيقية من fontsLiveData.
+        // بدون هذا الشرط: بعد أن يقتل النظام عملية التطبيق بالخلفية ثم تُعاد فتحه من الأخيرة،
+        // يُعاد إنشاء الـ ViewModel من الصفر، ومراقب isLoadingLiveData (قيمته الابتدائية false
+        // منذ الإنشاء) يُفعَّل قبل وصول بيانات الخطوط الفعلية من Room، فتُستدعى هذه الدالة بينما
+        // لا تزال mCurrentFontsList فارغة افتراضيًا. mHasNotifiedReady لا يصير true إلا مع وصول
+        // بيانات fontsLiveData الحقيقية لأول مرة (مراقب getFontsLiveData بالأسفل).
+        if (!mHasNotifiedReady) {
+            return;
+        }
         if (mCurrentFontsList.isEmpty()) {
             mSearchManager.updateFontsList(new ArrayList<>());
             if (mAdapter != null) {
