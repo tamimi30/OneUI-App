@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_vertical"
-            android:padding="2.0px">
+            android:paddingHorizontal="2.0px">
 
             <ImageView
                 android:id="@+id/btn_bold"
