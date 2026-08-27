@@ -252,34 +252,39 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     }
 
     private void setupViewModelObservers() {
-        mViewModel.getFontsLiveData().observe(this, fonts -> {
-            if (fonts != null) {
-                notifyMainActivityReadyOnce();
-
-                if (mIsBatchOperationRunning) {
-                    mPendingFontsUpdate = new ArrayList<>(fonts);
-                    return;
-                }
-
-                mCurrentFontsList = new ArrayList<>(fonts);
-
-                if (mAdapter != null) {
-                    mAdapter.setAllFontsMetadata(fonts);
-
-                    mAdapter.notifyAllFavoritesChanged();
-                }
-
-                refreshAdapterData();
-
-
-                updateMainActivityFontsCount(fonts.size());
-
-                List<String> pathsToPreload = new ArrayList<>();
-                for (LocalFontListViewModel.FontFileInfoWithMetadata font : fonts) {
-                    pathsToPreload.add(font.getPath());
-                }
-                LocalFontCache.getInstance().preloadFonts(pathsToPreload);
+        mViewModel.getFontsSnapshotLiveData().observe(this, snapshot -> {
+            // ثلاث حالات لا اثنتين: غير جاهز (تجاهل تمامًا) / جاهز وفارغ / جاهز وفيه خطوط.
+            // الشاشة الفارغة مسموحة فقط في الحالة الثانية.
+            if (snapshot == null || !snapshot.isReady) {
+                return;
             }
+            List<LocalFontListViewModel.FontFileInfoWithMetadata> fonts = snapshot.fonts;
+
+            notifyMainActivityReadyOnce();
+
+            if (mIsBatchOperationRunning) {
+                mPendingFontsUpdate = new ArrayList<>(fonts);
+                return;
+            }
+
+            mCurrentFontsList = new ArrayList<>(fonts);
+
+            if (mAdapter != null) {
+                mAdapter.setAllFontsMetadata(fonts);
+
+                mAdapter.notifyAllFavoritesChanged();
+            }
+
+            refreshAdapterData();
+
+
+            updateMainActivityFontsCount(fonts.size());
+
+            List<String> pathsToPreload = new ArrayList<>();
+            for (LocalFontListViewModel.FontFileInfoWithMetadata font : fonts) {
+                pathsToPreload.add(font.getPath());
+            }
+            LocalFontCache.getInstance().preloadFonts(pathsToPreload);
         });
 
         mViewModel.getIsLoadingLiveData().observe(this, isLoading -> {
@@ -920,6 +925,12 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     }
 
     private void refreshAdapterData() {
+        // حارس دفاعي إضافي: حتى لو استُدعيت هذه الدالة من مكان آخر (مثل مراقب
+        // isLoadingLiveData بالأسفل) قبل وصول أول دفعة جاهزة، لا نحسم حالة العرض.
+        // mHasNotifiedReady لا يصير true إلا مع تلك الدفعة (انظر أعلاه).
+        if (!mHasNotifiedReady) {
+            return;
+        }
         if (mCurrentFontsList.isEmpty()) {
             mSearchManager.updateFontsList(new ArrayList<>());
             if (mAdapter != null) {
