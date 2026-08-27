@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
@@ -44,6 +45,29 @@ public class LocalFontListViewModel extends AndroidViewModel {
     private final MutableLiveData<List<FontEntity>> fontsLiveData;
 
     private final MutableLiveData<List<FontEntity>> favoritesLiveData;
+
+    /** دفعة واحدة ذرية: تجمع "هل وصلت أول بيانات حقيقية من Room؟" مع القائمة نفسها،
+     * بدل نشرهما عبر LiveData منفصلين (isLoadingLiveData و fontsLiveData) قد لا يتزامنان
+     * بعد إعادة إنشاء الـ ViewModel من الصفر. */
+    public static final class FontsSnapshot {
+        public final boolean isReady;
+        public final List<FontFileInfoWithMetadata> fonts;
+
+        private FontsSnapshot(boolean isReady, List<FontFileInfoWithMetadata> fonts) {
+            this.isReady = isReady;
+            this.fonts = fonts;
+        }
+
+        private static FontsSnapshot notReady() {
+            return new FontsSnapshot(false, new ArrayList<>());
+        }
+
+        private static FontsSnapshot ready(List<FontFileInfoWithMetadata> fonts) {
+            return new FontsSnapshot(true, fonts);
+        }
+    }
+
+    private final MediatorLiveData<FontsSnapshot> fontsSnapshotLiveData = new MediatorLiveData<>();
 
     private boolean mIsFolderSyncing = false;
     private List<FontEntity> mPendingSyncFonts = null;
@@ -97,6 +121,19 @@ public class LocalFontListViewModel extends AndroidViewModel {
         
         fontsLiveData = new MutableLiveData<>();
 
+        // القيمة الابتدائية notReady تبقى كما هي حتى يصل أول تغيير حقيقي على fontsLiveData؛
+        // عندها فقط يتحول isReady إلى true معًا مع القائمة، في نفس الكائن، بلا احتمال تسابق.
+        fontsSnapshotLiveData.setValue(FontsSnapshot.notReady());
+        fontsSnapshotLiveData.addSource(fontsLiveData, entities -> {
+            List<FontFileInfoWithMetadata> mapped = new ArrayList<>();
+            if (entities != null) {
+                for (FontEntity entity : entities) {
+                    mapped.add(new FontFileInfoWithMetadata(entity));
+                }
+            }
+            fontsSnapshotLiveData.setValue(FontsSnapshot.ready(mapped));
+        });
+
         favoritesLiveData = new MutableLiveData<>(new ArrayList<>());
         
         repository.getLocalFonts().observeForever(entities -> {
@@ -146,6 +183,11 @@ public class LocalFontListViewModel extends AndroidViewModel {
             }
             return result;
         });
+    }
+
+    /** استخدم هذه بدل getFontsLiveData() في الشاشة — لا تصل أبدًا بقائمة فارغة زائفة. */
+    public LiveData<FontsSnapshot> getFontsSnapshotLiveData() {
+        return fontsSnapshotLiveData;
     }
 
 
