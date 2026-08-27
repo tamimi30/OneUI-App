@@ -46,6 +46,11 @@ public class MainActivity extends BaseActivity
     private boolean mIsMinSplashTimeElapsed = false;
     private boolean mIsInitialDataReady = false;
     private long mSplashStartTime = 0L;
+
+    // static: يبقى false طوال عمر الـ Process حتى تُحمَّل بيانات الخطوط الحقيقية لأول مرة فيه،
+    // وبعدها يبقى true طالما الـ Process حيّ. يُصفَّر تلقائيًا فقط عندما يقتل النظام الـ Process
+    // كليًا ثم يُنشئه من جديد (إعادة الفتح من الأخيرة بعد القتل بالخلفية).
+    private static boolean sHasLoadedFontsOnceThisProcess = false;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
@@ -88,10 +93,11 @@ public class MainActivity extends BaseActivity
 
         setContentView(R.layout.activity_main);
 
-        // التحقق مما إذا كان هذا فتحاً جديداً للتطبيق (Cold Start) أم إعادة بناء بسبب تغيير اللغة أو الثيم (Hot Start).
-        // عند إعادة البناء، البيانات والواجهات محفوظة مسبقًا، لذا نتخطى الانتظار الاصطناعي فورًا
-        // لتفادي التأخير الملحوظ عند الضغط على زر الرجوع بعد تغيير اللغة.
-        if (savedInstanceState != null) {
+        // نتخطى انتظار شاشة البداية فقط إذا سبق أن حُمِّلت بيانات الخطوط فعليًا في نفس الـ
+        // Process الحالي. savedInstanceState != null وحدها لا تكفي دليلاً: فهي تكون != null
+        // أيضًا عند إعادة الفتح من "الأخيرة" بعد أن يكون النظام قد قتل الـ Process بالكامل
+        // بالخلفية، وفي هذه الحالة كل ViewModel جديد تمامًا ولم تُحمَّل بياناته بعد.
+        if (savedInstanceState != null && sHasLoadedFontsOnceThisProcess) {
             isUIReady = true;
         }
 
@@ -150,6 +156,7 @@ public class MainActivity extends BaseActivity
 
     public void setAppReady() {
         mIsInitialDataReady = true;
+        sHasLoadedFontsOnceThisProcess = true;
         checkSplashReadyState();
     }
 
