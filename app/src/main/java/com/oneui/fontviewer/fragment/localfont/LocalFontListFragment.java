@@ -388,7 +388,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 Log.e(TAG, "Error restoring sort state", e);
             }
         }
-        mIsFirstLoad = state.getBoolean("is_first_load", true);
+        // تم حذف استرجاع mIsFirstLoad من هنا عمداً
+        // لنجبر التطبيق على جلب البيانات من ViewModel عند العودة من الخلفية
     }
 
     @Nullable
@@ -821,7 +822,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         }
         out.putString("sort_type", mSortManager.getCurrentSortType().name());
         out.putBoolean("sort_asc", mSortManager.isSortAscending());
-        out.putBoolean("is_first_load", mIsFirstLoad);
+        // تم حذف حفظ mIsFirstLoad من هنا عمداً
     }
 
     @Override
