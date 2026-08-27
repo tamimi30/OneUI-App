@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity
         // Process الحالي. savedInstanceState != null وحدها لا تكفي دليلاً: فهي تكون != null
         // أيضًا عند إعادة الفتح من "الأخيرة" بعد أن يكون النظام قد قتل الـ Process بالكامل
         // بالخلفية، وفي هذه الحالة كل ViewModel جديد تمامًا ولم تُحمَّل بياناته بعد.
-        if (savedInstanceState != null && sHasLoadedFontsOnceThisProcess) {
+        if (savedInstanceState != null) {
             isUIReady = true;
         }
 
