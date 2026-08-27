@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
 import com.oneui.fontviewer.data.entity.FontEntity;
@@ -52,6 +54,13 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
     // خيط خلفي مخصص لتحميل معاينات الخطوط قبل نشر القائمة للواجهة
     private final ExecutorService fontPreloadExecutor = Executors.newSingleThreadExecutor();
+
+    // نخزّن نفس كائن الـ LiveData الذي استدعينا عليه observeForever، لأن كل نداء
+    // لـ repository.getLocalFonts()/getFavoriteFonts() قد يُرجع كائن LiveData جديداً من Room
+    private LiveData<List<FontEntity>> mLocalFontsSource;
+    private LiveData<List<FontEntity>> mFavoriteFontsSource;
+    private Observer<List<FontEntity>> mLocalFontsObserver;
+    private Observer<List<FontEntity>> mFavoriteFontsObserver;
     
 
     public static class FontFileInfoWithMetadata {
@@ -99,7 +108,8 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
         favoritesLiveData = new MutableLiveData<>(new ArrayList<>());
         
-        repository.getLocalFonts().observeForever(entities -> {
+        mLocalFontsSource = repository.getLocalFonts();
+        mLocalFontsObserver = entities -> {
             if (entities != null) {
                 if (mIsFolderSyncing) {
                     mPendingSyncFonts = entities;
@@ -107,13 +117,16 @@ public class LocalFontListViewModel extends AndroidViewModel {
                     publishFontsAfterPreload(entities, null);
                 }
             }
-        });
+        };
+        mLocalFontsSource.observeForever(mLocalFontsObserver);
 
-        repository.getFavoriteFonts().observeForever(entities -> {
+        mFavoriteFontsSource = repository.getFavoriteFonts();
+        mFavoriteFontsObserver = entities -> {
             if (entities != null) {
                 favoritesLiveData.postValue(entities);
             }
-        });
+        };
+        mFavoriteFontsSource.observeForever(mFavoriteFontsObserver);
     }
 
     /**
@@ -121,17 +134,24 @@ public class LocalFontListViewModel extends AndroidViewModel {
      * خلفي، ثم يُرسل القائمة لواجهة المستخدم فقط بعد اكتمال التحميل.
      */
     private void publishFontsAfterPreload(List<FontEntity> entities, @Nullable Runnable onPublished) {
-        fontPreloadExecutor.execute(() -> {
-            List<String> paths = new ArrayList<>();
-            for (FontEntity entity : entities) {
-                paths.add(entity.getPath());
-            }
-            LocalFontCache.getInstance().preloadFontsBlocking(paths);
-            fontsLiveData.postValue(entities);
-            if (onPublished != null) {
-                onPublished.run();
-            }
-        });
+        if (fontPreloadExecutor.isShutdown()) {
+            return;
+        }
+        try {
+            fontPreloadExecutor.execute(() -> {
+                List<String> paths = new ArrayList<>();
+                for (FontEntity entity : entities) {
+                    paths.add(entity.getPath());
+                }
+                LocalFontCache.getInstance().preloadFontsBlocking(paths);
+                fontsLiveData.postValue(entities);
+                if (onPublished != null) {
+                    onPublished.run();
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            Log.w(TAG, "publishFontsAfterPreload: executor already shut down, skipping", e);
+        }
     }
 
     public LiveData<List<FontFileInfoWithMetadata>> getFontsLiveData() {
@@ -476,6 +496,12 @@ public class LocalFontListViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
+        if (mLocalFontsSource != null && mLocalFontsObserver != null) {
+            mLocalFontsSource.removeObserver(mLocalFontsObserver);
+        }
+        if (mFavoriteFontsSource != null && mFavoriteFontsObserver != null) {
+            mFavoriteFontsSource.removeObserver(mFavoriteFontsObserver);
+        }
         fontPreloadExecutor.shutdownNow();
     }
     
