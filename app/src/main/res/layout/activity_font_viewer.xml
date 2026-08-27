@@ -34,13 +34,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_vertical"
-            android:paddingHorizontal="2.0px">
+            android:paddingHorizontal="2.0px"
+            android:paddingVertical="2.0px">
 
             <ImageView
                 android:id="@+id/btn_bold"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:padding="11dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="15dp"
                 android:src="@drawable/ic_oui_text_bold"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/sort_btn_ripple_oval"
@@ -52,9 +53,9 @@
 
             <ImageView
                 android:id="@+id/btn_italic"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:padding="11dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="15dp"
                 android:src="@drawable/ic_oui_text_italic"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/sort_btn_ripple_oval"
