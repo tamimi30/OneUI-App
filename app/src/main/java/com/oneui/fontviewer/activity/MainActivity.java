@@ -92,7 +92,7 @@ public class MainActivity extends BaseActivity
         // عند إعادة البناء، البيانات والواجهات محفوظة مسبقًا، لذا نتخطى الانتظار الاصطناعي فورًا
         // لتفادي التأخير الملحوظ عند الضغط على زر الرجوع بعد تغيير اللغة.
         if (savedInstanceState != null) {
-            isUIReady = true;
+            isUIReady = false;
         }
 
         mNavManager = new NavManager(this);
