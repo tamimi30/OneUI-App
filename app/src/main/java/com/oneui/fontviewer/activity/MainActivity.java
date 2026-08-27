@@ -45,12 +45,6 @@ public class MainActivity extends BaseActivity
     private boolean isUIReady = false;
     private boolean mIsMinSplashTimeElapsed = false;
     private boolean mIsInitialDataReady = false;
-
-    // يبقى true طالما العملية (Process) حيّة، ويُصفَّر تلقائيًا كلما أنشأ النظام العملية
-    // من جديد بعد قتلها بالخلفية. هذا يميّز "إعادة بناء ساخنة" (تغيير لغة/ثيم، نفس العملية،
-    // كل الـ ViewModel وبياناته بالذاكرة) عن "إعادة فتح بعد قتل العملية" (savedInstanceState
-    // غير null في الحالتين معًا، لكن في الثانية كل الـ ViewModel جديدة ولم تُحمَّل بعد).
-    private static boolean sProcessAlreadyStarted = false;
     private long mSplashStartTime = 0L;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
@@ -94,13 +88,12 @@ public class MainActivity extends BaseActivity
 
         setContentView(R.layout.activity_main);
 
-        // نفس الفكرة، مع شرط إضافي: savedInstanceState غير null في حالتين مختلفتين — تغيير
-        // لغة/ثيم (يصح التخطي)، أو عودة بعد قتل النظام للعملية بالخلفية (لا يصح التخطي، لأن
-        // بيانات الخطوط لم تصل بعد). sProcessAlreadyStarted يميّز الحالتين بدقة.
-        if (savedInstanceState != null && sProcessAlreadyStarted) {
+        // التحقق مما إذا كان هذا فتحاً جديداً للتطبيق (Cold Start) أم إعادة بناء بسبب تغيير اللغة أو الثيم (Hot Start).
+        // عند إعادة البناء، البيانات والواجهات محفوظة مسبقًا، لذا نتخطى الانتظار الاصطناعي فورًا
+        // لتفادي التأخير الملحوظ عند الضغط على زر الرجوع بعد تغيير اللغة.
+        if (savedInstanceState != null) {
             isUIReady = true;
         }
-        sProcessAlreadyStarted = true;
 
         mNavManager = new NavManager(this);
 
