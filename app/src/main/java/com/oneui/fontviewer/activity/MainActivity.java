@@ -45,6 +45,8 @@ public class MainActivity extends BaseActivity
     private boolean isUIReady = false;
     private boolean mIsMinSplashTimeElapsed = false;
     private boolean mIsInitialDataReady = false;
+    // متغير static لمعرفة ما إذا كانت العملية (Process) حية أم تم إنشاؤها للتو بعد قتل النظام لها بالخلفية
+    private static boolean sProcessAlreadyStarted = false;
     private long mSplashStartTime = 0L;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
@@ -89,11 +91,20 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
 
         // التحقق مما إذا كان هذا فتحاً جديداً للتطبيق (Cold Start) أم إعادة بناء بسبب تغيير اللغة أو الثيم (Hot Start).
-        // عند إعادة البناء، البيانات والواجهات محفوظة مسبقًا، لذا نتخطى الانتظار الاصطناعي فورًا
-        // لتفادي التأخير الملحوظ عند الضغط على زر الرجوع بعد تغيير اللغة.
         if (savedInstanceState != null) {
-            isUIReady = true;
+            if (sProcessAlreadyStarted) {
+                // حالة تغيير اللغة أو الثيم (العملية لا تزال حية في الرام)
+                // نتخطى شاشة الـ Splash فوراً لمنع التأخير الملحوظ.
+                isUIReady = true;
+            } else {
+                // حالة العودة للتطبيق بعد أن قام النظام بقتل العملية في الخلفية (Process Death)
+                // لا نتخطى الـ Splash Screen، بل نتركها تأخذ وقتها المعتاد
+                // حتى نعطي الـ ViewModel الوقت الكافي لجلب الخطوط من Room ولا تظهر الشاشة الفارغة.
+            }
         }
+        
+        // بمجرد المرور من هنا، نخبر التطبيق أن العملية الآن أصبحت حية
+        sProcessAlreadyStarted = true;
 
         mNavManager = new NavManager(this);
 
