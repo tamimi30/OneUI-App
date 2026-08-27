@@ -290,15 +290,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 }
             } else {
                 mUIManager.hideLoadingState();
-                // لا نُحدّث حالة العرض (فارغ/قائمة) قبل وصول أول بيانات حقيقية من
-                // fontsLiveData. بدون هذا الشرط: عند إعادة إنشاء الـ Fragment/ViewModel
-                // من الصفر (بعد قتل النظام للعملية ثم إعادة الفتح من الأخيرة)، تكون
-                // isLoadingLiveData لا تزال بقيمتها الافتراضية false، فيُستدعى
-                // refreshAdapterData() فورًا بينما mCurrentFontsList ما زالت فارغة لأن
-                // استعلام Room غير المتزامن لم يصل بعد.
-                if (mHasNotifiedReady) {
-                    refreshAdapterData();
-                }
+                refreshAdapterData();
                 setDrawerLocked(false); 
                 
                 if (mRecyclerView != null && mRecyclerView.getVisibility() == View.VISIBLE) {
