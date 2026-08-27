@@ -45,9 +45,9 @@ public class MainActivity extends BaseActivity
     private boolean isUIReady = false;
     private boolean mIsMinSplashTimeElapsed = false;
     private boolean mIsInitialDataReady = false;
-    // متغير static لمعرفة ما إذا كانت العملية (Process) حية أم تم إنشاؤها للتو بعد قتل النظام لها بالخلفية
-    private static boolean sProcessAlreadyStarted = false;
     private long mSplashStartTime = 0L;
+    // متغير static لمعرفة ما إذا كانت العملية (Process) حية أم تم إنشاؤها للتو بعد قتل النظام لها
+    private static boolean sProcessAlreadyStarted = false;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
@@ -90,7 +90,7 @@ public class MainActivity extends BaseActivity
 
         setContentView(R.layout.activity_main);
 
-        // التحقق مما إذا كان هذا فتحاً جديداً للتطبيق (Cold Start) أم إعادة بناء بسبب تغيير اللغة أو الثيم (Hot Start).
+        // التحقق مما إذا كان هذا فتحاً جديداً للتطبيق أم إعادة بناء بسبب تغيير اللغة أو الثيم أو قتل النظام
         if (savedInstanceState != null) {
             if (sProcessAlreadyStarted) {
                 // حالة تغيير اللغة أو الثيم (العملية لا تزال حية في الرام)
@@ -99,12 +99,9 @@ public class MainActivity extends BaseActivity
             } else {
                 // حالة العودة للتطبيق بعد أن قام النظام بقتل العملية في الخلفية (Process Death)
                 // لا نتخطى الـ Splash Screen، بل نتركها تأخذ وقتها المعتاد
-                // حتى نعطي الـ ViewModel الوقت الكافي لجلب الخطوط من Room ولا تظهر الشاشة الفارغة.
+                // حتى نعطي الـ ViewModel الوقت الكافي لجلب الخطوط ولا تظهر الشاشة الفارغة.
             }
         }
-        
-        // بمجرد المرور من هنا، نخبر التطبيق أن العملية الآن أصبحت حية
-        sProcessAlreadyStarted = true;
 
         mNavManager = new NavManager(this);
 
@@ -151,6 +148,9 @@ public class MainActivity extends BaseActivity
             mIsInitialDataReady = true;
             checkSplashReadyState();
         }, 60000L);
+        
+        // بمجرد المرور من هنا، نخبر التطبيق أن العملية الآن أصبحت حية
+        sProcessAlreadyStarted = true;
     }
 
     private void checkSplashReadyState() {
