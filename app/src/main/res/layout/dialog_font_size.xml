@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
-    android:paddingTop="22dp"
+    android:paddingTop="24dp"
     android:paddingBottom="31dp">
     	
     <LinearLayout
@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="19dp"
         android:orientation="horizontal"
+        android:layoutDirection="locale"
         android:layout_gravity="center_vertical">
 
         <com.oneui.fontviewer.widget.OneUiTextView
@@ -31,8 +32,8 @@
 
         <ImageView
             android:id="@+id/font_size_help_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
             android:src="@drawable/ic_oui_help_outline"
             android:tint="?android:attr/textColorSecondary"
             android:contentDescription="@string/font_size_dialog_tip"
