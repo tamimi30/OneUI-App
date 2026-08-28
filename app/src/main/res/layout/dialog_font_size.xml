@@ -23,14 +23,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="?android:attr/windowTitleStyle"
+            android:textStyle="bold"
             android:layout_gravity="center_vertical"
             android:text="@string/font_size_dialog_title" />
 
         <ImageView
             android:id="@+id/font_size_help_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:padding="4dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
             android:src="@drawable/ic_oui_help_outline"
             android:tint="?android:attr/textColorSecondary"
             android:contentDescription="@string/font_size_dialog_tip"
