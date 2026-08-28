@@ -16,15 +16,13 @@
         android:layout_height="wrap_content"
         android:paddingBottom="4dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:layout_gravity="center_vertical">
 
         <androidx.appcompat.widget.DialogTitle
             android:id="@+id/font_size_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary"
+            style="?android:attr/windowTitleStyle"
             android:layout_gravity="center_vertical"
             android:text="@string/font_size_dialog_title" />
 
