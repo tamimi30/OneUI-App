@@ -18,7 +18,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <TextView
+        <androidx.appcompat.widget.DialogTitle
             android:id="@+id/font_size_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
