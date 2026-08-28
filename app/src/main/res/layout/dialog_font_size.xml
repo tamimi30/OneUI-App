@@ -9,6 +9,34 @@
     android:paddingHorizontal="17dp"
     android:paddingTop="15dp"
     android:paddingBottom="31dp">
+    	
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:id="@+id/font_size_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/font_size_dialog_title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+        <ImageView
+            android:id="@+id/font_size_help_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_oui_help_outline"
+            android:contentDescription="@string/font_size_dialog_tip"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+    </LinearLayout>
 
     <EditText
         android:id="@+id/font_size_value"
@@ -26,9 +54,6 @@
         android:selectAllOnFocus="true"
         android:maxLength="3"
         android:cursorVisible="false"
-        android:textSelectHandle="@null"
-        android:textSelectHandleLeft="@null"
-        android:textSelectHandleRight="@null"
         android:textColorHighlight="@color/sesl_number_picker_text_highlight_color"
         android:gravity="center" />
 
