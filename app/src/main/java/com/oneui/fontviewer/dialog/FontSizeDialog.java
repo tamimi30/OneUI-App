@@ -7,6 +7,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.view.MotionEvent;
+import android.view.MotionEvent.ACTION_DOWN;
+import android.view.ViewConfiguration.getDoubleTapTimeout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
@@ -80,10 +83,10 @@ public class FontSizeDialog {
             private boolean blockThisGesture = false;
 
             @Override
-            public boolean onTouch(View v, android.view.MotionEvent event) {
-                if (event.getActionMasked() == android.view.MotionEvent.ACTION_DOWN) {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getActionMasked() == ACTION_DOWN) {
                     long now = event.getEventTime();
-                    blockThisGesture = (now - lastDownTime) < android.view.ViewConfiguration.getDoubleTapTimeout();
+                    blockThisGesture = (now - lastDownTime) < getDoubleTapTimeout();
                     lastDownTime = blockThisGesture ? 0L : now;
                 }
                 return blockThisGesture;
