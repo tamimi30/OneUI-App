@@ -20,7 +20,6 @@
 
         <TextView
             android:id="@+id/font_size_title"
-            style="?android:attr/windowTitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="viewStart"
@@ -28,7 +27,6 @@
 
         <ImageView
             android:id="@+id/font_size_help_icon"
-            style="@style/RtlOverlay.Widget.AppCompat.DialogTitle.Icon"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:padding="4dp"
@@ -37,7 +35,7 @@
             android:contentDescription="@string/font_size_dialog_tip"
             android:clickable="true"
             android:focusable="true"
-            android:scaleType="fitCenter"
+            android:gravity="end|bottom|center"
             android:background="?attr/selectableItemBackgroundBorderless" />
 
     </LinearLayout>
