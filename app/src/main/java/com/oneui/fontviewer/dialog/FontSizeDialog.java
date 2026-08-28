@@ -7,8 +7,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.view.MotionEvent;
-import android.view.ViewConfiguration;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
@@ -75,21 +73,20 @@ public class FontSizeDialog {
             fontSizeTipPopup.show(TipPopup.DIRECTION_BOTTOM_RIGHT);
         });
 
-        fontSizeValue.setOnClickListener(v -> fontSizeValue.selectAll());
-        fontSizeValue.setLongClickable(false); 
-        fontSizeValue.setOnTouchListener(new View.OnTouchListener() {
-            private long lastDownTime = 0L;
-            private boolean blockThisGesture = false;
+        fontSizeValue.setLongClickable(false);
 
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    long now = event.getEventTime();
-                    blockThisGesture = (now - lastDownTime) < ViewConfiguration.getDoubleTapTimeout();
-                    lastDownTime = blockThisGesture ? 0L : now;
+        fontSizeValue.setOnTouchListener((v, event) -> {
+            if (event.getActionMasked() == android.view.MotionEvent.ACTION_DOWN) {
+                fontSizeValue.selectAll();
+                fontSizeValue.requestFocus();
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.viewClicked(fontSizeValue);
+                    imm.showSoftInput(fontSizeValue, 0);
                 }
-                return blockThisGesture;
+                return true;
             }
+            return false;
         });
 
         fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
@@ -240,4 +237,4 @@ public class FontSizeDialog {
     }
 
     
-            }
+}
