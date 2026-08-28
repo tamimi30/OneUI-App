@@ -74,8 +74,7 @@ public class SearchCoordinator {
 
     public void bindSearchMenuItem(@NonNull MenuItem searchMenuItem) {
         this.searchMenuItem = searchMenuItem;
-        
-        this.searchMenuItem.setActionView(null);
+
         this.searchMenuItem.setOnMenuItemClickListener(item -> {
             expandSearch();
             return true;
@@ -275,7 +274,7 @@ public class SearchCoordinator {
             if (searchMenuItem != null && drawerLayout != null) {
                 drawerLayout.post(() -> {
                     if (searchMenuItem != null) {
-                        searchMenuItem.expandActionView();
+                        expandSearch();
                         if (searchView != null && !savedSearchQuery.isEmpty()) {
                             searchView.setQuery(savedSearchQuery, false);
                         }
