@@ -16,13 +16,16 @@
         android:layout_height="wrap_content"
         android:paddingBottom="4dp"
         android:orientation="horizontal"
-        android:gravity="start|bottom|center">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/font_size_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="viewStart"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="?android:atrr/textColorPrimary"
+            android:layout_gravity="center_vertical"
             android:text="@string/font_size_dialog_title" />
 
         <ImageView
@@ -35,7 +38,7 @@
             android:contentDescription="@string/font_size_dialog_tip"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="end|bottom|center"
+            android:layout_gravity="center_vertical|end"
             android:background="?attr/selectableItemBackgroundBorderless" />
 
     </LinearLayout>
