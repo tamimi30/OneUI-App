@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 
@@ -11,6 +12,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
 
 import com.oneui.fontviewer.R;
+
+import dev.oneuiproject.oneui.widget.TipPopup;
 
 public class FontSizeDialog {
 
@@ -33,6 +36,7 @@ public class FontSizeDialog {
 
     private AlertDialog dialog;
     private float tempSize;
+    private TipPopup fontSizeTipPopup;
 
     public FontSizeDialog(Context context, float currentSize, float minSize, float maxSize) {
         this.context     = context;
@@ -62,8 +66,8 @@ public class FontSizeDialog {
         fontSizeValue.setLongClickable(false); 
 
         fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
-            @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
-            @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
+            @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return true; }
+            @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { menu.clear(); return true; }
             @Override public boolean onActionItemClicked(android.view.ActionMode mode, android.view.MenuItem item) { return false; }
             @Override public void onDestroyActionMode(android.view.ActionMode mode) {}
         });
@@ -81,6 +85,9 @@ public class FontSizeDialog {
                 if (!inputText.isEmpty()) {
                     try {
                         float enteredSize = Float.parseFloat(inputText);
+                        if (enteredSize > maxSize || enteredSize < minSize) {
+                            Toast.makeText(context, R.string.toast_invalid_font_size, Toast.LENGTH_SHORT).show();
+                        }
                         if (enteredSize > maxSize) enteredSize = maxSize;
                         if (enteredSize < minSize) enteredSize = minSize;
 
@@ -114,6 +121,9 @@ public class FontSizeDialog {
             if (!inputText.isEmpty()) {
                 try {
                     float enteredSize = Float.parseFloat(inputText);
+                    if (enteredSize > maxSize || enteredSize < minSize) {
+                        Toast.makeText(context, R.string.toast_invalid_font_size, Toast.LENGTH_SHORT).show();
+                    }
                     if (enteredSize > maxSize) enteredSize = maxSize;
                     if (enteredSize < minSize) enteredSize = minSize;
                     tempSize = enteredSize;
@@ -139,7 +149,18 @@ public class FontSizeDialog {
         });
 
         dialog = builder.create();
+        dialog.setOnDismissListener(d -> {
+            if (fontSizeTipPopup != null) {
+                fontSizeTipPopup.dismiss(false);
+            }
+        });
         dialog.show();
+
+        fontSizeValue.post(() -> {
+            fontSizeTipPopup = new TipPopup(fontSizeValue, TipPopup.MODE_NORMAL);
+            fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
+            fontSizeTipPopup.show(TipPopup.DIRECTION_TOP_RIGHT);
+        });
     }
 
     private void setupSeekBar() {
@@ -149,7 +170,6 @@ public class FontSizeDialog {
 
         int range = (int) (maxSize - minSize);
         seekBar.setMax(range);
-        seekBar.setMode(SeslSeekBar.MODE_EXPAND);
 
         int currentProgress = (int) (currentSize - minSize);
         seekBar.setProgress(currentProgress);
