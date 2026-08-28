@@ -27,7 +27,7 @@
             android:textSize="16sp"
             app:maxFontLevel="large"
             android:textStyle="bold"
-            android:textDirecict="locale"
+            android:textDirection="locale"
             android:textColor="?android:attr/textColorPrimary"
             android:text="@string/font_size_dialog_title" />
 
@@ -40,7 +40,7 @@
             android:contentDescription="@string/font_size_dialog_tip"
             android:clickable="true"
             android:focusable="true"
-            android:textDirecict="locale"
+            android:textDirection="locale"
             android:background="?attr/selectableItemBackgroundBorderless" />
 
     </LinearLayout>
