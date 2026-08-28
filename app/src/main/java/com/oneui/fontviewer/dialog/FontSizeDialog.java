@@ -77,19 +77,15 @@ public class FontSizeDialog {
 
         fontSizeValue.setOnClickListener(v -> fontSizeValue.selectAll());
         fontSizeValue.setLongClickable(false); 
-        fontSizeValue.setOnTouchListener(new View.OnTouchListener() {
-            private long lastDownTime = 0L;
-            private boolean blockThisGesture = false;
-
+        android.view.GestureDetector gestureDetector = new android.view.GestureDetector(context, new android.view.GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    long now = event.getEventTime();
-                    blockThisGesture = (now - lastDownTime) < ViewConfiguration.getDoubleTapTimeout();
-                    lastDownTime = blockThisGesture ? 0L : now;
-                }
-                return blockThisGesture;
+            public boolean onDoubleTap(android.view.MotionEvent e) {
+                return true; // استهلاك النقر المزدوج لمنع ظهور المقابض
             }
+        });
+
+        fontSizeValue.setOnTouchListener((v, event) -> {
+            return gestureDetector.onTouchEvent(event);
         });
 
         fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
