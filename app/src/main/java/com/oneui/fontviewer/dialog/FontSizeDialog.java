@@ -56,14 +56,39 @@ public class FontSizeDialog {
 
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.font_size_dialog_title);
+        
 
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_font_size, null);
         builder.setView(dialogView);
         fontSizeValue = dialogView.findViewById(R.id.font_size_value);
+        View helpIcon = dialogView.findViewById(R.id.font_size_help_icon);
+        helpIcon.setOnClickListener(v -> {
+            if (fontSizeTipPopup != null && fontSizeTipPopup.isShowing()) {
+                fontSizeTipPopup.dismiss(true);
+                return;
+            }
+            fontSizeTipPopup = new TipPopup(helpIcon, TipPopup.MODE_TRANSLUCENT);
+            fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
+            fontSizeTipPopup.setExpanded(true);
+            fontSizeTipPopup.show(TipPopup.DIRECTION_BOTTOM_RIGHT);
+        });
 
         fontSizeValue.setOnClickListener(v -> fontSizeValue.selectAll());
         fontSizeValue.setLongClickable(false); 
+        fontSizeValue.setOnTouchListener(new View.OnTouchListener() {
+            private long lastDownTime = 0L;
+            private boolean blockThisGesture = false;
+
+            @Override
+            public boolean onTouch(View v, android.view.MotionEvent event) {
+                if (event.getActionMasked() == android.view.MotionEvent.ACTION_DOWN) {
+                    long now = event.getEventTime();
+                    blockThisGesture = (now - lastDownTime) < android.view.ViewConfiguration.getDoubleTapTimeout();
+                    lastDownTime = blockThisGesture ? 0L : now;
+                }
+                return blockThisGesture;
+            }
+        });
 
         fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
             @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return true; }
@@ -154,13 +179,21 @@ public class FontSizeDialog {
                 fontSizeTipPopup.dismiss(false);
             }
         });
-        dialog.show();
-
-        fontSizeValue.post(() -> {
-            fontSizeTipPopup = new TipPopup(fontSizeValue, TipPopup.MODE_NORMAL);
-            fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
-            fontSizeTipPopup.show(TipPopup.DIRECTION_TOP_RIGHT);
+        
+        dialog.setOnCancelListener(d -> {
+            String inputText = fontSizeValue.getText().toString();
+            if (!inputText.isEmpty()) {
+                try {
+                    float enteredSize = Float.parseFloat(inputText);
+                    if (enteredSize > maxSize || enteredSize < minSize) {
+                        Toast.makeText(context, R.string.toast_invalid_font_size, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (NumberFormatException ignored) {}
+            }
         });
+        
+        dialog.show();
+        
     }
 
     private void setupSeekBar() {
