@@ -33,14 +33,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_gravity="center_vertical"
-            android:paddingHorizontal="2.0px"
-            android:paddingVertical="2.0px">
+            android:layout_gravity="center_vertical">
 
             <ImageView
                 android:id="@+id/btn_bold"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="54dp"
                 android:layout_weight="1"
                 android:padding="17dp"
                 android:src="@drawable/ic_oui_text_bold"
@@ -55,7 +53,7 @@
             <ImageView
                 android:id="@+id/btn_italic"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="54dp"
                 android:layout_weight="1"
                 android:padding="17dp"
                 android:src="@drawable/ic_oui_text_italic"
