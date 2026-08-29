@@ -70,7 +70,7 @@ public class FontSizeDialog {
             fontSizeTipPopup = new TipPopup(helpIcon, TipPopup.MODE_TRANSLUCENT);
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             fontSizeTipPopup.setExpanded(true);
-            fontSizeTipPopup.show(TipPopup.DIRECTION_BOTTOM_START);
+            fontSizeTipPopup.show(TipPopup.DIRECTION_BOTTOM);
             fontSizeTipPopup.animateScaleUp();
         });
 
