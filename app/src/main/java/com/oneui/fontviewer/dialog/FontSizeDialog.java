@@ -72,7 +72,7 @@ public class FontSizeDialog {
             fontSizeTipPopup.setExpanded(true);
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
-            fontSizeTipPopup.animateScaleUp();
+            fontSizeTipPopup.animateViewIn();
         });
 
         fontSizeValue.setLongClickable(false);
@@ -221,7 +221,13 @@ public class FontSizeDialog {
             }
 
             @Override
-            public void onStartTrackingTouch(SeslSeekBar seekBar) {}
+            public void onStartTrackingTouch(SeslSeekBar seekBar) {
+                fontSizeValue.clearFocus();
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
+                }
+            }
 
             @Override
             public void onStopTrackingTouch(SeslSeekBar seekBar) {}
