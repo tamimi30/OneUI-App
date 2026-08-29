@@ -46,7 +46,6 @@
                 android:foreground="@drawable/sort_btn_ripple_oval"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginEnd="16dp"
                 android:layout_gravity="center_vertical"
                 android:tooltipText="@string/btn_bold" />
 
