@@ -71,6 +71,7 @@ public class FontSizeDialog {
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             fontSizeTipPopup.setExpanded(true);
             fontSizeTipPopup.show(TipPopup.DIRECTION_BOTTOM_RIGHT);
+            fontSizeTipPopup.animateScaleUp();
         });
 
         fontSizeValue.setLongClickable(false);
