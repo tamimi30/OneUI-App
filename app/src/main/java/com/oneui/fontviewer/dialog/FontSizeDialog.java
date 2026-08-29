@@ -70,7 +70,8 @@ public class FontSizeDialog {
             fontSizeTipPopup = new TipPopup(helpIcon, TipPopup.MODE_TRANSLUCENT);
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             fontSizeTipPopup.setExpanded(true);
-            fontSizeTipPopup.show(TipPopup.DIRECTION_BOTTOM_RIGHT);
+            boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+            fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_LEFT : TipPopup.DIRECTION_BOTTOM_RIGHT);
             fontSizeTipPopup.animateScaleUp();
         });
 
