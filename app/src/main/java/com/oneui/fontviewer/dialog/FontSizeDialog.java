@@ -72,6 +72,7 @@ public class FontSizeDialog {
             fontSizeTipPopup.setExpanded(true);
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
+            fontSizeTipPopup.animateViewIn();
         });
 
         fontSizeValue.setLongClickable(false);
@@ -238,7 +239,9 @@ public class FontSizeDialog {
             String newText = String.format("%.0f", size);
             if (!fontSizeValue.getText().toString().equals(newText)) {
                 fontSizeValue.setText(newText);
-                fontSizeValue.setSelection(newText.length());
+                if (fontSizeValue.hasFocus()) {
+                    fontSizeValue.setSelection(newText.length());
+                }
             }
         }
     }
