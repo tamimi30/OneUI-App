@@ -71,7 +71,7 @@ public class FontSizeDialog {
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             fontSizeTipPopup.setExpanded(true);
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
-            fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LIFT);
+            fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
             fontSizeTipPopup.animateScaleUp();
         });
 
