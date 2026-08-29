@@ -220,13 +220,7 @@ public class FontSizeDialog {
             }
 
             @Override
-            public void onStartTrackingTouch(SeslSeekBar seekBar) {
-                fontSizeValue.clearFocus();
-                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
-                }
-            }
+            public void onStartTrackingTouch(SeslSeekBar seekBar) {}
 
             @Override
             public void onStopTrackingTouch(SeslSeekBar seekBar) {}
