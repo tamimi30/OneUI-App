@@ -16,6 +16,7 @@
         android:paddingRight="24dp"
         android:paddingBottom="19dp"
         android:orientation="horizontal"
+        android:layoutDirection="locale"
         android:layout_gravity="center_vertical">
 
         <com.oneui.fontviewer.widget.OneUiTextView
@@ -26,6 +27,7 @@
             android:textSize="16sp"
             app:maxFontLevel="large"
             android:textStyle="bold"
+            android:textDirection="locale"
             android:textColor="?android:attr/textColorPrimary"
             android:layout_gravity="center_vertical"
             android:text="@string/font_size_dialog_title" />
@@ -39,6 +41,7 @@
             android:contentDescription="@string/font_size_dialog_tip"
             android:clickable="true"
             android:focusable="true"
+            android:layoutDirection="locale"
             android:layout_gravity="center_vertical"
             android:background="?attr/selectableItemBackgroundBorderless" />
 
