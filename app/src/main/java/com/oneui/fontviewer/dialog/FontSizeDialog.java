@@ -37,8 +37,6 @@ public class FontSizeDialog {
     private AlertDialog dialog;
     private float tempSize;
     private TipPopup fontSizeTipPopup;
-    private long lastFontSizeTextUpdateTime = 0L;
-    private static final long FONT_SIZE_TEXT_UPDATE_THROTTLE_MS = 80L;
 
     public FontSizeDialog(Context context, float currentSize, float minSize, float maxSize) {
         this.context     = context;
@@ -74,7 +72,6 @@ public class FontSizeDialog {
             fontSizeTipPopup.setExpanded(true);
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
-            
         });
 
         fontSizeValue.setLongClickable(false);
@@ -215,12 +212,7 @@ public class FontSizeDialog {
             @Override
             public void onProgressChanged(SeslSeekBar seekBar, int progress, boolean fromUser) {
                 tempSize = minSize + progress;
-
-                long now = System.currentTimeMillis();
-                if (now - lastFontSizeTextUpdateTime >= FONT_SIZE_TEXT_UPDATE_THROTTLE_MS) {
-                    lastFontSizeTextUpdateTime = now;
-                    updateFontSizeText(tempSize);
-                }
+                updateFontSizeText(tempSize);
 
                 if (sizeListener != null && fromUser) {
                     sizeListener.onFontSizeChanged(tempSize);
@@ -228,12 +220,16 @@ public class FontSizeDialog {
             }
 
             @Override
-            public void onStartTrackingTouch(SeslSeekBar seekBar) {}
+            public void onStartTrackingTouch(SeslSeekBar seekBar) {
+                fontSizeValue.clearFocus();
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
+                }
+            }
 
             @Override
-            public void onStopTrackingTouch(SeslSeekBar seekBar) {
-                updateFontSizeText(tempSize);
-            }
+            public void onStopTrackingTouch(SeslSeekBar seekBar) {}
         });
     }
 
