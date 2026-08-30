@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="primary_color_themed">#6345e5</color>
+    <color name="primary_color_themed">@color/ic_bg_color</color>
     <color name="ic_bg_color">#6345e5</color>
     <color name="oui_primary_color">#ff0072de</color>
-    
+
+    <color name="orange">#EAB65205</color>
 
     <color name="sort_bar_text_color">#ff636363</color>
     <color name="primary_text_color">#ff010101</color>
