@@ -2,7 +2,7 @@
 <resources>
 
     <color name="primary_color_themed">@color/ic_bg_color</color>
-    <color name="ic_bg_color">#6345e5</color>
+    <color name="ic_bg_color">#8062F4</color>
     <color name="oui_primary_color">#ff0072de</color>
 
     <color name="orange">#EAB65205</color>
