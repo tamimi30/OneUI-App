@@ -14,7 +14,7 @@
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:paddingBottom="4dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
         <com.oneui.fontviewer.widget.OneUiTextView
@@ -49,10 +49,10 @@
         android:layout_height="wrap_content"
         android:minWidth="80dp"
         android:text="34"
-        android:textSize="26sp"
+        android:textSize="25sp"
         android:textColor="?android:attr/textColorPrimary"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="11dp"
+        android:layout_marginBottom="12dp"
         android:background="@null"
         android:inputType="number"
         android:imeOptions="flagNoExtractUi|actionDone"
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="11dp"
         android:layout_marginEnd="11dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="17dp"
         app:seslSeekBarMode="expand" />
 
 </LinearLayout>
