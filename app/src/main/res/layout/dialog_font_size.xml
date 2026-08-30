@@ -34,7 +34,7 @@
             android:layout_width="26dp"
             android:layout_height="26dp"
             android:src="@drawable/ic_oui_tips"
-            android:tint="@color/orange"
+            android:tint="#FF9E01"
             android:contentDescription="@string/font_size_dialog_tip"
             android:clickable="true"
             android:focusable="true"
