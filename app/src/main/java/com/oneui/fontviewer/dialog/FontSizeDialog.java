@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
+import androidx.core.content.ContextCompat;
 
 import com.oneui.fontviewer.R;
 
@@ -36,6 +37,7 @@ public class FontSizeDialog {
 
     private AlertDialog dialog;
     private float tempSize;
+    private float originalSize;
     private TipPopup fontSizeTipPopup;
 
     public FontSizeDialog(Context context, float currentSize, float minSize, float maxSize) {
@@ -44,6 +46,7 @@ public class FontSizeDialog {
         this.minSize     = minSize;
         this.maxSize     = maxSize;
         this.tempSize    = currentSize;
+        this.originalSize = currentSize;
     }
 
     public void setOnFontSizeChangedListener(OnFontSizeChangedListener listener) {
@@ -69,6 +72,8 @@ public class FontSizeDialog {
             }
             fontSizeTipPopup = new TipPopup(helpIcon, TipPopup.MODE_TRANSLUCENT);
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
+            // set custom background color with alpha using project color
+            fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.oui_primary_color));
             fontSizeTipPopup.setExpanded(true);
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
@@ -77,6 +82,8 @@ public class FontSizeDialog {
 
         fontSizeValue.setLongClickable(false);
 
+        // When the EditText is touched or focused we disable the seekBar to avoid
+        // heavy seek events while the keyboard is visible (fixes keyboard freeze).
         fontSizeValue.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == android.view.MotionEvent.ACTION_DOWN) {
                 fontSizeValue.selectAll();
@@ -86,9 +93,26 @@ public class FontSizeDialog {
                     imm.viewClicked(fontSizeValue);
                     imm.showSoftInput(fontSizeValue, 0);
                 }
+                if (seekBar != null) {
+                    seekBar.setEnabled(false);
+                    seekBar.setAlpha(0.4f);
+                }
                 return true;
             }
             return false;
+        });
+
+        // Also track focus changes to re-enable/disable the seekBar when keyboard
+        // is shown/hidden by other means.
+        fontSizeValue.setOnFocusChangeListener((v, hasFocus) -> {
+            if (seekBar == null) return;
+            if (hasFocus) {
+                seekBar.setEnabled(false);
+                seekBar.setAlpha(0.4f);
+            } else {
+                seekBar.setEnabled(true);
+                seekBar.setAlpha(1f);
+            }
         });
 
         fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
@@ -118,10 +142,12 @@ public class FontSizeDialog {
                         if (enteredSize < minSize) enteredSize = minSize;
 
                         int newProgress = (int) (enteredSize - minSize);
-                        seekBar.setProgress(newProgress);
+                        if (seekBar != null) seekBar.setProgress(newProgress);
                         updateFontSizeText(enteredSize);
                         tempSize = enteredSize;
                         
+                        // For immediate preview we inform the listener, but we will
+                        // restore original size if the dialog is cancelled.
                         if (sizeListener != null) {
                             sizeListener.onFontSizeChanged(enteredSize);
                         }
@@ -134,6 +160,11 @@ public class FontSizeDialog {
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
                 }
+                // Re-enable seekBar after keyboard closed
+                if (seekBar != null) {
+                    seekBar.setEnabled(true);
+                    seekBar.setAlpha(1f);
+                }
                 return true;
             }
             return false;
@@ -142,7 +173,7 @@ public class FontSizeDialog {
 
         setupSeekBar();
 
-        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+        builder.setPositiveButton(android.R.string.ok, (d, which) -> {
             String inputText = fontSizeValue.getText().toString();
             if (!inputText.isEmpty()) {
                 try {
@@ -156,25 +187,38 @@ public class FontSizeDialog {
                 } catch (NumberFormatException ignored) {}
             }
             
+            // Commit the final size
             if (sizeListener != null) {
                 sizeListener.onFontSizeChanged(tempSize);
             }
             
+            // Hide keyboard and re-enable seekBar
             fontSizeValue.clearFocus();
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
             }
+            if (seekBar != null) {
+                seekBar.setEnabled(true);
+                seekBar.setAlpha(1f);
+            }
         });
 
-        builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+        builder.setNegativeButton(android.R.string.cancel, (d, which) -> {
+            // Restore original size when cancelling
+            if (sizeListener != null) {
+                sizeListener.onFontSizeChanged(originalSize);
+            }
             if (cancelListener != null) {
                 cancelListener.onDialogCancelled();
             }
-            dialog.dismiss();
+            // Dialog will be dismissed automatically
         });
 
         dialog = builder.create();
+        // Allow tapping outside to cancel and restore size
+        dialog.setCanceledOnTouchOutside(true);
+
         dialog.setOnDismissListener(d -> {
             if (fontSizeTipPopup != null) {
                 fontSizeTipPopup.dismiss(false);
@@ -182,14 +226,23 @@ public class FontSizeDialog {
         });
         
         dialog.setOnCancelListener(d -> {
-            String inputText = fontSizeValue.getText().toString();
-            if (!inputText.isEmpty()) {
-                try {
-                    float enteredSize = Float.parseFloat(inputText);
-                    if (enteredSize > maxSize || enteredSize < minSize) {
-                        Toast.makeText(context, R.string.toast_invalid_font_size, Toast.LENGTH_SHORT).show();
-                    }
-                } catch (NumberFormatException ignored) {}
+            // Restore original size when cancelled (including tapping outside)
+            if (sizeListener != null) {
+                sizeListener.onFontSizeChanged(originalSize);
+            }
+            if (cancelListener != null) {
+                cancelListener.onDialogCancelled();
+            }
+
+            // Hide keyboard and re-enable seekBar
+            fontSizeValue.clearFocus();
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
+            }
+            if (seekBar != null) {
+                seekBar.setEnabled(true);
+                seekBar.setAlpha(1f);
             }
         });
         
@@ -215,6 +268,7 @@ public class FontSizeDialog {
                 tempSize = minSize + progress;
                 updateFontSizeText(tempSize);
 
+                // Live preview while dragging; we keep originalSize to allow restore on cancel
                 if (sizeListener != null && fromUser) {
                     sizeListener.onFontSizeChanged(tempSize);
                 }
