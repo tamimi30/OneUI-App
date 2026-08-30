@@ -60,7 +60,7 @@
 	<string name="toast_no_internet_connection">لم تتم ترجمة البيانات الوصفية، لا يتوفر اتصال بالانترنت</string>
 	<string name="toast_translation_api_error">فشلت ترجمة البيانات الوصفية، خدمة الترجمة غير متوفرة.</string>
 	<string name="toast_invalid_font_size">تم إدخال قيمة غير صالحة</string>
-	<string name="font_size_dialog_tip"> ضغط على الرقم لتعديل حجم الخط بدقة ضغط على الرقم لتعديل حجم الخط بدقة ضغط على الرقم لتعديل حجم الخط بدقةاضغط على الرقم لتعديل حجم الخط بدقة</string>
+	<string name="font_size_dialog_tip">إضغط على الرقم لتعديل حجم النص بدقة.</string>
     
     <!-- الخطوط المحلية -->
     <string name="drawer_local_fonts">الخطوط المحلية</string>
