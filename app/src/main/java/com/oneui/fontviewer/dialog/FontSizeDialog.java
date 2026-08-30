@@ -81,7 +81,7 @@ public class FontSizeDialog {
             fontSizeTipPopup = new TipPopup(helpIcon, TipPopup.MODE_NORMAL);
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             // set custom background color with alpha using project color
-            fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.oui_primary_color));
+            fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
             fontSizeTipPopup.setExpanded(true);
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
