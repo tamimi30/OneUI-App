@@ -11,6 +11,8 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.oneui.fontviewer.R;
 
@@ -39,6 +41,7 @@ public class FontSizeDialog {
     private float tempSize;
     private float originalSize;
     private TipPopup fontSizeTipPopup;
+    private boolean isNumericKeyboardVisible = false;
 
     public FontSizeDialog(Context context, float currentSize, float minSize, float maxSize) {
         this.context     = context;
@@ -84,26 +87,41 @@ public class FontSizeDialog {
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
         });
 
+        // يرصد ظهور/اختفاء الكيبورد مباشرة، بغض النظر عن السبب (رجوع، Done، إلخ)
+        ViewCompat.setOnApplyWindowInsetsListener(dialogView, (v, insets) -> {
+            boolean isVisibleNow = insets.isVisible(WindowInsetsCompat.Type.ime());
+            if (isNumericKeyboardVisible && !isVisibleNow && seekBar != null) {
+                seekBar.setEnabled(true);
+                seekBar.setAlpha(1f);
+            }
+            isNumericKeyboardVisible = isVisibleNow;
+            return insets;
+        });
+
         fontSizeValue.setLongClickable(false);
 
-        // When the EditText is touched or focused we disable the seekBar to avoid
-        // heavy seek events while the keyboard is visible (fixes keyboard freeze).
+        // ننتظر رفع الإصبع (ACTION_UP) قبل التنفيذ، كسلوك النقر القياسي،
+        // بدل التنفيذ الفوري عند أول لمسة (ACTION_DOWN).
         fontSizeValue.setOnTouchListener((v, event) -> {
-            if (event.getActionMasked() == android.view.MotionEvent.ACTION_DOWN) {
-                fontSizeValue.selectAll();
-                fontSizeValue.requestFocus();
-                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.viewClicked(fontSizeValue);
-                    imm.showSoftInput(fontSizeValue, 0);
-                }
-                if (seekBar != null) {
-                    seekBar.setEnabled(false);
-                    seekBar.setAlpha(0.4f);
-                }
-                return true;
+            switch (event.getActionMasked()) {
+                case android.view.MotionEvent.ACTION_DOWN:
+                    return true;
+                case android.view.MotionEvent.ACTION_UP:
+                    fontSizeValue.selectAll();
+                    fontSizeValue.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.viewClicked(fontSizeValue);
+                        imm.showSoftInput(fontSizeValue, 0);
+                    }
+                    if (seekBar != null) {
+                        seekBar.setEnabled(false);
+                        seekBar.setAlpha(0.4f);
+                    }
+                    return true;
+                default:
+                    return false;
             }
-            return false;
         });
 
         // Also track focus changes to re-enable/disable the seekBar when keyboard
@@ -227,6 +245,7 @@ public class FontSizeDialog {
             if (fontSizeTipPopup != null) {
                 fontSizeTipPopup.dismiss(false);
             }
+            ViewCompat.setOnApplyWindowInsetsListener(dialogView, null);
         });
         
         dialog.setOnCancelListener(d -> {
