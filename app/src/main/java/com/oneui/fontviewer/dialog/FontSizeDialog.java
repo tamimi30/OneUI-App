@@ -72,19 +72,15 @@ public class FontSizeDialog {
             fontSizeTipPopup.setExpanded(true);
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
+            fontSizeTipPopup.animateScaleUp();
         });
 
         fontSizeValue.setLongClickable(false);
 
-        // عند النقر على حقل الإدخال: فعّل الكيبورد وعطّل SeekBar
         fontSizeValue.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == android.view.MotionEvent.ACTION_DOWN) {
                 fontSizeValue.selectAll();
                 fontSizeValue.requestFocus();
-                
-                // تعطيل SeekBar وتغيير لونه
-                disableSeekBar();
-                
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.viewClicked(fontSizeValue);
@@ -134,31 +130,14 @@ public class FontSizeDialog {
                     }
                 }
                 fontSizeValue.clearFocus();
-                
-                // إغلاق الكيبورد وتفعيل SeekBar مرة أخرى
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
                 }
-                enableSeekBar();
-                
                 return true;
             }
             return false;
         });
-
-        // مراقبة فقدان التركيز على حقل الإدخال وإغلاق الكيبورد
-        fontSizeValue.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                // عند فقدان التركيز: إغلاق الكيبورد وتفعيل SeekBar
-                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
-                }
-                enableSeekBar();
-            }
-        });
-
         seekBar       = dialogView.findViewById(R.id.font_size_seekbar);
 
         setupSeekBar();
@@ -218,30 +197,6 @@ public class FontSizeDialog {
         
     }
 
-    /**
-     * تعطيل SeekBar وتغيير مظهره للدلالة على أنه معطل
-     * - تقليل الشفافية إلى 50%
-     * - تعطيل المس
-     */
-    private void disableSeekBar() {
-        if (seekBar != null) {
-            seekBar.setEnabled(false);
-            seekBar.setAlpha(0.5f); // شفافية 50% لتشير إلى التعطيل
-        }
-    }
-
-    /**
-     * تفعيل SeekBar واستعادة مظهره الطبيعي
-     * - استعادة الشفافية إلى 100%
-     * - تفعيل المس
-     */
-    private void enableSeekBar() {
-        if (seekBar != null) {
-            seekBar.setEnabled(true);
-            seekBar.setAlpha(1.0f); // شفافية 100% (طبيعي)
-        }
-    }
-
     private void setupSeekBar() {
         if (seekBar == null) {
             return;
@@ -278,9 +233,7 @@ public class FontSizeDialog {
             String newText = String.format("%.0f", size);
             if (!fontSizeValue.getText().toString().equals(newText)) {
                 fontSizeValue.setText(newText);
-                if (fontSizeValue.hasFocus()) {
-                    fontSizeValue.setSelection(newText.length());
-                }
+                fontSizeValue.setSelection(newText.length());
             }
         }
     }
