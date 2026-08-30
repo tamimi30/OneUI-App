@@ -5,16 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingTop="24dp"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
-    android:paddingBottom="31dp">
+    android:orientation="vertical">
     	
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="19dp"
+        android:paddingTop="24dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:layout_marginBottom="12dp"
         android:orientation="horizontal">
 
         <com.oneui.fontviewer.widget.OneUiTextView
@@ -31,10 +30,10 @@
 
         <ImageView
             android:id="@+id/font_size_help_icon"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_oui_help_outline"
-            android:tint="?android:attr/textColorSecondary"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:src="@drawable/ic_oui_tips_outline"
+            android:tint="#FF9E01"
             android:contentDescription="@string/font_size_dialog_tip"
             android:clickable="true"
             android:focusable="true"
@@ -49,10 +48,10 @@
         android:layout_height="wrap_content"
         android:minWidth="80dp"
         android:text="34"
-        android:textSize="30sp"
+        android:textSize="28sp"
         android:textColor="?android:attr/textColorPrimary"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="21dp"
+        android:layout_marginBottom="12dp"
         android:background="@null"
         android:inputType="number"
         android:imeOptions="flagNoExtractUi|actionDone"
@@ -66,6 +65,9 @@
         android:id="@+id/font_size_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="12dp"
         app:seslSeekBarMode="expand" />
 
 </LinearLayout>
