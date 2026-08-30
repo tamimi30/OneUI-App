@@ -90,9 +90,10 @@ public class FontSizeDialog {
         // يرصد ظهور/اختفاء الكيبورد مباشرة، بغض النظر عن السبب (رجوع، Done، إلخ)
         ViewCompat.setOnApplyWindowInsetsListener(dialogView, (v, insets) -> {
             boolean isVisibleNow = insets.isVisible(WindowInsetsCompat.Type.ime());
-            if (isNumericKeyboardVisible && !isVisibleNow && seekBar != null) {
-                seekBar.setEnabled(true);
-                seekBar.setAlpha(1f);
+            if (isNumericKeyboardVisible && !isVisibleNow) {
+                if (fontSizeValue != null) {
+                    fontSizeValue.clearFocus();
+                }
             }
             isNumericKeyboardVisible = isVisibleNow;
             return insets;
