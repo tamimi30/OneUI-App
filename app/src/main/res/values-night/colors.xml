@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="oui_primary_color">#EAFF9E01</color>
+    <color name="oui_primary_color">#ff3e91ff</color>
 
     <color name="sort_bar_text_color">#ffa9a9a9</color>
     <color name="primary_text_color">#fffafafa</color>
