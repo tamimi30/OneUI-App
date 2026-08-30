@@ -60,7 +60,7 @@
 	<string name="toast_no_internet_connection">The metadata has not been translated, no internet connection.</string>
 	<string name="toast_translation_api_error">Metadata translation failed, translation service unavailable.</string>
     <string name="toast_invalid_font_size">Invalid value provided</string>
-	<string name="font_size_dialog_tip">Click on the number to adjust the text size accurately.</string>
+	<string name="font_size_dialog_tip">Click the number to adjust the text size accurately.</string>
 	
     <!-- الخطوط المحلية -->
     <string name="drawer_local_fonts">Local fonts</string>
