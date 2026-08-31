@@ -301,12 +301,6 @@ public class FontViewerFragment extends Fragment {
         previewSentence = view.findViewById(R.id.preview_sentence);
         weightLabelText = view.findViewById(R.id.weight_label_text);
         weightSpinner   = view.findViewById(R.id.weight_spinner);
-
-        // تعطيل التسريع الجرافيكي لهذا العنصر تحديدًا: عند الخطوط المخصصة
-        // وأحجام كبيرة جدًا، قد يمتد حبر بعض الحروف إلى ما وراء حدود الطبقة
-        // الرسومية المحسوبة من مقاييس الخط القياسية (ascent/descent)، فتُقص.
-        // الرسم بالمعالج (Software) لا يخضع لهذا القيد.
-        previewSentence.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
 
