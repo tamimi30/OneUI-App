@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:minWidth="80dp"
         android:text="34"
-        android:textSize="36dp"
+        android:textSize="40dp"
         android:textColor="?android:attr/textColorPrimary"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
