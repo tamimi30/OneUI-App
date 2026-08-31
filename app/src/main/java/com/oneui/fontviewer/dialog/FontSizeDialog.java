@@ -5,7 +5,7 @@ import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
+//import android.widget.Toast;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.ActionMode;
@@ -20,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import dev.oneuiproject.oneui.widget.TipPopup;
+import dev.oneuiproject.oneui.widget.Toast;
 
 import com.oneui.fontviewer.R;
 
