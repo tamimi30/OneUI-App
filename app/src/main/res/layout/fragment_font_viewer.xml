@@ -7,58 +7,61 @@
     android:overScrollMode="always"
     android:scrollbars="vertical"
     android:fillViewport="true">
-
-    <dev.oneuiproject.oneui.widget.RoundLinearLayout
+       
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingVertical="27dp"
-        android:background="@color/oui_background_color"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="104dp">
 
-        <!-- وصف الوزن والعرض للخطوط الثابتة -->
-        <TextView
-            android:id="@+id/weight_label_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="17sp"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone" />
-
-        <!-- منتقي الوزن للخطوط المتغيرة -->
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/weight_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginHorizontal="14dp"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone" />
-
-        <LinearLayout
+        <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
-  
+            android:layout_height="match_parent"
+            android:paddingVertical="27dp"
+            android:background="@color/oui_background_color"
+            android:orientation="vertical">
+
+            <!-- وصف الوزن والعرض للخطوط الثابتة -->
             <TextView
-                android:id="@+id/preview_sentence"
+                android:id="@+id/weight_label_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="17sp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone" />
+
+            <!-- منتقي الوزن للخطوط المتغيرة -->
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/weight_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginHorizontal="14dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="34dp"
-                android:textColor="@color/font_preview_text_color" />
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp">
+  
+                <TextView
+                    android:id="@+id/preview_sentence"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="34dp"
+                    android:textColor="@color/font_preview_text_color" />
                 
-        </LinearLayout>
+            </LinearLayout>
                 
-    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
-    
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="104dp"
-        android:background="@android:color/transparent" />
+        </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+        
+    </LinearLayout>
     
 </androidx.core.widget.NestedScrollView>
