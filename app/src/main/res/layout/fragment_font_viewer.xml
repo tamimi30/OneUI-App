@@ -24,8 +24,6 @@
             android:paddingVertical="27dp"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
@@ -52,6 +50,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
                 android:clipToPadding="false"
                 android:orientation="vertical">
                 
