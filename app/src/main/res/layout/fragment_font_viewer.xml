@@ -18,6 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingVertical="27dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
@@ -40,7 +42,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:layout_marginHorizontal="14dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />             
                 
@@ -48,9 +49,6 @@
                 android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:clipToPadding="false"
                 android:lineSpacingExtra="4sp"
                 android:textSize="34dp"
                 android:textColor="@color/font_preview_text_color" />
