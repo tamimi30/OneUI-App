@@ -1,6 +1,7 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -42,6 +43,7 @@ public class FontSizeDialog {
     private float originalSize;
     private TipPopup fontSizeTipPopup;
     private boolean isNumericKeyboardVisible = false;
+    private Toast invalidSizeRealtimeToast;
 
     public FontSizeDialog(Context context, float currentSize, float minSize, float maxSize) {
         this.context     = context;
@@ -137,6 +139,37 @@ public class FontSizeDialog {
                 seekBar.setAlpha(1f);
             }
         });
+
+        // نفس نمط سامسونج: رفض فوري للرقم الزائد أثناء الكتابة + Toast واحد يُعاد استخدامه.
+        InputFilter maxValueRealtimeFilter = (source, start, end, dest, dstart, dend) -> {
+            String result = dest.subSequence(0, dstart).toString()
+                    + source.subSequence(start, end)
+                    + dest.subSequence(dend, dest.length());
+
+            if (result.isEmpty()) {
+                return null;
+            }
+
+            try {
+                int enteredValue = Integer.parseInt(result);
+                if (enteredValue > (int) maxSize) {
+                    if (invalidSizeRealtimeToast == null) {
+                        invalidSizeRealtimeToast = Toast.makeText(context, R.string.toast_invalid_font_size, Toast.LENGTH_SHORT);
+                    }
+                    invalidSizeRealtimeToast.show();
+                    return "";
+                }
+            } catch (NumberFormatException e) {
+                return "";
+            }
+
+            return null;
+        };
+        InputFilter[] existingFilters = fontSizeValue.getFilters();
+        InputFilter[] combinedFilters = new InputFilter[existingFilters.length + 1];
+        System.arraycopy(existingFilters, 0, combinedFilters, 0, existingFilters.length);
+        combinedFilters[existingFilters.length] = maxValueRealtimeFilter;
+        fontSizeValue.setFilters(combinedFilters);
 
         fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
             @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return true; }
@@ -318,3 +351,4 @@ public class FontSizeDialog {
 
     
                                                          }
+                                                         
