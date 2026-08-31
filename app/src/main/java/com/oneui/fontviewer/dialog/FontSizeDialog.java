@@ -8,6 +8,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
@@ -15,9 +19,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.oneui.fontviewer.R;
-
 import dev.oneuiproject.oneui.widget.TipPopup;
+
+import com.oneui.fontviewer.R;
 
 public class FontSizeDialog {
 
@@ -107,9 +111,9 @@ public class FontSizeDialog {
         // بدل التنفيذ الفوري عند أول لمسة (ACTION_DOWN).
         fontSizeValue.setOnTouchListener((v, event) -> {
             switch (event.getActionMasked()) {
-                case android.view.MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_DOWN:
                     return true;
-                case android.view.MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_UP:
                     fontSizeValue.selectAll();
                     fontSizeValue.requestFocus();
                     InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -171,18 +175,18 @@ public class FontSizeDialog {
         combinedFilters[existingFilters.length] = maxValueRealtimeFilter;
         fontSizeValue.setFilters(combinedFilters);
 
-        fontSizeValue.setCustomSelectionActionModeCallback(new android.view.ActionMode.Callback() {
-            @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return true; }
-            @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { menu.clear(); return true; }
-            @Override public boolean onActionItemClicked(android.view.ActionMode mode, android.view.MenuItem item) { return false; }
-            @Override public void onDestroyActionMode(android.view.ActionMode mode) {}
+        fontSizeValue.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+            @Override public boolean onCreateActionMode(ActionMode mode, Menu menu) { return true; }
+            @Override public boolean onPrepareActionMode(ActionMode mode, Menu menu) { menu.clear(); return true; }
+            @Override public boolean onActionItemClicked(ActionMode mode, MenuItem item) { return false; }
+            @Override public void onDestroyActionMode(ActionMode mode) {}
         });
 
-        fontSizeValue.setCustomInsertionActionModeCallback(new android.view.ActionMode.Callback() {
-            @Override public boolean onCreateActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
-            @Override public boolean onPrepareActionMode(android.view.ActionMode mode, android.view.Menu menu) { return false; }
-            @Override public boolean onActionItemClicked(android.view.ActionMode mode, android.view.MenuItem item) { return false; }
-            @Override public void onDestroyActionMode(android.view.ActionMode mode) {}
+        fontSizeValue.setCustomInsertionActionModeCallback(new ActionMode.Callback() {
+            @Override public boolean onCreateActionMode(ActionMode mode, Menu menu) { return false; }
+            @Override public boolean onPrepareActionMode(ActionMode mode, Menu menu) { return false; }
+            @Override public boolean onActionItemClicked(ActionMode mode, MenuItem item) { return false; }
+            @Override public void onDestroyActionMode(ActionMode mode) {}
         });
 
         fontSizeValue.setOnEditorActionListener((v, actionId, event) -> {
