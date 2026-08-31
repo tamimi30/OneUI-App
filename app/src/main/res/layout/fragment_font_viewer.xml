@@ -46,12 +46,10 @@
                 
             <TextView
                 android:id="@+id/preview_sentence"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:lineSpacingExtra="4sp"
-                android:textSize="34dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
                 android:textColor="@color/font_preview_text_color" />
         
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
