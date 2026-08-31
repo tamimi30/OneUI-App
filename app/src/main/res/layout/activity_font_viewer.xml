@@ -37,7 +37,7 @@
 
             <ImageView
                 android:id="@+id/btn_bold"
-                android:layout_width="wrap_content"
+                android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_weight="1"
                 android:src="@drawable/ic_oui_text_bold"
@@ -50,7 +50,7 @@
 
             <ImageView
                 android:id="@+id/btn_italic"
-                android:layout_width="wrap_content"
+                android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_weight="1"
                 android:src="@drawable/ic_oui_text_italic"
