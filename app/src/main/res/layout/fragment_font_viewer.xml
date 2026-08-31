@@ -24,6 +24,8 @@
             android:paddingVertical="27dp"
             android:clipChildren="false"
             android:clipToPadding="false"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
@@ -46,25 +48,16 @@
                 android:layout_gravity="left"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" /> 
-
-            <FrameLayout
-                android:layout_width="match_parent"
+                
+            <TextView
+                android:id="@+id/preview_sentence"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
+                android:lineSpacingExtra="4sp"
                 android:clipToPadding="false"
-                android:orientation="vertical">
-                
-                <TextView
-                    android:id="@+id/preview_sentence"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:lineSpacingExtra="4sp"
-                    android:clipToPadding="false"
-                    android:textSize="34dp"
-                    android:textColor="@color/font_preview_text_color" />
-                
-            </FrameLayout>
+                android:layout_marginHorizontal="-15dp"
+                android:textSize="34dp"
+                android:textColor="@color/font_preview_text_color" />
             
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
         
