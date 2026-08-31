@@ -4,6 +4,8 @@
     android:id="@+id/font_viewer_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:overScrollMode="always"
     android:scrollbars="vertical"
     android:fillViewport="true">
@@ -12,6 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:paddingBottom="104dp">
 
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
@@ -20,6 +24,8 @@
             android:paddingVertical="27dp"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
@@ -42,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:layout_marginHorizontal="14dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />             
                 
@@ -50,6 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="4sp"
+                android:clipToPadding="false"
                 android:textSize="34dp"
                 android:textColor="@color/font_preview_text_color" />
         
