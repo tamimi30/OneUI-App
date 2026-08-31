@@ -38,7 +38,7 @@
             <ImageView
                 android:id="@+id/btn_bold"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="24dp"
                 android:layout_weight="1"
                 android:src="@drawable/ic_oui_text_bold"
                 android:background="@drawable/bg_format_toggle"
@@ -51,7 +51,7 @@
             <ImageView
                 android:id="@+id/btn_italic"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="24dp"
                 android:layout_weight="1"
                 android:src="@drawable/ic_oui_text_italic"
                 android:background="@drawable/bg_format_toggle"
