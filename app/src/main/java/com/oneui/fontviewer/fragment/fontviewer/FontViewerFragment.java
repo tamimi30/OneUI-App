@@ -287,7 +287,7 @@ public class FontViewerFragment extends Fragment {
         }
 
         weightAnimator = ValueAnimator.ofFloat(oldWeight, newWeight);
-        weightAnimator.setDuration(300);
+        weightAnimator.setDuration(350);
         weightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
 
         weightAnimator.addUpdateListener(animation -> {
