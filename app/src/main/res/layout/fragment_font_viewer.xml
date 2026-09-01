@@ -43,23 +43,15 @@
                 android:layout_marginHorizontal="14dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
-
-            <LinearLayout
+  
+            <TextView
+                android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="0dp"
+                android:textSize="34dp"
                 android:paddingStart="24dp"
-                android:paddingEnd="24dp">
-  
-                <TextView
-                    android:id="@+id/preview_sentence"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="34dp"
-                    android:textColor="@color/font_preview_text_color" />
-                
-            </LinearLayout>
+                android:paddingEnd="24dp"
+                android:textColor="@color/font_preview_text_color" />
                 
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
         
