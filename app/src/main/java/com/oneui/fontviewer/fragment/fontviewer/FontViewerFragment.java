@@ -1,6 +1,5 @@
 package com.oneui.fontviewer.fragment.fontviewer;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -16,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -72,8 +70,6 @@ public class FontViewerFragment extends Fragment {
     private TextView weightLabelText;
     private AppCompatSpinner weightSpinner;
 
-    private ValueAnimator weightMorphAnimator;
-
     private String currentFontPath;
     private String currentFontFileName;
     private String currentFontRealName;
@@ -96,6 +92,7 @@ public class FontViewerFragment extends Fragment {
     private FontViewerPreferenceManager preferenceManager;
     private SettingsViewModel settingsViewModel;
     private BoldItalicFormatting formattingHelper = new BoldItalicFormatting();
+    private android.animation.ValueAnimator weightAnimator; // متغير الأنيميشن
 
 
     public interface OnFontChangedListener {
@@ -233,11 +230,11 @@ public class FontViewerFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-    	formattingHelper.unbind();
-        if (weightMorphAnimator != null) {
-            weightMorphAnimator.cancel();
-            weightMorphAnimator = null;
+        // إيقاف الأنيميشن إذا كان يعمل لمنع تسريب الذاكرة (Memory Leak)
+        if (weightAnimator != null && weightAnimator.isRunning()) {
+            weightAnimator.cancel();
         }
+    	formattingHelper.unbind();
         super.onDestroyView();
         previewSentence = null;
         weightLabelText = null;
@@ -263,65 +260,62 @@ public class FontViewerFragment extends Fragment {
             return;
         }
 
-        float previousFontWeight = currentFontWeight;
-
-        currentFontWeight = instance.value;
-        preferenceManager.saveFontWeight(instance.value);
-
         File fontFile = new File(currentFontPath);
         if (!fontFile.exists()) {
             return;
         }
 
-        Typeface newTypeface;
+        float oldWeight = currentFontWeight;
+        final float newWeight = instance.value;
 
-        if (isSystemFont) {
-            SystemFontCache cache = SystemFontCache.getInstance();
-            newTypeface = cache.getTypefaceWithWeight(currentFontPath, instance.value, currentTtcIndex);
-        } else {
-            newTypeface = VariableFontHelper.createTypefaceWithWeight(fontFile, instance.value, currentTtcIndex);
-        }
-
-        if (newTypeface != null) {
-            currentTypeface = newTypeface;
-            animateWeightTransition(previousFontWeight, instance.value);
-        } else {
-            Toast.makeText(requireContext(),
-                "Failed to apply weight: " + instance.name,
-                Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void animateWeightTransition(float fromWeight, float toWeight) {
-        applyFontToPreviewTexts();
-
-        if (previewSentence == null || fromWeight == toWeight) {
+        // إذا كان الوزن هو نفسه، لا تفعل شيئاً
+        if (oldWeight == newWeight) {
             return;
         }
 
-        float actualFromWeight = fromWeight;
-        if (weightMorphAnimator != null && weightMorphAnimator.isRunning()) {
-            actualFromWeight = (float) weightMorphAnimator.getAnimatedValue();
-            weightMorphAnimator.cancel();
+        // حفظ الوزن الجديد في التفضيلات
+        preferenceManager.saveFontWeight(newWeight);
+
+        // إلغاء أي أنيميشن يعمل حالياً لمنع التداخل (إذا اختار المستخدم أوزان متتالية بسرعة)
+        if (weightAnimator != null && weightAnimator.isRunning()) {
+            weightAnimator.cancel();
+            // التقاط الوزن الحالي أثناء الأنيميشن ليكون نقطة البداية الجديدة
+            oldWeight = currentFontWeight; 
         }
 
-        previewSentence.setFontVariationSettings("'wght' " + actualFromWeight);
-        previewSentence.invalidate();
+        // إنشاء أنيميشن ينتقل من الوزن القديم إلى الجديد
+        weightAnimator = android.animation.ValueAnimator.ofFloat(oldWeight, newWeight);
+        weightAnimator.setDuration(300); // مدة الأنيميشن (300 ملي ثانية - يمكنك تعديلها)
+        weightAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator()); // حركة ناعمة في البداية والنهاية
 
-        ValueAnimator animator = ValueAnimator.ofFloat(actualFromWeight, toWeight);
-        animator.setDuration(350);
-        animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.addUpdateListener(anim -> {
-            if (previewSentence == null) {
-                return;
+        // تحديث الخط مع كل خطوة في الأنيميشن
+        weightAnimator.addUpdateListener(animation -> {
+            float animatedWeight = (float) animation.getAnimatedValue();
+
+            Typeface animatedTypeface;
+            if (isSystemFont) {
+                SystemFontCache cache = SystemFontCache.getInstance();
+                animatedTypeface = cache.getTypefaceWithWeight(currentFontPath, animatedWeight, currentTtcIndex);
+            } else {
+                animatedTypeface = VariableFontHelper.createTypefaceWithWeight(fontFile, animatedWeight, currentTtcIndex);
             }
-            float animatedWeight = (float) anim.getAnimatedValue();
-            previewSentence.setFontVariationSettings("'wght' " + animatedWeight);
-            previewSentence.invalidate();
+
+            if (animatedTypeface != null) {
+                currentTypeface = animatedTypeface;
+                currentFontWeight = animatedWeight; // تحديث الوزن الحالي لتطبيقه
+                applyFontToPreviewTexts(); // تحديث الشاشة
+            }
         });
 
-        weightMorphAnimator = animator;
-        animator.start();
+        // تأكيد تعيين الوزن النهائي بدقة عند انتهاء الأنيميشن
+        weightAnimator.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                currentFontWeight = newWeight;
+            }
+        });
+
+        weightAnimator.start();
     }
 
     private void updatePreviewTexts() {
