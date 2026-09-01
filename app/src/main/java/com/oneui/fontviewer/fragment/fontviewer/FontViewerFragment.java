@@ -29,7 +29,6 @@ import androidx.lifecycle.ViewModelProvider;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.os.Build;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import java.io.File;
@@ -287,32 +286,15 @@ public class FontViewerFragment extends Fragment {
         }
 
         weightAnimator = ValueAnimator.ofFloat(oldWeight, newWeight);
-        weightAnimator.setDuration(350);
+        weightAnimator.setDuration(450);
         weightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
 
         weightAnimator.addUpdateListener(animation -> {
             float animatedWeight = (float) animation.getAnimatedValue();
             currentFontWeight = animatedWeight;
 
-            // تطبيق الميزة الجديدة للأجهزة المدعومة (أندرويد 8.0 وأعلى)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (previewSentence != null) {
-                    previewSentence.setFontVariationSettings("'wght' " + animatedWeight);
-                }
-            } else {
-                // الطريقة القديمة للأجهزة الأقدم
-                Typeface animatedTypeface;
-                if (isSystemFont) {
-                    SystemFontCache cache = SystemFontCache.getInstance();
-                    animatedTypeface = cache.getTypefaceWithWeight(currentFontPath, animatedWeight, currentTtcIndex);
-                } else {
-                    animatedTypeface = VariableFontHelper.createTypefaceWithWeight(fontFile, animatedWeight, currentTtcIndex);
-                }
-
-                if (animatedTypeface != null) {
-                    currentTypeface = animatedTypeface;
-                    applyFontToPreviewTexts();
-                }
+            if (previewSentence != null) {
+                previewSentence.setFontVariationSettings("'wght' " + animatedWeight);
             }
         });
 
@@ -321,20 +303,18 @@ public class FontViewerFragment extends Fragment {
             public void onAnimationEnd(Animator animation) {
                 currentFontWeight = newWeight;
                 
-                // التأكد من بناء Typeface النهائي في الخلفية للأجهزة الحديثة لضمان استقرار خصائص الخط عند تغيير حجمه لاحقاً
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    bgExecutor.execute(() -> {
-                        Typeface finalTypeface;
-                        if (isSystemFont) {
-                            finalTypeface = SystemFontCache.getInstance().getTypefaceWithWeight(currentFontPath, newWeight, currentTtcIndex);
-                        } else {
-                            finalTypeface = VariableFontHelper.createTypefaceWithWeight(fontFile, newWeight, currentTtcIndex);
-                        }
-                        if (finalTypeface != null) {
-                            mainHandler.post(() -> currentTypeface = finalTypeface);
-                        }
-                    });
-                }
+                // بناء Typeface النهائي في الخلفية لضمان استقرار خصائص الخط عند تغيير حجمه لاحقاً
+                bgExecutor.execute(() -> {
+                    Typeface finalTypeface;
+                    if (isSystemFont) {
+                        finalTypeface = SystemFontCache.getInstance().getTypefaceWithWeight(currentFontPath, newWeight, currentTtcIndex);
+                    } else {
+                        finalTypeface = VariableFontHelper.createTypefaceWithWeight(fontFile, newWeight, currentTtcIndex);
+                    }
+                    if (finalTypeface != null) {
+                        mainHandler.post(() -> currentTypeface = finalTypeface);
+                    }
+                });
             }
         });
 
