@@ -26,8 +26,15 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.os.Build;
+import android.view.animation.AccelerateDecelerateInterpolator;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -92,7 +99,7 @@ public class FontViewerFragment extends Fragment {
     private FontViewerPreferenceManager preferenceManager;
     private SettingsViewModel settingsViewModel;
     private BoldItalicFormatting formattingHelper = new BoldItalicFormatting();
-    private android.animation.ValueAnimator weightAnimator; // متغير الأنيميشن
+    private ValueAnimator weightAnimator; // متغير الأنيميشن
 
 
     public interface OnFontChangedListener {
@@ -268,50 +275,66 @@ public class FontViewerFragment extends Fragment {
         float oldWeight = currentFontWeight;
         final float newWeight = instance.value;
 
-        // إذا كان الوزن هو نفسه، لا تفعل شيئاً
         if (oldWeight == newWeight) {
             return;
         }
 
-        // حفظ الوزن الجديد في التفضيلات
         preferenceManager.saveFontWeight(newWeight);
 
-        // إلغاء أي أنيميشن يعمل حالياً لمنع التداخل (إذا اختار المستخدم أوزان متتالية بسرعة)
         if (weightAnimator != null && weightAnimator.isRunning()) {
             weightAnimator.cancel();
-            // التقاط الوزن الحالي أثناء الأنيميشن ليكون نقطة البداية الجديدة
             oldWeight = currentFontWeight; 
         }
 
-        // إنشاء أنيميشن ينتقل من الوزن القديم إلى الجديد
-        weightAnimator = android.animation.ValueAnimator.ofFloat(oldWeight, newWeight);
-        weightAnimator.setDuration(300); // مدة الأنيميشن (300 ملي ثانية - يمكنك تعديلها)
-        weightAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator()); // حركة ناعمة في البداية والنهاية
+        weightAnimator = ValueAnimator.ofFloat(oldWeight, newWeight);
+        weightAnimator.setDuration(300);
+        weightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        // تحديث الخط مع كل خطوة في الأنيميشن
         weightAnimator.addUpdateListener(animation -> {
             float animatedWeight = (float) animation.getAnimatedValue();
+            currentFontWeight = animatedWeight;
 
-            Typeface animatedTypeface;
-            if (isSystemFont) {
-                SystemFontCache cache = SystemFontCache.getInstance();
-                animatedTypeface = cache.getTypefaceWithWeight(currentFontPath, animatedWeight, currentTtcIndex);
+            // تطبيق الميزة الجديدة للأجهزة المدعومة (أندرويد 8.0 وأعلى)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (previewSentence != null) {
+                    previewSentence.setFontVariationSettings("'wght' " + animatedWeight);
+                }
             } else {
-                animatedTypeface = VariableFontHelper.createTypefaceWithWeight(fontFile, animatedWeight, currentTtcIndex);
-            }
+                // الطريقة القديمة للأجهزة الأقدم
+                Typeface animatedTypeface;
+                if (isSystemFont) {
+                    SystemFontCache cache = SystemFontCache.getInstance();
+                    animatedTypeface = cache.getTypefaceWithWeight(currentFontPath, animatedWeight, currentTtcIndex);
+                } else {
+                    animatedTypeface = VariableFontHelper.createTypefaceWithWeight(fontFile, animatedWeight, currentTtcIndex);
+                }
 
-            if (animatedTypeface != null) {
-                currentTypeface = animatedTypeface;
-                currentFontWeight = animatedWeight; // تحديث الوزن الحالي لتطبيقه
-                applyFontToPreviewTexts(); // تحديث الشاشة
+                if (animatedTypeface != null) {
+                    currentTypeface = animatedTypeface;
+                    applyFontToPreviewTexts();
+                }
             }
         });
 
-        // تأكيد تعيين الوزن النهائي بدقة عند انتهاء الأنيميشن
-        weightAnimator.addListener(new android.animation.AnimatorListenerAdapter() {
+        weightAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationEnd(android.animation.Animator animation) {
+            public void onAnimationEnd(Animator animation) {
                 currentFontWeight = newWeight;
+                
+                // التأكد من بناء Typeface النهائي في الخلفية للأجهزة الحديثة لضمان استقرار خصائص الخط عند تغيير حجمه لاحقاً
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    bgExecutor.execute(() -> {
+                        Typeface finalTypeface;
+                        if (isSystemFont) {
+                            finalTypeface = SystemFontCache.getInstance().getTypefaceWithWeight(currentFontPath, newWeight, currentTtcIndex);
+                        } else {
+                            finalTypeface = VariableFontHelper.createTypefaceWithWeight(fontFile, newWeight, currentTtcIndex);
+                        }
+                        if (finalTypeface != null) {
+                            mainHandler.post(() -> currentTypeface = finalTypeface);
+                        }
+                    });
+                }
             }
         });
 
@@ -746,7 +769,7 @@ public class FontViewerFragment extends Fragment {
 
     public Map<String, String> getFontMetaData() {
         if (currentFontPath == null) {
-            return new java.util.HashMap<>();
+            return new HashMap<>();
         }
 
         File fontFile = new File(currentFontPath);
@@ -754,7 +777,7 @@ public class FontViewerFragment extends Fragment {
         Map<String, String> metadata = FontMetadataExtractor.extractMetadataWithTtcIndex(fontFile, currentTtcIndex);
 
         if (metadata == null) {
-            metadata = new java.util.HashMap<>();
+            metadata = new HashMap<>();
         }
 
         String displayPath = (originalFontPath != null && !originalFontPath.isEmpty())
