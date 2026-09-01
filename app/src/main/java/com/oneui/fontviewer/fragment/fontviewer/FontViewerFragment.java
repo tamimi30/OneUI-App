@@ -1,5 +1,6 @@
 package com.oneui.fontviewer.fragment.fontviewer;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -69,6 +71,8 @@ public class FontViewerFragment extends Fragment {
     private TextView previewSentence;
     private TextView weightLabelText;
     private AppCompatSpinner weightSpinner;
+
+    private ValueAnimator weightMorphAnimator;
 
     private String currentFontPath;
     private String currentFontFileName;
@@ -230,6 +234,10 @@ public class FontViewerFragment extends Fragment {
     @Override
     public void onDestroyView() {
     	formattingHelper.unbind();
+        if (weightMorphAnimator != null) {
+            weightMorphAnimator.cancel();
+            weightMorphAnimator = null;
+        }
         super.onDestroyView();
         previewSentence = null;
         weightLabelText = null;
@@ -255,6 +263,8 @@ public class FontViewerFragment extends Fragment {
             return;
         }
 
+        float previousFontWeight = currentFontWeight;
+
         currentFontWeight = instance.value;
         preferenceManager.saveFontWeight(instance.value);
 
@@ -274,12 +284,44 @@ public class FontViewerFragment extends Fragment {
 
         if (newTypeface != null) {
             currentTypeface = newTypeface;
-            applyFontToPreviewTexts();
+            animateWeightTransition(previousFontWeight, instance.value);
         } else {
             Toast.makeText(requireContext(),
                 "Failed to apply weight: " + instance.name,
                 Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void animateWeightTransition(float fromWeight, float toWeight) {
+        applyFontToPreviewTexts();
+
+        if (previewSentence == null || fromWeight == toWeight) {
+            return;
+        }
+
+        float actualFromWeight = fromWeight;
+        if (weightMorphAnimator != null && weightMorphAnimator.isRunning()) {
+            actualFromWeight = (float) weightMorphAnimator.getAnimatedValue();
+            weightMorphAnimator.cancel();
+        }
+
+        previewSentence.setFontVariationSettings("'wght' " + actualFromWeight);
+        previewSentence.invalidate();
+
+        ValueAnimator animator = ValueAnimator.ofFloat(actualFromWeight, toWeight);
+        animator.setDuration(350);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.addUpdateListener(anim -> {
+            if (previewSentence == null) {
+                return;
+            }
+            float animatedWeight = (float) anim.getAnimatedValue();
+            previewSentence.setFontVariationSettings("'wght' " + animatedWeight);
+            previewSentence.invalidate();
+        });
+
+        weightMorphAnimator = animator;
+        animator.start();
     }
 
     private void updatePreviewTexts() {
