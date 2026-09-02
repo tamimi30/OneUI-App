@@ -16,13 +16,15 @@ public class VariableFontHelper {
     
     public static class VariableInstance {
         public String name;
-        public String tag;
-        public float value;
+        public float weight;
+        public float width;
+        public String variationSettings;
         
-        public VariableInstance(String name, String tag, float value) {
+        public VariableInstance(String name, float weight, float width) {
             this.name = name;
-            this.tag = tag;
-            this.value = value;
+            this.weight = weight;
+            this.width = width;
+            this.variationSettings = "'wght' " + weight + (width > 0 ? ", 'wdth' " + width : "");
         }
         
         @Override
@@ -123,26 +125,32 @@ public class VariableFontHelper {
     public static List<VariableInstance> extractVariableInstances(File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
         
-        
-        
         if (!isVariableFont(fontFile, ttcIndex)) {
             return instances;
         }
         
         try {
-            float[] range = readWeightRangeFromFvar(fontFile, ttcIndex);
-            float minWeight = range[0];
-            float maxWeight = range[1];
+            float[][] ranges = readAxesRangesFromFvar(fontFile, ttcIndex);
+            float minWeight = ranges[0][0];
+            float maxWeight = ranges[0][1];
+            float minWidth = ranges[1][0];
+            float maxWidth = ranges[1][1];
             
-            addWeightIfInRange(instances, "Thin", 100, minWeight, maxWeight);
-            addWeightIfInRange(instances, "Extra Light", 200, minWeight, maxWeight);
-            addWeightIfInRange(instances, "Light", 300, minWeight, maxWeight);
-            addWeightIfInRange(instances, "Regular", 400, minWeight, maxWeight);
-            addWeightIfInRange(instances, "Medium", 500, minWeight, maxWeight);
-            addWeightIfInRange(instances, "Semi Bold", 600, minWeight, maxWeight);
-            addWeightIfInRange(instances, "Bold", 700, minWeight, maxWeight);
-            addWeightIfInRange(instances, "Extra Bold", 800, minWeight, maxWeight);
-            addWeightIfInRange(instances, "Black", 900, minWeight, maxWeight);
+            float normalWidth = Math.max(minWidth, Math.min(100f, maxWidth));
+            
+            addCombinations(instances, "", minWeight, maxWeight, normalWidth);
+            
+            if (minWidth <= 75f && maxWidth >= 75f && minWidth != maxWidth) {
+                addCombinations(instances, "Condensed ", minWeight, maxWeight, 75f);
+            } else if (minWidth < normalWidth && minWidth != maxWidth) {
+                addCombinations(instances, "Condensed ", minWeight, maxWeight, minWidth);
+            }
+            
+            if (maxWidth >= 125f && minWidth != maxWidth) {
+                addCombinations(instances, "Expanded ", minWeight, maxWeight, 125f);
+            } else if (maxWidth > normalWidth && minWidth != maxWidth) {
+                addCombinations(instances, "Expanded ", minWeight, maxWeight, maxWidth);
+            }
             
         } catch (Exception e) {
             android.util.Log.e(TAG, "Failed to extract instances", e);
@@ -151,10 +159,8 @@ public class VariableFontHelper {
         return instances;
     }
     
-    
-    
-    private static float[] readWeightRangeFromFvar(File fontFile, int ttcIndex) {
-        float[] defaultRange = {100f, 900f};
+    private static float[][] readAxesRangesFromFvar(File fontFile, int ttcIndex) {
+        float[][] ranges = {{100f, 900f}, {100f, 100f}};
         
         try (RandomAccessFile raf = new RandomAccessFile(fontFile, "r")) {
             byte[] header = new byte[4];
@@ -167,7 +173,7 @@ public class VariableFontHelper {
                 raf.seek(8);
                 long numFonts = readUInt32(raf);
                 if (ttcIndex >= numFonts) {
-                    return defaultRange;
+                    return ranges;
                 }
                 
                 raf.seek(12 + (ttcIndex * 4));
@@ -192,7 +198,7 @@ public class VariableFontHelper {
             }
             
             if (fvarOffset == -1) {
-                return defaultRange;
+                return ranges;
             }
             
             raf.seek(fvarOffset + 4);
@@ -210,19 +216,21 @@ public class VariableFontHelper {
                 String axisTagStr = new String(axisTag, "US-ASCII");
                 
                 if ("wght".equals(axisTagStr)) {
-                    float minValue = readFixed(raf);
+                    ranges[0][0] = readFixed(raf);
                     readFixed(raf);
-                    float maxValue = readFixed(raf);
-                    
-                    return new float[]{minValue, maxValue};
+                    ranges[0][1] = readFixed(raf);
+                } else if ("wdth".equals(axisTagStr)) {
+                    ranges[1][0] = readFixed(raf);
+                    readFixed(raf);
+                    ranges[1][1] = readFixed(raf);
                 }
             }
             
         } catch (Exception e) {
-            android.util.Log.e(TAG, "Failed to read weight range from fvar", e);
+            android.util.Log.e(TAG, "Failed to read axes ranges from fvar", e);
         }
         
-        return defaultRange;
+        return ranges;
     }
     
     private static int readUInt16(RandomAccessFile raf) throws Exception {
@@ -245,14 +253,7 @@ public class VariableFontHelper {
         raf.read(bytes);
         int value = ((bytes[0] & 0xFF) << 24) | 
                     ((bytes[1] & 0xFF) << 16) | 
-                    ((bytes[2] & 0xFF) << 8) | 
-                    (bytes[3] & 0xFF);
-        return value / 65536.0f;
-    }
-    
-    private static void addWeightIfInRange(List<VariableInstance> instances, 
-                                          String name, float value, 
-                                          float min, float max) {
+                   float min, float max) {
         if (value >= min && value <= max) {
             instances.add(new VariableInstance(name, "wght", value));
         }
@@ -260,21 +261,16 @@ public class VariableFontHelper {
 
     
 
-    public static Typeface createTypefaceWithWeight(File fontFile, float weight, int ttcIndex) {
-        
-        
+    public static Typeface createTypefaceWithSettings(File fontFile, String variationSettings, int ttcIndex) {
         try {
             Font.Builder fontBuilder = new Font.Builder(fontFile);
             
             if (ttcIndex > 0) {
                 fontBuilder.setTtcIndex(ttcIndex);
-                android.util.Log.d(TAG, "Set TTC index: " + ttcIndex);
             }
             
-            if (weight > 0) {
-                String variationSettings = "'wght' " + weight;
+            if (variationSettings != null && !variationSettings.isEmpty()) {
                 fontBuilder.setFontVariationSettings(variationSettings);
-                android.util.Log.d(TAG, "Set variation settings: " + variationSettings);
             }
             
             Font font = fontBuilder.build();
@@ -284,16 +280,10 @@ public class VariableFontHelper {
                     new android.graphics.fonts.FontFamily.Builder(font).build()
                 );
             
-            Typeface result = fallbackBuilder.build();
-            android.util.Log.d(TAG, "Successfully created variable Typeface with weight: " + weight + 
-                                   ", ttcIndex: " + ttcIndex);
-            
-            return result;
+            return fallbackBuilder.build();
             
         } catch (Exception e) {
-            android.util.Log.e(TAG, "Failed to create variable Typeface with weight: " + weight + 
-                                    ", ttcIndex: " + ttcIndex, e);
-            
+            android.util.Log.e(TAG, "Failed to create variable Typeface", e);
             try {
                 return Typeface.createFromFile(fontFile);
             } catch (Exception ex) {
