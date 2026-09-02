@@ -59,6 +59,7 @@ public class FontViewerFragment extends Fragment {
     private static final String KEY_ORIGINAL_FONT_PATH = "original_font_path";
     private static final String KEY_FONT_SIZE          = "font_size";
     private static final String KEY_FONT_WEIGHT        = "font_weight";
+    private static final String KEY_FONT_WIDTH         = "font_width";
     private static final String KEY_IS_VARIABLE_FONT   = "is_variable_font";
     private static final String KEY_TTC_INDEX          = "ttc_index";
     private static final String KEY_IS_SYSTEM_FONT     = "is_system_font";
@@ -69,6 +70,7 @@ public class FontViewerFragment extends Fragment {
     private static final float MIN_FONT_SIZE       = 12f;
     private static final float MAX_FONT_SIZE       = 520f;
     private static final float DEFAULT_FONT_WEIGHT = 400f;
+    private static final float DEFAULT_FONT_WIDTH  = 100f;
 
     private static float sSessionFontSize = -1f;
 
@@ -83,7 +85,7 @@ public class FontViewerFragment extends Fragment {
     private Typeface currentTypeface;
     private float currentFontSize   = DEFAULT_FONT_SIZE;
     private float currentFontWeight = DEFAULT_FONT_WEIGHT;
-    private float currentFontWidth  = 100f;
+    private float currentFontWidth  = DEFAULT_FONT_WIDTH;
     private boolean isVariableFont  = false;
     private int currentTtcIndex     = 0;
     private boolean isSystemFont    = false;
@@ -194,7 +196,7 @@ public class FontViewerFragment extends Fragment {
             originalFontPath       = savedInstanceState.getString(KEY_ORIGINAL_FONT_PATH);
             currentFontSize        = savedInstanceState.getFloat(KEY_FONT_SIZE, DEFAULT_FONT_SIZE);
             currentFontWeight      = savedInstanceState.getFloat(KEY_FONT_WEIGHT, DEFAULT_FONT_WEIGHT);
-            currentFontWidth       = savedInstanceState.getFloat("font_width", 100f);
+            currentFontWidth       = savedInstanceState.getFloat(KEY_FONT_WIDTH, DEFAULT_FONT_WIDTH);
             isVariableFont         = savedInstanceState.getBoolean(KEY_IS_VARIABLE_FONT, false);
             currentTtcIndex        = savedInstanceState.getInt(KEY_TTC_INDEX, 0);
             isSystemFont           = savedInstanceState.getBoolean(KEY_IS_SYSTEM_FONT, false);
@@ -202,7 +204,7 @@ public class FontViewerFragment extends Fragment {
 
             if (currentFontPath != null && !currentFontPath.isEmpty()) {
                 notifyFontChangedImmediate();
-                loadFontFromPathWithWeight(currentFontPath, currentFontWeight);
+                loadFontFromPathWithAxes(currentFontPath, currentFontWeight, currentFontWidth);
             }
         } else {
             Intent hostIntent = requireActivity().getIntent();
@@ -263,7 +265,7 @@ public class FontViewerFragment extends Fragment {
         }
     }
 
-    private void onFontWeightChanged(VariableFontHelper.VariableInstance instance) {
+    private void onFontInstanceChanged(VariableFontHelper.VariableInstance instance) {
         if (instance == null || currentFontPath == null) {
             return;
         }
@@ -274,40 +276,31 @@ public class FontViewerFragment extends Fragment {
         }
 
         float oldWeight = currentFontWeight;
-        float oldWidth = currentFontWidth;
         final float newWeight = instance.weight;
         final float newWidth = instance.width;
-        final String newSettings = instance.variationSettings;
 
-        if (oldWeight == newWeight && oldWidth == newWidth) {
+        if (oldWeight == newWeight && currentFontWidth == newWidth) {
             return;
         }
-
+        
+        currentFontWidth = newWidth;
         preferenceManager.saveFontWeight(newWeight);
 
         if (weightAnimator != null && weightAnimator.isRunning()) {
             weightAnimator.cancel();
             oldWeight = currentFontWeight; 
-            oldWidth = currentFontWidth;
         }
 
-        weightAnimator = ValueAnimator.ofFloat(0f, 1f);
+        weightAnimator = ValueAnimator.ofFloat(oldWeight, newWeight);
         weightAnimator.setDuration(600);
         weightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        final float startWeight = oldWeight;
-        final float startWidth = oldWidth;
-
         weightAnimator.addUpdateListener(animation -> {
-            float fraction = (float) animation.getAnimatedValue();
-            float animatedWeight = startWeight + (newWeight - startWeight) * fraction;
-            float animatedWidth = startWidth + (newWidth - startWidth) * fraction;
-            
+            float animatedWeight = (float) animation.getAnimatedValue();
             currentFontWeight = animatedWeight;
-            currentFontWidth = animatedWidth;
 
             if (previewSentence != null) {
-                previewSentence.setFontVariationSettings("'wght' " + animatedWeight + ", 'wdth' " + animatedWidth);
+                previewSentence.setFontVariationSettings("'wght' " + animatedWeight + ", 'wdth' " + newWidth);
             }
         });
 
@@ -315,14 +308,14 @@ public class FontViewerFragment extends Fragment {
             @Override
             public void onAnimationEnd(Animator animation) {
                 currentFontWeight = newWeight;
-                currentFontWidth = newWidth;
                 
+                // بناء Typeface النهائي في الخلفية لضمان استقرار خصائص الخط عند تغيير حجمه لاحقاً
                 bgExecutor.execute(() -> {
                     Typeface finalTypeface;
                     if (isSystemFont) {
                         finalTypeface = SystemFontCache.getInstance().getTypefaceWithWeight(currentFontPath, newWeight, currentTtcIndex);
                     } else {
-                        finalTypeface = VariableFontHelper.createTypefaceWithSettings(fontFile, newSettings, currentTtcIndex);
+                        finalTypeface = VariableFontHelper.createTypefaceWithAxes(fontFile, newWeight, newWidth, currentTtcIndex);
                     }
                     if (finalTypeface != null) {
                         mainHandler.post(() -> currentTypeface = finalTypeface);
@@ -384,7 +377,7 @@ public class FontViewerFragment extends Fragment {
             formattingHelper.reset();
         }
 
-        loadFontFromPathWithWeight(path, DEFAULT_FONT_WEIGHT);
+        loadFontFromPathWithAxes(path, DEFAULT_FONT_WEIGHT, DEFAULT_FONT_WIDTH);
     }
 
     public void loadFontFromPath(String path, String fileName, String realName,
@@ -422,7 +415,7 @@ public class FontViewerFragment extends Fragment {
         }
     }
 
-    private void loadFontFromPathWithWeight(String path, float weight) {
+    private void loadFontFromPathWithAxes(String path, float weight, float width) {
         bgExecutor.execute(() -> {
             try {
                 File fontFile = new File(path);
@@ -433,6 +426,7 @@ public class FontViewerFragment extends Fragment {
 
                 boolean isVar = VariableFontHelper.isVariableFont(fontFile, currentTtcIndex);
                 float finalWeight = weight;
+                float finalWidth = width;
 
                 if (finalWeight == DEFAULT_FONT_WEIGHT && isVar) {
                     finalWeight = 400f;
@@ -441,6 +435,7 @@ public class FontViewerFragment extends Fragment {
 
                 if (!isVar) {
                     finalWeight = 0f;
+                    finalWidth = 0f;
                 }
 
                 List<VariableFontHelper.VariableInstance> variableInstances = null;
@@ -455,16 +450,7 @@ public class FontViewerFragment extends Fragment {
                         SystemFontCache cache = SystemFontCache.getInstance();
                         typeface = cache.getTypefaceWithWeight(path, finalWeight, currentTtcIndex);
                     } else {
-                        String initSettings = "'wght' " + finalWeight + ", 'wdth' 100";
-                        if (variableInstances != null && !variableInstances.isEmpty()) {
-                            for (VariableFontHelper.VariableInstance inst : variableInstances) {
-                                if (Math.abs(inst.weight - finalWeight) < 1f && Math.abs(inst.width - 100f) < 1f) {
-                                    initSettings = inst.variationSettings;
-                                    break;
-                                }
-                            }
-                        }
-                        typeface = VariableFontHelper.createTypefaceWithSettings(fontFile, initSettings, currentTtcIndex);
+                        typeface = VariableFontHelper.createTypefaceWithAxes(fontFile, finalWeight, finalWidth, currentTtcIndex);
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "★ Typeface creation failed - font might be corrupted", e);
@@ -495,12 +481,14 @@ public class FontViewerFragment extends Fragment {
                 if (typeface != null) {
                     final Typeface finalTypeface             = typeface;
                     final float finalWeightForHandler        = finalWeight;
+                    final float finalWidthForHandler         = finalWidth;
                     final boolean finalIsVariable            = isVar;
                     final List<VariableFontHelper.VariableInstance> finalInstances = variableInstances;
 
                     mainHandler.post(() -> {
                         currentTypeface   = finalTypeface;
                         currentFontWeight = finalWeightForHandler;
+                        currentFontWidth  = finalWidthForHandler;
                         isVariableFont    = finalIsVariable;
 
                         if (finalIsVariable && finalInstances != null && !finalInstances.isEmpty()) {
@@ -574,16 +562,6 @@ public class FontViewerFragment extends Fragment {
                 break;
             }
         }
-        
-        if (selectedIndex == 0 && instances.size() > 0) {
-            for (int i = 0; i < instances.size(); i++) {
-                if (Math.abs(instances.get(i).weight - currentFontWeight) < 1f) {
-                    selectedIndex = i;
-                    break;
-                }
-            }
-        }
-        
         weightSpinner.setSelection(selectedIndex);
 
         final List<VariableFontHelper.VariableInstance> finalInstances = instances;
@@ -593,7 +571,7 @@ public class FontViewerFragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position >= 0 && position < finalInstances.size()) {
-                        onFontWeightChanged(finalInstances.get(position));
+                        onFontInstanceChanged(finalInstances.get(position));
                     }
                 }
 
@@ -723,7 +701,7 @@ public class FontViewerFragment extends Fragment {
         originalFontPath        = null;
         isVariableFont          = false;
         currentFontWeight       = DEFAULT_FONT_WEIGHT;
-        currentFontWidth        = 100f;
+        currentFontWidth        = DEFAULT_FONT_WIDTH;
         currentTtcIndex         = 0;
         isSystemFont            = false;
         currentWeightWidthLabel  = null;
@@ -773,7 +751,7 @@ public class FontViewerFragment extends Fragment {
         }
 
                 notifyFontChangedImmediate();
-                loadFontFromPathWithWeight(lastPath, lastWeight);
+                loadFontFromPathWithAxes(lastPath, lastWeight, DEFAULT_FONT_WIDTH);
             } else {
                 preferenceManager.clearLastViewedFont();
             }
@@ -837,7 +815,7 @@ public class FontViewerFragment extends Fragment {
         }
         outState.putFloat(KEY_FONT_SIZE, currentFontSize);
         outState.putFloat(KEY_FONT_WEIGHT, currentFontWeight);
-        outState.putFloat("font_width", currentFontWidth);
+        outState.putFloat(KEY_FONT_WIDTH, currentFontWidth);
         outState.putBoolean(KEY_IS_VARIABLE_FONT, isVariableFont);
         outState.putInt(KEY_TTC_INDEX, currentTtcIndex);
         outState.putBoolean(KEY_IS_SYSTEM_FONT, isSystemFont);
