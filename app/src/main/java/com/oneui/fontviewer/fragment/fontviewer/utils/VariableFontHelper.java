@@ -4,7 +4,6 @@ import android.graphics.Typeface;
 import android.graphics.fonts.Font;
 import android.graphics.fonts.FontVariationAxis;
 
-
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -34,12 +33,9 @@ public class VariableFontHelper {
     }
     
     public static boolean isVariableFont(File fontFile, int ttcIndex) {
-        
-        
         if (fontFile == null || !fontFile.exists()) {
             return false;
         }
-        
         try {
             FontVariationAxis[] axes = getVariationAxes(fontFile, ttcIndex);
             if (axes != null && axes.length > 0) {
@@ -47,11 +43,8 @@ public class VariableFontHelper {
             }
         } catch (Exception e) {
         }
-        
         return fvarTableExists(fontFile, ttcIndex);
     }
-    
-    
     
     private static FontVariationAxis[] getVariationAxes(File fontFile, int ttcIndex) {
         try {
@@ -78,20 +71,17 @@ public class VariableFontHelper {
                 if (ttcIndex >= numFonts) {
                     return false;
                 }
-                
                 raf.seek(12 + (ttcIndex * 4));
                 long fontOffset = readUInt32(raf);
                 return checkFvarAtOffset(raf, fontOffset);
             } else {
                 raf.seek(4);
                 int numTables = readUInt16(raf);
-                
                 for (int i = 0; i < numTables; i++) {
                     raf.seek(12 + i * 16);
                     byte[] tableTag = new byte[4];
                     raf.read(tableTag);
                     String tagStr = new String(tableTag, "US-ASCII");
-                    
                     if ("fvar".equals(tagStr)) {
                         return true;
                     }
@@ -106,13 +96,11 @@ public class VariableFontHelper {
         try {
             raf.seek(fontOffset + 4);
             int numTables = readUInt16(raf);
-            
             for (int i = 0; i < numTables; i++) {
                 raf.seek(fontOffset + 12 + i * 16);
                 byte[] tableTag = new byte[4];
                 raf.read(tableTag);
                 String tagStr = new String(tableTag, "US-ASCII");
-                
                 if ("fvar".equals(tagStr)) {
                     return true;
                 }
@@ -253,13 +241,28 @@ public class VariableFontHelper {
         raf.read(bytes);
         int value = ((bytes[0] & 0xFF) << 24) | 
                     ((bytes[1] & 0xFF) << 16) | 
-                   float min, float max) {
-        if (value >= min && value <= max) {
-            instances.add(new VariableInstance(name, "wght", value));
-        }
+                    ((bytes[2] & 0xFF) << 8) | 
+                    (bytes[3] & 0xFF);
+        return value / 65536.0f;
+    }
+    
+    private static void addCombinations(List<VariableInstance> instances, String prefix, float minWght, float maxWght, float wdth) {
+        addIfInRange(instances, prefix + "Thin", 100, minWght, maxWght, wdth);
+        addIfInRange(instances, prefix + "Extra Light", 200, minWght, maxWght, wdth);
+        addIfInRange(instances, prefix + "Light", 300, minWght, maxWght, wdth);
+        addIfInRange(instances, prefix + "Regular", 400, minWght, maxWght, wdth);
+        addIfInRange(instances, prefix + "Medium", 500, minWght, maxWght, wdth);
+        addIfInRange(instances, prefix + "Semi Bold", 600, minWght, maxWght, wdth);
+        addIfInRange(instances, prefix + "Bold", 700, minWght, maxWght, wdth);
+        addIfInRange(instances, prefix + "Extra Bold", 800, minWght, maxWght, wdth);
+        addIfInRange(instances, prefix + "Black", 900, minWght, maxWght, wdth);
     }
 
-    
+    private static void addIfInRange(List<VariableInstance> instances, String name, float wght, float minWght, float maxWght, float wdth) {
+        if (wght >= minWght && wght <= maxWght) {
+            instances.add(new VariableInstance(name, wght, wdth));
+        }
+    }
 
     public static Typeface createTypefaceWithSettings(File fontFile, String variationSettings, int ttcIndex) {
         try {
