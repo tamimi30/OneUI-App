@@ -231,6 +231,26 @@ public class VariableFontHelper {
                 raf.read(axisTag);
                 String axisTagStr = new String(axisTag, "US-ASCII");
                 
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
                 if ("wght".equals(axisTagStr)) {
                     float minValue = readFixed(raf);
                     readFixed(raf);
@@ -369,7 +389,155 @@ public class VariableFontHelper {
                 addNamedInstance(instances, "Thin", 100, min, max, tag);
                 addNamedInstance(instances, "Extra Light", 200, min, max, tag);
                 addNamedInstance(instances, "Light", 300, min, max, tag);
-                
+                addNamedInstance(instances, "Regular", 400, min, max, tag);
+                addNamedInstance(instances, "Medium", 500, min, max, tag);
+                addNamedInstance(instances, "Semi Bold", 600, min, max, tag);
+                addNamedInstance(instances, "Bold", 700, min, max, tag);
+                addNamedInstance(instances, "Extra Bold", 800, min, max, tag);
+                addNamedInstance(instances, "Black", 900, min, max, tag);
+                break;
+
+            case "WDTH":
+                addNamedInstance(instances, "Ultra Condensed", 50f, min, max, tag);
+                addNamedInstance(instances, "Extra Condensed", 62.5f, min, max, tag);
+                addNamedInstance(instances, "Condensed", 75f, min, max, tag);
+                addNamedInstance(instances, "Semi Condensed", 87.5f, min, max, tag);
+                addNamedInstance(instances, "Normal", 100f, min, max, tag);
+                addNamedInstance(instances, "Semi Expanded", 112.5f, min, max, tag);
+                addNamedInstance(instances, "Expanded", 125f, min, max, tag);
+                addNamedInstance(instances, "Extra Expanded", 150f, min, max, tag);
+                addNamedInstance(instances, "Ultra Expanded", 200f, min, max, tag);
+                break;
+
+            case "GRAD": {
+                float high = def + (max - def) * 0.5f;
+                addNamedInstance(instances, "Low", min, min, max, tag);
+                addNamedInstance(instances, "Normal", def, min, max, tag);
+                addNamedInstance(instances, "High", high, min, max, tag);
+                addNamedInstance(instances, "Extra", max, min, max, tag);
+                break;
+            }
+
+            case "ROND":
+                addNamedInstance(instances, "Sharp", min, min, max, tag);
+                addNamedInstance(instances, "Normal", def, min, max, tag);
+                addNamedInstance(instances, "Rounded", max, min, max, tag);
+                break;
+
+            case "ITAL":
+                addNamedInstance(instances, "Upright", min, min, max, tag);
+                addNamedInstance(instances, "Italic", max, min, max, tag);
+                break;
+
+            case "OPSZ": {
+                float text = min + (max - min) / 3f;
+                float title = min + (max - min) * 2f / 3f;
+                addNamedInstance(instances, "Caption", min, min, max, tag);
+                addNamedInstance(instances, "Text", text, min, max, tag);
+                addNamedInstance(instances, "Title", title, min, max, tag);
+                addNamedInstance(instances, "Display", max, min, max, tag);
+                break;
+            }
+
+            case "MONO":
+                addNamedInstance(instances, "Proportional", min, min, max, tag);
+                addNamedInstance(instances, "Monospaced", max, min, max, tag);
+                break;
+
+            default:
+                break;
+        }
+
+        return instances;
+    }
+
+    // ★ إضافة قيمة جاهزة لأي محور (عام، غير محصور بمحور الوزن) إن كانت ضمن المدى المسموح ★
+    private static void addNamedInstance(List<VariableInstance> instances, String name, float value,
+                                          float min, float max, String axisTag) {
+        if (value >= min && value <= max) {
+            instances.add(new VariableInstance(name, axisTag, value));
+        }
+    }
+
+    // ★ تحويل خريطة (وسم المحور -> القيمة) إلى نص إعدادات الخط المتغيّر الذي يفهمه أندرويد ★
+    public static String buildVariationSettingsString(java.util.Map<String, Float> axisValues) {
+        if (axisValues == null || axisValues.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (java.util.Map.Entry<String, Float> entry : axisValues.entrySet()) {
+            if (entry.getKey() == null || entry.getValue() == null) continue;
+            if (sb.length() > 0) sb.append(",");
+            sb.append("'").append(entry.getKey()).append("' ").append(entry.getValue());
+        }
+
+        return sb.toString();
+    }
+
+    // ★ إنشاء Typeface باستخدام كل قيم المحاور دفعة واحدة (وزن + عرض + درجة + ...) ★
+    public static Typeface createTypefaceWithAxes(File fontFile, java.util.Map<String, Float> axisValues, int ttcIndex) {
+        try {
+            Font.Builder fontBuilder = new Font.Builder(fontFile);
+
+            if (ttcIndex > 0) {
+                fontBuilder.setTtcIndex(ttcIndex);
+                android.util.Log.d(TAG, "Set TTC index: " + ttcIndex);
+            }
+
+            String variationSettings = buildVariationSettingsString(axisValues);
+            if (!variationSettings.isEmpty()) {
+                fontBuilder.setFontVariationSettings(variationSettings);
+                android.util.Log.d(TAG, "Set variation settings: " + variationSettings);
+            }
+
+            Font font = fontBuilder.build();
+
+            Typeface.CustomFallbackBuilder fallbackBuilder =
+                new Typeface.CustomFallbackBuilder(
+                    new android.graphics.fonts.FontFamily.Builder(font).build()
+                );
+
+            Typeface result = fallbackBuilder.build();
+            android.util.Log.d(TAG, "Successfully created variable Typeface with axes: " + variationSettings +
+                                   ", ttcIndex: " + ttcIndex);
+
+            return result;
+
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Failed to create variable Typeface with axes, ttcIndex: " + ttcIndex, e);
+
+            try {
+                return Typeface.createFromFile(fontFile);
+            } catch (Exception ex) {
+                return null;
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     private static int readUInt16(RandomAccessFile raf) throws Exception {
         byte[] bytes = new byte[2];
