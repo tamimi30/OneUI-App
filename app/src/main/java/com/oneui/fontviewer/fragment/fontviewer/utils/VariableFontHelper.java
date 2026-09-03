@@ -30,6 +30,28 @@ public class VariableFontHelper {
             return name;
         }
     }
+
+    // ★ معلومات محور واحد داخل الخط: الوسم كما هو مخزّن فعلياً، ومدى القيم، والاسم المعروض ★
+    public static class AxisInfo {
+        public final String tag;          // الوسم بالضبط كما هو داخل ملف الخط (بحروفه الكبيرة/الصغيرة الأصلية)
+        public final String canonicalKey; // مفتاح موحّد: WGHT / WDTH / GRAD / ROND / ITAL / OPSZ / MONO
+        public final String displayName;  // الاسم المعروض للمستخدم: Weight / Width / ...
+        public final float min;
+        public final float max;
+        public final float defaultValue;
+
+        public AxisInfo(String tag, String canonicalKey, String displayName, float min, float max, float defaultValue) {
+            this.tag = tag;
+            this.canonicalKey = canonicalKey;
+            this.displayName = displayName;
+            this.min = min;
+            this.max = max;
+            this.defaultValue = defaultValue;
+        }
+    }
+
+    // ★ ترتيب عرض المحاور المدعومة في منتقي نوع المحور ★
+    private static final String[] SUPPORTED_AXES_ORDER = {"WGHT", "WDTH", "GRAD", "ROND", "ITAL", "OPSZ", "MONO"};
     
     public static boolean isVariableFont(File fontFile, int ttcIndex) {
         
@@ -224,6 +246,130 @@ public class VariableFontHelper {
         
         return defaultRange;
     }
+
+    // ★ قراءة كل المحاور الموجودة في جدول fvar للخط (وليس فقط محور الوزن) ★
+    public static List<AxisInfo> readAllAxesFromFvar(File fontFile, int ttcIndex) {
+        List<AxisInfo> result = new ArrayList<>();
+
+        try (RandomAccessFile raf = new RandomAccessFile(fontFile, "r")) {
+            byte[] header = new byte[4];
+            raf.read(header);
+            String tag = new String(header, "US-ASCII");
+
+            long fontOffset = 0;
+
+            if ("ttcf".equals(tag)) {
+                raf.seek(8);
+                long numFonts = readUInt32(raf);
+                if (ttcIndex >= numFonts) {
+                    return result;
+                }
+
+                raf.seek(12 + (ttcIndex * 4));
+                fontOffset = readUInt32(raf);
+            }
+
+            raf.seek(fontOffset + 4);
+            int numTables = readUInt16(raf);
+
+            long fvarOffset = -1;
+            for (int i = 0; i < numTables; i++) {
+                raf.seek(fontOffset + 12 + i * 16);
+                byte[] tableTag = new byte[4];
+                raf.read(tableTag);
+                String tagStr = new String(tableTag, "US-ASCII");
+
+                if ("fvar".equals(tagStr)) {
+                    raf.seek(fontOffset + 12 + i * 16 + 8);
+                    fvarOffset = readUInt32(raf);
+                    break;
+                }
+            }
+
+            if (fvarOffset == -1) {
+                return result;
+            }
+
+            raf.seek(fvarOffset + 4);
+            int axesArrayOffset = readUInt16(raf);
+            raf.seek(fvarOffset + 8);
+            int axisCount = readUInt16(raf);
+            int axisSize = readUInt16(raf);
+
+            for (int i = 0; i < axisCount; i++) {
+                long axisPos = fvarOffset + axesArrayOffset + (i * axisSize);
+                raf.seek(axisPos);
+
+                byte[] axisTag = new byte[4];
+                raf.read(axisTag);
+                String axisTagStr = new String(axisTag, "US-ASCII");
+
+                float minValue = readFixed(raf);
+                float defaultValueRaw = readFixed(raf);
+                float maxValue = readFixed(raf);
+
+                result.add(new AxisInfo(axisTagStr, axisTagStr.trim().toUpperCase(), axisTagStr, minValue, maxValue, defaultValueRaw));
+            }
+
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Failed to read axes from fvar", e);
+        }
+
+        return result;
+    }
+
+    // ★ إرجاع المحاور المدعومة فقط (من بين كل المحاور الموجودة في الخط) مع اسم عرض مناسب ومرتبة ★
+    public static List<AxisInfo> getSupportedAxes(File fontFile, int ttcIndex) {
+        List<AxisInfo> allAxes = readAllAxesFromFvar(fontFile, ttcIndex);
+        List<AxisInfo> supported = new ArrayList<>();
+
+        for (String canonicalKey : SUPPORTED_AXES_ORDER) {
+            for (AxisInfo axis : allAxes) {
+                if (axis.canonicalKey.equals(canonicalKey)) {
+                    supported.add(new AxisInfo(axis.tag, canonicalKey, displayNameForAxis(canonicalKey), axis.min, axis.max, axis.defaultValue));
+                    break;
+                }
+            }
+        }
+
+        return supported;
+    }
+
+    private static String displayNameForAxis(String canonicalKey) {
+        switch (canonicalKey) {
+            case "WGHT": return "Weight";
+            case "WDTH": return "Width";
+            case "GRAD": return "Grade";
+            case "ROND": return "Roundness";
+            case "ITAL": return "Italic";
+            case "OPSZ": return "Optical Size";
+            case "MONO": return "Mono";
+            default:     return canonicalKey;
+        }
+    }
+
+    private static float clamp(float value, float min, float max) {
+        if (value < min) return min;
+        if (value > max) return max;
+        return value;
+    }
+
+    // ★ بناء قائمة القيم الجاهزة الخاصة بمحور معيّن، مرتبة من الأصغر إلى الأكبر، حسب ما يدعمه الخط فعلياً ★
+    public static List<VariableInstance> extractInstancesForAxis(AxisInfo axis) {
+        List<VariableInstance> instances = new ArrayList<>();
+        if (axis == null) return instances;
+
+        float min = axis.min;
+        float max = axis.max;
+        float def = clamp(axis.defaultValue, min, max);
+        String tag = axis.tag;
+
+        switch (axis.canonicalKey) {
+            case "WGHT":
+                addNamedInstance(instances, "Thin", 100, min, max, tag);
+                addNamedInstance(instances, "Extra Light", 200, min, max, tag);
+                addNamedInstance(instances, "Light", 300, min, max, tag);
+                
     
     private static int readUInt16(RandomAccessFile raf) throws Exception {
         byte[] bytes = new byte[2];
