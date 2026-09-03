@@ -14,6 +14,13 @@ public class VariableFontHelper {
     
     private static final String TAG = "VariableFontHelper";
     
+    private static String findKeyIgnoreCase(java.util.Map<String, float[]> map, String target) {
+        for (String key : map.keySet()) {
+            if (key.equalsIgnoreCase(target)) return key;
+        }
+        return null;
+    }
+    
     public static class VariableInstance {
         public String name;
         public String tag;
@@ -130,60 +137,66 @@ public class VariableFontHelper {
         try {
             java.util.Map<String, float[]> ranges = readAllAxesRangesFromFvar(fontFile, ttcIndex);
             
-            if (ranges.containsKey("wght")) {
-                float min = ranges.get("wght")[0]; float max = ranges.get("wght")[1];
+            String wghtTag = findKeyIgnoreCase(ranges, "wght");
+            if (wghtTag != null) {
+                float min = ranges.get(wghtTag)[0]; float max = ranges.get(wghtTag)[1];
                 List<VariableInstance> list = new ArrayList<>();
-                addIfInRange(list, "Thin", "wght", 100, min, max);
-                addIfInRange(list, "Extra Light", "wght", 200, min, max);
-                addIfInRange(list, "Light", "wght", 300, min, max);
-                addIfInRange(list, "Regular", "wght", 400, min, max);
-                addIfInRange(list, "Medium", "wght", 500, min, max);
-                addIfInRange(list, "Semi Bold", "wght", 600, min, max);
-                addIfInRange(list, "Bold", "wght", 700, min, max);
-                addIfInRange(list, "Extra Bold", "wght", 800, min, max);
-                addIfInRange(list, "Black", "wght", 900, min, max);
+                addIfInRange(list, "Thin", wghtTag, 100, min, max);
+                addIfInRange(list, "Extra Light", wghtTag, 200, min, max);
+                addIfInRange(list, "Light", wghtTag, 300, min, max);
+                addIfInRange(list, "Regular", wghtTag, 400, min, max);
+                addIfInRange(list, "Medium", wghtTag, 500, min, max);
+                addIfInRange(list, "Semi Bold", wghtTag, 600, min, max);
+                addIfInRange(list, "Bold", wghtTag, 700, min, max);
+                addIfInRange(list, "Extra Bold", wghtTag, 800, min, max);
+                addIfInRange(list, "Black", wghtTag, 900, min, max);
                 instancesMap.put("wght", list);
             }
-            if (ranges.containsKey("wdth")) {
-                float min = ranges.get("wdth")[0]; float max = ranges.get("wdth")[1];
+            String wdthTag = findKeyIgnoreCase(ranges, "wdth");
+            if (wdthTag != null) {
+                float min = ranges.get(wdthTag)[0]; float max = ranges.get(wdthTag)[1];
                 List<VariableInstance> list = new ArrayList<>();
-                addIfInRange(list, "Ultra Condensed", "wdth", 50, min, max);
-                addIfInRange(list, "Extra Condensed", "wdth", 62.5f, min, max);
-                addIfInRange(list, "Condensed", "wdth", 75, min, max);
-                addIfInRange(list, "Semi Condensed", "wdth", 87.5f, min, max);
-                addIfInRange(list, "Normal Width", "wdth", 100, min, max);
-                addIfInRange(list, "Semi Expanded", "wdth", 112.5f, min, max);
-                addIfInRange(list, "Expanded", "wdth", 125, min, max);
+                addIfInRange(list, "Ultra Condensed", wdthTag, 50, min, max);
+                addIfInRange(list, "Extra Condensed", wdthTag, 62.5f, min, max);
+                addIfInRange(list, "Condensed", wdthTag, 75, min, max);
+                addIfInRange(list, "Semi Condensed", wdthTag, 87.5f, min, max);
+                addIfInRange(list, "Normal Width", wdthTag, 100, min, max);
+                addIfInRange(list, "Semi Expanded", wdthTag, 112.5f, min, max);
+                addIfInRange(list, "Expanded", wdthTag, 125, min, max);
                 instancesMap.put("wdth", list);
             }
-            if (ranges.containsKey("ital")) {
-                float min = ranges.get("ital")[0]; float max = ranges.get("ital")[1];
+            String italTag = findKeyIgnoreCase(ranges, "ital");
+            if (italTag != null) {
+                float min = ranges.get(italTag)[0]; float max = ranges.get(italTag)[1];
                 List<VariableInstance> list = new ArrayList<>();
-                addIfInRange(list, "Upright", "ital", 0, min, max);
-                addIfInRange(list, "Italic", "ital", 1, min, max);
+                addIfInRange(list, "Upright", italTag, 0, min, max);
+                addIfInRange(list, "Italic", italTag, 1, min, max);
                 instancesMap.put("ital", list);
             }
-            if (ranges.containsKey("grad")) {
-                float min = ranges.get("grad")[0]; float max = ranges.get("grad")[1];
+            String gradTag = findKeyIgnoreCase(ranges, "grad");
+            if (gradTag != null) {
+                float min = ranges.get(gradTag)[0]; float max = ranges.get(gradTag)[1];
                 List<VariableInstance> list = new ArrayList<>();
-                addIfInRange(list, "Low Grade", "grad", -200, min, max);
-                addIfInRange(list, "Normal Grade", "grad", 0, min, max);
-                addIfInRange(list, "High Grade", "grad", 150, min, max);
+                addIfInRange(list, "Low Grade", gradTag, -200, min, max);
+                addIfInRange(list, "Normal Grade", gradTag, 0, min, max);
+                addIfInRange(list, "High Grade", gradTag, 150, min, max);
                 instancesMap.put("grad", list);
             }
-            if (ranges.containsKey("spac")) {
-                float min = ranges.get("spac")[0]; float max = ranges.get("spac")[1];
+            String spacTag = findKeyIgnoreCase(ranges, "spac");
+            if (spacTag != null) {
+                float min = ranges.get(spacTag)[0]; float max = ranges.get(spacTag)[1];
                 List<VariableInstance> list = new ArrayList<>();
-                addIfInRange(list, "Tight Spacing", "spac", min, min, max);
-                if(0 > min && 0 < max) addIfInRange(list, "Normal Spacing", "spac", 0, min, max);
-                addIfInRange(list, "Wide Spacing", "spac", max, min, max);
+                addIfInRange(list, "Tight Spacing", spacTag, min, min, max);
+                if(0 > min && 0 < max) addIfInRange(list, "Normal Spacing", spacTag, 0, min, max);
+                addIfInRange(list, "Wide Spacing", spacTag, max, min, max);
                 instancesMap.put("spac", list);
             }
-            if (ranges.containsKey("rond")) {
-                float min = ranges.get("rond")[0]; float max = ranges.get("rond")[1];
+            String rondTag = findKeyIgnoreCase(ranges, "rond");
+            if (rondTag != null) {
+                float min = ranges.get(rondTag)[0]; float max = ranges.get(rondTag)[1];
                 List<VariableInstance> list = new ArrayList<>();
-                addIfInRange(list, "Square", "rond", 0, min, max);
-                addIfInRange(list, "Round", "rond", 100, min, max);
+                addIfInRange(list, "Square", rondTag, 0, min, max);
+                addIfInRange(list, "Round", rondTag, 100, min, max);
                 instancesMap.put("rond", list);
             }
             
@@ -245,9 +258,10 @@ public class VariableFontHelper {
                 byte[] axisTag = new byte[4];
                 raf.read(axisTag);
                 String axisTagStr = new String(axisTag, "US-ASCII");
+                String lowerTag = axisTagStr.toLowerCase(java.util.Locale.US);
                 
-                if ("wght".equals(axisTagStr) || "wdth".equals(axisTagStr) || "ital".equals(axisTagStr) ||
-                    "grad".equals(axisTagStr) || "spac".equals(axisTagStr) || "rond".equals(axisTagStr)) {
+                if ("wght".equals(lowerTag) || "wdth".equals(lowerTag) || "ital".equals(lowerTag) ||
+                    "grad".equals(lowerTag) || "spac".equals(lowerTag) || "rond".equals(lowerTag)) {
                     float minValue = readFixed(raf);
                     readFixed(raf); // default
                     float maxValue = readFixed(raf);
