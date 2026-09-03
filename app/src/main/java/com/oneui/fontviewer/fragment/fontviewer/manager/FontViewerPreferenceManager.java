@@ -103,4 +103,26 @@ public class FontViewerPreferenceManager {
     }
     
     
+    // ════════════════════════════════════════════════════════════
+    // ★ محاور الخط المتغير الأخرى (العرض / الدرجة / الاستدارة / المائل / الحجم البصري / أحادي المسافة) ★
+    // ════════════════════════════════════════════════════════════
+    
+    public void saveAxisValue(String axisCanonicalKey, float value) {
+        dataStore.setViewerAxisValue(axisCanonicalKey, value)
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    prefs -> Log.d(TAG, "Saved axis value: " + axisCanonicalKey + " = " + value),
+                    error -> Log.e(TAG, "Error saving axis value: " + error.getMessage())
+                );
+    }
+    
+    public Float getAxisValue(String axisCanonicalKey) {
+        try {
+            return dataStore.getViewerAxisValue(axisCanonicalKey).blockingFirst();
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting axis value (" + axisCanonicalKey + "): " + e.getMessage());
+            return null;
+        }
+    }
+    
 }
