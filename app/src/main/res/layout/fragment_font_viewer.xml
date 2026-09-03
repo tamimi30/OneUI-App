@@ -35,14 +35,32 @@
                 android:visibility="gone" />
 
             <!-- منتقي الوزن للخطوط المتغيرة -->
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/weight_spinner"
+            <!-- تحديث: أصبح الصف يحتوي منتقيين بجانب بعض: منتقي نوع المحور ثم منتقي القيمة (سابقاً كان weight_spinner فقط) -->
+            <LinearLayout
+                android:id="@+id/axis_pickers_row"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:orientation="horizontal"
                 android:layout_marginHorizontal="14dp"
-                android:layout_marginBottom="16dp"
-                android:visibility="gone" />
+                android:layout_marginBottom="16dp">
+
+                <!-- منتقي نوع المحور: الوزن / العرض / الدرجة / الاستدارة / المائل / الحجم البصري / أحادي المسافة -->
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/axis_type_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:visibility="gone" />
+
+                <!-- منتقي القيمة الخاصة بالمحور المختار (اسمه الجديد بدل weight_spinner) -->
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/axis_value_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+            </LinearLayout>
   
             <TextView
                 android:id="@+id/preview_sentence"
