@@ -461,6 +461,9 @@ public class FontViewerFragment extends Fragment {
         }
     }
 
+    
+    
+    
     private void loadFontFromPathWithWeight(String path, float weight) {
         bgExecutor.execute(() -> {
             try {
@@ -558,7 +561,82 @@ public class FontViewerFragment extends Fragment {
                         if (finalSupportedAxes != null) {
                             for (VariableFontHelper.AxisInfo axis : finalSupportedAxes) {
                                 if (!"WGHT".equals(axis.canonicalKey)) {
-                         
+                                    Float value = finalLoadedAxisValues.get(axis.tag);
+                                    if (value != null) {
+                                        currentAxisValues.put(axis.tag, value);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (finalIsVariable && finalSupportedAxes != null && !finalSupportedAxes.isEmpty()) {
+                            setupAxisUI(finalSupportedAxes);
+                        } else {
+                            showWeightLabel(currentWeightWidthLabel);
+                        }
+
+                        applyFontToPreviewTexts();
+                        Log.d(TAG, "Font typeface loaded and applied successfully");
+                    });
+                } else {
+                    throw new Exception("Failed to create Typeface - returned null");
+                }
+
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                   
+                    currentFontRealName = null;
+
+
+                    if (fontChangedListener != null) {
+                        fontChangedListener.onFontChanged(currentFontRealName, currentFontFileName);
+                        Log.d(TAG, "★ Updated title to 'Unknown Font' after general error");
+                    }
+
+                    hideWeightUI();
+
+                    currentTypeface = null;
+                    Typeface defaultTypeface = Typeface.DEFAULT;
+                    if (previewSentence != null) {
+                        previewSentence.setTypeface(defaultTypeface);
+                    }
+
+                    Toast.makeText(requireContext(),
+                        getString(R.string.font_viewer_error_loading_font) +
+                        " (" + getString(R.string.unknown_font) + ")",
+                        Toast.LENGTH_SHORT).show();
+
+                    Log.e(TAG, "Error creating typeface from path: " + path, e);
+                });
+            }
+        });
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
     // ★ تهيئة منتقي نوع المحور ومنتقي القيمة معاً بناءً على المحاور المدعومة في الخط الحالي ★
