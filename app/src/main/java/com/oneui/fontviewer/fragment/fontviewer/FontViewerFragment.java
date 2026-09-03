@@ -264,7 +264,9 @@ public class FontViewerFragment extends Fragment {
     }
 
     private float getFallbackValueForAxis(String tag) {
-        switch(tag) {
+        if (tag == null) return 0f;
+        String lower = tag.toLowerCase(java.util.Locale.US);
+        switch(lower) {
             case "wght": return 400f;
             case "wdth": return 100f;
             default: return 0f;
@@ -291,7 +293,7 @@ public class FontViewerFragment extends Fragment {
 
         if (oldVal == newVal) return;
 
-        if ("wght".equals(axisTag)) {
+        if ("wght".equalsIgnoreCase(axisTag)) {
             preferenceManager.saveFontWeight(newVal);
             currentFontWeight = newVal;
         }
@@ -453,12 +455,12 @@ public class FontViewerFragment extends Fragment {
                 if (isVar) {
                     variableAxes = VariableFontHelper.extractAllVariableInstances(fontFile, currentTtcIndex);
                     currentAxesValues.clear();
-                    currentAxesValues.put("wght", finalWeight);
-                    if (variableAxes.containsKey("wdth")) currentAxesValues.put("wdth", 100f);
-                    if (variableAxes.containsKey("ital")) currentAxesValues.put("ital", 0f);
-                    if (variableAxes.containsKey("grad")) currentAxesValues.put("grad", 0f);
-                    if (variableAxes.containsKey("spac")) currentAxesValues.put("spac", 0f);
-                    if (variableAxes.containsKey("rond")) currentAxesValues.put("rond", 0f);
+                    currentAxesValues.put(variableAxes.containsKey("wght") ? variableAxes.get("wght").get(0).tag : "wght", finalWeight);
+                    if (variableAxes.containsKey("wdth")) currentAxesValues.put(variableAxes.get("wdth").get(0).tag, 100f);
+                    if (variableAxes.containsKey("ital")) currentAxesValues.put(variableAxes.get("ital").get(0).tag, 0f);
+                    if (variableAxes.containsKey("grad")) currentAxesValues.put(variableAxes.get("grad").get(0).tag, 0f);
+                    if (variableAxes.containsKey("spac")) currentAxesValues.put(variableAxes.get("spac").get(0).tag, 0f);
+                    if (variableAxes.containsKey("rond")) currentAxesValues.put(variableAxes.get("rond").get(0).tag, 0f);
                 }
 
                 Typeface typeface;
@@ -565,13 +567,15 @@ public class FontViewerFragment extends Fragment {
         setupSingleSpinner(rondSpinner, axesMap.get("rond"), "rond");
     }
 
-    private void setupSingleSpinner(AppCompatSpinner spinner, List<VariableFontHelper.VariableInstance> instances, String axisTag) {
+    private void setupSingleSpinner(AppCompatSpinner spinner, List<VariableFontHelper.VariableInstance> instances, String axisTagFallback) {
         if (spinner == null) return;
         if (instances == null || instances.isEmpty()) {
             spinner.setVisibility(View.GONE);
             return;
         }
         spinner.setVisibility(View.VISIBLE);
+        
+        String actualTag = instances.get(0).tag;
         
         List<String> names = new ArrayList<>();
         for (VariableFontHelper.VariableInstance inst : instances) {
@@ -586,7 +590,7 @@ public class FontViewerFragment extends Fragment {
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         
-        float currentVal = currentAxesValues.containsKey(axisTag) ? currentAxesValues.get(axisTag) : getFallbackValueForAxis(axisTag);
+        float currentVal = currentAxesValues.containsKey(actualTag) ? currentAxesValues.get(actualTag) : getFallbackValueForAxis(axisTagFallback);
         int selectedIndex = 0;
         for (int i = 0; i < instances.size(); i++) {
             if (Math.abs(instances.get(i).value - currentVal) < 1f) {
