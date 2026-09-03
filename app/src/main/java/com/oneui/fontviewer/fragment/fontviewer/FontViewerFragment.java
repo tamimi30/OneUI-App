@@ -500,6 +500,7 @@ public class FontViewerFragment extends Fragment {
                     final Typeface finalTypeface             = typeface;
                     final float finalWeightForHandler        = finalWeight;
                     final boolean finalIsVariable            = isVar;
+                    final Map<String, List<VariableFontHelper.VariableInstance>> finalVariableAxes = variableAxes;
                     
 
                     mainHandler.post(() -> {
@@ -507,8 +508,8 @@ public class FontViewerFragment extends Fragment {
                         currentFontWeight = finalWeightForHandler;
                         isVariableFont    = finalIsVariable;
 
-                        if (finalIsVariable && variableAxes != null && !variableAxes.isEmpty()) {
-                            setupVariableAxesUI(variableAxes);
+                        if (finalIsVariable && finalVariableAxes != null && !finalVariableAxes.isEmpty()) {
+                            setupVariableAxesUI(finalVariableAxes);
                         } else {
                             showWeightLabel(currentWeightWidthLabel);
                         }
