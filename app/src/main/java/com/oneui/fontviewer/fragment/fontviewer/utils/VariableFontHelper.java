@@ -217,6 +217,49 @@ public class VariableFontHelper {
             int numTables = readUInt16(raf);
             
             long fvarOffset = -1;
+            for (int i = 0; i < numTables; i++) {
+                raf.seek(fontOffset + 12 + i * 16);
+                byte[] tableTag = new byte[4];
+                raf.read(tableTag);
+                String tagStr = new String(tableTag, "US-ASCII");
+                
+                if ("fvar".equals(tagStr)) {
+                    raf.seek(fontOffset + 12 + i * 16 + 8);
+                    fvarOffset = readUInt32(raf);
+                    break;
+                }
+            }
+            
+            if (fvarOffset == -1) return axesRanges;
+            
+            raf.seek(fvarOffset + 4);
+            int axesArrayOffset = readUInt16(raf);
+            raf.seek(fvarOffset + 8);
+            int axisCount = readUInt16(raf);
+            int axisSize = readUInt16(raf);
+            
+            for (int i = 0; i < axisCount; i++) {
+                long axisPos = fvarOffset + axesArrayOffset + (i * axisSize);
+                raf.seek(axisPos);
+                
+                byte[] axisTag = new byte[4];
+                raf.read(axisTag);
+                String axisTagStr = new String(axisTag, "US-ASCII");
+                
+                if ("wght".equals(axisTagStr) || "wdth".equals(axisTagStr) || "ital".equals(axisTagStr) ||
+                    "grad".equals(axisTagStr) || "spac".equals(axisTagStr) || "rond".equals(axisTagStr)) {
+                    float minValue = readFixed(raf);
+                    readFixed(raf); // default
+                    float maxValue = readFixed(raf);
+                    axesRanges.put(axisTagStr, new float[]{minValue, maxValue});
+                }
+            }
+            
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Failed to read axes ranges from fvar", e);
+        }
+        return axesRanges;
+    }
      
     private static int readUInt16(RandomAccessFile raf) throws Exception {
         byte[] bytes = new byte[2];
