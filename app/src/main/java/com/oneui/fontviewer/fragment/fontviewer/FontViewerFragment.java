@@ -500,7 +500,7 @@ public class FontViewerFragment extends Fragment {
                     final Typeface finalTypeface             = typeface;
                     final float finalWeightForHandler        = finalWeight;
                     final boolean finalIsVariable            = isVar;
-                    final List<VariableFontHelper.VariableInstance> finalInstances = variableInstances;
+                    
 
                     mainHandler.post(() -> {
                         currentTypeface   = finalTypeface;
