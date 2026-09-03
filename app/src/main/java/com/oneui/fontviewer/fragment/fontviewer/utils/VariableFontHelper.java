@@ -16,13 +16,13 @@ public class VariableFontHelper {
     
     public static class VariableInstance {
         public String name;
-        public float weight;
-        public float width;
+        public String tag;
+        public float value;
         
-        public VariableInstance(String name, float weight, float width) {
+        public VariableInstance(String name, String tag, float value) {
             this.name = name;
-            this.weight = weight;
-            this.width = width;
+            this.tag = tag;
+            this.value = value;
         }
         
         @Override
@@ -120,61 +120,82 @@ public class VariableFontHelper {
         return false;
     }
     
-    public static List<VariableInstance> extractVariableInstances(File fontFile, int ttcIndex) {
-        List<VariableInstance> instances = new ArrayList<>();
+    public static java.util.Map<String, List<VariableInstance>> extractAllVariableInstances(File fontFile, int ttcIndex) {
+        java.util.Map<String, List<VariableInstance>> instancesMap = new java.util.HashMap<>();
         
         if (!isVariableFont(fontFile, ttcIndex)) {
-            return instances;
+            return instancesMap;
         }
         
         try {
-            float[] ranges = readAxesRangesFromFvar(fontFile, ttcIndex);
-            float minWeight = ranges[0];
-            float maxWeight = ranges[1];
-            float minWidth = ranges[2];
-            float maxWidth = ranges[3];
-            boolean hasWidth = ranges[4] == 1f;
+            java.util.Map<String, float[]> ranges = readAllAxesRangesFromFvar(fontFile, ttcIndex);
             
-            // ترتيب العروض: العادي أولاً، ثم الكثيف، ثم الموسع
-            float[] widths = {100f, 87.5f, 75f, 62.5f, 50f, 112.5f, 125f, 150f, 200f};
-            String[] widthNames = {"", "Semi Condensed ", "Condensed ", "Extra Condensed ", "Ultra Condensed ", "Semi Expanded ", "Expanded ", "Extra Expanded ", "Ultra Expanded "};
-            
-            String[] weightNames = {"Thin", "Extra Light", "Light", "Regular", "Medium", "Semi Bold", "Bold", "Extra Bold", "Black"};
-            float[] weights = {100f, 200f, 300f, 400f, 500f, 600f, 700f, 800f, 900f};
-            
-            if (!hasWidth) {
-                // خط يدعم الوزن فقط
-                for (int i = 0; i < weights.length; i++) {
-                    if (weights[i] >= minWeight && weights[i] <= maxWeight) {
-                        instances.add(new VariableInstance(weightNames[i], weights[i], 100f));
-                    }
-                }
-            } else {
-                // خط يدعم الوزن والعرض
-                for (int wIdx = 0; wIdx < widths.length; wIdx++) {
-                    float currentWidth = widths[wIdx];
-                    if (currentWidth >= minWidth && currentWidth <= maxWidth) {
-                        for (int i = 0; i < weights.length; i++) {
-                            if (weights[i] >= minWeight && weights[i] <= maxWeight) {
-                                String fullName = (widthNames[wIdx] + weightNames[i]).trim();
-                                instances.add(new VariableInstance(fullName, weights[i], currentWidth));
-                            }
-                        }
-                    }
-                }
+            if (ranges.containsKey("wght")) {
+                float min = ranges.get("wght")[0]; float max = ranges.get("wght")[1];
+                List<VariableInstance> list = new ArrayList<>();
+                addIfInRange(list, "Thin", "wght", 100, min, max);
+                addIfInRange(list, "Extra Light", "wght", 200, min, max);
+                addIfInRange(list, "Light", "wght", 300, min, max);
+                addIfInRange(list, "Regular", "wght", 400, min, max);
+                addIfInRange(list, "Medium", "wght", 500, min, max);
+                addIfInRange(list, "Semi Bold", "wght", 600, min, max);
+                addIfInRange(list, "Bold", "wght", 700, min, max);
+                addIfInRange(list, "Extra Bold", "wght", 800, min, max);
+                addIfInRange(list, "Black", "wght", 900, min, max);
+                instancesMap.put("wght", list);
             }
+            if (ranges.containsKey("wdth")) {
+                float min = ranges.get("wdth")[0]; float max = ranges.get("wdth")[1];
+                List<VariableInstance> list = new ArrayList<>();
+                addIfInRange(list, "Ultra Condensed", "wdth", 50, min, max);
+                addIfInRange(list, "Extra Condensed", "wdth", 62.5f, min, max);
+                addIfInRange(list, "Condensed", "wdth", 75, min, max);
+                addIfInRange(list, "Semi Condensed", "wdth", 87.5f, min, max);
+                addIfInRange(list, "Normal Width", "wdth", 100, min, max);
+                addIfInRange(list, "Semi Expanded", "wdth", 112.5f, min, max);
+                addIfInRange(list, "Expanded", "wdth", 125, min, max);
+                instancesMap.put("wdth", list);
+            }
+            if (ranges.containsKey("ital")) {
+                float min = ranges.get("ital")[0]; float max = ranges.get("ital")[1];
+                List<VariableInstance> list = new ArrayList<>();
+                addIfInRange(list, "Upright", "ital", 0, min, max);
+                addIfInRange(list, "Italic", "ital", 1, min, max);
+                instancesMap.put("ital", list);
+            }
+            if (ranges.containsKey("grad")) {
+                float min = ranges.get("grad")[0]; float max = ranges.get("grad")[1];
+                List<VariableInstance> list = new ArrayList<>();
+                addIfInRange(list, "Low Grade", "grad", -200, min, max);
+                addIfInRange(list, "Normal Grade", "grad", 0, min, max);
+                addIfInRange(list, "High Grade", "grad", 150, min, max);
+                instancesMap.put("grad", list);
+            }
+            if (ranges.containsKey("spac")) {
+                float min = ranges.get("spac")[0]; float max = ranges.get("spac")[1];
+                List<VariableInstance> list = new ArrayList<>();
+                addIfInRange(list, "Tight Spacing", "spac", min, min, max);
+                if(0 > min && 0 < max) addIfInRange(list, "Normal Spacing", "spac", 0, min, max);
+                addIfInRange(list, "Wide Spacing", "spac", max, min, max);
+                instancesMap.put("spac", list);
+            }
+            if (ranges.containsKey("rond")) {
+                float min = ranges.get("rond")[0]; float max = ranges.get("rond")[1];
+                List<VariableInstance> list = new ArrayList<>();
+                addIfInRange(list, "Square", "rond", 0, min, max);
+                addIfInRange(list, "Round", "rond", 100, min, max);
+                instancesMap.put("rond", list);
+            }
+            
         } catch (Exception e) {
-            android.util.Log.e(TAG, "Failed to extract instances", e);
+            android.util.Log.e(TAG, "Failed to extract variable axes instances", e);
         }
         
-        return instances;
+        return instancesMap;
     }
     
-    
-    
-    private static float[] readAxesRangesFromFvar(File fontFile, int ttcIndex) {
-        // [minWeight, maxWeight, minWidth, maxWidth, hasWidthFlag]
-        float[] ranges = {100f, 900f, 100f, 100f, 0f};
+    private static java.util.Map<String, float[]> readAllAxesRangesFromFvar(File fontFile, int ttcIndex) {
+        java.util.Map<String, float[]> axesRanges = new java.util.HashMap<>();
         
         try (RandomAccessFile raf = new RandomAccessFile(fontFile, "r")) {
             byte[] header = new byte[4];
@@ -186,7 +207,7 @@ public class VariableFontHelper {
             if ("ttcf".equals(tag)) {
                 raf.seek(8);
                 long numFonts = readUInt32(raf);
-                if (ttcIndex >= numFonts) return ranges;
+                if (ttcIndex >= numFonts) return axesRanges;
                 
                 raf.seek(12 + (ttcIndex * 4));
                 fontOffset = readUInt32(raf);
@@ -196,54 +217,7 @@ public class VariableFontHelper {
             int numTables = readUInt16(raf);
             
             long fvarOffset = -1;
-            for (int i = 0; i < numTables; i++) {
-                raf.seek(fontOffset + 12 + i * 16);
-                byte[] tableTag = new byte[4];
-                raf.read(tableTag);
-                String tagStr = new String(tableTag, "US-ASCII");
-                
-                if ("fvar".equals(tagStr)) {
-                    raf.seek(fontOffset + 12 + i * 16 + 8);
-                    fvarOffset = readUInt32(raf);
-                    break;
-                }
-            }
-            
-            if (fvarOffset == -1) return ranges;
-            
-            raf.seek(fvarOffset + 4);
-            int axesArrayOffset = readUInt16(raf);
-            raf.seek(fvarOffset + 8);
-            int axisCount = readUInt16(raf);
-            int axisSize = readUInt16(raf);
-            
-            for (int i = 0; i < axisCount; i++) {
-                long axisPos = fvarOffset + axesArrayOffset + (i * axisSize);
-                raf.seek(axisPos);
-                
-                byte[] axisTag = new byte[4];
-                raf.read(axisTag);
-                String axisTagStr = new String(axisTag, "US-ASCII");
-                
-                if ("wght".equals(axisTagStr)) {
-                    ranges[0] = readFixed(raf);
-                    readFixed(raf); 
-                    ranges[1] = readFixed(raf);
-                } else if ("wdth".equals(axisTagStr)) {
-                    ranges[2] = readFixed(raf);
-                    readFixed(raf); 
-                    ranges[3] = readFixed(raf);
-                    ranges[4] = 1f;
-                }
-            }
-            
-        } catch (Exception e) {
-            android.util.Log.e(TAG, "Failed to read axes ranges from fvar", e);
-        }
-        
-        return ranges;
-    }
-    
+     
     private static int readUInt16(RandomAccessFile raf) throws Exception {
         byte[] bytes = new byte[2];
         raf.read(bytes);
@@ -269,30 +243,23 @@ public class VariableFontHelper {
         return value / 65536.0f;
     }
     
-    private static void addWeightIfInRange(List<VariableInstance> instances, 
-                                          String name, float value, 
-                                          float min, float max) {
+    private static void addIfInRange(List<VariableInstance> instances, 
+                                     String name, String tag, float value, 
+                                     float min, float max) {
         if (value >= min && value <= max) {
-            instances.add(new VariableInstance(name, "wght", value));
+            instances.add(new VariableInstance(name, tag, value));
         }
     }
 
-    
-
-    public static Typeface createTypefaceWithAxes(File fontFile, float weight, float width, int ttcIndex) {
+    public static Typeface createTypefaceWithSettings(File fontFile, String variationSettings, int ttcIndex) {
         try {
             Font.Builder fontBuilder = new Font.Builder(fontFile);
             
             if (ttcIndex > 0) {
                 fontBuilder.setTtcIndex(ttcIndex);
-                android.util.Log.d(TAG, "Set TTC index: " + ttcIndex);
             }
             
-            if (weight > 0 || width > 0) {
-                String variationSettings = "";
-                if (weight > 0) variationSettings += "'wght' " + weight;
-                if (width > 0) variationSettings += (variationSettings.isEmpty() ? "" : ", ") + "'wdth' " + width;
-                
+            if (variationSettings != null && !variationSettings.isEmpty()) {
                 fontBuilder.setFontVariationSettings(variationSettings);
                 android.util.Log.d(TAG, "Set variation settings: " + variationSettings);
             }
@@ -304,14 +271,10 @@ public class VariableFontHelper {
                     new android.graphics.fonts.FontFamily.Builder(font).build()
                 );
             
-            Typeface result = fallbackBuilder.build();
-            android.util.Log.d(TAG, "Successfully created variable Typeface with axes: wght=" + weight + ", wdth=" + width + ", ttcIndex: " + ttcIndex);
-            
-            return result;
+            return fallbackBuilder.build();
             
         } catch (Exception e) {
-            android.util.Log.e(TAG, "Failed to create variable Typeface with axes: wght=" + weight + ", wdth=" + width + ", ttcIndex: " + ttcIndex, e);
-            
+            android.util.Log.e(TAG, "Failed to create variable Typeface with settings: " + variationSettings, e);
             try {
                 return Typeface.createFromFile(fontFile);
             } catch (Exception ex) {
