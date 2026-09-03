@@ -592,10 +592,12 @@ public class FontViewerFragment extends Fragment {
         
         float currentVal = currentAxesValues.containsKey(actualTag) ? currentAxesValues.get(actualTag) : getFallbackValueForAxis(axisTagFallback);
         int selectedIndex = 0;
+        float minDiff = Float.MAX_VALUE;
         for (int i = 0; i < instances.size(); i++) {
-            if (Math.abs(instances.get(i).value - currentVal) < 1f) {
+            float diff = Math.abs(instances.get(i).value - currentVal);
+            if (diff < minDiff) {
+                minDiff = diff;
                 selectedIndex = i;
-                break;
             }
         }
         spinner.setSelection(selectedIndex);
