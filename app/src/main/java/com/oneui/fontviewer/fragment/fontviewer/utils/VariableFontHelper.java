@@ -177,16 +177,19 @@ public class VariableFontHelper {
             if (gradTag != null) {
                 float min = ranges.get(gradTag)[0]; float max = ranges.get(gradTag)[1];
                 List<VariableInstance> list = new ArrayList<>();
+                
+                // إضافة القيمة الدنيا
                 addIfInRange(list, "Low Grade", gradTag, min, min, max);
-                if (0 > min && 0 < max) {
-                    addIfInRange(list, "Normal Grade", gradTag, 0, min, max);
-                } else if (min < max && 0 != min && 0 != max) {
-                    float mid = (min + max) / 2f;
-                    addIfInRange(list, "Normal Grade", gradTag, mid, min, max);
-                }
-                if (max > min) {
+                
+                if (min < max) {
+                    // إذا كان الصفر يقع بين القيمتين، نعتبره Normal، وإلا نأخذ القيمة المتوسطة
+                    float normalVal = (min < 0 && max > 0) ? 0f : (min + max) / 2f;
+                    addIfInRange(list, "Normal Grade", gradTag, normalVal, min, max);
+                    
+                    // إضافة القيمة القصوى
                     addIfInRange(list, "High Grade", gradTag, max, min, max);
                 }
+                
                 instancesMap.put("grad", list);
             }
             String spacTag = findKeyIgnoreCase(ranges, "spac");
