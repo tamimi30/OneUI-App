@@ -56,6 +56,13 @@ public class SettingsDataStore {
     private final Preferences.Key<String> KEY_VIEWER_FILE_NAME;
     private final Preferences.Key<String> KEY_VIEWER_REAL_NAME;
     private final Preferences.Key<Float> KEY_VIEWER_FONT_WEIGHT;
+
+    // ★ مفاتيح محاور الخط المتغير الإضافية: العرض، التدرج، الاستدارة، الميل، والتباعد الأحادي ★
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_WIDTH;
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_GRADE;
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_ROUNDNESS;
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_ITALIC_AXIS;
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_MONO;
     
     // Default values
     public static final int DEFAULT_LANGUAGE_MODE = 0;
@@ -68,6 +75,13 @@ public class SettingsDataStore {
             "The quick brown fox jumps over the lazy dog.\n\n" +
             "0123456789";
     public static final float DEFAULT_VIEWER_FONT_WEIGHT = 400f;
+
+    // ★ القيم الافتراضية لمحاور الخط المتغير الإضافية ★
+    public static final float DEFAULT_VIEWER_FONT_WIDTH       = 100f;
+    public static final float DEFAULT_VIEWER_FONT_GRADE       = 0f;
+    public static final float DEFAULT_VIEWER_FONT_ROUNDNESS   = 0f;
+    public static final float DEFAULT_VIEWER_FONT_ITALIC_AXIS = 0f;
+    public static final float DEFAULT_VIEWER_FONT_MONO        = 0f;
     
     
     private SettingsDataStore(Context context) {
@@ -110,6 +124,13 @@ public class SettingsDataStore {
         KEY_VIEWER_FILE_NAME = PreferencesKeys.stringKey("viewer_file_name");
         KEY_VIEWER_REAL_NAME = PreferencesKeys.stringKey("viewer_real_name");
         KEY_VIEWER_FONT_WEIGHT = PreferencesKeys.floatKey("viewer_font_weight");
+
+        // ★ Initialize additional variable-axis keys ★
+        KEY_VIEWER_FONT_WIDTH       = PreferencesKeys.floatKey("viewer_font_width");
+        KEY_VIEWER_FONT_GRADE       = PreferencesKeys.floatKey("viewer_font_grade");
+        KEY_VIEWER_FONT_ROUNDNESS   = PreferencesKeys.floatKey("viewer_font_roundness");
+        KEY_VIEWER_FONT_ITALIC_AXIS = PreferencesKeys.floatKey("viewer_font_italic_axis");
+        KEY_VIEWER_FONT_MONO        = PreferencesKeys.floatKey("viewer_font_mono");
     }
     
     public static SettingsDataStore getInstance(Context context) {
@@ -499,6 +520,101 @@ public class SettingsDataStore {
             prefs.get(KEY_VIEWER_FONT_WEIGHT) : DEFAULT_VIEWER_FONT_WEIGHT
         );
     }
+
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Width Axis (wdth)
+    // ════════════════════════════════════════════════════════════
+
+    public Single<Preferences> setViewerFontWidth(float width) {
+        return dataStore.updateDataAsync(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_WIDTH, width);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Float> getViewerFontWidth() {
+        return dataStore.data().map(prefs ->
+            prefs.get(KEY_VIEWER_FONT_WIDTH) != null ?
+            prefs.get(KEY_VIEWER_FONT_WIDTH) : DEFAULT_VIEWER_FONT_WIDTH
+        );
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Grade Axis (GRAD)
+    // ════════════════════════════════════════════════════════════
+
+    public Single<Preferences> setViewerFontGrade(float grade) {
+        return dataStore.updateDataAsync(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_GRADE, grade);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Float> getViewerFontGrade() {
+        return dataStore.data().map(prefs ->
+            prefs.get(KEY_VIEWER_FONT_GRADE) != null ?
+            prefs.get(KEY_VIEWER_FONT_GRADE) : DEFAULT_VIEWER_FONT_GRADE
+        );
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Roundness Axis (ROND)
+    // ════════════════════════════════════════════════════════════
+
+    public Single<Preferences> setViewerFontRoundness(float roundness) {
+        return dataStore.updateDataAsync(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_ROUNDNESS, roundness);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Float> getViewerFontRoundness() {
+        return dataStore.data().map(prefs ->
+            prefs.get(KEY_VIEWER_FONT_ROUNDNESS) != null ?
+            prefs.get(KEY_VIEWER_FONT_ROUNDNESS) : DEFAULT_VIEWER_FONT_ROUNDNESS
+        );
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Italic Axis (ital)
+    // ════════════════════════════════════════════════════════════
+
+    public Single<Preferences> setViewerFontItalicAxis(float italValue) {
+        return dataStore.updateDataAsync(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_ITALIC_AXIS, italValue);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Float> getViewerFontItalicAxis() {
+        return dataStore.data().map(prefs ->
+            prefs.get(KEY_VIEWER_FONT_ITALIC_AXIS) != null ?
+            prefs.get(KEY_VIEWER_FONT_ITALIC_AXIS) : DEFAULT_VIEWER_FONT_ITALIC_AXIS
+        );
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Mono Axis (MONO)
+    // ════════════════════════════════════════════════════════════
+
+    public Single<Preferences> setViewerFontMono(float monoValue) {
+        return dataStore.updateDataAsync(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_MONO, monoValue);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Float> getViewerFontMono() {
+        return dataStore.data().map(prefs ->
+            prefs.get(KEY_VIEWER_FONT_MONO) != null ?
+            prefs.get(KEY_VIEWER_FONT_MONO) : DEFAULT_VIEWER_FONT_MONO
+        );
+    }
     
     // ════════════════════════════════════════════════════════════
     // Clear All
@@ -511,4 +627,4 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-                                                          }
+                    }
