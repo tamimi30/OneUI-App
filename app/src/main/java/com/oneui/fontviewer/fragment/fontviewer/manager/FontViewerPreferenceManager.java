@@ -7,6 +7,7 @@ import android.util.Log;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
+import com.oneui.fontviewer.fragment.fontviewer.utils.VariableFontHelper;
 
 public class FontViewerPreferenceManager {
     
@@ -101,6 +102,140 @@ public class FontViewerPreferenceManager {
             return defaultWeight;
         }
     }
+
+    
+
+    public void saveFontWidth(float fontWidth) {
+        dataStore.setViewerFontWidth(fontWidth)
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    prefs -> Log.d(TAG, "Saved font width: " + fontWidth),
+                    error -> Log.e(TAG, "Error saving font width: " + error.getMessage())
+                );
+    }
+
+    public float getFontWidth(float defaultWidth) {
+        try {
+            Float value = dataStore.getViewerFontWidth().blockingFirst();
+            return value != null ? value : defaultWidth;
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting font width: " + e.getMessage());
+            return defaultWidth;
+        }
+    }
+
+    public void saveFontGrade(float fontGrade) {
+        dataStore.setViewerFontGrade(fontGrade)
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    prefs -> Log.d(TAG, "Saved font grade: " + fontGrade),
+                    error -> Log.e(TAG, "Error saving font grade: " + error.getMessage())
+                );
+    }
+
+    public float getFontGrade(float defaultGrade) {
+        try {
+            Float value = dataStore.getViewerFontGrade().blockingFirst();
+            return value != null ? value : defaultGrade;
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting font grade: " + e.getMessage());
+            return defaultGrade;
+        }
+    }
+
+    public void saveFontRoundness(float fontRoundness) {
+        dataStore.setViewerFontRoundness(fontRoundness)
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    prefs -> Log.d(TAG, "Saved font roundness: " + fontRoundness),
+                    error -> Log.e(TAG, "Error saving font roundness: " + error.getMessage())
+                );
+    }
+
+    public float getFontRoundness(float defaultRoundness) {
+        try {
+            Float value = dataStore.getViewerFontRoundness().blockingFirst();
+            return value != null ? value : defaultRoundness;
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting font roundness: " + e.getMessage());
+            return defaultRoundness;
+        }
+    }
+
+    public void saveFontItalicAxis(float italValue) {
+        dataStore.setViewerFontItalicAxis(italValue)
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    prefs -> Log.d(TAG, "Saved font italic axis: " + italValue),
+                    error -> Log.e(TAG, "Error saving font italic axis: " + error.getMessage())
+                );
+    }
+
+    public float getFontItalicAxis(float defaultItal) {
+        try {
+            Float value = dataStore.getViewerFontItalicAxis().blockingFirst();
+            return value != null ? value : defaultItal;
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting font italic axis: " + e.getMessage());
+            return defaultItal;
+        }
+    }
+
+    public void saveFontMono(float monoValue) {
+        dataStore.setViewerFontMono(monoValue)
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    prefs -> Log.d(TAG, "Saved font mono: " + monoValue),
+                    error -> Log.e(TAG, "Error saving font mono: " + error.getMessage())
+                );
+    }
+
+    public float getFontMono(float defaultMono) {
+        try {
+            Float value = dataStore.getViewerFontMono().blockingFirst();
+            return value != null ? value : defaultMono;
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting font mono: " + e.getMessage());
+            return defaultMono;
+        }
+    }
+
+    // ★ دالتان عامتان (Generic) للحفظ والاسترجاع حسب وسم المحور، تُستخدمان من FontViewerFragment
+    //   بدل استدعاء الدالة المخصصة لكل محور يدوياً في كل مرة ★
+    public void saveFontAxisValue(String axisTag, float value) {
+        if (VariableFontHelper.AXIS_WGHT.equals(axisTag)) {
+            saveFontWeight(value);
+        } else if (VariableFontHelper.AXIS_WDTH.equals(axisTag)) {
+            saveFontWidth(value);
+        } else if (VariableFontHelper.AXIS_ITAL.equals(axisTag)) {
+            saveFontItalicAxis(value);
+        } else if (VariableFontHelper.AXIS_GRAD.equals(axisTag)) {
+            saveFontGrade(value);
+        } else if (VariableFontHelper.AXIS_ROND.equals(axisTag)) {
+            saveFontRoundness(value);
+        } else if (VariableFontHelper.AXIS_MONO.equals(axisTag)) {
+            saveFontMono(value);
+        } else {
+            Log.w(TAG, "Unknown axis tag for saving: " + axisTag);
+        }
+    }
+
+    public float getFontAxisValue(String axisTag, float defaultValue) {
+        if (VariableFontHelper.AXIS_WGHT.equals(axisTag)) {
+            return getFontWeight(defaultValue);
+        } else if (VariableFontHelper.AXIS_WDTH.equals(axisTag)) {
+            return getFontWidth(defaultValue);
+        } else if (VariableFontHelper.AXIS_ITAL.equals(axisTag)) {
+            return getFontItalicAxis(defaultValue);
+        } else if (VariableFontHelper.AXIS_GRAD.equals(axisTag)) {
+            return getFontGrade(defaultValue);
+        } else if (VariableFontHelper.AXIS_ROND.equals(axisTag)) {
+            return getFontRoundness(defaultValue);
+        } else if (VariableFontHelper.AXIS_MONO.equals(axisTag)) {
+            return getFontMono(defaultValue);
+        }
+        return defaultValue;
+    }
     
     
-}
+    }
