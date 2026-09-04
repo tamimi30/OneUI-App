@@ -39,9 +39,7 @@
                 android:id="@+id/variable_axes_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
                 android:layout_marginBottom="16dp"
-                
                 app:flexWrap="wrap"
                 app:justifyContent="flex_start"
                 android:visibility="gone">
@@ -62,6 +60,7 @@
                         android:layout_height="wrap_content"
                         android:text="Weight"
                         android:textSize="12sp"
+                        android:layout_marginStart="24dp"
                         android:layout_gravity="left"
                         android:textColor="?android:attr/textColorSecondary"
                         />
@@ -70,6 +69,7 @@
                         android:id="@+id/weight_spinner"
                         android:layout_width="wrap_content"
                         android:layout_gravity="left"
+                        android:layout_marginStart="14dp"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
 
