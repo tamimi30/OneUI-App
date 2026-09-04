@@ -56,14 +56,6 @@ public class SettingsDataStore {
     private final Preferences.Key<String> KEY_VIEWER_FILE_NAME;
     private final Preferences.Key<String> KEY_VIEWER_REAL_NAME;
     private final Preferences.Key<Float> KEY_VIEWER_FONT_WEIGHT;
-
-    // ★ قيم محاور الخط المتغير الأخرى (منفصلة تماماً عن محور الوزن) ★
-    private final Preferences.Key<Float> KEY_VIEWER_AXIS_WDTH;
-    private final Preferences.Key<Float> KEY_VIEWER_AXIS_GRAD;
-    private final Preferences.Key<Float> KEY_VIEWER_AXIS_ROND;
-    private final Preferences.Key<Float> KEY_VIEWER_AXIS_ITAL;
-    private final Preferences.Key<Float> KEY_VIEWER_AXIS_OPSZ;
-    private final Preferences.Key<Float> KEY_VIEWER_AXIS_MONO;
     
     // Default values
     public static final int DEFAULT_LANGUAGE_MODE = 0;
@@ -118,14 +110,6 @@ public class SettingsDataStore {
         KEY_VIEWER_FILE_NAME = PreferencesKeys.stringKey("viewer_file_name");
         KEY_VIEWER_REAL_NAME = PreferencesKeys.stringKey("viewer_real_name");
         KEY_VIEWER_FONT_WEIGHT = PreferencesKeys.floatKey("viewer_font_weight");
-
-        // ★ Initialize other variable-axis keys ★
-        KEY_VIEWER_AXIS_WDTH = PreferencesKeys.floatKey("viewer_axis_wdth");
-        KEY_VIEWER_AXIS_GRAD = PreferencesKeys.floatKey("viewer_axis_grad");
-        KEY_VIEWER_AXIS_ROND = PreferencesKeys.floatKey("viewer_axis_rond");
-        KEY_VIEWER_AXIS_ITAL = PreferencesKeys.floatKey("viewer_axis_ital");
-        KEY_VIEWER_AXIS_OPSZ = PreferencesKeys.floatKey("viewer_axis_opsz");
-        KEY_VIEWER_AXIS_MONO = PreferencesKeys.floatKey("viewer_axis_mono");
     }
     
     public static SettingsDataStore getInstance(Context context) {
@@ -516,39 +500,6 @@ public class SettingsDataStore {
         );
     }
     
-    // ════════════════════════════════════════════════════════════
-    // Font Viewer - Other Variable Axes (Width / Grade / Roundness / Italic / Optical Size / Mono)
-    // ════════════════════════════════════════════════════════════
-
-    public Single<Preferences> setViewerAxisValue(String axisCanonicalKey, float value) {
-        return dataStore.updateDataAsync(prefs -> {
-            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            Preferences.Key<Float> key = keyForAxis(axisCanonicalKey);
-            if (key != null) {
-                mutablePrefs.set(key, value);
-            }
-            return Single.just(mutablePrefs);
-        });
-    }
-
-    public Flowable<Float> getViewerAxisValue(String axisCanonicalKey) {
-        Preferences.Key<Float> key = keyForAxis(axisCanonicalKey);
-        return dataStore.data().map(prefs -> key != null ? prefs.get(key) : null);
-    }
-
-    private Preferences.Key<Float> keyForAxis(String axisCanonicalKey) {
-        if (axisCanonicalKey == null) return null;
-        switch (axisCanonicalKey) {
-            case "WDTH": return KEY_VIEWER_AXIS_WDTH;
-            case "GRAD": return KEY_VIEWER_AXIS_GRAD;
-            case "ROND": return KEY_VIEWER_AXIS_ROND;
-            case "ITAL": return KEY_VIEWER_AXIS_ITAL;
-            case "OPSZ": return KEY_VIEWER_AXIS_OPSZ;
-            case "MONO": return KEY_VIEWER_AXIS_MONO;
-            default: return null;
-        }
-    }
-
     // ════════════════════════════════════════════════════════════
     // Clear All
     // ════════════════════════════════════════════════════════════

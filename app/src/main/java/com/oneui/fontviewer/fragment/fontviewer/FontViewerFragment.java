@@ -74,8 +74,7 @@ public class FontViewerFragment extends Fragment {
 
     private TextView previewSentence;
     private TextView weightLabelText;
-    private AppCompatSpinner axisValueSpinner; // (سابقاً: weightSpinner) يعرض القيم الجاهزة للمحور المختار حالياً
-    private AppCompatSpinner axisTypeSpinner;  // منتقي نوع المحور: الوزن / العرض / الدرجة / الاستدارة / المائل / الحجم البصري / أحادي المسافة
+    private AppCompatSpinner weightSpinner;
 
     private String currentFontPath;
     private String currentFontFileName;
@@ -89,12 +88,6 @@ public class FontViewerFragment extends Fragment {
     private boolean isSystemFont    = false;
 
     private String currentWeightWidthLabel;
-
-    // ★ المحاور المتغيرة المدعومة والمتوفرة في الخط الحالي، ومحور القيمة المختار حالياً في منتقي نوع المحور ★
-    private List<VariableFontHelper.AxisInfo> currentSupportedAxes = new ArrayList<>();
-    private VariableFontHelper.AxisInfo currentSelectedAxis;
-    // ★ قيم كل المحاور الأخرى (عدا الوزن) حسب وسمها الأصلي كما ورد من الخط، لتبقى محفوظة عند التنقل بين المحاور ★
-    private final Map<String, Float> currentAxisValues = new HashMap<>();
 
     private OnFontChangedListener fontChangedListener;
 
@@ -249,10 +242,9 @@ public class FontViewerFragment extends Fragment {
         }
     	formattingHelper.unbind();
         super.onDestroyView();
-        previewSentence  = null;
-        weightLabelText  = null;
-        axisValueSpinner = null;
-        axisTypeSpinner  = null;
+        previewSentence = null;
+        weightLabelText = null;
+        weightSpinner   = null;
     }
 
     @Override
@@ -269,28 +261,8 @@ public class FontViewerFragment extends Fragment {
         }
     }
 
-    // ★ إرجاع القيمة الحالية لمحور معيّن (من متغير الوزن الأساسي أو من خريطة المحاور الأخرى) ★
-    private float getAxisCurrentValue(VariableFontHelper.AxisInfo axis) {
-        if (axis == null) return 0f;
-        if ("WGHT".equals(axis.canonicalKey)) {
-            return currentFontWeight;
-        }
-        Float stored = currentAxisValues.get(axis.tag);
-        return stored != null ? stored : axis.defaultValue;
-    }
-
-    // ★ بناء خريطة (وسم المحور -> القيمة) بكل المحاور المدعومة حالياً، مع إمكانية تجاوز قيمة محور واحد أثناء الأنيميشن ★
-    private Map<String, Float> buildAxisValuesMap(String overrideTag, float overrideValue) {
-        Map<String, Float> map = new HashMap<>();
-        for (VariableFontHelper.AxisInfo axis : currentSupportedAxes) {
-            float value = axis.tag.equals(overrideTag) ? overrideValue : getAxisCurrentValue(axis);
-            map.put(axis.tag, value);
-        }
-        return map;
-    }
-
-    private void onAxisValueChanged(VariableFontHelper.AxisInfo axis, VariableFontHelper.VariableInstance instance) {
-        if (axis == null || instance == null || currentFontPath == null) {
+    private void onFontWeightChanged(VariableFontHelper.VariableInstance instance) {
+        if (instance == null || currentFontPath == null) {
             return;
         }
 
@@ -299,68 +271,45 @@ public class FontViewerFragment extends Fragment {
             return;
         }
 
-        float oldValue = getAxisCurrentValue(axis);
-        final float newValue = instance.value;
+        float oldWeight = currentFontWeight;
+        final float newWeight = instance.value;
 
-        if (oldValue == newValue) {
+        if (oldWeight == newWeight) {
             return;
         }
 
-        final boolean isWeightAxis    = "WGHT".equals(axis.canonicalKey);
-        final String axisTag          = axis.tag;
-        final String axisCanonicalKey = axis.canonicalKey;
-
-        if (isWeightAxis) {
-            preferenceManager.saveFontWeight(newValue);
-        } else {
-            preferenceManager.saveAxisValue(axisCanonicalKey, newValue);
-        }
+        preferenceManager.saveFontWeight(newWeight);
 
         if (weightAnimator != null && weightAnimator.isRunning()) {
             weightAnimator.cancel();
-            oldValue = getAxisCurrentValue(axis);
+            oldWeight = currentFontWeight; 
         }
 
-        weightAnimator = ValueAnimator.ofFloat(oldValue, newValue);
+        weightAnimator = ValueAnimator.ofFloat(oldWeight, newWeight);
         weightAnimator.setDuration(600);
         weightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
 
         weightAnimator.addUpdateListener(animation -> {
-            float animatedValue = (float) animation.getAnimatedValue();
-
-            if (isWeightAxis) {
-                currentFontWeight = animatedValue;
-            } else {
-                currentAxisValues.put(axisTag, animatedValue);
-            }
+            float animatedWeight = (float) animation.getAnimatedValue();
+            currentFontWeight = animatedWeight;
 
             if (previewSentence != null) {
-                String liveSettings = VariableFontHelper.buildVariationSettingsString(
-                        buildAxisValuesMap(axisTag, animatedValue));
-                if (!liveSettings.isEmpty()) {
-                    previewSentence.setFontVariationSettings(liveSettings);
-                }
+                previewSentence.setFontVariationSettings("'wght' " + animatedWeight);
             }
         });
 
         weightAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (isWeightAxis) {
-                    currentFontWeight = newValue;
-                } else {
-                    currentAxisValues.put(axisTag, newValue);
-                }
-
-                final Map<String, Float> finalAxisValues = buildAxisValuesMap(axisTag, newValue);
-
+                currentFontWeight = newWeight;
+                
                 // بناء Typeface النهائي في الخلفية لضمان استقرار خصائص الخط عند تغيير حجمه لاحقاً
                 bgExecutor.execute(() -> {
                     Typeface finalTypeface;
                     if (isSystemFont) {
-                        finalTypeface = SystemFontCache.getInstance().getTypefaceWithAxes(currentFontPath, finalAxisValues, currentTtcIndex);
+                        finalTypeface = SystemFontCache.getInstance().getTypefaceWithWeight(currentFontPath, newWeight, currentTtcIndex);
                     } else {
-                        finalTypeface = VariableFontHelper.createTypefaceWithAxes(fontFile, finalAxisValues, currentTtcIndex);
+                        finalTypeface = VariableFontHelper.createTypefaceWithWeight(fontFile, newWeight, currentTtcIndex);
                     }
                     if (finalTypeface != null) {
                         mainHandler.post(() -> currentTypeface = finalTypeface);
@@ -390,8 +339,7 @@ public class FontViewerFragment extends Fragment {
     private void initViews(View view) {
         previewSentence = view.findViewById(R.id.preview_sentence);
         weightLabelText = view.findViewById(R.id.weight_label_text);
-        axisValueSpinner = view.findViewById(R.id.axis_value_spinner); // (سابقاً: weight_spinner)
-        axisTypeSpinner  = view.findViewById(R.id.axis_type_spinner);
+        weightSpinner   = view.findViewById(R.id.weight_spinner);
     }
 
 
@@ -461,9 +409,6 @@ public class FontViewerFragment extends Fragment {
         }
     }
 
-    
-    
-    
     private void loadFontFromPathWithWeight(String path, float weight) {
         bgExecutor.execute(() -> {
             try {
@@ -485,24 +430,9 @@ public class FontViewerFragment extends Fragment {
                     finalWeight = 0f;
                 }
 
-                List<VariableFontHelper.AxisInfo> supportedAxes = null;
-                Map<String, Float> loadedAxisValues = new HashMap<>();
-
+                List<VariableFontHelper.VariableInstance> variableInstances = null;
                 if (isVar) {
-                    // ★ اكتشاف كل المحاور المدعومة (وزن، عرض، درجة، استدارة، مائل، حجم بصري، أحادي المسافة) ★
-                    supportedAxes = VariableFontHelper.getSupportedAxes(fontFile, currentTtcIndex);
-
-                    for (VariableFontHelper.AxisInfo axis : supportedAxes) {
-                        if ("WGHT".equals(axis.canonicalKey)) {
-                            loadedAxisValues.put(axis.tag, finalWeight);
-                        } else {
-                            // نحمّل القيمة المحفوظة لآخر خط تم فتحه إن وجدت، وإلا القيمة الافتراضية للمحور
-                            Float savedValue = preferenceManager.getAxisValue(axis.canonicalKey);
-                            float value = (savedValue != null) ? savedValue : axis.defaultValue;
-                            value = Math.max(axis.min, Math.min(axis.max, value)); // نتأكد أن القيمة ضمن مدى هذا الخط تحديداً
-                            loadedAxisValues.put(axis.tag, value);
-                        }
-                    }
+                    variableInstances = VariableFontHelper.extractVariableInstances(fontFile, currentTtcIndex);
                 }
 
                 Typeface typeface;
@@ -510,13 +440,9 @@ public class FontViewerFragment extends Fragment {
                 try {
                     if (isSystemFont) {
                         SystemFontCache cache = SystemFontCache.getInstance();
-                        typeface = isVar
-                                ? cache.getTypefaceWithAxes(path, loadedAxisValues, currentTtcIndex)
-                                : cache.getTypefaceWithWeight(path, finalWeight, currentTtcIndex);
+                        typeface = cache.getTypefaceWithWeight(path, finalWeight, currentTtcIndex);
                     } else {
-                        typeface = isVar
-                                ? VariableFontHelper.createTypefaceWithAxes(fontFile, loadedAxisValues, currentTtcIndex)
-                                : VariableFontHelper.createTypefaceWithWeight(fontFile, finalWeight, currentTtcIndex);
+                        typeface = VariableFontHelper.createTypefaceWithWeight(fontFile, finalWeight, currentTtcIndex);
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "★ Typeface creation failed - font might be corrupted", e);
@@ -545,32 +471,18 @@ public class FontViewerFragment extends Fragment {
                 }
 
                 if (typeface != null) {
-                    final Typeface finalTypeface                                  = typeface;
-                    final float finalWeightForHandler                             = finalWeight;
-                    final boolean finalIsVariable                                 = isVar;
-                    final List<VariableFontHelper.AxisInfo> finalSupportedAxes    = supportedAxes;
-                    final Map<String, Float> finalLoadedAxisValues                = loadedAxisValues;
+                    final Typeface finalTypeface             = typeface;
+                    final float finalWeightForHandler        = finalWeight;
+                    final boolean finalIsVariable            = isVar;
+                    final List<VariableFontHelper.VariableInstance> finalInstances = variableInstances;
 
                     mainHandler.post(() -> {
                         currentTypeface   = finalTypeface;
                         currentFontWeight = finalWeightForHandler;
                         isVariableFont    = finalIsVariable;
 
-                        // ★ تحديث خريطة قيم المحاور الأخرى بما تم تحميله لهذا الخط تحديداً ★
-                        currentAxisValues.clear();
-                        if (finalSupportedAxes != null) {
-                            for (VariableFontHelper.AxisInfo axis : finalSupportedAxes) {
-                                if (!"WGHT".equals(axis.canonicalKey)) {
-                                    Float value = finalLoadedAxisValues.get(axis.tag);
-                                    if (value != null) {
-                                        currentAxisValues.put(axis.tag, value);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (finalIsVariable && finalSupportedAxes != null && !finalSupportedAxes.isEmpty()) {
-                            setupAxisUI(finalSupportedAxes);
+                        if (finalIsVariable && finalInstances != null && !finalInstances.isEmpty()) {
+                            setupWeightSpinner(finalInstances);
                         } else {
                             showWeightLabel(currentWeightWidthLabel);
                         }
@@ -611,110 +523,13 @@ public class FontViewerFragment extends Fragment {
             }
         });
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
 
-    // ★ تهيئة منتقي نوع المحور ومنتقي القيمة معاً بناءً على المحاور المدعومة في الخط الحالي ★
-    private void setupAxisUI(List<VariableFontHelper.AxisInfo> axes) {
-        if (axisValueSpinner == null || weightLabelText == null || !isAdded()) return;
-
-        currentSupportedAxes = axes;
-
-        if (axes == null || axes.isEmpty()) {
-            hideWeightUI();
-            return;
-        }
+    private void setupWeightSpinner(List<VariableFontHelper.VariableInstance> instances) {
+        if (weightSpinner == null || weightLabelText == null || !isAdded()) return;
 
         weightLabelText.setVisibility(View.GONE);
-        axisValueSpinner.setVisibility(View.VISIBLE);
-
-        // إن كان هناك أكثر من محور مدعوم، نعرض منتقي نوع المحور بجانب منتقي القيمة
-        if (axes.size() > 1 && axisTypeSpinner != null) {
-            axisTypeSpinner.setVisibility(View.VISIBLE);
-
-            List<String> axisNames = new ArrayList<>();
-            for (VariableFontHelper.AxisInfo axis : axes) {
-                axisNames.add(axis.displayName);
-            }
-
-            ArrayAdapter<String> axisAdapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                axisNames
-            );
-            axisAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-            axisTypeSpinner.setOnItemSelectedListener(null);
-            axisTypeSpinner.setAdapter(axisAdapter);
-
-            // اختيار محور الوزن افتراضياً إن كان مدعوماً، وإلا أول محور متوفر
-            int defaultAxisIndex = 0;
-            for (int i = 0; i < axes.size(); i++) {
-                if ("WGHT".equals(axes.get(i).canonicalKey)) {
-                    defaultAxisIndex = i;
-                    break;
-                }
-            }
-            axisTypeSpinner.setSelection(defaultAxisIndex);
-            currentSelectedAxis = axes.get(defaultAxisIndex);
-
-            axisTypeSpinner.post(() -> {
-                if (axisTypeSpinner == null || !isAdded()) return;
-                axisTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        if (position >= 0 && position < axes.size()) {
-                            currentSelectedAxis = axes.get(position);
-                            populateAxisValueSpinner(currentSelectedAxis);
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {}
-                });
-            });
-        } else {
-            // محور واحد فقط: لا حاجة لإظهار منتقي نوع المحور (نفس السلوك القديم)
-            if (axisTypeSpinner != null) {
-                axisTypeSpinner.setOnItemSelectedListener(null);
-                axisTypeSpinner.setVisibility(View.GONE);
-            }
-            currentSelectedAxis = axes.get(0);
-        }
-
-        populateAxisValueSpinner(currentSelectedAxis);
-    }
-
-    // ★ تعبئة منتقي القيمة بالقيم الجاهزة الخاصة بالمحور المختار حالياً ★
-    private void populateAxisValueSpinner(VariableFontHelper.AxisInfo axis) {
-        if (axisValueSpinner == null || axis == null || !isAdded()) return;
-
-        List<VariableFontHelper.VariableInstance> instances = VariableFontHelper.extractInstancesForAxis(axis);
-        if (instances.isEmpty()) return;
+        weightSpinner.setVisibility(View.VISIBLE);
 
         List<String> instanceNames = new ArrayList<>();
         for (VariableFontHelper.VariableInstance inst : instances) {
@@ -728,28 +543,25 @@ public class FontViewerFragment extends Fragment {
         );
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 
-        axisValueSpinner.setOnItemSelectedListener(null);
-        axisValueSpinner.setAdapter(adapter);
+        weightSpinner.setAdapter(adapter);
 
-        float currentValue = getAxisCurrentValue(axis);
         int selectedIndex = 0;
         for (int i = 0; i < instances.size(); i++) {
-            if (Math.abs(instances.get(i).value - currentValue) < 1f) {
+            if (Math.abs(instances.get(i).value - currentFontWeight) < 1f) {
                 selectedIndex = i;
                 break;
             }
         }
-        axisValueSpinner.setSelection(selectedIndex);
+        weightSpinner.setSelection(selectedIndex);
 
         final List<VariableFontHelper.VariableInstance> finalInstances = instances;
-        final VariableFontHelper.AxisInfo finalAxis = axis;
-        axisValueSpinner.post(() -> {
-            if (axisValueSpinner == null || !isAdded()) return;
-            axisValueSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        weightSpinner.post(() -> {
+            if (weightSpinner == null || !isAdded()) return;
+            weightSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position >= 0 && position < finalInstances.size()) {
-                        onAxisValueChanged(finalAxis, finalInstances.get(position));
+                        onFontWeightChanged(finalInstances.get(position));
                     }
                 }
 
@@ -760,10 +572,9 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void showWeightLabel(String label) {
-        if (weightLabelText == null || axisValueSpinner == null) return;
+        if (weightLabelText == null || weightSpinner == null) return;
 
-        axisValueSpinner.setVisibility(View.GONE);
-        if (axisTypeSpinner != null) axisTypeSpinner.setVisibility(View.GONE);
+        weightSpinner.setVisibility(View.GONE);
 
         if (label != null && !label.isEmpty()) {
             weightLabelText.setText(label);
@@ -774,9 +585,8 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void hideWeightUI() {
-        if (weightLabelText != null)  weightLabelText.setVisibility(View.GONE);
-        if (axisValueSpinner != null) axisValueSpinner.setVisibility(View.GONE);
-        if (axisTypeSpinner != null)  axisTypeSpinner.setVisibility(View.GONE);
+        if (weightLabelText != null) weightLabelText.setVisibility(View.GONE);
+        if (weightSpinner != null)   weightSpinner.setVisibility(View.GONE);
     }
 
     public void loadFontFromUri(Uri uri, String fileName) {
@@ -884,11 +694,6 @@ public class FontViewerFragment extends Fragment {
         currentTtcIndex         = 0;
         isSystemFont            = false;
         currentWeightWidthLabel  = null;
-
-        // ★ تصفير حالة المحاور الأخرى عند مسح الخط الحالي ★
-        currentAxisValues.clear();
-        currentSupportedAxes = new ArrayList<>();
-        currentSelectedAxis  = null;
 
         Typeface defaultTypeface = Typeface.DEFAULT;
         if (previewSentence != null) previewSentence.setTypeface(defaultTypeface);
