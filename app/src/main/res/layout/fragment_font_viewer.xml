@@ -41,8 +41,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="14dp"
                 android:layout_marginBottom="16dp"
+                android:layout_gravity="left"
                 app:flexWrap="wrap"
-                app:justifyContent="flex_left"
+                app:justifyContent="flex_start"
                 android:visibility="gone">
 
                 <!-- 1. محور الوزن (Weight - wght) -->
