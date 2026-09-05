@@ -50,17 +50,6 @@
                    android:orientation="vertical">	
 
                    <include layout="@layout/variable_axis_layout" />
-                   
-                   <View
-                       android:layout_width="wrap_content"
-                       android:layout_height="1dp"
-                       android:layout_marginTop="20dp"
-                       android:layout_marginStart="24dp"
-                       android:layout_marginEnd="24dp"
-                       android:layout_gravity="center_horizontal"
-                       android:background="?attr/listDividerColor" />
-                       
-                </LinearLayout>
 
             </com.oneui.fontviewer.widget.SpinnerRowScrollView>
   
