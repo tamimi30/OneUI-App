@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,8 +30,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.transition.AutoTransition;
-import android.transition.TransitionManager;
+
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -92,13 +91,7 @@ public class FontViewerFragment extends Fragment {
     private TextView previewSentence;
     private TextView weightLabelText;
 
-    private View variableAxesContainer;
-    private View extraAxesContainer;
-    private View toggleAxesButton;
-    private ImageView toggleAxesArrow;
-    private TextView toggleAxesText;
-    private boolean axesExpanded = false;
-
+    private FlexboxLayout variableAxesContainer;
     private AxisSpinnerUi weightAxisUi;
     private AxisSpinnerUi widthAxisUi;
     private AxisSpinnerUi italicAxisUi;
@@ -305,10 +298,6 @@ public class FontViewerFragment extends Fragment {
         previewSentence        = null;
         weightLabelText        = null;
         variableAxesContainer  = null;
-        extraAxesContainer     = null;
-        toggleAxesButton       = null;
-        toggleAxesArrow        = null;
-        toggleAxesText         = null;
         weightAxisUi           = null;
         widthAxisUi             = null;
         italicAxisUi            = null;
@@ -427,10 +416,6 @@ public class FontViewerFragment extends Fragment {
         weightLabelText = view.findViewById(R.id.weight_label_text);
 
         variableAxesContainer = view.findViewById(R.id.variable_axes_container);
-        extraAxesContainer    = view.findViewById(R.id.extra_axes_container);
-        toggleAxesButton      = view.findViewById(R.id.toggle_axes_button);
-        toggleAxesArrow       = view.findViewById(R.id.toggle_axes_arrow);
-        toggleAxesText        = view.findViewById(R.id.toggle_axes_text);
 
         weightAxisUi = new AxisSpinnerUi(
             VariableFontHelper.AXIS_WGHT,
@@ -470,44 +455,6 @@ public class FontViewerFragment extends Fragment {
         allAxisUis.add(gradeAxisUi);
         allAxisUis.add(roundnessAxisUi);
         allAxisUis.add(monoAxisUi);
-
-        setupAxisToggle();
-    }
-
-    /**
-     * يهيّئ زر طي/توسيع الصفوف الإضافية من محاور الخط المتغير (كل ما عدا الصف الأول: الوزن والعرض).
-     * الحالة الافتراضية مطوية دائماً عند إنشاء الواجهة، وتبقى كما هي بين تبديل الخطوط
-     * (لا تُعاد للطي تلقائياً عند تحميل خط جديد، فهي تفضيل عرض للمستخدم وليست بيانات خاصة بالخط).
-     */
-    private void setupAxisToggle() {
-        if (toggleAxesButton == null || extraAxesContainer == null || toggleAxesArrow == null) return;
-
-        axesExpanded = false;
-        extraAxesContainer.setVisibility(View.GONE);
-        toggleAxesArrow.setRotation(0f);
-        if (toggleAxesText != null) {
-            toggleAxesText.setText("More");
-        }
-
-        toggleAxesButton.setOnClickListener(v -> {
-            axesExpanded = !axesExpanded;
-
-            // أنيميشن انسيابي (تلاشي + تمدد/انكماش) على الحاوية الأب التي تضم شبكة المحاور
-            // بالكامل مع نص المعاينة، حتى ينزلق كل شيء بسلاسة بدل أن يقفز فجأة لمكانه الجديد
-            View transitionParent = (variableAxesContainer != null) ? (View) variableAxesContainer.getParent() : null;
-            if (transitionParent instanceof ViewGroup) {
-                TransitionManager.beginDelayedTransition((ViewGroup) transitionParent, new AutoTransition().setDuration(220));
-            }
-
-            extraAxesContainer.setVisibility(axesExpanded ? View.VISIBLE : View.GONE);
-            toggleAxesArrow.animate()
-                .rotation(axesExpanded ? 180f : 0f)
-                .setDuration(220)
-                .start();
-            if (toggleAxesText != null) {
-                toggleAxesText.setText(axesExpanded ? "Less" : "More");
-            }
-        });
     }
 
 
@@ -745,15 +692,13 @@ public class FontViewerFragment extends Fragment {
         if (ui == null || ui.container == null || ui.spinner == null) return;
 
         if (instances == null || instances.isEmpty()) {
-            // المحور غير مدعوم في هذا الخط: نخفي خانته بالكامل
-            ui.instances = new ArrayList<>();
-            ui.spinner.setOnItemSelectedListener(null);
             ui.container.setVisibility(View.GONE);
+            ui.instances = new ArrayList<>();
             return;
         }
 
-        ui.container.setVisibility(View.VISIBLE);
         ui.instances = instances;
+        ui.container.setVisibility(View.VISIBLE);
 
         List<String> instanceNames = new ArrayList<>();
         for (VariableFontHelper.VariableInstance inst : instances) {
@@ -799,17 +744,6 @@ public class FontViewerFragment extends Fragment {
             });
         });
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     private void showWeightLabel(String label) {
         if (weightLabelText == null || variableAxesContainer == null) return;
