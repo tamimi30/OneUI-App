@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginStart="14dp"
+            android:layout_marginStart="15dp"
             android:minWidth="100dp" />
     </LinearLayout>
 
@@ -39,7 +39,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
-        android:background="?android:attr/listDivider" />
+        android:background="?android:attr/dividerVertical" />
 
     <LinearLayout
         android:id="@+id/width_axis_container"
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:text="Width"
             android:textSize="12sp"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="13dp"
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -72,7 +72,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
-        android:background="?android:attr/listDivider" />
+        android:background="?android:attr/dividerVertical" />
 
     <LinearLayout
         android:id="@+id/italic_axis_container"
@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:text="Italic"
             android:textSize="12sp"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="13dp"
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -105,7 +105,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
-        android:background="?android:attr/listDivider" />
+        android:background="?android:attr/dividerVertical" />
 
     <LinearLayout
         android:id="@+id/grade_axis_container"
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:text="Grade"
             android:textSize="12sp"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="13dp"
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -138,7 +138,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
-        android:background="?android:attr/listDivider" />
+        android:background="?android:attr/dividerVertical" />
 
     <LinearLayout
         android:id="@+id/roundness_axis_container"
@@ -153,7 +153,7 @@
             android:layout_height="wrap_content"
             android:text="Roundness"
             android:textSize="12sp"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="13dp"
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -171,7 +171,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
-        android:background="?android:attr/listDivider" />
+        android:background="?android:attr/dividerVertical" />
 
     <LinearLayout
         android:id="@+id/mono_axis_container"
@@ -186,7 +186,7 @@
             android:layout_height="wrap_content"
             android:text="Mono"
             android:textSize="12sp"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="13dp"
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
