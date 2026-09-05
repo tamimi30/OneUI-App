@@ -21,6 +21,19 @@
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
+            <!-- وصف الوزن والعرض للخطوط الثابتة -->
+            <TextView
+                android:id="@+id/weight_label_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="17sp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone" />
+
             <com.oneui.fontviewer.widget.SpinnerRowScrollView
                 android:id="@+id/variable_axes_container"
                 android:layout_width="match_parent"
