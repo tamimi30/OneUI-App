@@ -5,14 +5,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.HorizontalScrollView;
 
-/**
- * حاوية سكرول أفقي مخصصة لصف الـ Spinners الخاصة بمحاور الخط المتغيّر.
- * تستولي على اللمسة فور اكتشاف حركة أفقية حقيقية (بعتبة صغيرة جداً)
- * قبل أن يفتح الـ Spinner قائمته المنسدلة تلقائياً.
- */
 public class SpinnerRowScrollView extends HorizontalScrollView {
 
-    // عتبة حركة صغيرة جداً (أصغر بكثير من عتبة السكرول الافتراضية)
     private static final float MICRO_SLOP_DP = 3.5f;
 
     private final float microSlopPx;
@@ -45,12 +39,16 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
             case MotionEvent.ACTION_MOVE:
                 float dx = Math.abs(ev.getX() - downX);
                 float dy = Math.abs(ev.getY() - downY);
-                // حركة أفقية واضحة (أكبر من العتبة الصغيرة وأكبر من أي حركة عمودية)
                 if (dx > microSlopPx && dx > dy) {
-                    return true; // استولِ على اللمسة الآن، قبل فتح الـ Spinner
+                    return true;
                 }
                 break;
         }
         return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        // نتجاهل هذا الطلب عمداً — راجع الشرح أعلاه.
     }
 }
