@@ -38,6 +38,7 @@
                 android:id="@+id/variable_axes_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layoutDirection="ltr"
                 android:layout_marginBottom="16dp"
                 android:scrollbars="horizontal"
                 android:overScrollMode="always"
