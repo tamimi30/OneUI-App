@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -92,7 +95,7 @@ public class FontViewerFragment extends Fragment {
     private View variableAxesContainer;
     private View extraAxesContainer;
     private View toggleAxesButton;
-    private TextView toggleAxesArrow;
+    private ImageView toggleAxesArrow;
     private TextView toggleAxesText;
     private boolean axesExpanded = false;
 
@@ -488,10 +491,18 @@ public class FontViewerFragment extends Fragment {
 
         toggleAxesButton.setOnClickListener(v -> {
             axesExpanded = !axesExpanded;
+
+            // أنيميشن انسيابي (تلاشي + تمدد/انكماش) على الحاوية الأب التي تضم شبكة المحاور
+            // بالكامل مع نص المعاينة، حتى ينزلق كل شيء بسلاسة بدل أن يقفز فجأة لمكانه الجديد
+            View transitionParent = (variableAxesContainer != null) ? (View) variableAxesContainer.getParent() : null;
+            if (transitionParent instanceof ViewGroup) {
+                TransitionManager.beginDelayedTransition((ViewGroup) transitionParent, new AutoTransition().setDuration(220));
+            }
+
             extraAxesContainer.setVisibility(axesExpanded ? View.VISIBLE : View.GONE);
             toggleAxesArrow.animate()
                 .rotation(axesExpanded ? 180f : 0f)
-                .setDuration(200)
+                .setDuration(220)
                 .start();
             if (toggleAxesText != null) {
                 toggleAxesText.setText(axesExpanded ? "Less" : "More");
@@ -734,24 +745,14 @@ public class FontViewerFragment extends Fragment {
         if (ui == null || ui.container == null || ui.spinner == null) return;
 
         if (instances == null || instances.isEmpty()) {
-            // المحور غير مدعوم في هذا الخط: لا نخفي خانته، بل نطفئ لونها ونجعلها غير قابلة للمس،
-            // حتى يبقى موضع كل محور ثابتاً دائماً في الشبكة ولا تتغيّر أماكن الخانات بين الخطوط
+            // المحور غير مدعوم في هذا الخط: نخفي خانته بالكامل
             ui.instances = new ArrayList<>();
-            setAxisEnabled(ui, false);
-
             ui.spinner.setOnItemSelectedListener(null);
-            ArrayAdapter<String> placeholderAdapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                java.util.Collections.singletonList("—")
-            );
-            placeholderAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-            ui.spinner.setAdapter(placeholderAdapter);
-            ui.spinner.setSelection(0);
+            ui.container.setVisibility(View.GONE);
             return;
         }
 
-        setAxisEnabled(ui, true);
+        ui.container.setVisibility(View.VISIBLE);
         ui.instances = instances;
 
         List<String> instanceNames = new ArrayList<>();
@@ -803,15 +804,7 @@ public class FontViewerFragment extends Fragment {
     
     
     
-    /**
-     * يطفئ لون خانة محور معيّن (تعتيم) ويجعلها غير قابلة للمس عندما لا يدعمه الخط الحالي،
-     * أو يعيدها الى حالتها الطبيعية الكاملة عندما يدعمه.
-     */
-    private void setAxisEnabled(AxisSpinnerUi ui, boolean enabled) {
-        ui.container.setAlpha(enabled ? 1f : 0.35f);
-        ui.container.setEnabled(enabled);
-        ui.spinner.setEnabled(enabled);
-    }
+    
     
     
     
