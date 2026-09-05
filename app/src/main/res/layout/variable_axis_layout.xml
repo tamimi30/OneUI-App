@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/variable_axes_row"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layoutDirection="ltr"
+    android:gravity="center_vertical">
+
+    <LinearLayout
+        android:id="@+id/weight_axis_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical|left"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weight"
+            android:textSize="12sp"
+            android:layout_marginStart="24dp"
+            android:layout_gravity="left"
+            android:textColor="?android:attr/textColorSecondary" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/weight_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginStart="14dp"
+            android:minWidth="100dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="center_vertical"
+        android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:id="@+id/width_axis_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical|left"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Width"
+            android:textSize="12sp"
+            android:layout_marginStart="24dp"
+            android:layout_gravity="left"
+            android:textColor="?android:attr/textColorSecondary" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/width_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginStart="14dp"
+            android:minWidth="100dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="center_vertical"
+        android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:id="@+id/italic_axis_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical|left"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Italic"
+            android:textSize="12sp"
+            android:layout_marginStart="24dp"
+            android:layout_gravity="left"
+            android:textColor="?android:attr/textColorSecondary" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/ital_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginStart="14dp"
+            android:minWidth="100dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="center_vertical"
+        android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:id="@+id/grade_axis_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical|left"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grade"
+            android:textSize="12sp"
+            android:layout_marginStart="24dp"
+            android:layout_gravity="left"
+            android:textColor="?android:attr/textColorSecondary" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/grad_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginStart="14dp"
+            android:minWidth="100dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="center_vertical"
+        android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:id="@+id/roundness_axis_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical|left"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Roundness"
+            android:textSize="12sp"
+            android:layout_marginStart="24dp"
+            android:layout_gravity="left"
+            android:textColor="?android:attr/textColorSecondary" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/rond_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginStart="14dp"
+            android:minWidth="100dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="center_vertical"
+        android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:id="@+id/mono_axis_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical|left"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mono"
+            android:textSize="12sp"
+            android:layout_marginStart="24dp"
+            android:layout_gravity="left"
+            android:textColor="?android:attr/textColorSecondary" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/mono_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginStart="14dp"
+            android:minWidth="100dp" />
+    </LinearLayout>
+
+</LinearLayout>
