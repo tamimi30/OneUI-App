@@ -264,12 +264,12 @@
                         android:textSize="13sp"
                         android:textColor="?android:attr/textColorSecondary"/>
 
-                    <TextView
+                    <ImageView
                         android:id="@+id/toggle_axes_arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="⌄"
+                        android:src="@drawable/ic_oui_keyboard_arrow_down"
                         android:textSize="14sp"
                         android:textColor="?android:attr/textColorSecondary"/>
 
