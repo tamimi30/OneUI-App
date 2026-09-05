@@ -1,201 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/variable_axes_row"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layoutDirection="ltr"
-    android:gravity="center_vertical">
-
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/font_viewer_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:overScrollMode="always"
+    android:scrollbars="vertical"
+    android:fillViewport="true">
+       
     <LinearLayout
-        android:id="@+id/weight_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center_vertical|left"
-        android:visibility="gone">
+        android:paddingBottom="104dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Weight"
-            android:textSize="13sp"
-            android:layout_marginStart="24dp"
-            android:layout_gravity="left"
-            android:textColor="?android:attr/textColorSecondary" />
+        <dev.oneuiproject.oneui.widget.RoundLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingVertical="27dp"
+            android:background="@color/oui_background_color"
+            android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/weight_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginStart="11dp"
-            android:minWidth="170dp" />
+            <!-- وصف الوزن والعرض للخطوط الثابتة -->
+            <TextView
+                android:id="@+id/weight_label_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="17sp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone" />
+
+            <com.oneui.fontviewer.widget.SpinnerRowScrollView
+                android:id="@+id/variable_axes_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layoutDirection="ltr"
+                android:layout_marginBottom="16dp"
+                android:scrollbars="none"
+                android:overScrollMode="ifContentScrolls"
+                android:visibility="gone">
+                	
+                <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="vertical">	
+
+                   <include layout="@layout/variable_axis_layout" />
+                   
+                   <View
+                       android:layout_width="match_parent"
+                       android:layout_height="1dp"
+                       android:layout_marginTop="20dp"
+                       android:layout_marginStart="24dp"
+                       android:layout_marginEnd="24dp"
+                       android:layout_gravity="center_horizontal"
+                       android:background="?attr/listDividerColor" />
+                       
+                </LinearLayout>
+
+            </com.oneui.fontviewer.widget.SpinnerRowScrollView>
+  
+            <TextView
+                android:id="@+id/preview_sentence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="34dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:textColor="@color/font_preview_text_color" />
+                
+        </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+        
     </LinearLayout>
-
-    <View
-        android:layout_width="2dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor" />
-
-    <LinearLayout
-        android:id="@+id/width_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical|left"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Width"
-            android:textSize="13sp"
-            android:layout_marginStart="13dp"
-            android:layout_gravity="left"
-            android:textColor="?android:attr/textColorSecondary" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/width_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:minWidth="170dp" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="2dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor" />
-
-    <LinearLayout
-        android:id="@+id/italic_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical|left"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Italic"
-            android:textSize="13sp"
-            android:layout_marginStart="13dp"
-            android:layout_gravity="left"
-            android:textColor="?android:attr/textColorSecondary" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/ital_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:minWidth="170dp" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="2dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor" />
-
-    <LinearLayout
-        android:id="@+id/grade_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical|left"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Grade"
-            android:textSize="13sp"
-            android:layout_marginStart="13dp"
-            android:layout_gravity="left"
-            android:textColor="?android:attr/textColorSecondary" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/grad_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:minWidth="170dp" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="2dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor" />
-
-    <LinearLayout
-        android:id="@+id/roundness_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical|left"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Roundness"
-            android:textSize="13sp"
-            android:layout_marginStart="13dp"
-            android:layout_gravity="left"
-            android:textColor="?android:attr/textColorSecondary" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/rond_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:minWidth="170dp" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="2dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor" />
-
-    <LinearLayout
-        android:id="@+id/mono_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical|left"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mono"
-            android:textSize="13sp"
-            android:layout_marginStart="13dp"
-            android:layout_gravity="left"
-            android:textColor="?android:attr/textColorSecondary" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/mono_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:minWidth="170dp" />
-    </LinearLayout>
-
-</LinearLayout>
+    
+</androidx.core.widget.NestedScrollView>
