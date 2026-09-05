@@ -31,8 +31,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
-import com.google.android.flexbox.FlexboxLayout;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +89,13 @@ public class FontViewerFragment extends Fragment {
     private TextView previewSentence;
     private TextView weightLabelText;
 
-    private FlexboxLayout variableAxesContainer;
+    private View variableAxesContainer;
+    private View extraAxesContainer;
+    private View toggleAxesButton;
+    private TextView toggleAxesArrow;
+    private TextView toggleAxesText;
+    private boolean axesExpanded = false;
+
     private AxisSpinnerUi weightAxisUi;
     private AxisSpinnerUi widthAxisUi;
     private AxisSpinnerUi italicAxisUi;
@@ -298,6 +302,10 @@ public class FontViewerFragment extends Fragment {
         previewSentence        = null;
         weightLabelText        = null;
         variableAxesContainer  = null;
+        extraAxesContainer     = null;
+        toggleAxesButton       = null;
+        toggleAxesArrow        = null;
+        toggleAxesText         = null;
         weightAxisUi           = null;
         widthAxisUi             = null;
         italicAxisUi            = null;
@@ -416,6 +424,10 @@ public class FontViewerFragment extends Fragment {
         weightLabelText = view.findViewById(R.id.weight_label_text);
 
         variableAxesContainer = view.findViewById(R.id.variable_axes_container);
+        extraAxesContainer    = view.findViewById(R.id.extra_axes_container);
+        toggleAxesButton      = view.findViewById(R.id.toggle_axes_button);
+        toggleAxesArrow       = view.findViewById(R.id.toggle_axes_arrow);
+        toggleAxesText        = view.findViewById(R.id.toggle_axes_text);
 
         weightAxisUi = new AxisSpinnerUi(
             VariableFontHelper.AXIS_WGHT,
@@ -455,6 +467,36 @@ public class FontViewerFragment extends Fragment {
         allAxisUis.add(gradeAxisUi);
         allAxisUis.add(roundnessAxisUi);
         allAxisUis.add(monoAxisUi);
+
+        setupAxisToggle();
+    }
+
+    /**
+     * يهيّئ زر طي/توسيع الصفوف الإضافية من محاور الخط المتغير (كل ما عدا الصف الأول: الوزن والعرض).
+     * الحالة الافتراضية مطوية دائماً عند إنشاء الواجهة، وتبقى كما هي بين تبديل الخطوط
+     * (لا تُعاد للطي تلقائياً عند تحميل خط جديد، فهي تفضيل عرض للمستخدم وليست بيانات خاصة بالخط).
+     */
+    private void setupAxisToggle() {
+        if (toggleAxesButton == null || extraAxesContainer == null || toggleAxesArrow == null) return;
+
+        axesExpanded = false;
+        extraAxesContainer.setVisibility(View.GONE);
+        toggleAxesArrow.setRotation(0f);
+        if (toggleAxesText != null) {
+            toggleAxesText.setText("More");
+        }
+
+        toggleAxesButton.setOnClickListener(v -> {
+            axesExpanded = !axesExpanded;
+            extraAxesContainer.setVisibility(axesExpanded ? View.VISIBLE : View.GONE);
+            toggleAxesArrow.animate()
+                .rotation(axesExpanded ? 180f : 0f)
+                .setDuration(200)
+                .start();
+            if (toggleAxesText != null) {
+                toggleAxesText.setText(axesExpanded ? "Less" : "More");
+            }
+        });
     }
 
 
@@ -692,13 +734,25 @@ public class FontViewerFragment extends Fragment {
         if (ui == null || ui.container == null || ui.spinner == null) return;
 
         if (instances == null || instances.isEmpty()) {
-            ui.container.setVisibility(View.GONE);
+            // المحور غير مدعوم في هذا الخط: لا نخفي خانته، بل نطفئ لونها ونجعلها غير قابلة للمس،
+            // حتى يبقى موضع كل محور ثابتاً دائماً في الشبكة ولا تتغيّر أماكن الخانات بين الخطوط
             ui.instances = new ArrayList<>();
+            setAxisEnabled(ui, false);
+
+            ui.spinner.setOnItemSelectedListener(null);
+            ArrayAdapter<String> placeholderAdapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                java.util.Collections.singletonList("—")
+            );
+            placeholderAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+            ui.spinner.setAdapter(placeholderAdapter);
+            ui.spinner.setSelection(0);
             return;
         }
 
+        setAxisEnabled(ui, true);
         ui.instances = instances;
-        ui.container.setVisibility(View.VISIBLE);
 
         List<String> instanceNames = new ArrayList<>();
         for (VariableFontHelper.VariableInstance inst : instances) {
@@ -744,6 +798,25 @@ public class FontViewerFragment extends Fragment {
             });
         });
     }
+    
+    
+    
+    
+    
+    /**
+     * يطفئ لون خانة محور معيّن (تعتيم) ويجعلها غير قابلة للمس عندما لا يدعمه الخط الحالي،
+     * أو يعيدها الى حالتها الطبيعية الكاملة عندما يدعمه.
+     */
+    private void setAxisEnabled(AxisSpinnerUi ui, boolean enabled) {
+        ui.container.setAlpha(enabled ? 1f : 0.35f);
+        ui.container.setEnabled(enabled);
+        ui.spinner.setEnabled(enabled);
+    }
+    
+    
+    
+    
+    
 
     private void showWeightLabel(String label) {
         if (weightLabelText == null || variableAxesContainer == null) return;
