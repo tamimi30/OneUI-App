@@ -34,177 +34,249 @@
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
-            <!-- منتقيات محاور الخطوط المتغيرة (باستخدام FlexboxLayout للسماح بالتفاف المنتقيات عند كثرتها) -->
-            <com.google.android.flexbox.FlexboxLayout
+            <!-- منتقيات محاور الخطوط المتغيرة: شبكة ثابتة (محوران في كل صف)، الصف الأول يظهر دائماً،
+                         والصفوف الإضافية مطوية افتراضياً خلف زر توسيع/طي، حتى لا تستحوذ على مساحة كبيرة
+                 من الشاشة ولا تلتف الخانات بشكل غير متوقع -->
+            <LinearLayout
                 android:id="@+id/variable_axes_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="14dp"
                 android:layout_marginBottom="16dp"
-                app:flexWrap="wrap"
-                app:justifyContent="flex_start"
                 android:visibility="gone">
 
-                <!-- 1. محور الوزن (Weight - wght) -->
+                <!-- الصف الأول (يظهر دائماً): الوزن والعرض -->
                 <LinearLayout
-                    android:id="@+id/weight_axis_container"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp"
-                    app:layout_flexGrow="1"
-                    android:visibility="gone">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- 1. محور الوزن (Weight - wght) -->
+                    <LinearLayout
+                        android:id="@+id/weight_axis_container"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Weight"
-                        android:textSize="12sp"
-                        android:layout_marginStart="24dp"
-                        android:layout_gravity="left"
-                        android:textColor="?android:attr/textColorSecondary"
-                        />
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal"
+                        android:layout_marginBottom="14dp"
+                        android:paddingHorizontal="6dp">
 
-                    <androidx.appcompat.widget.AppCompatSpinner
-                        android:id="@+id/weight_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_gravity="left"
-                        android:layout_marginStart="14dp"
-                        android:layout_height="wrap_content" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Weight"
+                            android:textSize="12sp"
+                            android:maxLines="2"
+                            android:gravity="center_horizontal"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:layout_marginBottom="2dp"/>
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/weight_spinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <!-- 2. محور العرض (Width - wdth) -->
+                    <LinearLayout
+                        android:id="@+id/width_axis_container"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal"
+                        android:layout_marginBottom="14dp"
+                        android:paddingHorizontal="6dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Width"
+                            android:textSize="12sp"
+                            android:maxLines="2"
+                            android:gravity="center_horizontal"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:layout_marginBottom="2dp"/>
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/width_spinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
-                <!-- 2. محور العرض (Width - wdth) -->
+                <!-- الصفوف الإضافية: مطوية افتراضياً -->
                 <LinearLayout
-                    android:id="@+id/width_axis_container"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/extra_axes_container"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp"
-                    app:layout_flexGrow="1"
-                    android:paddingHorizontal="4dp"
                     android:visibility="gone">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- الصف الثاني: الميل والتدرج -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Width"
-                        android:textSize="12sp"
-                        android:textColor="?android:attr/textColorSecondary"
-                        />
+                        android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatSpinner
-                        android:id="@+id/width_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        <!-- 3. محور الميل (Italic - ital) -->
+                        <LinearLayout
+                            android:id="@+id/italic_axis_container"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center_horizontal"
+                            android:layout_marginBottom="14dp"
+                            android:paddingHorizontal="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Italic"
+                                android:textSize="12sp"
+                                android:maxLines="2"
+                                android:gravity="center_horizontal"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:layout_marginBottom="2dp"/>
+
+                            <androidx.appcompat.widget.AppCompatSpinner
+                                android:id="@+id/ital_spinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <!-- 4. محور التدرج (Grade - GRAD) -->
+                        <LinearLayout
+                            android:id="@+id/grade_axis_container"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center_horizontal"
+                            android:layout_marginBottom="14dp"
+                            android:paddingHorizontal="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Grade"
+                                android:textSize="12sp"
+                                android:maxLines="2"
+                                android:gravity="center_horizontal"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:layout_marginBottom="2dp"/>
+
+                            <androidx.appcompat.widget.AppCompatSpinner
+                                android:id="@+id/grad_spinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- الصف الثالث: الاستدارة والتباعد الأحادي -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- 5. محور الاستدارة (Roundness - ROND) -->
+                        <LinearLayout
+                            android:id="@+id/roundness_axis_container"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center_horizontal"
+                            android:layout_marginBottom="14dp"
+                            android:paddingHorizontal="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Roundness"
+                                android:textSize="12sp"
+                                android:maxLines="2"
+                                android:gravity="center_horizontal"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:layout_marginBottom="2dp"/>
+
+                            <androidx.appcompat.widget.AppCompatSpinner
+                                android:id="@+id/rond_spinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <!-- 6. محور التباعد الأحادي (Mono - MONO) -->
+                        <LinearLayout
+                            android:id="@+id/mono_axis_container"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center_horizontal"
+                            android:layout_marginBottom="14dp"
+                            android:paddingHorizontal="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mono"
+                                android:textSize="12sp"
+                                android:maxLines="2"
+                                android:gravity="center_horizontal"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:layout_marginBottom="2dp"/>
+
+                            <androidx.appcompat.widget.AppCompatSpinner
+                                android:id="@+id/mono_spinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
-                <!-- 3. محور الميل (Italic - ital) -->
+                <!-- زر توسيع/طي الصفوف الإضافية -->
                 <LinearLayout
-                    android:id="@+id/italic_axis_container"
+                    android:id="@+id/toggle_axes_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp"
-                    app:layout_flexGrow="1"
-                    android:paddingHorizontal="4dp"
-                    android:visibility="gone">
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
 
                     <TextView
+                        android:id="@+id/toggle_axes_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Italic"
-                        android:textSize="12sp"
-                        android:textColor="?android:attr/textColorSecondary"
-                        />
-
-                    <androidx.appcompat.widget.AppCompatSpinner
-                        android:id="@+id/ital_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <!-- 4. محور التدرج (Grade - GRAD) -->
-                <LinearLayout
-                    android:id="@+id/grade_axis_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp"
-                    app:layout_flexGrow="1"
-                    android:paddingHorizontal="4dp"
-                    android:visibility="gone">
+                        android:text="More"
+                        android:textSize="13sp"
+                        android:textColor="?android:attr/textColorSecondary"/>
 
                     <TextView
+                        android:id="@+id/toggle_axes_arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Grade"
-                        android:textSize="12sp"
-                        android:textColor="?android:attr/textColorSecondary"
-                        />
+                        android:layout_marginStart="4dp"
+                        android:text="⌄"
+                        android:textSize="14sp"
+                        android:textColor="?android:attr/textColorSecondary"/>
 
-                    <androidx.appcompat.widget.AppCompatSpinner
-                        android:id="@+id/grad_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
-                <!-- 5. محور الاستدارة (Roundness - ROND) -->
-                <LinearLayout
-                    android:id="@+id/roundness_axis_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp"
-                    app:layout_flexGrow="1"
-                    android:paddingHorizontal="4dp"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Roundness"
-                        android:textSize="12sp"
-                        android:textColor="?android:attr/textColorSecondary"
-                        />
-
-                    <androidx.appcompat.widget.AppCompatSpinner
-                        android:id="@+id/rond_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <!-- 6. محور التباعد الأحادي (Mono - MONO) -->
-                <LinearLayout
-                    android:id="@+id/mono_axis_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp"
-                    app:layout_flexGrow="1"
-                    android:paddingHorizontal="4dp"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mono"
-                        android:textSize="12sp"
-                        android:textColor="?android:attr/textColorSecondary"
-                        />
-
-                    <androidx.appcompat.widget.AppCompatSpinner
-                        android:id="@+id/mono_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-            </com.google.android.flexbox.FlexboxLayout>
-  
+            </LinearLayout>
+            
             <TextView
                 android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
