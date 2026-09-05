@@ -41,7 +41,7 @@
                 android:layoutDirection="ltr"
                 android:layout_marginBottom="16dp"
                 android:scrollbars="none"
-                android:overScrollMode="always"
+                android:overScrollMode="ifContentScrolls"
                 android:visibility="gone">
 
                 <include layout="@layout/variable_axis_layout" />
