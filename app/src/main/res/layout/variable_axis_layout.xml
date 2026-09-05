@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginStart="11dp"
-            android:minWidth="140dp" />
+            android:minWidth="170dp" />
     </LinearLayout>
 
     <View
@@ -38,7 +38,7 @@
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center_vertical|bottom"
         android:background="?attr/listDividerColor" />
 
     <LinearLayout
@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:minWidth="140dp" />
+            android:minWidth="170dp" />
     </LinearLayout>
 
     <View
@@ -71,7 +71,7 @@
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center_vertical|bottom"
         android:background="?attr/listDividerColor" />
 
     <LinearLayout
@@ -96,7 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:minWidth="140dp" />
+            android:minWidth="170dp" />
     </LinearLayout>
 
     <View
@@ -104,7 +104,7 @@
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center_vertical|bottom"
         android:background="?attr/listDividerColor" />
 
     <LinearLayout
@@ -129,7 +129,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:minWidth="140dp" />
+            android:minWidth="170dp" />
     </LinearLayout>
 
     <View
@@ -137,7 +137,7 @@
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center_vertical|bottom"
         android:background="?attr/listDividerColor" />
 
     <LinearLayout
@@ -162,7 +162,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:minWidth="140dp" />
+            android:minWidth="170dp" />
     </LinearLayout>
 
     <View
@@ -170,7 +170,7 @@
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center_vertical|bottom"
         android:background="?attr/listDividerColor" />
 
     <LinearLayout
@@ -195,7 +195,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:minWidth="140dp" />
+            android:minWidth="170dp" />
     </LinearLayout>
 
 </LinearLayout>
