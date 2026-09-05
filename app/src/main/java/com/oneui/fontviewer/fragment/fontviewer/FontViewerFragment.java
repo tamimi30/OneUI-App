@@ -31,8 +31,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
-import com.google.android.flexbox.FlexboxLayout;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +89,7 @@ public class FontViewerFragment extends Fragment {
     private TextView previewSentence;
     private TextView weightLabelText;
 
-    private FlexboxLayout variableAxesContainer;
+    private View variableAxesContainer;
     private AxisSpinnerUi weightAxisUi;
     private AxisSpinnerUi widthAxisUi;
     private AxisSpinnerUi italicAxisUi;
