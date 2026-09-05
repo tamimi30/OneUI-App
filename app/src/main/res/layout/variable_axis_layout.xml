@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:text="Width"
             android:textSize="12sp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="12dp"
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:text="Italic"
             android:textSize="12sp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="12dp"
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:text="Grade"
             android:textSize="12sp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="12dp"
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -153,7 +153,7 @@
             android:layout_height="wrap_content"
             android:text="Roundness"
             android:textSize="12sp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="12dp"
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -186,7 +186,7 @@
             android:layout_height="wrap_content"
             android:text="Mono"
             android:textSize="12sp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="12dp"
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
