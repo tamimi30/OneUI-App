@@ -3,6 +3,7 @@ package com.oneui.fontviewer.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ViewParent;
 import android.widget.HorizontalScrollView;
 
 public class SpinnerRowScrollView extends HorizontalScrollView {
@@ -40,6 +41,13 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
                 float dx = Math.abs(ev.getX() - downX);
                 float dy = Math.abs(ev.getY() - downY);
                 if (dx > microSlopPx && dx > dy) {
+                    // سحب أفقي واضح: استولِ على اللمسة، وأخبر الحاوية
+                    // العمودية الكبرى (NestedScrollView) ألا تستولي عليها
+                    // هي الأخرى حتى لو انحرف السحب عمودياً قليلاً لاحقاً.
+                    ViewParent parent = getParent();
+                    if (parent != null) {
+                        parent.requestDisallowInterceptTouchEvent(true);
+                    }
                     return true;
                 }
                 break;
@@ -49,6 +57,13 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
 
     @Override
     public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-        // نتجاهل هذا الطلب عمداً — راجع الشرح أعلاه.
+        // لا نُطبّق هذا الطلب على هذه الحاوية نفسها (كي نبقى قادرين دوماً
+        // على اعتراض اللمسة حتى لو طلب الـ Spinner عكس ذلك)، لكن نمرره
+        // إلى الأب الأعلى كالمعتاد، لحماية الصفحة العمودية أيضاً عندما
+        // نحن أنفسنا من يطلب ذلك.
+        ViewParent parent = getParent();
+        if (parent != null) {
+            parent.requestDisallowInterceptTouchEvent(disallowIntercept);
+        }
     }
 }
