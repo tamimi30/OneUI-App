@@ -41,9 +41,9 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
                 float dx = Math.abs(ev.getX() - downX);
                 float dy = Math.abs(ev.getY() - downY);
                 if (dx > microSlopPx && dx > dy) {
-                    // سحب أفقي واضح: استولِ على اللمسة، وأخبر الحاوية
-                    // العمودية الكبرى (NestedScrollView) ألا تستولي عليها
-                    // هي الأخرى حتى لو انحرف السحب عمودياً قليلاً لاحقاً.
+                    // حركة أفقية واضحة: نقفل هذا القرار فوراً كي لا يستطيع
+                    // التمرير العمودي للصفحة سحب اللمسة منّا لاحقاً حتى لو
+                    // استمر السحب بشكل سريع أو مائل قليلاً.
                     ViewParent parent = getParent();
                     if (parent != null) {
                         parent.requestDisallowInterceptTouchEvent(true);
@@ -57,13 +57,8 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
 
     @Override
     public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-        // لا نُطبّق هذا الطلب على هذه الحاوية نفسها (كي نبقى قادرين دوماً
-        // على اعتراض اللمسة حتى لو طلب الـ Spinner عكس ذلك)، لكن نمرره
-        // إلى الأب الأعلى كالمعتاد، لحماية الصفحة العمودية أيضاً عندما
-        // نحن أنفسنا من يطلب ذلك.
-        ViewParent parent = getParent();
-        if (parent != null) {
-            parent.requestDisallowInterceptTouchEvent(disallowIntercept);
-        }
+        // نتجاهل هذا الطلب عمداً عندما يأتي من الـ Spinner نفسه (طلب "لا تعترض
+        // إطلاقاً" الذي يرسله فور لمسه لتفعيل خاصية السحب الداخلية فيه)، كي تبقى
+        // هذه الحاوية قادرة دوماً على التقاط السحب الأفقي حتى لو بدأ فوق الـ Spinner.
     }
 }
