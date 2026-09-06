@@ -90,6 +90,8 @@ public class FontViewerFragment extends Fragment {
     private TextView weightLabelText;
 
     private View variableAxesContainer;
+    private View axesBottomDivider;
+    private View[] axisDividers;
     private AxisSpinnerUi weightAxisUi;
     private AxisSpinnerUi widthAxisUi;
     private AxisSpinnerUi italicAxisUi;
@@ -296,6 +298,8 @@ public class FontViewerFragment extends Fragment {
         previewSentence        = null;
         weightLabelText        = null;
         variableAxesContainer  = null;
+        axesBottomDivider      = null;
+        axisDividers           = null;
         weightAxisUi           = null;
         widthAxisUi             = null;
         italicAxisUi            = null;
@@ -453,6 +457,37 @@ public class FontViewerFragment extends Fragment {
         allAxisUis.add(gradeAxisUi);
         allAxisUis.add(roundnessAxisUi);
         allAxisUis.add(monoAxisUi);
+
+        axesBottomDivider = view.findViewById(R.id.axes_bottom_divider);
+        axisDividers = new View[] {
+            view.findViewById(R.id.divider_weight_width),
+            view.findViewById(R.id.divider_width_italic),
+            view.findViewById(R.id.divider_italic_grade),
+            view.findViewById(R.id.divider_grade_roundness),
+            view.findViewById(R.id.divider_roundness_mono)
+        };
+    }
+
+    /**
+     * يُظهر الفاصل بين محورين فقط اذا كان كلاهما ظاهرين، حتى لا يبقى فاصل
+     * معلّقاً بجانب محور مخفي.
+     */
+    private void updateAxisDividers() {
+        if (axisDividers == null || allAxisUis == null) return;
+
+        for (int i = 0; i < axisDividers.length && i + 1 < allAxisUis.size(); i++) {
+            View divider = axisDividers[i];
+            if (divider == null) continue;
+
+            View before = allAxisUis.get(i).container;
+            View after  = allAxisUis.get(i + 1).container;
+
+            boolean bothVisible = before != null && after != null
+                    && before.getVisibility() == View.VISIBLE
+                    && after.getVisibility() == View.VISIBLE;
+
+            divider.setVisibility(bothVisible ? View.VISIBLE : View.GONE);
+        }
     }
 
 
@@ -679,11 +714,14 @@ public class FontViewerFragment extends Fragment {
 
         weightLabelText.setVisibility(View.GONE);
         variableAxesContainer.setVisibility(View.VISIBLE);
+        if (axesBottomDivider != null) axesBottomDivider.setVisibility(View.VISIBLE);
 
         for (AxisSpinnerUi ui : allAxisUis) {
             List<VariableFontHelper.VariableInstance> instances = axisInstancesMap.get(ui.tag);
             setupSingleAxisSpinner(ui, instances);
         }
+
+        updateAxisDividers();
     }
 
     private void setupSingleAxisSpinner(AxisSpinnerUi ui, List<VariableFontHelper.VariableInstance> instances) {
@@ -747,6 +785,7 @@ public class FontViewerFragment extends Fragment {
         if (weightLabelText == null || variableAxesContainer == null) return;
 
         variableAxesContainer.setVisibility(View.GONE);
+        if (axesBottomDivider != null) axesBottomDivider.setVisibility(View.GONE);
 
         if (label != null && !label.isEmpty()) {
             weightLabelText.setText(label);
@@ -759,6 +798,7 @@ public class FontViewerFragment extends Fragment {
     private void hideAxisUi() {
         if (weightLabelText != null) weightLabelText.setVisibility(View.GONE);
         if (variableAxesContainer != null) variableAxesContainer.setVisibility(View.GONE);
+        if (axesBottomDivider != null) axesBottomDivider.setVisibility(View.GONE);
     }
 
     public void loadFontFromUri(Uri uri, String fileName) {
