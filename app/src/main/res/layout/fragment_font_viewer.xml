@@ -7,7 +7,7 @@
     android:overScrollMode="always"
     android:scrollbars="vertical"
     android:fillViewport="true">
-
+       
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,7 +17,7 @@
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="400dp"
+            android:paddingVertical="27dp"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
@@ -29,10 +29,9 @@
                 android:layout_gravity="left"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="17sp"
-                android:paddingTop="27dp"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
-                android:layout_marginBottom="13dp"
+                android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
             <com.oneui.fontviewer.widget.SpinnerRowScrollView
@@ -40,24 +39,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layoutDirection="ltr"
+                android:layout_marginBottom="16dp"
                 android:scrollbars="none"
                 android:overScrollMode="ifContentScrolls"
                 android:visibility="gone">
+                	
+                <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="vertical">	
 
-                <include layout="@layout/variable_axis_layout" />
+                   <include layout="@layout/variable_axis_layout" />
 
             </com.oneui.fontviewer.widget.SpinnerRowScrollView>
-
-            <View
-                android:id="@+id/axes_bottom_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="13dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="?attr/listDividerColor"
-                android:visibility="gone" />
-
+  
             <TextView
                 android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
@@ -66,9 +61,9 @@
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
                 android:textColor="@color/font_preview_text_color" />
-
+                
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
-
+        
     </LinearLayout>
-
+    
 </androidx.core.widget.NestedScrollView>
