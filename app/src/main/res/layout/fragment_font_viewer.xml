@@ -51,7 +51,6 @@
                 android:id="@+id/axes_bottom_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="20dp"
                 android:layout_marginBottom="13dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
