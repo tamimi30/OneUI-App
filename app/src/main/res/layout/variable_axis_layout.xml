@@ -4,6 +4,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp"
     android:layoutDirection="ltr"
     android:gravity="center_vertical">
 
@@ -11,6 +13,7 @@
         android:id="@+id/weight_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="140sp"
         android:orientation="vertical"
         android:gravity="center_vertical|left"
         android:visibility="gone">
@@ -29,14 +32,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginStart="11dp"
-            android:minWidth="170dp" />
+            android:layout_marginStart="11dp" />
     </LinearLayout>
 
     <View
-        android:id="@+id/weight_axis_divider"
-        android:layout_width="2dp"
-        android:layout_height="50dp"
+        android:id="@+id/divider_weight_width"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
@@ -46,6 +48,7 @@
         android:id="@+id/width_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="140sp"
         android:orientation="vertical"
         android:gravity="center_vertical|left"
         android:visibility="gone">
@@ -63,14 +66,13 @@
             android:id="@+id/width_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:minWidth="170dp" />
+            android:layout_gravity="left" />
     </LinearLayout>
 
     <View
-        android:id="@+id/width_axis_divider"
-        android:layout_width="2dp"
-        android:layout_height="50dp"
+        android:id="@+id/divider_width_italic"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
@@ -80,6 +82,7 @@
         android:id="@+id/italic_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="140sp"
         android:orientation="vertical"
         android:gravity="center_vertical|left"
         android:visibility="gone">
@@ -97,14 +100,13 @@
             android:id="@+id/ital_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:minWidth="170dp" />
+            android:layout_gravity="left" />
     </LinearLayout>
 
     <View
-        android:id="@+id/italic_axis_divider"
-        android:layout_width="2dp"
-        android:layout_height="50dp"
+        android:id="@+id/divider_italic_grade"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
@@ -114,6 +116,7 @@
         android:id="@+id/grade_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="140sp"
         android:orientation="vertical"
         android:gravity="center_vertical|left"
         android:visibility="gone">
@@ -131,14 +134,13 @@
             android:id="@+id/grad_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:minWidth="170dp" />
+            android:layout_gravity="left" />
     </LinearLayout>
 
     <View
-        android:id="@+id/grade_axis_divider"
-        android:layout_width="2dp"
-        android:layout_height="50dp"
+        android:id="@+id/divider_grade_roundness"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
@@ -148,6 +150,7 @@
         android:id="@+id/roundness_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="140sp"
         android:orientation="vertical"
         android:gravity="center_vertical|left"
         android:visibility="gone">
@@ -165,14 +168,13 @@
             android:id="@+id/rond_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:minWidth="170dp" />
+            android:layout_gravity="left" />
     </LinearLayout>
 
     <View
-        android:id="@+id/roundness_axis_divider"
-        android:layout_width="2dp"
-        android:layout_height="50dp"
+        android:id="@+id/divider_roundness_mono"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
@@ -182,6 +184,7 @@
         android:id="@+id/mono_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="140sp"
         android:orientation="vertical"
         android:gravity="center_vertical|left"
         android:visibility="gone">
@@ -199,8 +202,7 @@
             android:id="@+id/mono_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:minWidth="170dp" />
+            android:layout_gravity="left" />
     </LinearLayout>
 
 </LinearLayout>
