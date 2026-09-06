@@ -17,7 +17,6 @@
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingVertical="27dp"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
@@ -29,9 +28,10 @@
                 android:layout_gravity="left"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="17sp"
+                android:paddingTop="27dp"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="13dp"
                 android:visibility="gone" />
 
             <com.oneui.fontviewer.widget.SpinnerRowScrollView
@@ -47,13 +47,12 @@
 
             </com.oneui.fontviewer.widget.SpinnerRowScrollView>
 
-            <!-- فاصل أفقي تحت صف الـ Spinners، خارج منطقة السكرول تماماً -->
             <View
-                android:id="@+id/axes_row_divider"
+                android:id="@+id/axes_bottom_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="13dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
                 android:background="?attr/listDividerColor"
