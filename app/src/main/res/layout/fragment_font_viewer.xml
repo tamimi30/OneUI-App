@@ -34,35 +34,24 @@
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
-            <LinearLayout
+            <com.oneui.fontviewer.widget.SpinnerRowScrollView
                 android:id="@+id/variable_axes_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layoutDirection="ltr"
                 android:layout_marginBottom="16dp"
+                android:scrollbars="none"
+                android:overScrollMode="ifContentScrolls"
                 android:visibility="gone">
+                	
+                <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="vertical">	
 
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layoutDirection="ltr"
-                    android:paddingVertical="300dp"
-                    android:scrollbars="none"
-                    android:overScrollMode="ifContentScrolls">
+                   <include layout="@layout/variable_axis_layout" />
 
-                    <include layout="@layout/variable_axis_layout" />
-
-                </HorizontalScrollView>
-                
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="?attr/listDividerColor" />
-
-            </LinearLayout>
+            </com.oneui.fontviewer.widget.SpinnerRowScrollView>
   
             <TextView
                 android:id="@+id/preview_sentence"
