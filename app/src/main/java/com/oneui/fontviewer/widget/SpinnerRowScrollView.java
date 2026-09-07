@@ -9,11 +9,14 @@ import android.widget.HorizontalScrollView;
 public class SpinnerRowScrollView extends HorizontalScrollView {
 
     private static final float MICRO_SLOP_DP = 3.5f;
-    // خُفّضت من 16f الى 4f: كلما كانت هذه العتبة أصغر، كلما اعتبرنا الحركة
-    // "عمودية" وحررنا السيطرة لـ NestedScrollView بشكل أسرع، مما يقلل فرصة
-    // فوز مؤقت الـ Spinner الداخلي بالسباق ويمنع فتح القائمة أصلاً بدل أن
-    // تُفتح ثم تُغلق.
-    private static final float VERTICAL_RELEASE_SLOP_DP = 4f;
+    private static final float VERTICAL_RELEASE_SLOP_DP = 3.5f;
+    // معامل الحسم الاتجاهي: يجب أن تكون الحركة العمودية أكبر من الأفقية
+    // بهذا المعامل (وليس فقط أكبر بقليل كما كان سابقاً عند dy>=dx وهو 45
+    // درجة) لتُعتبر "عمودية بوضوح". كلما زاد الرقم، كلما اقترب خط الفصل
+    // من الخط العمودي المستقيم (90 درجة)، فيتطلب ميلاً أقرب للعمودي التام،
+    // مما يمنع سحب أفقي سريع منحرف قليلاً من تفعيل السكرول العمودي بالخطأ.
+    // 2.0 يعني: يجب أن تكون الزاوية أكبر من ~63 درجة عن الأفقي (بدل 45).
+    private static final float VERTICAL_DOMINANCE_RATIO = 2.0f;
 
     private final float microSlopPx;
     private final float verticalReleaseSlopPx;
@@ -81,9 +84,7 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
         if (verticalReleased) return;
         float dx = Math.abs(ev.getX() - downX);
         float dy = Math.abs(ev.getY() - downY);
-        // dy >= dx (وليس dy > dx فقط): عند التساوي التقريبي نميل لصالح
-        // اعتبارها عمودية، لأن التحرير المبكر آمن دائماً كما شُرح أعلاه.
-        if (dy > verticalReleaseSlopPx && dy >= dx) {
+        if (dy > verticalReleaseSlopPx && dy > dx * VERTICAL_DOMINANCE_RATIO) {
             verticalReleased = true;
             ViewParent parent = getParent();
             if (parent != null) {
