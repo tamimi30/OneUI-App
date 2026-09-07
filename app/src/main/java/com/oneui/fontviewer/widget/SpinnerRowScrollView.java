@@ -9,7 +9,7 @@ import android.widget.HorizontalScrollView;
 public class SpinnerRowScrollView extends HorizontalScrollView {
 
     private static final float MICRO_SLOP_DP = 3.5f;
-    private static final float VERTICAL_RELEASE_SLOP_DP = 20f;
+    private static final float VERTICAL_RELEASE_SLOP_DP = 40f;
 
     private final float microSlopPx;
     private final float verticalReleaseSlopPx;
