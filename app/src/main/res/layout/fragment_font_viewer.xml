@@ -33,29 +33,35 @@
                 android:paddingEnd="24dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
-
-            <com.oneui.fontviewer.widget.CustomHorizontalScrollView
+                
+            <LinearLayout
                 android:id="@+id/variable_axes_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layoutDirection="ltr"
-                android:layout_marginBottom="16dp"
-                android:paddingTop="250dp"
-                android:paddingBottom="250dp"
-                android:scrollbars="none"
-                android:overScrollMode="ifContentScrolls"
-                android:visibility="gone">
+                android:orientation="vertical">   
+
+                <com.oneui.fontviewer.widget.CustomHorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="ltr"
+                    android:paddingBottom="20dp"
+                    android:scrollbars="none"
+                    android:overScrollMode="ifContentScrolls"
+                    android:visibility="gone">
                 	
-                <LinearLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:orientation="vertical">	
+                    <include layout="@layout/variable_axis_layout" />
+                
+                </com.oneui.fontviewer.widget.CustomHorizontalScrollView>
+            
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_layout_height="1dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="?attr/listDividerColor" />
 
-                   <include layout="@layout/variable_axis_layout" />
-                </LinearLayout>
-
-            </com.oneui.fontviewer.widget.CustomHorizontalScrollView>
-  
+            </LinearLayout>
+                
             <TextView
                 android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
