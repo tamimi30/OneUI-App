@@ -8,16 +8,14 @@ import android.widget.HorizontalScrollView;
 
 public class SpinnerRowScrollView extends HorizontalScrollView {
 
-    // عتبة صغيرة جداً لالتقاط السحب الأفقي فوراً (حتى لو بطيء) قبل فتح الـ Spinner
     private static final float MICRO_SLOP_DP = 3.5f;
-    // عتبة أكبر: لا نُحرر السكرول العمودي إلا بعد سحب عمودي واضح فعلاً
-    // (هذا هو "تخفيف الحساسية" الذي طلبته، وليس إلغاء للسكرول العمودي)
     private static final float VERTICAL_RELEASE_SLOP_DP = 16f;
 
     private final float microSlopPx;
     private final float verticalReleaseSlopPx;
     private float downX;
     private float downY;
+    private boolean verticalReleased;
 
     public SpinnerRowScrollView(Context context) {
         super(context);
@@ -46,9 +44,7 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
             case MotionEvent.ACTION_DOWN: {
                 downX = ev.getX();
                 downY = ev.getY();
-                // نقول لكل الحاويات الأب (بما فيها NestedScrollView العمودي):
-                // لا تقرروا بأنفسكم إن كانت هذه اللمسة أفقية أو عمودية الآن،
-                // نحن سنقرر أولاً.
+                verticalReleased = false;
                 ViewParent parent = getParent();
                 if (parent != null) {
                     parent.requestDisallowInterceptTouchEvent(true);
@@ -58,25 +54,38 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
 
             case MotionEvent.ACTION_MOVE: {
                 float dx = Math.abs(ev.getX() - downX);
-                float dy = Math.abs(ev.getY() - downY);
-
-                if (dx > microSlopPx && dx > dy) {
-                    // سحب أفقي واضح: نستولي عليه نحن
+                if (dx > microSlopPx && dx > Math.abs(ev.getY() - downY)) {
                     return true;
                 }
-
-                if (dy > verticalReleaseSlopPx && dy > dx) {
-                    // سحب عمودي واضح (تجاوز عتبة أكبر عمداً): نُحرر اللمسة
-                    // ليتصرف الـ NestedScrollView بشكل طبيعي تماماً من الآن
-                    ViewParent parent = getParent();
-                    if (parent != null) {
-                        parent.requestDisallowInterceptTouchEvent(false);
-                    }
-                }
+                checkVerticalRelease(ev);
                 break;
             }
         }
         return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        // تُستدعى دائماً حتى عندما لا يستهلك أي عنصر داخلي اللمسة (نص، فاصل،
+        // خلفية)، وفي هذه الحالة تحديداً لا تُستدعى onInterceptTouchEvent مع
+        // كل حركة، لذلك نكرر نفس فحص "تحرير السكرول العمودي" هنا أيضاً.
+        if (ev.getActionMasked() == MotionEvent.ACTION_MOVE) {
+            checkVerticalRelease(ev);
+        }
+        return super.onTouchEvent(ev);
+    }
+
+    private void checkVerticalRelease(MotionEvent ev) {
+        if (verticalReleased) return;
+        float dx = Math.abs(ev.getX() - downX);
+        float dy = Math.abs(ev.getY() - downY);
+        if (dy > verticalReleaseSlopPx && dy > dx) {
+            verticalReleased = true;
+            ViewParent parent = getParent();
+            if (parent != null) {
+                parent.requestDisallowInterceptTouchEvent(false);
+            }
+        }
     }
 
     @Override
