@@ -34,12 +34,14 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/weight_axis_divider"
         android:layout_width="2dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor" />
+        android:background="?attr/listDividerColor"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/width_axis_container"
@@ -67,12 +69,14 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/width_axis_divider"
         android:layout_width="2dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor" />
+        android:background="?attr/listDividerColor"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/italic_axis_container"
@@ -100,12 +104,14 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/italic_axis_divider"
         android:layout_width="2dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor" />
+        android:background="?attr/listDividerColor"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/grade_axis_container"
@@ -133,12 +139,14 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/grade_axis_divider"
         android:layout_width="2dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor" />
+        android:background="?attr/listDividerColor"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/roundness_axis_container"
@@ -166,12 +174,14 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/roundness_axis_divider"
         android:layout_width="2dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor" />
+        android:background="?attr/listDividerColor"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/mono_axis_container"
