@@ -50,6 +50,7 @@
                    android:orientation="vertical">	
 
                    <include layout="@layout/variable_axis_layout" />
+                </LinearLayout>
 
             </HorizontalScrollView>
   
