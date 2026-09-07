@@ -4,17 +4,17 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.HorizontalScrollView;
 
-public class CustomHorizontalScrollView extends HorizontalScrollView {
+public class OneUiHorizontalScrollView extends HorizontalScrollView {
 
-    public CustomHorizontalScrollView(Context context) {
+    public OneUiHorizontalScrollView(Context context) {
         super(context);
     }
 
-    public CustomHorizontalScrollView(Context context, AttributeSet attrs) {
+    public OneUiHorizontalScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomHorizontalScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public OneUiHorizontalScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
