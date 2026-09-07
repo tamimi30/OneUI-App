@@ -132,12 +132,14 @@ public class FontViewerFragment extends Fragment {
         final String tag;
         final View container;
         final AppCompatSpinner spinner;
+        final View divider;
         List<VariableFontHelper.VariableInstance> instances = new ArrayList<>();
 
-        AxisSpinnerUi(String tag, View container, AppCompatSpinner spinner) {
+        AxisSpinnerUi(String tag, View container, AppCompatSpinner spinner, View divider) {
             this.tag = tag;
             this.container = container;
             this.spinner = spinner;
+            this.divider = divider;
         }
     }
 
@@ -418,32 +420,38 @@ public class FontViewerFragment extends Fragment {
         weightAxisUi = new AxisSpinnerUi(
             VariableFontHelper.AXIS_WGHT,
             view.findViewById(R.id.weight_axis_container),
-            view.findViewById(R.id.weight_spinner)
+            view.findViewById(R.id.weight_spinner),
+            view.findViewById(R.id.weight_axis_divider)
         );
         widthAxisUi = new AxisSpinnerUi(
             VariableFontHelper.AXIS_WDTH,
             view.findViewById(R.id.width_axis_container),
-            view.findViewById(R.id.width_spinner)
+            view.findViewById(R.id.width_spinner),
+            view.findViewById(R.id.width_axis_divider)
         );
         italicAxisUi = new AxisSpinnerUi(
             VariableFontHelper.AXIS_ITAL,
             view.findViewById(R.id.italic_axis_container),
-            view.findViewById(R.id.ital_spinner)
+            view.findViewById(R.id.ital_spinner),
+            view.findViewById(R.id.italic_axis_divider)
         );
         gradeAxisUi = new AxisSpinnerUi(
             VariableFontHelper.AXIS_GRAD,
             view.findViewById(R.id.grade_axis_container),
-            view.findViewById(R.id.grad_spinner)
+            view.findViewById(R.id.grad_spinner),
+            view.findViewById(R.id.grade_axis_divider)
         );
         roundnessAxisUi = new AxisSpinnerUi(
             VariableFontHelper.AXIS_ROND,
             view.findViewById(R.id.roundness_axis_container),
-            view.findViewById(R.id.rond_spinner)
+            view.findViewById(R.id.rond_spinner),
+            view.findViewById(R.id.roundness_axis_divider)
         );
         monoAxisUi = new AxisSpinnerUi(
             VariableFontHelper.AXIS_MONO,
             view.findViewById(R.id.mono_axis_container),
-            view.findViewById(R.id.mono_spinner)
+            view.findViewById(R.id.mono_spinner),
+            null
         );
 
         allAxisUis = new ArrayList<>();
@@ -683,6 +691,35 @@ public class FontViewerFragment extends Fragment {
         for (AxisSpinnerUi ui : allAxisUis) {
             List<VariableFontHelper.VariableInstance> instances = axisInstancesMap.get(ui.tag);
             setupSingleAxisSpinner(ui, instances);
+        }
+
+        updateAxisDividers();
+    }
+
+    /**
+     * كل فاصل يُعرض فقط إذا كان محوره الخاص ظاهراً، وكان هناك محور آخر ظاهر
+     * بعده (أي أنه ليس آخر محور ظاهر فعلياً). محور Mono لا فاصل له أصلاً
+     * لأنه دائماً الأخير.
+     */
+    private void updateAxisDividers() {
+        if (allAxisUis == null) return;
+
+        int lastVisibleIndex = -1;
+        for (int i = 0; i < allAxisUis.size(); i++) {
+            AxisSpinnerUi ui = allAxisUis.get(i);
+            if (ui.container != null && ui.container.getVisibility() == View.VISIBLE) {
+                lastVisibleIndex = i;
+            }
+        }
+
+        for (int i = 0; i < allAxisUis.size(); i++) {
+            AxisSpinnerUi ui = allAxisUis.get(i);
+            if (ui.divider == null) continue;
+
+            boolean thisVisible = ui.container != null
+                    && ui.container.getVisibility() == View.VISIBLE;
+            boolean showDivider = thisVisible && i < lastVisibleIndex;
+            ui.divider.setVisibility(showDivider ? View.VISIBLE : View.GONE);
         }
     }
 
