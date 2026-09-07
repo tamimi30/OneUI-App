@@ -9,7 +9,11 @@ import android.widget.HorizontalScrollView;
 public class SpinnerRowScrollView extends HorizontalScrollView {
 
     private static final float MICRO_SLOP_DP = 3.5f;
-    private static final float VERTICAL_RELEASE_SLOP_DP = 16f;
+    // خُفّضت من 16f الى 4f: كلما كانت هذه العتبة أصغر، كلما اعتبرنا الحركة
+    // "عمودية" وحررنا السيطرة لـ NestedScrollView بشكل أسرع، مما يقلل فرصة
+    // فوز مؤقت الـ Spinner الداخلي بالسباق ويمنع فتح القائمة أصلاً بدل أن
+    // تُفتح ثم تُغلق.
+    private static final float VERTICAL_RELEASE_SLOP_DP = 4f;
 
     private final float microSlopPx;
     private final float verticalReleaseSlopPx;
@@ -54,7 +58,8 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
 
             case MotionEvent.ACTION_MOVE: {
                 float dx = Math.abs(ev.getX() - downX);
-                if (dx > microSlopPx && dx > Math.abs(ev.getY() - downY)) {
+                float dy = Math.abs(ev.getY() - downY);
+                if (dx > microSlopPx && dx > dy) {
                     return true;
                 }
                 checkVerticalRelease(ev);
@@ -66,9 +71,6 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        // تُستدعى دائماً حتى عندما لا يستهلك أي عنصر داخلي اللمسة (نص، فاصل،
-        // خلفية)، وفي هذه الحالة تحديداً لا تُستدعى onInterceptTouchEvent مع
-        // كل حركة، لذلك نكرر نفس فحص "تحرير السكرول العمودي" هنا أيضاً.
         if (ev.getActionMasked() == MotionEvent.ACTION_MOVE) {
             checkVerticalRelease(ev);
         }
@@ -79,7 +81,9 @@ public class SpinnerRowScrollView extends HorizontalScrollView {
         if (verticalReleased) return;
         float dx = Math.abs(ev.getX() - downX);
         float dy = Math.abs(ev.getY() - downY);
-        if (dy > verticalReleaseSlopPx && dy > dx) {
+        // dy >= dx (وليس dy > dx فقط): عند التساوي التقريبي نميل لصالح
+        // اعتبارها عمودية، لأن التحرير المبكر آمن دائماً كما شُرح أعلاه.
+        if (dy > verticalReleaseSlopPx && dy >= dx) {
             verticalReleased = true;
             ViewParent parent = getParent();
             if (parent != null) {
