@@ -7,22 +7,22 @@ import android.view.ViewConfiguration;
 
 import androidx.core.widget.NestedScrollView;
 
-public class CustomVerticalScrollView extends NestedScrollView {
+public class OneUiNestedScrollView extends NestedScrollView {
 
     private float mDownX;
     private float mDownY;
     private final int mTouchSlop;
 
-    public CustomVerticalScrollView(Context context) {
+    public OneUiNestedScrollView(Context context) {
         this(context, null);
     }
 
-    public CustomVerticalScrollView(Context context, AttributeSet attrs) {
+    public OneUiNestedScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
-    public CustomVerticalScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public OneUiNestedScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
