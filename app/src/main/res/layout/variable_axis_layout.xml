@@ -24,7 +24,7 @@
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
-        <androidx.appcompat.widget.AppCompatSpinner
+        <com.oneui.fontviewer.widget.ScrollableSpinner
             android:id="@+id/weight_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
-        <androidx.appcompat.widget.AppCompatSpinner
+        <com.oneui.fontviewer.widget.ScrollableSpinner
             android:id="@+id/width_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
-        <androidx.appcompat.widget.AppCompatSpinner
+        <com.oneui.fontviewer.widget.ScrollableSpinner
             android:id="@+id/ital_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
-        <androidx.appcompat.widget.AppCompatSpinner
+        <com.oneui.fontviewer.widget.ScrollableSpinner
             android:id="@+id/grad_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -157,7 +157,7 @@
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
-        <androidx.appcompat.widget.AppCompatSpinner
+        <com.oneui.fontviewer.widget.ScrollableSpinner
             android:id="@+id/rond_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -190,7 +190,7 @@
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
-        <androidx.appcompat.widget.AppCompatSpinner
+        <com.oneui.fontviewer.widget.ScrollableSpinner
             android:id="@+id/mono_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
