@@ -34,12 +34,14 @@
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
-            <HorizontalScrollView
+            <com.oneui.fontviewer.widget.CustomHorizontalScrollView
                 android:id="@+id/variable_axes_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layoutDirection="ltr"
                 android:layout_marginBottom="16dp"
+                android:paddingTop="250dp"
+                android:paddingBottom="250dp"
                 android:scrollbars="none"
                 android:overScrollMode="ifContentScrolls"
                 android:visibility="gone">
@@ -52,7 +54,7 @@
                    <include layout="@layout/variable_axis_layout" />
                 </LinearLayout>
 
-            </HorizontalScrollView>
+            </com.oneui.fontviewer.widget.CustomHorizontalScrollView>
   
             <TextView
                 android:id="@+id/preview_sentence"
