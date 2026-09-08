@@ -83,6 +83,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private boolean mIsFirstLoad = true;
     private boolean mHasNotifiedReady = false;
+    private boolean mAwaitingInitialFontsLoad = false;
 
     private boolean mNeedsScrollRestore = false;
 
@@ -136,6 +137,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                     }
 
 
+                    mAwaitingInitialFontsLoad = true;
                     mViewModel.saveFolderPath(directoryPath);
                     mViewModel.loadFontsFromPath(directoryPath);
                 }
@@ -255,6 +257,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         mViewModel.getFontsLiveData().observe(this, fonts -> {
             if (fonts != null) {
                 notifyMainActivityReadyOnce();
+                mAwaitingInitialFontsLoad = false;
 
                 if (mIsBatchOperationRunning) {
                     mPendingFontsUpdate = new ArrayList<>(fonts);
@@ -440,6 +443,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         mUIManager.setLoadingContainer(view.findViewById(R.id.loading_container));
 
         mUIManager.updateUIVisibility(mViewModel.hasSavedFolder());
+
+        mAwaitingInitialFontsLoad = mViewModel.hasSavedFolder();
 
         updateMainActivityFolderState(mViewModel.hasSavedFolder());
     }
@@ -929,7 +934,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                     mSortManager.isSortAscending()
                 );
             }
-            mUIManager.updateEmptyView(true, mSearchManager.isSearchActive());
+            if (!mAwaitingInitialFontsLoad) {
+                mUIManager.updateEmptyView(true, mSearchManager.isSearchActive());
+            }
             return;
         }
 
