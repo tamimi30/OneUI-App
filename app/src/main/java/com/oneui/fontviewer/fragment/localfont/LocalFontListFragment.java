@@ -86,9 +86,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private boolean mNeedsScrollRestore = false;
 
-    // يمنع ظهور رسالة "لا توجد خطوط" قبل وصول القائمة الفعلية
-    private boolean mFontsLoadPending = false;
-
     private long mBackPressedTime = 0;
     private static final long BACK_PRESS_EXIT_INTERVAL = 2000;
 
@@ -139,7 +136,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                     }
 
 
-                    mFontsLoadPending = true;
                     mViewModel.saveFolderPath(directoryPath);
                     mViewModel.loadFontsFromPath(directoryPath);
                 }
@@ -258,7 +254,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private void setupViewModelObservers() {
         mViewModel.getFontsLiveData().observe(this, fonts -> {
             if (fonts != null) {
-                mFontsLoadPending = false;
                 notifyMainActivityReadyOnce();
 
                 if (mIsBatchOperationRunning) {
@@ -416,7 +411,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         if (mIsFirstLoad) {
             if (mViewModel.hasSavedFolder()) {
-                mFontsLoadPending = true;
                 mViewModel.loadFonts();
             } else {
                 notifyMainActivityReadyOnce();
@@ -927,9 +921,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private void refreshAdapterData() {
         if (mCurrentFontsList.isEmpty()) {
-            if (mFontsLoadPending) {
-                return;
-            }
             mSearchManager.updateFontsList(new ArrayList<>());
             if (mAdapter != null) {
                 mAdapter.updateFilteredFonts(new ArrayList<>(), mSearchManager.getCurrentSearchQuery());
