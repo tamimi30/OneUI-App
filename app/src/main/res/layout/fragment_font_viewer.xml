@@ -7,17 +7,64 @@
     android:overScrollMode="always"
     android:scrollbars="vertical"
     android:fillViewport="true">
-       
+    	
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingBottom="104dp">
+    	
+        <LinearLayout
+            android:id="@+id/variable_axes_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="vertical">
 
+            <dev.oneuiproject.oneui.widget.Separator
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Variable Axes" /> 
+
+            <dev.oneuiproject.oneui.widget.RoundLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@color/oui_background_color"
+                android:orientation="vertical"> 
+
+                <com.oneui.fontviewer.widget.OneUiHorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="ltr"
+                    android:paddingBottom="20dp"
+                    android:scrollbars="none"
+                    android:overScrollMode="ifContentScrolls">
+                    	
+                    <include layout="@layout/variable_axis_layout" />
+                
+                </com.oneui.fontviewer.widget.OneUiHorizontalScrollView>
+            
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="?attr/listDividerColor" />
+                
+            </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+            
+        </LinearLayout>
+        
+        <dev.oneuiproject.oneui.widget.Separator
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+       
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingVertical="27dp"
+            android:paddingHorizontal="24dp"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
@@ -29,47 +76,14 @@
                 android:layout_gravity="left"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="17sp"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
-                
-            <LinearLayout
-                android:id="@+id/variable_axes_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:visibility="gone"
-                android:orientation="vertical">   
-
-                <com.oneui.fontviewer.widget.OneUiHorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layoutDirection="ltr"
-                    android:paddingBottom="20dp"
-                    android:scrollbars="none"
-                    android:overScrollMode="ifContentScrolls">
-                	
-                    <include layout="@layout/variable_axis_layout" />
-                
-                </com.oneui.fontviewer.widget.OneUiHorizontalScrollView>
-            
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="?attr/listDividerColor" />
-
-            </LinearLayout>
-                
+                    
             <TextView
                 android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="34dp"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
                 android:textColor="@color/font_preview_text_color" />
                 
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
