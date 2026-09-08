@@ -58,12 +58,6 @@ public class LocalFontRepository {
         return fontDao.getLocalFonts();
     }
 
-    // ★ نسخة متزامنة تُستخدم فقط من خيط خلفي، لجلب القائمة الفعلية والمحدثة
-    // مباشرة من قاعدة البيانات دون انتظار وصول تحديث LiveData
-    public List<FontEntity> getLocalFontsSyncSafe() {
-        return fontDao.getLocalFontsSync();
-    }
-
     public LiveData<FontEntity> getFontByPath(String path) {
         return fontDao.getFontByPath(path);
     }

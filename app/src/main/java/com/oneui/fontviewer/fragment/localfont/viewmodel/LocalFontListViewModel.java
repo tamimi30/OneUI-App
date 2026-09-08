@@ -448,12 +448,6 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
             @Override
             public void onFullExtractionComplete() {
-                // ★ نجلب القائمة الفعلية مباشرة من قاعدة البيانات هنا (لا زلنا على خيط خلفي)
-                // بدل الاعتماد فقط على mPendingSyncFonts أو fontsLiveData.getValue()، واللذان قد
-                // يكونان فارغين أو قديمين إذا لم يصل تحديث LiveData بعد — هذا يمنع عرض شاشة
-                // "لا توجد خطوط" بشكل خاطئ لثوانٍ قبل ظهور القائمة الحقيقية
-                List<FontEntity> freshFontsFromDb = repository.getLocalFontsSyncSafe();
-
                 long elapsedTime = System.currentTimeMillis() - startTime;
                 long delay = showLoading ? Math.max(0, 2500 - elapsedTime) : 0;
 
@@ -464,8 +458,6 @@ public class LocalFontListViewModel extends AndroidViewModel {
                     if (mPendingSyncFonts != null) {
                         toPublish = mPendingSyncFonts;
                         mPendingSyncFonts = null;
-                    } else if (freshFontsFromDb != null) {
-                        toPublish = freshFontsFromDb;
                     } else {
                         List<FontEntity> currentFonts = fontsLiveData.getValue();
                         toPublish = currentFonts != null ? currentFonts : new ArrayList<>();
