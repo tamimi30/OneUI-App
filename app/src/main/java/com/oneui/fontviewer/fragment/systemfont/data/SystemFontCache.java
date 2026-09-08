@@ -6,9 +6,11 @@ import android.util.Log;
 
 import com.oneui.fontviewer.data.database.AppDatabase;
 import com.oneui.fontviewer.data.entity.FontEntity;
+import com.oneui.fontviewer.fragment.fontviewer.utils.VariableFontHelper;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SystemFontCache {
@@ -133,6 +135,28 @@ public class SystemFontCache {
         
         return typeface;
     }
+
+    /**
+     * نسخة عامة تدعم تطبيق عدة محاور دفعة واحدة (وزن، عرض، ميل، تدرج، استدارة، تباعد أحادي...)
+     * على خط النظام، بنفس فلسفة getTypefaceWithWeight.
+     */
+    public Typeface getTypefaceWithAxes(String fontPath, Map<String, Float> axisValues, int ttcIndex) {
+        if (fontPath == null || fontPath.isEmpty()) {
+            return null;
+        }
+
+        Log.d(TAG, "Loading typeface with axes: " + axisValues + ", ttcIndex: " + ttcIndex);
+
+        Typeface typeface = loadTypefaceWithAxesInternal(fontPath, axisValues, ttcIndex);
+
+        if (typeface != null) {
+            Log.d(TAG, "Successfully created typeface with axes: " + axisValues);
+        } else {
+            Log.e(TAG, "Failed to create typeface with axes: " + axisValues);
+        }
+
+        return typeface;
+    }
     
     
     
@@ -177,6 +201,52 @@ public class SystemFontCache {
                 return loadTypefaceFromFile(fontFile.getAbsolutePath());
             }
             
+            return null;
+        }
+    }
+
+    private Typeface loadTypefaceWithAxesInternal(String fontPath, Map<String, Float> axisValues, int ttcIndex) {
+        File fontFile = new File(fontPath);
+        if (!fontFile.exists() || !fontFile.canRead()) {
+            Log.w(TAG, "Font file does not exist or cannot be read: " + fontPath);
+            return null;
+        }
+
+        return loadTypefaceUsingBuilderWithAxes(fontFile, axisValues, ttcIndex);
+    }
+
+    private Typeface loadTypefaceUsingBuilderWithAxes(File fontFile, Map<String, Float> axisValues, int ttcIndex) {
+        try {
+            android.graphics.fonts.Font.Builder fontBuilder =
+                new android.graphics.fonts.Font.Builder(fontFile);
+
+            if (ttcIndex > 0) {
+                fontBuilder.setTtcIndex(ttcIndex);
+                Log.d(TAG, "Set TTC index: " + ttcIndex);
+            }
+
+            String variationSettings = VariableFontHelper.buildVariationSettingsString(axisValues);
+            if (!variationSettings.isEmpty()) {
+                fontBuilder.setFontVariationSettings(variationSettings);
+                Log.d(TAG, "Set font variation settings: " + variationSettings);
+            }
+
+            android.graphics.fonts.Font font = fontBuilder.build();
+
+            Typeface.CustomFallbackBuilder fallbackBuilder =
+                new Typeface.CustomFallbackBuilder(
+                    new android.graphics.fonts.FontFamily.Builder(font).build()
+                );
+
+            return fallbackBuilder.build();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Font.Builder failed for axes", e);
+
+            if (axisValues == null || axisValues.isEmpty()) {
+                return loadTypefaceFromFile(fontFile.getAbsolutePath());
+            }
+
             return null;
         }
     }
