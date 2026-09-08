@@ -448,6 +448,8 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
             @Override
             public void onFullExtractionComplete() {
+                List<FontEntity> freshFontsFromDb = repository.getLocalFontsSyncSafe();
+
                 long elapsedTime = System.currentTimeMillis() - startTime;
                 long delay = showLoading ? Math.max(0, 2500 - elapsedTime) : 0;
 
@@ -458,6 +460,8 @@ public class LocalFontListViewModel extends AndroidViewModel {
                     if (mPendingSyncFonts != null) {
                         toPublish = mPendingSyncFonts;
                         mPendingSyncFonts = null;
+                    } else if (freshFontsFromDb != null) {
+                        toPublish = freshFontsFromDb;
                     } else {
                         List<FontEntity> currentFonts = fontsLiveData.getValue();
                         toPublish = currentFonts != null ? currentFonts : new ArrayList<>();
