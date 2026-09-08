@@ -58,6 +58,10 @@ public class LocalFontRepository {
         return fontDao.getLocalFonts();
     }
 
+    public List<FontEntity> getLocalFontsSync() {
+        return fontDao.getLocalFontsSync();
+    }
+
     public LiveData<FontEntity> getFontByPath(String path) {
         return fontDao.getFontByPath(path);
     }
