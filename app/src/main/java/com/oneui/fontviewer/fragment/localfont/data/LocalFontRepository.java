@@ -338,16 +338,18 @@ public class LocalFontRepository {
                     if (existing == null) {
                         FontEntity newFont = createFontEntityFromFile(fileInfo, false);
 
-                        try {
-                            File fontFile = new File(fileInfo.getPath());
-                            String realName = FontMetadataExtractor.extractFontName(fontFile, 0);
-                            if (realName != null && !realName.isEmpty() &&
-                                !realName.equals("Unknown Font")) {
-                                newFont.setRealName(realName);
-                                Log.d(TAG, "★ Instantly extracted name: " + realName);
+                        if (fileInfo.getSize() < 2 * 1024 * 1024) { 
+                            try {
+                                File fontFile = new File(fileInfo.getPath());
+                                String realName = FontMetadataExtractor.extractFontName(fontFile, 0);
+                                if (realName != null && !realName.isEmpty() &&
+                                    !realName.equals("Unknown Font")) {
+                                    newFont.setRealName(realName);
+                                    Log.d(TAG, "★ Instantly extracted name: " + realName);
+                                }
+                            } catch (Exception e) {
+                                Log.w(TAG, "Quick extraction failed: " + e.getMessage());
                             }
-                        } catch (Exception e) {
-                            Log.w(TAG, "Quick extraction failed: " + e.getMessage());
                         }
 
                         try {
@@ -458,7 +460,7 @@ public class LocalFontRepository {
                 if (!font.isSystemFont()) {
                     try {
                         File fontFile = new File(font.getPath());
-                        if (fontFile.exists()) {
+                        if (fontFile.exists() && fontFile.length() < 10 * 1024 * 1024) {
                             String realName = FontMetadataExtractor.extractFontName(
                                 fontFile, font.getTtcIndex());
                             if (realName != null && !realName.isEmpty() &&
