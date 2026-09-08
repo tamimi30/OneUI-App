@@ -58,6 +58,15 @@ public class LocalFontRepository {
         return fontDao.getLocalFonts();
     }
 
+    public List<FontEntity> getLocalFontsSyncSafe() {
+        try {
+            return fontDao.getLocalFontsSync();
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get local fonts synchronously", e);
+            return null;
+        }
+    }
+
     public LiveData<FontEntity> getFontByPath(String path) {
         return fontDao.getFontByPath(path);
     }
