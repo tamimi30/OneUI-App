@@ -27,5 +27,19 @@
         <item name="strokeWidth">2.0px</item>
         <item name="cardCornerRadius">28dp</item>
     </style>
+        
+    <!-- Axis text style -->
+    <style name="AxisTextStyle" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minWidth">86sp</item>
+        <item name="android:layout_marginStart">13dp</item>
+        <item name="android:layout_marginEnd">35dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="app:minFontLevel">medium</item>
+        <item name="android:fontFamily">sec-roboto-light</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
 
 </resources>
