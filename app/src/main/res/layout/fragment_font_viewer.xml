@@ -16,26 +16,26 @@
     	
         <LinearLayout
             android:id="@+id/variable_axes_container"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:orientation="vertical">
 
             <dev.oneuiproject.oneui.widget.Separator
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Variable Axes" /> 
 
             <dev.oneuiproject.oneui.widget.RoundLinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="24dp"
                 android:paddingTop="20dp"
-                android:background="@color/oui_background_color"
+                
                 android:orientation="vertical"> 
 
                 <com.oneui.fontviewer.widget.OneUiHorizontalScrollView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layoutDirection="ltr"
                     android:paddingBottom="20dp"
