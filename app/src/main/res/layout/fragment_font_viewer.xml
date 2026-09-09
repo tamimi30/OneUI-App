@@ -40,7 +40,7 @@
                     android:layoutDirection="ltr"
                     android:paddingBottom="20dp"
                     android:scrollbars="none"
-                    android:overScrollMode="always">
+                    android:overScrollMode="ifContentScrolls">
                     	
                     <include layout="@layout/variable_axis_layout" />
                 
