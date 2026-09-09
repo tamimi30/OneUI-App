@@ -29,7 +29,7 @@
             <dev.oneuiproject.oneui.widget.RoundLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="24dp"
+                
                 android:paddingTop="14dp"
                 android:background="@color/oui_background_color"
                 android:orientation="vertical"> 
