@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.oneui.fontviewer.widget.OneUiNestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/font_viewer_scroll"
     android:layout_width="match_parent"
@@ -33,7 +33,7 @@
                 android:background="@color/oui_background_color"
                 android:orientation="vertical"> 
 
-                <HorizontalScrollView
+                <com.oneui.fontviewer.widget.OneUiHorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layoutDirection="ltr"
@@ -43,7 +43,7 @@
                     	
                     <include layout="@layout/variable_axis_layout" />
                 
-                </HorizontalScrollView>
+                </com.oneui.fontviewer.widget.OneUiHorizontalScrollView>
             
                 <View
                     android:layout_width="match_parent"
@@ -90,4 +90,4 @@
         
     </LinearLayout>
     
-</androidx.core.widget.NestedScrollView>
+</com.oneui.fontviewer.widget.OneUiNestedScrollView>
