@@ -24,6 +24,7 @@
             <dev.oneuiproject.oneui.widget.Separator
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textDirection="left"
                 android:text="Variable Axes" /> 
 
             <dev.oneuiproject.oneui.widget.RoundLinearLayout
