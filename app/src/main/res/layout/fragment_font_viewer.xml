@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="24dp"
-                android:paddingTop="20dp"
+                android:paddingTop="14dp"
                 
                 android:orientation="vertical"> 
 
@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layoutDirection="ltr"
-                    android:paddingBottom="20dp"
+                    android:paddingBottom="10dp"
                     android:scrollbars="none"
                     android:overScrollMode="ifContentScrolls">
                     	
