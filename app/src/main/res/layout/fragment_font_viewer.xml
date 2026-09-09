@@ -33,7 +33,7 @@
                 android:background="@color/oui_background_color"
                 android:orientation="vertical"> 
 
-                <com.oneui.fontviewer.widget.HorizontalScrollView
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layoutDirection="ltr"
@@ -43,7 +43,7 @@
                     	
                     <include layout="@layout/variable_axis_layout" />
                 
-                </com.oneui.fontviewer.widget.HorizontalScrollView>
+                </HorizontalScrollView>
             
                 <View
                     android:layout_width="match_parent"
