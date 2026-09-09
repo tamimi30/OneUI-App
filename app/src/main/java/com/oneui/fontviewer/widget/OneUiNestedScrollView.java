@@ -42,7 +42,7 @@ public class OneUiNestedScrollView extends NestedScrollView {
                 float dx = Math.abs(ev.getX() - mDownX);
                 float dy = Math.abs(ev.getY() - mDownY);
                 
-                                // إذا كانت الحركة أفقية بوضوح، لا تعترض اللمسة إطلاقاً
+                // إذا كانت الحركة أفقية بوضوح، لا تعترض اللمسة إطلاقاً
                 // ودع الأبناء (CustomHorizontalScrollView أو الـ Spinner) يتصرفون بها
 
                 if (dx > mTouchSlop && dx > dy) {
