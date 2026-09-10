@@ -11,12 +11,7 @@
         android:id="@+id/weight_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="14dp"
-        android:paddingStart="11dp"
-        android:paddingEnd="11dp"
-        android:paddingBottom="10dp"
-        android:background="@color/oui_background_color"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -46,12 +41,7 @@
         android:id="@+id/width_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="14dp"
-        android:paddingStart="11dp"
-        android:paddingEnd="11dp"
-        android:paddingBottom="10dp"
-        android:background="@color/oui_background_color"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -81,12 +71,7 @@
         android:id="@+id/italic_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="14dp"
-        android:paddingStart="11dp"
-        android:paddingEnd="11dp"
-        android:paddingBottom="10dp"
-        android:background="@color/oui_background_color"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -116,12 +101,7 @@
         android:id="@+id/grade_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="14dp"
-        android:paddingStart="11dp"
-        android:paddingEnd="11dp"
-        android:paddingBottom="10dp"
-        android:background="@color/oui_background_color"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -151,12 +131,7 @@
         android:id="@+id/roundness_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="14dp"
-        android:paddingStart="11dp"
-        android:paddingEnd="11dp"
-        android:paddingBottom="10dp"
-        android:background="@color/oui_background_color"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -186,12 +161,7 @@
         android:id="@+id/mono_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="14dp"
-        android:paddingStart="11dp"
-        android:paddingEnd="11dp"
-        android:paddingBottom="10dp"
-        android:background="@color/oui_background_color"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
