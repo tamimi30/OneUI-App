@@ -1,10 +1,8 @@
 package com.oneui.fontviewer.widget; // ⚠️ استخدم نفس الـ package الموجود في CustomHorizontalScrollView.java بالضبط
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewConfiguration;
 
 import androidx.core.widget.NestedScrollView;
@@ -49,12 +47,5 @@ public class OneUiNestedScrollView extends NestedScrollView {
                 break;
         }
         return super.onInterceptTouchEvent(ev);
-    }
-
-    @Override
-    public boolean requestChildRectangleOnScreen(View child, Rect rectangle, boolean immediate) {
-        boolean scrolled = super.requestChildRectangleOnScreen(child, rectangle, immediate);
-        rectangle.set(0, 0, 1, 1);
-        return scrolled;
     }
 }
