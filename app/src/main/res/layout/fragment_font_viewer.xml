@@ -60,10 +60,10 @@
             
         </LinearLayout>
         
-       <View
-           android:layout_width="match_parent"
-           android:layout_height="@dimen/sesl_list_subheader_min_height"
-           android:background="?attr/roundedCornerColor" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sesl_list_subheader_min_height"
+            android:background="?attr/roundedCornerColor" />
        
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
