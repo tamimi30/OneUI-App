@@ -22,7 +22,7 @@
             android:orientation="vertical">
             
             <TextView
-                style="@style/Base.Widget.AppCompat.TextView.ListSeparator"
+                style="@style/Base.Widget.AppCompat.light.TextView.ListSeparator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textDirection="ltr"
