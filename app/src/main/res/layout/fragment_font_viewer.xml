@@ -16,19 +16,19 @@
     	
         <LinearLayout
             android:id="@+id/variable_axes_container"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:orientation="vertical">
             
             <dev.oneuiproject.oneui.widget.Separator
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textDirection="ltr"
                 android:text="Variable Axes" />
 
             <dev.oneuiproject.oneui.widget.RoundLinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="14dp"
                 android:background="@color/oui_background_color"
