@@ -20,13 +20,20 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:orientation="vertical">
-            	
-            <TextView
-                style="@style/Base.Widget.AppCompat.TextView.ListSeparator"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textDirection="ltr"
-                android:text="Variable Axes" />
+                android:orientation="vertical">
+                
+                <TextView
+                    style="@style/Base.Widget.AppCompat.TextView.ListSeparator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textDirection="ltr"
+                    android:text="Variable Axes" />
+
+            </LinearLayout>
 
             <dev.oneuiproject.oneui.widget.RoundLinearLayout
                 android:layout_width="match_parent"
