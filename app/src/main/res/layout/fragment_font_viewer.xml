@@ -21,8 +21,7 @@
             android:visibility="gone"
             android:orientation="vertical">
             
-            <TextView
-                style="@style/Widget.AppCompat.TextView.ListSeparator"
+            <dev.oneuiproject.oneui.widget.Separator
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textDirection="ltr"
@@ -58,10 +57,9 @@
             
         </LinearLayout>
         
-        <View
+        <dev.oneuiproject.oneui.widget.Separator
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sesl_list_subheader_min_height"
-            android:background="?attr/roundedCornerColor" />
+            android:layout_height="wrap_content" />
        
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
