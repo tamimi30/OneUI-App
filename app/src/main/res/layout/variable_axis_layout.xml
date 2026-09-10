@@ -28,8 +28,6 @@
             android:id="@+id/weight_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            android:focusable="false"
             android:layout_gravity="left"
             android:layout_marginStart="11dp"
             android:minWidth="170dp" />
