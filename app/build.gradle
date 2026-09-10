@@ -109,7 +109,7 @@ dependencies {
     
     // Room Database
     implementation 'androidx.room:room-runtime:2.8.4'
-    annotationProcessor 'androidx.room:room-compiler:2.8.4'
+    annotationProcessor 'androidx.room:room-compiler:2.8.5'
     implementation 'androidx.room:room-rxjava3:2.8.5'
     
     // DataStore Preferences
