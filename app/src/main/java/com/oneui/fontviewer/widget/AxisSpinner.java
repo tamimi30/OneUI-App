@@ -8,17 +8,17 @@ import android.view.ViewParent;
 
 import androidx.appcompat.widget.AppCompatSpinner;
 
-public class OneUiAxisSpinner extends AppCompatSpinner {
+public class AxisSpinner extends AppCompatSpinner {
 
-    public OneUiAxisSpinner(Context context) {
+    public AxisSpinner(Context context) {
         super(context);
     }
 
-    public OneUiAxisSpinner(Context context, AttributeSet attrs) {
+    public AxisSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public OneUiAxisSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AxisSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
