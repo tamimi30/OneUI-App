@@ -4,10 +4,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="14dp"
-    android:paddingStart="11dp"
-    android:paddingEnd="11dp"
-    android:paddingBottom="10dp"
     android:layoutDirection="ltr"
     android:gravity="center_vertical">
 
@@ -16,6 +12,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="14dp"
+        android:paddingStart="11dp"
+        android:paddingEnd="11dp"
+        android:paddingBottom="10dp"
         android:background="@color/oui_background_color"
         android:visibility="gone">
 
@@ -25,9 +25,9 @@
             style="@style/AxisNameTextStyle"
             android:text="Weight" />
 
-        <com.oneui.fontviewer.widget.OneUiAxisSpinner
+        <com.oneui.fontviewer.widget.AxisSpinner
             android:id="@+id/weight_spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
     </dev.oneuiproject.oneui.widget.RoundLinearLayout>
@@ -47,6 +47,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="14dp"
+        android:paddingStart="11dp"
+        android:paddingEnd="11dp"
+        android:paddingBottom="10dp"
         android:background="@color/oui_background_color"
         android:visibility="gone">
 
@@ -58,7 +62,7 @@
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/width_spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
     </dev.oneuiproject.oneui.widget.RoundLinearLayout>
@@ -78,6 +82,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="14dp"
+        android:paddingStart="11dp"
+        android:paddingEnd="11dp"
+        android:paddingBottom="10dp"
         android:background="@color/oui_background_color"
         android:visibility="gone">
 
@@ -89,7 +97,7 @@
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/ital_spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
     </dev.oneuiproject.oneui.widget.RoundLinearLayout>
@@ -109,6 +117,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="14dp"
+        android:paddingStart="11dp"
+        android:paddingEnd="11dp"
+        android:paddingBottom="10dp"
         android:background="@color/oui_background_color"
         android:visibility="gone">
 
@@ -120,7 +132,7 @@
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/grad_spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
     </dev.oneuiproject.oneui.widget.RoundLinearLayout>
@@ -140,6 +152,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="14dp"
+        android:paddingStart="11dp"
+        android:paddingEnd="11dp"
+        android:paddingBottom="10dp"
         android:background="@color/oui_background_color"
         android:visibility="gone">
 
@@ -151,7 +167,7 @@
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/rond_spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
     </dev.oneuiproject.oneui.widget.RoundLinearLayout>
@@ -171,6 +187,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="14dp"
+        android:paddingStart="11dp"
+        android:paddingEnd="11dp"
+        android:paddingBottom="10dp"
         android:background="@color/oui_background_color"
         android:visibility="gone">
 
@@ -182,7 +202,7 @@
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/mono_spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
     </dev.oneuiproject.oneui.widget.RoundLinearLayout>
