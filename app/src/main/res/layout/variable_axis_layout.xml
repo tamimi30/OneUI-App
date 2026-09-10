@@ -24,7 +24,7 @@
             android:layout_gravity="left"
             android:textColor="?android:attr/textColorSecondary" />
 
-        <androidx.appcompat.widget.AppCompatSpinner
+        <com.oneui.fontviewer.widget.OneUiAxisSpinner
             android:id="@+id/weight_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
