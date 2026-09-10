@@ -13,6 +13,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingBottom="104dp">
+        	
+        <TextView
+            style="@style/Base.Widget.AppCompat.TextView.ListSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textDirection="ltr"
+            android:text="Variable Axes" />
     	
         <LinearLayout
             android:id="@+id/variable_axes_container"
@@ -20,20 +27,6 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                
-                <TextView
-                    style="@style/Base.Widget.AppCompat.TextView.ListSeparator"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textDirection="ltr"
-                    android:text="Variable Axes" />
-
-            </LinearLayout>
 
             <dev.oneuiproject.oneui.widget.RoundLinearLayout
                 android:layout_width="match_parent"
