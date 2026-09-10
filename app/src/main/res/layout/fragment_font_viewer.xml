@@ -30,15 +30,12 @@
             <dev.oneuiproject.oneui.widget.RoundLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="14dp"
-                android:background="@color/oui_background_color"
                 android:orientation="vertical"> 
 
                 <com.oneui.fontviewer.widget.OneUiHorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layoutDirection="ltr"
-                    android:paddingBottom="10dp"
                     android:scrollbars="none"
                     android:overScrollMode="always">
                     	
@@ -77,7 +74,7 @@
                 android:layout_gravity="left"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="17sp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="14dp"
                 android:visibility="gone" />
                     
             <TextView
