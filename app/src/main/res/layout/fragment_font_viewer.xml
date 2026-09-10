@@ -21,7 +21,10 @@
             android:visibility="gone"
             android:orientation="vertical">
 
-            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 
                 <TextView
                     style="@style/Base.Widget.AppCompat.TextView.ListSeparator"
@@ -30,10 +33,7 @@
                     android:textDirection="ltr"
                     android:text="Variable Axes" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+            </LinearLayout>
 
             <dev.oneuiproject.oneui.widget.RoundLinearLayout
                 android:layout_width="match_parent"
@@ -62,9 +62,7 @@
                     android:background="?attr/listDividerColor" />
                 
             </dev.oneuiproject.oneui.widget.RoundLinearLayout>
-
-            </LinearLayout>
-                
+            
         </LinearLayout>
         
        <View
