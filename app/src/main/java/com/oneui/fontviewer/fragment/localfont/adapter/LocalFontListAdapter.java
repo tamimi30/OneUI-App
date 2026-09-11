@@ -131,8 +131,8 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 break;
             case NAME:
             default:
-                String nameA = a.getRealName() != null ? a.getRealName() : "";
-                String nameB = b.getRealName() != null ? b.getRealName() : "";
+                String nameA = a.getDisplayName() != null ? a.getDisplayName() : "";
+                String nameB = b.getDisplayName() != null ? b.getDisplayName() : "";
                 result = nameA.compareToIgnoreCase(nameB);
         }
         return currentSortAscending ? result : -result;
@@ -379,7 +379,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         positionSections.clear();
 
         for (int i = 0; i < mSortedList.size(); i++) {
-            String name   = mSortedList.get(i).getRealName();
+            String name   = mSortedList.get(i).getDisplayName();
             String letter = (name != null && !name.isEmpty()) ? name.substring(0, 1).toUpperCase() : "#";
             if (!Character.isLetter(letter.charAt(0))) letter = "#";
 
