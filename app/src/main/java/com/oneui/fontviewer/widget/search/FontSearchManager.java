@@ -56,8 +56,9 @@ public class FontSearchManager {
         } else {
             String lowerCaseQuery = currentSearchQuery.toLowerCase(Locale.getDefault());
             for (FontFileInfo font : allFonts) {
-                if (font.getRealName() != null
-                        && font.getRealName().toLowerCase(Locale.getDefault()).contains(lowerCaseQuery)) {
+                String displayName = font.getDisplayName();
+                if (displayName != null
+                        && displayName.toLowerCase(Locale.getDefault()).contains(lowerCaseQuery)) {
                     filteredFonts.add(font);
                 }
             }
