@@ -946,7 +946,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 font.getName(),
                 font.getPath(),
                 font.getSize(),
-                font.getLastModified()
+                font.getLastModified(),
+                font.getRealName()
             ));
         }
 
