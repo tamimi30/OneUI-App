@@ -131,8 +131,8 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 break;
             case NAME:
             default:
-                String nameA = a.getName() != null ? a.getName() : "";
-                String nameB = b.getName() != null ? b.getName() : "";
+                String nameA = a.getRealName() != null ? a.getRealName() : "";
+                String nameB = b.getRealName() != null ? b.getRealName() : "";
                 result = nameA.compareToIgnoreCase(nameB);
         }
         return currentSortAscending ? result : -result;
@@ -379,7 +379,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         positionSections.clear();
 
         for (int i = 0; i < mSortedList.size(); i++) {
-            String name   = mSortedList.get(i).getName();
+            String name   = mSortedList.get(i).getRealName();
             String letter = (name != null && !name.isEmpty()) ? name.substring(0, 1).toUpperCase() : "#";
             if (!Character.isLetter(letter.charAt(0))) letter = "#";
 
@@ -446,7 +446,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             if ((payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) || !isSearchActive)
                     && holder instanceof LocalFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
-                String displayName = FileUtils.removeExtension(fontInfo.getName());
+                String displayName = fontInfo.getDisplayName();
 
                 if (isSearchActive) {
                     android.text.Spannable highlighted = highlighter.highlightText(displayName, currentSearchQuery);
@@ -528,7 +528,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private void bindLocalFontViewHolder(LocalFontViewHolder holder, FontFileInfo fontInfo, int position) {
         String fileName    = fontInfo.getName();
         String path        = fontInfo.getPath();
-        String displayName = FileUtils.removeExtension(fileName);
+        String displayName = fontInfo.getDisplayName();
 
         LocalFontListViewModel.FontFileInfoWithMetadata metadata = getFontMetadataForPath(path);
         String realName = (metadata != null) ? metadata.getRealName() : null;
