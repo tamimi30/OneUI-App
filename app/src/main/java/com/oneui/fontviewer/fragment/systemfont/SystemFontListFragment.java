@@ -340,7 +340,8 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
                 font.getFileName(),
                 font.getPath(),
                 font.getSize(),
-                font.getLastModified()
+                font.getLastModified(),
+                font.getRealName()
             ));
         }
 
