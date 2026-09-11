@@ -598,7 +598,8 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
                 font.getName(),
                 font.getPath(),
                 font.getSize(),
-                font.getLastModified()
+                font.getLastModified(),
+                font.getRealName()
             ));
         }
 
