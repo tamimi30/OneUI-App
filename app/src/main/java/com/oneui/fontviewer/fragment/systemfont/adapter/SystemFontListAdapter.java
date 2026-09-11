@@ -102,8 +102,8 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             case SIZE:  result = Long.compare(a.getSize(), b.getSize()); break;
             case NAME:
             default:
-                String nameA = a.getName() != null ? a.getName() : "";
-                String nameB = b.getName() != null ? b.getName() : "";
+                String nameA = a.getRealName() != null ? a.getRealName() : "";
+                String nameB = b.getRealName() != null ? b.getRealName() : "";
                 result = nameA.compareToIgnoreCase(nameB);
         }
         return currentSortAscending ? result : -result;
@@ -296,7 +296,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         positionSections.clear();
 
         for (int i = 0; i < mSortedList.size(); i++) {
-            String name   = mSortedList.get(i).getName();
+            String name   = mSortedList.get(i).getRealName();
             String letter = (name != null && !name.isEmpty()) ? name.substring(0, 1).toUpperCase() : "#";
             if (!Character.isLetter(letter.charAt(0))) letter = "#";
 
@@ -367,7 +367,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
             if ((payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) || !isSearchActive) && holder instanceof SystemFontViewHolder) {
                 FontFileInfo fontInfo      = mSortedList.get(position - 1);
-                String displayName         = FileUtils.removeExtension(fontInfo.getName());
+                String displayName         = fontInfo.getDisplayName();
                 boolean isLastOpened       = preferenceManager.isLastOpenedFont(fontInfo.getPath());
                 
                 if (isSearchActive) isLastOpened = false;
@@ -424,7 +424,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private void bindFontViewHolder(SystemFontViewHolder holder, FontFileInfo fontInfo) {
         String fileName    = fontInfo.getName();
         String path        = fontInfo.getPath();
-        String displayName = FileUtils.removeExtension(fileName);
+        String displayName = fontInfo.getDisplayName();
 
         SystemFontInfo sfi = getFontInfoForPath(path);
         String realName    = (sfi != null) ? sfi.getRealName() : null;
