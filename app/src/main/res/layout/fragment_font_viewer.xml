@@ -27,9 +27,12 @@
                 android:textDirection="ltr"
                 android:text="Variable Axes" />
 
-            <dev.oneuiproject.oneui.widget.RoundLinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:theme="@style/Theme.MaterialComponents.DayNight"
+                app:cardCornerRadius="20dp"
+                app:cardBackgroundColor="@color/oui_background_color"
                 android:orientation="vertical"> 
 
                 <com.oneui.fontviewer.widget.OneUiHorizontalScrollView
@@ -50,7 +53,7 @@
                     android:layout_marginEnd="24dp"
                     android:background="?attr/listDividerColor" />
                 
-            </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+            </com.google.android.material.card.MaterialCardView>
             
         </LinearLayout>
         
