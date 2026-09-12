@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- زوايا مستديرة -->
-    <corners android:radius="20dp"/>
+    <corners android:radius="10dp"/>
 
     <!-- اختياري: إضافة حدود -->
     <stroke android:width="0dp" android:color="@android:color/black"/>
