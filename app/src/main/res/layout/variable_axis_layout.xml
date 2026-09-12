@@ -7,7 +7,7 @@
     android:layoutDirection="ltr"
     android:gravity="center_vertical">
 
-    <dev.oneuiproject.oneui.widget.RoundLinearLayout
+    <LinearLayout
         android:id="@+id/weight_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+    </LinearLayout>
 
     <View
         android:id="@+id/weight_axis_divider"
@@ -37,7 +37,7 @@
         android:background="?attr/listDividerColor"
         android:visibility="gone" />
 
-    <dev.oneuiproject.oneui.widget.RoundLinearLayout
+    <LinearLayout
         android:id="@+id/width_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+    </LinearLayout>
 
     <View
         android:id="@+id/width_axis_divider"
@@ -67,7 +67,7 @@
         android:background="?attr/listDividerColor"
         android:visibility="gone" />
 
-    <dev.oneuiproject.oneui.widget.RoundLinearLayout
+    <LinearLayout
         android:id="@+id/italic_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+    </LinearLayout>
 
     <View
         android:id="@+id/italic_axis_divider"
@@ -97,7 +97,7 @@
         android:background="?attr/listDividerColor"
         android:visibility="gone" />
 
-    <dev.oneuiproject.oneui.widget.RoundLinearLayout
+    <LinearLayout
         android:id="@+id/grade_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -115,7 +115,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+    </LinearLayout>
 
     <View
         android:id="@+id/grade_axis_divider"
@@ -127,7 +127,7 @@
         android:background="?attr/listDividerColor"
         android:visibility="gone" />
 
-    <dev.oneuiproject.oneui.widget.RoundLinearLayout
+    <LinearLayout
         android:id="@+id/roundness_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+    </LinearLayout>
 
     <View
         android:id="@+id/roundness_axis_divider"
@@ -157,7 +157,7 @@
         android:background="?attr/listDividerColor"
         android:visibility="gone" />
 
-    <dev.oneuiproject.oneui.widget.RoundLinearLayout
+    <LinearLayout
         android:id="@+id/mono_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -175,6 +175,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+    </LinearLayout>
 
 </LinearLayout>
