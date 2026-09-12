@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:layoutDirection="ltr"
-    android:theme="@style/AppTheme"
     android:gravity="center_vertical">
 
     <com.google.android.material.card.MaterialCardView
