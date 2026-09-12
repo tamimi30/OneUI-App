@@ -19,6 +19,7 @@
             android:id="@+id/variable_axes_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:theme="@style/AppTheme"
             android:visibility="gone"
             android:orientation="vertical">
             
@@ -38,6 +39,7 @@
                 <com.oneui.fontviewer.widget.OneUiHorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:theme="@style/AppTheme"
                     android:layoutDirection="ltr"
                     android:scrollbars="none"
                     android:overScrollMode="always">
