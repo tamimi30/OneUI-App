@@ -1,180 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/variable_axes_row"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layoutDirection="ltr"
-    android:gravity="center_vertical">
+<dev.oneuiproject.oneui.layout.ToolbarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:expanded="false"
+    app:navigationIcon="@drawable/ic_oui_back"
+    app:title="@string/drawer_font_viewer"
+    app:subtitle="@string/font_viewer_select_description">
+
+    <FrameLayout
+        android:id="@+id/font_viewer_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_font_size"
+        android:theme="@style/Theme.MaterialComponents.DayNight"
+        style="@style/FabStyle"
+        android:visibility="invisible"
+        app:layout_location="root"
+        android:tooltipText="@string/font_size_dialog_title" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/weight_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/AxisCardStyle"
-        android:visibility="gone">
+        android:id="@+id/format_bar"
+        android:theme="@style/Theme.MaterialComponents.DayNight"
+        style="@style/FormatBarStyle"
+        app:layout_location="root"
+        android:visibility="invisible">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Weight" />
+        <LinearLayout
+            android:layout_width="118dp"
+            android:layout_height="54dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical">
 
-        <com.oneui.fontviewer.widget.AxisSpinner
-            android:id="@+id/weight_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/btn_bold"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_oui_text_bold"
+                android:background="@drawable/bg_format_toggle"
+                android:foreground="@drawable/sort_btn_ripple_oval"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_gravity="center_vertical"
+                android:tooltipText="@string/btn_bold" />
+
+            <ImageView
+                android:id="@+id/btn_italic"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_oui_text_italic"
+                android:background="@drawable/bg_format_toggle"
+                android:foreground="@drawable/sort_btn_ripple_oval"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_gravity="center_vertical"
+                android:tooltipText="@string/btn_italic" />
             
+        </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
-    <View
-        android:id="@+id/weight_axis_divider"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor"
-        android:visibility="gone" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/width_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/AxisCardStyle"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Width" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/width_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-            
-    </com.google.android.material.card.MaterialCardView>
-
-    <View
-        android:id="@+id/width_axis_divider"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor"
-        android:visibility="gone" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/italic_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/AxisCardStyle"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Italic" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/ital_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-            
-    </com.google.android.material.card.MaterialCardView>
-
-    <View
-        android:id="@+id/italic_axis_divider"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor"
-        android:visibility="gone" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/grade_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/AxisCardStyle"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Grade" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/grad_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-            
-    </com.google.android.material.card.MaterialCardView>
-
-    <View
-        android:id="@+id/grade_axis_divider"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor"
-        android:visibility="gone" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/roundness_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/AxisCardStyle"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Roundness" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/rond_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-            
-    </com.google.android.material.card.MaterialCardView>
-
-    <View
-        android:id="@+id/roundness_axis_divider"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/listDividerColor"
-        android:visibility="gone" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/mono_axis_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/AxisCardStyle"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Mono" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/mono_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-            
-    </com.google.android.material.card.MaterialCardView>
-
-</LinearLayout>
+</dev.oneuiproject.oneui.layout.ToolbarLayout>
