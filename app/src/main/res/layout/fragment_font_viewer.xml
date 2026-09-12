@@ -12,14 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:theme="@style/AppTheme"
         android:paddingBottom="104dp">	
     	
         <LinearLayout
             android:id="@+id/variable_axes_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme"
             android:visibility="gone"
             android:orientation="vertical">
             
@@ -29,17 +27,14 @@
                 android:textDirection="ltr"
                 android:text="Variable Axes" />
 
-            <com.google.android.material.card.MaterialCardView
+            <dev.oneuiproject.oneui.widget.RoundLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:theme="@style/Theme.MaterialComponents.DayNight"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="20dp"> 
+                android:orientation="vertical"> 
 
                 <com.oneui.fontviewer.widget.OneUiHorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:theme="@style/AppTheme"
                     android:layoutDirection="ltr"
                     android:scrollbars="none"
                     android:overScrollMode="always">
@@ -47,8 +42,15 @@
                     <include layout="@layout/variable_axis_layout" />
                 
                 </com.oneui.fontviewer.widget.OneUiHorizontalScrollView>
+            
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="?attr/listDividerColor" />
                 
-            </com.google.android.material.card.MaterialCardView>
+            </dev.oneuiproject.oneui.widget.RoundLinearLayout>
             
         </LinearLayout>
         

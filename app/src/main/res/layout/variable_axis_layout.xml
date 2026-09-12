@@ -7,12 +7,11 @@
     android:layoutDirection="ltr"
     android:gravity="center_vertical">
 
-    <com.google.android.material.card.MaterialCardView
+    <dev.oneuiproject.oneui.widget.RoundLinearLayout
         android:id="@+id/weight_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
-        style="@style/AxisCardStyle"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -26,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </com.google.android.material.card.MaterialCardView>
+    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
     <View
         android:id="@+id/weight_axis_divider"
@@ -38,12 +37,11 @@
         android:background="?attr/listDividerColor"
         android:visibility="gone" />
 
-    <com.google.android.material.card.MaterialCardView
+    <dev.oneuiproject.oneui.widget.RoundLinearLayout
         android:id="@+id/width_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
-        style="@style/AxisCardStyle"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -57,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </com.google.android.material.card.MaterialCardView>
+    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
     <View
         android:id="@+id/width_axis_divider"
@@ -69,12 +67,11 @@
         android:background="?attr/listDividerColor"
         android:visibility="gone" />
 
-    <com.google.android.material.card.MaterialCardView
+    <dev.oneuiproject.oneui.widget.RoundLinearLayout
         android:id="@+id/italic_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
-        style="@style/AxisCardStyle"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -88,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </com.google.android.material.card.MaterialCardView>
+    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
     <View
         android:id="@+id/italic_axis_divider"
@@ -100,12 +97,11 @@
         android:background="?attr/listDividerColor"
         android:visibility="gone" />
 
-    <com.google.android.material.card.MaterialCardView
+    <dev.oneuiproject.oneui.widget.RoundLinearLayout
         android:id="@+id/grade_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
-        style="@style/AxisCardStyle"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -119,7 +115,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </com.google.android.material.card.MaterialCardView>
+    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
     <View
         android:id="@+id/grade_axis_divider"
@@ -131,12 +127,11 @@
         android:background="?attr/listDividerColor"
         android:visibility="gone" />
 
-    <com.google.android.material.card.MaterialCardView
+    <dev.oneuiproject.oneui.widget.RoundLinearLayout
         android:id="@+id/roundness_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
-        style="@style/AxisCardStyle"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -150,7 +145,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </com.google.android.material.card.MaterialCardView>
+    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
     <View
         android:id="@+id/roundness_axis_divider"
@@ -162,12 +157,11 @@
         android:background="?attr/listDividerColor"
         android:visibility="gone" />
 
-    <com.google.android.material.card.MaterialCardView
+    <dev.oneuiproject.oneui.widget.RoundLinearLayout
         android:id="@+id/mono_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
-        style="@style/AxisCardStyle"
+        style="@style/AxisContainerStyle"
         android:visibility="gone">
 
         <TextView
@@ -181,6 +175,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
             
-    </com.google.android.material.card.MaterialCardView>
+    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
 </LinearLayout>
