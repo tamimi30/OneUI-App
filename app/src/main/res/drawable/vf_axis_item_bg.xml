@@ -6,7 +6,7 @@
     <solid android:color="@color/oui_background_color"/>
 
     <!-- زوايا مستديرة -->
-    <corners android:radius="10dp"/>
+    <corners android:radius="20dp"/>
 
     <!-- اختياري: إضافة حدود -->
     <stroke android:width="0dp" android:color="@android:color/black"/>
