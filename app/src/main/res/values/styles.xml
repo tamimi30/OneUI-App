@@ -40,8 +40,8 @@
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
     
-    <!-- Axis card style -->
-	<style name="AxisCardStyle" parent="">
+    <!-- Axis container style -->
+	<style name="AxisContainerStyle" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
@@ -49,8 +49,7 @@
         <item name="android:paddingStart">11dp</item>
     	<item name="android:paddingEnd">11dp</item>
         <item name="android:paddingBottom">10dp</item>
-        <item name="cardCornerRadius">20dp</item>
-        <item name="cardBackgroundColor">@color/oui_background_color</item>
+        <item name="android:background">@drawable/vf_axis_item_bg</item>
     </style>
     	
 </resources>
