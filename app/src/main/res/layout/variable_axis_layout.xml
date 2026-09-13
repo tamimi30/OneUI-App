@@ -42,7 +42,7 @@
 
         <com.oneui.fontviewer.widget.AxisSpinner
             android:id="@+id/weight_spinner"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
             
     </LinearLayout>
@@ -92,7 +92,7 @@
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/width_spinner"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
             
     </LinearLayout>
