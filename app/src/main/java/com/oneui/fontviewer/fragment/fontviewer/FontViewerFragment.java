@@ -472,7 +472,7 @@ public class FontViewerFragment extends Fragment {
         setupAxisInfoButton(view, R.id.italic_info_icon, "Italic (ital)", R.drawable.italic_info_img, R.string.axis_info_italic_description);
         setupAxisInfoButton(view, R.id.grade_info_icon, "Grade (GRAD)", R.drawable.grade_info_img, R.string.axis_info_grade_description);
         setupAxisInfoButton(view, R.id.roundness_info_icon, "Roundness (ROND)", R.drawable.roundness_info_img, R.string.axis_info_roundness_description);
-        setupAxisInfoButton(view, R.id.mono_info_icon, "Monospace (MONO)", R.drawable.mono_info_img, R.string.axis_info_mono_description);
+        setupAxisInfoButton(view, R.id.monospace_info_icon, "Monospace (MONO)", R.drawable.monospace_info_img, R.string.axis_info_monospace_description);
     }
 
     private void setupAxisInfoButton(View root, int iconId, String axisTitle, int imageRes, int descriptionRes) {
