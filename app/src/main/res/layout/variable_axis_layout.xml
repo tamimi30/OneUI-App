@@ -14,11 +14,30 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Weight" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Weight" />
+
+            <ImageView
+                android:id="@+id/weight_info_icon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+
+        </LinearLayout>
 
         <com.oneui.fontviewer.widget.AxisSpinner
             android:id="@+id/weight_spinner"
@@ -44,11 +63,30 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Width" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Width" />
+
+            <ImageView
+                android:id="@+id/width_info_icon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/width_spinner"
@@ -74,11 +112,30 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Italic" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Italic" />
+
+            <ImageView
+                android:id="@+id/italic_info_icon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/ital_spinner"
@@ -104,11 +161,30 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Grade" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Grade" />
+
+            <ImageView
+                android:id="@+id/grade_info_icon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/grad_spinner"
@@ -134,11 +210,30 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Roundness" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Roundness" />
+
+            <ImageView
+                android:id="@+id/roundness_info_icon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/rond_spinner"
@@ -164,11 +259,30 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Mono" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Mono" />
+
+            <ImageView
+                android:id="@+id/mono_info_icon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/mono_spinner"
