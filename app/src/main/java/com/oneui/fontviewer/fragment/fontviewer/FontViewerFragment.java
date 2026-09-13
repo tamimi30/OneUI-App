@@ -41,6 +41,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.oneui.fontviewer.dialog.FontSizeDialog;
+import com.oneui.fontviewer.dialog.AxisInfoDialog;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.fontviewer.utils.VariableFontHelper;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
@@ -461,6 +462,24 @@ public class FontViewerFragment extends Fragment {
         allAxisUis.add(gradeAxisUi);
         allAxisUis.add(roundnessAxisUi);
         allAxisUis.add(monoAxisUi);
+
+        setupAxisInfoButtons(view);
+    }
+
+    private void setupAxisInfoButtons(View view) {
+        setupAxisInfoButton(view, R.id.weight_info_icon, "Weight (wght)", R.drawable.weight_info_img, R.string.axis_info_weight_description);
+        setupAxisInfoButton(view, R.id.width_info_icon, "Width (wdth)", R.drawable.width_info_img, R.string.axis_info_width_description);
+        setupAxisInfoButton(view, R.id.italic_info_icon, "Italic (ital)", R.drawable.italic_info_img, R.string.axis_info_italic_description);
+        setupAxisInfoButton(view, R.id.grade_info_icon, "Grade (GRAD)", R.drawable.grade_info_img, R.string.axis_info_grade_description);
+        setupAxisInfoButton(view, R.id.roundness_info_icon, "Roundness (ROND)", R.drawable.roundness_info_img, R.string.axis_info_roundness_description);
+        setupAxisInfoButton(view, R.id.mono_info_icon, "Monospace (MONO)", R.drawable.mono_info_img, R.string.axis_info_mono_description);
+    }
+
+    private void setupAxisInfoButton(View root, int iconId, String axisTitle, int imageRes, int descriptionRes) {
+        View icon = root.findViewById(iconId);
+        if (icon != null) {
+            icon.setOnClickListener(v -> AxisInfoDialog.show(requireContext(), axisTitle, imageRes, descriptionRes));
+        }
     }
 
 
