@@ -272,7 +272,7 @@
                 android:text="Mono" />
 
             <ImageView
-                android:id="@+id/mono_info_icon"
+                android:id="@+id/monospace_info_icon"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/ic_oui_info_outline"
