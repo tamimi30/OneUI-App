@@ -29,7 +29,7 @@ public class AxisInfoDialog {
 
         new AlertDialog.Builder(context)
                 .setTitle(axisTitle)
-                .setMessage(layout)
+                .setView(layout)
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
     }
