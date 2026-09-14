@@ -5,13 +5,13 @@
     android:viewportWidth="1920"
     android:viewportHeight="1080">
     <path
-        android:fillColor="@color/secondary_text_color_img"
+        android:fillColor="@color/sesl_seekbar_control_color_default"
         android:pathData="M1216 838c0-13.81 11.19-25 25-25h168c13.81 0 25 11.19 25 25v0c0 13.81-11.19 25-25 25h-168c-13.81 0-25-11.19-25-25z"/>
     <path
         android:fillColor="?attr/colorPrimary"
         android:pathData="M1215 838c0-13.81 11.19-25 25-25h136c13.81 0 25 11.19 25 25v0c0 13.81-11.19 25-25 25h-136c-13.81 0-25-11.19-25-25z"/>
     <path
-        android:fillColor="@color/secondary_text_color_img"
+        android:fillColor="@color/sesl_seekbar_control_color_default"
         android:pathData="M486 838c0-13.81 11.19-25 25-25h168c13.81 0 25 11.19 25 25v0c0 13.81-11.19 25-25 25h-168c-13.81 0-25-11.19-25-25z"/>
     <path
         android:fillColor="?attr/colorPrimary"
