@@ -33,8 +33,8 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minWidth">86sp</item>
-        <item name="android:layout_marginStart">7dp</item>
-        <item name="android:layout_marginEnd">14dp</item>
+        <item name="android:layout_marginStart">14dp</item>
+        <item name="android:layout_marginEnd">7dp</item>
         <item name="android:textSize">13sp</item>
         <item name="fontFamily">sec-roboto-light</item>
         <item name="android:textColor">?android:attr/textColorSecondary</item>
