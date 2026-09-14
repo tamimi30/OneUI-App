@@ -14,12 +14,12 @@
         android:fillColor="#FFD2E3FC"
         android:pathData="M1216 838c0-13.81 11.19-25 25-25h168c13.81 0 25 11.19 25 25v0c0 13.81-11.19 25-25 25h-168c-13.81 0-25-11.19-25-25z"/>
     <path
-        android:fillColor="attr/colorPrimary"
+        android:fillColor="?attr/colorPrimary"
         android:pathData="M1215 838c0-13.81 11.19-25 25-25h136c13.81 0 25 11.19 25 25v0c0 13.81-11.19 25-25 25h-136c-13.81 0-25-11.19-25-25z"/>
     <path
         android:fillColor="#FFD2E3FC"
         android:pathData="M486 838c0-13.81 11.19-25 25-25h168c13.81 0 25 11.19 25 25v0c0 13.81-11.19 25-25 25h-168c-13.81 0-25-11.19-25-25z"/>
     <path
-        android:fillColor="attr/colorPrimary"
+        android:fillColor="?attr/colorPrimary"
         android:pathData="M486 838c0-13.81 11.19-25 25-25h20c13.81 0 25 11.19 25 25v0c0 13.81-11.19 25-25 25h-20c-13.81 0-25-11.19-25-25z"/>
 </vector>
