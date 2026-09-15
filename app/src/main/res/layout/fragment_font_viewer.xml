@@ -25,8 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textDirection="ltr"
-                android:clipToOutline="true"
-                android:clipToOutline="true"
+                android:clipToOutline="false"
+                
                 android:text="Variable Axes" />
 
             <LinearLayout
