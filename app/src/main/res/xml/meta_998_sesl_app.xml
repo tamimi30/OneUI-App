@@ -69,6 +69,15 @@
             UID="16-61-8"
             ValueRef="1-A"
             ValueType="Color" />
+            
+        <Property
+            Comment="SeekBar color"
+            DefaultValue="660381fe"
+            DestAttribName="seekbar_color"
+            Opacity="40"
+            UID="16-61-7"
+            ValueRef="1-A"
+            ValueType="Color" />
         
     </AppMetaData>
     
