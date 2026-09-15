@@ -74,7 +74,7 @@
             Comment="SeekBar color"
             DefaultValue="660381fe"
             DestAttribName="seekbar_color"
-            Opacity="60"
+            Opacity="35"
             UID="16-61-7"
             ValueRef="1-A"
             ValueType="Color" />
