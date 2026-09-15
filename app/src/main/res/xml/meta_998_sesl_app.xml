@@ -63,10 +63,11 @@
 
         <Property
             Comment="Secondary Text/Icon Color - Adaptive"
-            DefaultValue="949494"
+            DefaultValue="ffc9c9c9"
             DestAttribName="secondary_text_color_img"
+            Opacity="50"
             UID="16-61-8"
-            ValueRef="1-1-4"
+            ValueRef="1-A"
             ValueType="Color" />
         
     </AppMetaData>
