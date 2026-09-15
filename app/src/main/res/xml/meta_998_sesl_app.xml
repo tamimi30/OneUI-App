@@ -65,7 +65,7 @@
             Comment="Secondary Text/Icon Color - Adaptive"
             DefaultValue="949494"
             DestAttribName="secondary_text_color_img"
-            UID="6"
+            UID="16-61-8"
             ValueRef="1-1-4"
             ValueType="Color" />
         
