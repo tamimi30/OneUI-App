@@ -25,6 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textDirection="ltr"
+                android:clipToOutline="true"
+                android:clipToOutline="true"
                 android:text="Variable Axes" />
 
             <LinearLayout
@@ -58,6 +60,7 @@
             android:layout_height="match_parent"
             android:paddingVertical="27dp"
             android:paddingHorizontal="24dp"
+            android:clipToOutline="false"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
