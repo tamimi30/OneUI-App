@@ -32,7 +32,7 @@
         <Property
             Comment="Themed Primary Color"
             DefaultValue="074d4"
-            DestAttribName="primary_color_themed, primary_dark_color_themed, oui_primary_color, secondary_text_color_img"
+            DestAttribName="primary_color_themed, primary_dark_color_themed, oui_primary_color"
             UID="5"
             ValueRef="1-A"
             ValueType="Color" />
@@ -59,6 +59,14 @@
             DestAttribName="sesl_tablayout_selected_indicator_color_dark, sesl_tablayout_selected_indicator_color_light, sesl_tablayout_selected_text_color_dark, sesl_tablayout_selected_text_color_light" 
             UID="55555"
             ValueRef="1-11-3" 
+            ValueType="Color" />
+
+        <Property
+            Comment="Secondary Text/Icon Color - Adaptive"
+            DefaultValue="949494"
+            DestAttribName="secondary_text_color_img"
+            UID="6"
+            ValueRef="1-1-4"
             ValueType="Color" />
         
     </AppMetaData>
