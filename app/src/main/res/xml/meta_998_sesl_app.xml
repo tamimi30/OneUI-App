@@ -32,7 +32,7 @@
         <Property
             Comment="Themed Primary Color"
             DefaultValue="074d4"
-            DestAttribName="primary_color_themed, primary_dark_color_themed, oui_primary_color"
+            DestAttribName="primary_color_themed, primary_dark_color_themed, oui_primary_color, secondary_text_color_img"
             UID="5"
             ValueRef="1-A"
             ValueType="Color" />
