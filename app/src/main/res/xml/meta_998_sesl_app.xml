@@ -63,7 +63,7 @@
 
         <Property
             Comment="Secondary Text/Icon Color - Adaptive"
-            DefaultValue="ffc9c9c9"
+            DefaultValue="800381fe"
             DestAttribName="secondary_text_color_img"
             Opacity="50"
             UID="16-61-8"
@@ -72,7 +72,7 @@
             
         <Property
             Comment="SeekBar color"
-            DefaultValue="660381fe"
+            DefaultValue="590381fe"
             DestAttribName="seekbar_color"
             Opacity="35"
             UID="16-61-7"
