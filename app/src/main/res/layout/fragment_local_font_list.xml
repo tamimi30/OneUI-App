@@ -145,11 +145,11 @@
                 android:textColor="@color/drawer_icon_color"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="0dp"/>
             
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/select_folder_button"
-                android:layout_width="220dp"
+                android:layout_width="200dp"
                 android:minHeight="52dp"
                 android:backgroundTint="?attr/colorPrimary"
                 style="@style/OneUI.AppInfoButton"
