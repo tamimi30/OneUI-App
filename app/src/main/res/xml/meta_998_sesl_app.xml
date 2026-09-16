@@ -63,7 +63,7 @@
 
         <Property
             Comment="Secondary Text/Icon Color - Adaptive"
-            DefaultValue="800381fe"
+            DefaultValue="804EA3FF"
             DestAttribName="secondary_text_color_img"
             Opacity="50"
             UID="16-61-8"
