@@ -72,7 +72,7 @@
             
         <Property
             Comment="SeekBar color"
-            DefaultValue="5904BEFE"
+            DefaultValue="4D04BEFE"
             DestAttribName="seekbar_color"
             Opacity="35"
             UID="16-61-9"
