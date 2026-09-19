@@ -62,15 +62,6 @@
             ValueType="Color" />
 
         <Property
-            Comment="Secondary Text/Icon Color - Adaptive"
-            DefaultValue="5903BEFF"
-            DestAttribName="secondary_text_color_img"
-            Opacity="35"
-            UID="16-61-8"
-            ValueRef="1-A"
-            ValueType="Color" />
-            
-        <Property
             Comment="SeekBar color"
             DefaultValue="5903BEFF"
             DestAttribName="seekbar_color"
