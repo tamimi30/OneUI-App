@@ -5,13 +5,13 @@
     android:viewportWidth="1920"
     android:viewportHeight="1080">
     <path
-        android:fillColor="@color/sesl_seekbar_control_color_default"
+        android:fillColor="@color/seekbar_color"
         android:pathData="M1216 838c0-13.81 11.19-25 25-25h168c13.81 0 25 11.19 25 25v0c0 13.81-11.19 25-25 25h-168c-13.81 0-25-11.19-25-25z"/>
     <path
         android:fillColor="?attr/colorPrimary"
         android:pathData="M1215 838c0-13.81 11.19-25 25-25h147c13.81 0 25 11.19 25 25v0c0 13.81-11.19 25-25 25h-147c-13.81 0-25-11.19-25-25z"/>
     <path
-        android:fillColor="@color/sesl_seekbar_control_color_default"
+        android:fillColor="@color/seekbar_color"
         android:pathData="M486 838c0-13.81 11.19-25 25-25h168c13.81 0 25 11.19 25 25v0c0 13.81-11.19 25-25 25h-168c-13.81 0-25-11.19-25-25z"/>
     <path
         android:fillColor="?attr/colorPrimary"
@@ -20,7 +20,7 @@
         android:fillColor="@color/sesl_description_text_color"
         android:pathData="M423.18 553h78.75v45h-78.75v-45Zm88.66 45V472h78.75v126h-78.75Zm0 0h78.75-78.75Zm0-126h78.75-78.75Zm88.66 126V481h78.75v117H600.5Zm0 0h78.75-78.75Zm0-117h78.75-78.75Zm88.66 117V427h78.75v171h-78.75Zm0 0h78.75-78.75Zm0-171h78.75-78.75Z"/>
     <path
-        android:fillColor="@color/secondary_text_color_img"
+        android:fillColor="@color/seekbar_color"
         android:pathData="M1152.18 553h78.75v45h-78.75v-45Zm88.66 45V472h78.75v126h-78.75Zm0 0h78.75-78.75Zm0-126h78.75-78.75Zm88.66 126V481h78.75v117h-78.75Zm0 0h78.75-78.75Zm0-117h78.75-78.75Zm88.66 117V427h78.75v171h-78.75Zm0 0h78.75-78.75Zm0-171h78.75-78.75Z"/>
     <path
         android:fillColor="@color/sesl_description_text_color"
