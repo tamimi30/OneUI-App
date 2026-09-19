@@ -10,8 +10,8 @@
 
 # 4. حماية مكتبة OneUI Design (إبقاء الحماية كما طلبت)
 
--keep class dev.oneuiproject.oneui.** {*;}
--keep class com.oneui.fontviewer.** {*;}
+# -keep class dev.oneuiproject.oneui.** {*;}
+# -keep class com.oneui.fontviewer.** {*;}
 
 # 5. تجاهل التحذيرات (ضروري جداً لتجنب فشل البناء بسبب الحذف العنيف)
 
