@@ -7,8 +7,8 @@
 
     <color name="orange">#EAB65205</color>
     
-    <color name="seekbar_color">#594DA3FF</color>
-    <color name="secondary_text_color_img">#594DA3FF</color>
+    <color name="seekbar_color">#5903BEFF</color>
+    <color name="secondary_text_color_img">#5903BEFF</color>
     <color name="sort_bar_text_color">#ff636363</color>
     <color name="primary_text_color">#ff010101</color>
     <color name="font_preview_text_color">#ff010101</color>
