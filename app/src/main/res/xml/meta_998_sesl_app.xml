@@ -63,16 +63,16 @@
 
         <Property
             Comment="Secondary Text/Icon Color - Adaptive"
-            DefaultValue="8004BEFE"
+            DefaultValue="4D04BEFE"
             DestAttribName="secondary_text_color_img"
-            Opacity="50"
+            Opacity="35"
             UID="16-61-8"
             ValueRef="1-A"
             ValueType="Color" />
             
         <Property
             Comment="SeekBar color"
-            DefaultValue="4704BEFE"
+            DefaultValue="4D04BEFE"
             DestAttribName="seekbar_color"
             Opacity="35"
             UID="16-61-9"
