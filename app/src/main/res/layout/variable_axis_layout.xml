@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:padding="14dp"
             android:orientation="vertical"
-            android:gravity="center">
+            android:layout_gravity="center">
             	
             <ImageView
                 android:id="@+id/weight_info_icon"
@@ -48,7 +48,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:padding="14dp"
             android:orientation="vertical"
-            android:gravity="center">
+            android:layout_gravity="center">
             	
             <ImageView
                 android:id="@+id/width_info_icon"
@@ -107,7 +107,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
@@ -156,7 +156,7 @@
             android:layout_height="wrap_content"
             android:padding="14dp"
             android:orientation="vertical"
-            android:gravity="center">
+            android:layout_gravity="center">
             	
             <ImageView
                 android:id="@+id/italic_info_icon"
@@ -166,7 +166,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
@@ -215,7 +215,7 @@
             android:layout_height="wrap_content"
             android:padding="14dp"
             android:orientation="vertical"
-            android:gravity="center">
+            android:layout_gravity="center">
             	
             <ImageView
                 android:id="@+id/grade_info_icon"
@@ -225,7 +225,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
@@ -274,7 +274,7 @@
             android:layout_height="wrap_content"
             android:padding="14dp"
             android:orientation="vertical"
-            android:gravity="center">
+            android:layout_gravity="center">
             	
             <ImageView
                 android:id="@+id/roundness_info_icon"
@@ -284,7 +284,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
@@ -333,7 +333,7 @@
             android:layout_height="wrap_content"
             android:padding="14dp"
             android:orientation="vertical"
-            android:gravity="center">
+            android:layout_gravity="center">
             	
             <ImageView
                 android:id="@+id/monospace_info_icon"
@@ -343,7 +343,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
