@@ -15,7 +15,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -47,7 +47,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
@@ -73,7 +73,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -105,7 +105,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
@@ -131,7 +131,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -163,7 +163,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
@@ -189,7 +189,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -221,7 +221,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
@@ -247,7 +247,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -279,7 +279,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
@@ -305,7 +305,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -337,7 +337,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:contentDescription="@string/axis_info_button_description"
                 android:tooltipText="@string/axis_info_button_description" />
                 
