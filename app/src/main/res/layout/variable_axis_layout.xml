@@ -15,7 +15,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -37,7 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="14dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:gravity="center">
             	
             <ImageView
                 android:id="@+id/weight_info_icon"
@@ -73,7 +74,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -95,7 +96,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="14dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:gravity="center">
             	
             <ImageView
                 android:id="@+id/width_info_icon"
@@ -131,7 +133,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -153,7 +155,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="14dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:gravity="center">
             	
             <ImageView
                 android:id="@+id/italic_info_icon"
@@ -189,7 +192,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -211,7 +214,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="14dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:gravity="center">
             	
             <ImageView
                 android:id="@+id/grade_info_icon"
@@ -247,7 +251,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -269,7 +273,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="14dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:gravity="center">
             	
             <ImageView
                 android:id="@+id/roundness_info_icon"
@@ -305,7 +310,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical">
@@ -327,7 +332,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="14dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:gravity="center">
             	
             <ImageView
                 android:id="@+id/monospace_info_icon"
