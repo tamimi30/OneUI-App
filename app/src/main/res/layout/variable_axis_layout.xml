@@ -14,30 +14,46 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Weight" />
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
-        <com.oneui.fontviewer.widget.AxisSpinner
-            android:id="@+id/weight_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Weight" />
+                
+            <com.oneui.fontviewer.widget.AxisSpinner
+                android:id="@+id/weight_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:gravity="center_vertical">
+            	
+            <ImageView
+                android:id="@+id/weight_info_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+                
+        </LinearLayout>
+                 
     </LinearLayout>
-    
-    <ImageView
-        android:id="@+id/weight_info_icon"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="7dp"
-        android:src="@drawable/ic_oui_info_outline"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:contentDescription="@string/axis_info_button_description"
-        android:tooltipText="@string/axis_info_button_description" />
 
     <View
         android:id="@+id/weight_axis_divider"
@@ -56,30 +72,46 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Width" />
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/width_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Width" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/width_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             
-    </LinearLayout>
-            
-    <ImageView
-        android:id="@+id/width_info_icon"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="7dp"
-        android:src="@drawable/ic_oui_info_outline"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:contentDescription="@string/axis_info_button_description"
-        android:tooltipText="@string/axis_info_button_description" />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:gravity="center_vertical">
+            	
+            <ImageView
+                android:id="@+id/width_info_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+                
+        </LinearLayout>
+        
+    </LinearLayout>   
 
     <View
         android:id="@+id/width_axis_divider"
@@ -98,31 +130,47 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Italic" />
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/ital_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Italic" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/ital_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:gravity="center_vertical">
+            	
+            <ImageView
+                android:id="@+id/italic_info_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+                
+        </LinearLayout>
+        
     </LinearLayout>
     
-    <ImageView
-        android:id="@+id/italic_info_icon"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="7dp"
-        android:src="@drawable/ic_oui_info_outline"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:contentDescription="@string/axis_info_button_description"
-        android:tooltipText="@string/axis_info_button_description" />
-
     <View
         android:id="@+id/italic_axis_divider"
         android:layout_width="0dp"
@@ -140,30 +188,46 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Grade" />
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/grad_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Grade" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/grad_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+                
+        </LinearLayout>
+                
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:gravity="center_vertical">
+            	
+            <ImageView
+                android:id="@+id/grade_info_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+                
+        </LinearLayout>
             
     </LinearLayout>
-    
-    <ImageView
-        android:id="@+id/grade_info_icon"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="7dp"
-        android:src="@drawable/ic_oui_info_outline"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:contentDescription="@string/axis_info_button_description"
-        android:tooltipText="@string/axis_info_button_description" />
 
     <View
         android:id="@+id/grade_axis_divider"
@@ -182,31 +246,47 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Roundness" />
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/rond_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Roundness" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/rond_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:gravity="center_vertical">
+            	
+            <ImageView
+                android:id="@+id/roundness_info_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+                
+        </LinearLayout>
+        
     </LinearLayout>
     
-    <ImageView
-        android:id="@+id/roundness_info_icon"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="7dp"
-        android:src="@drawable/ic_oui_info_outline"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:contentDescription="@string/axis_info_button_description"
-        android:tooltipText="@string/axis_info_button_description" />
-
     <View
         android:id="@+id/roundness_axis_divider"
         android:layout_width="0dp"
@@ -224,29 +304,45 @@
         style="@style/AxisContainerStyle"
         android:visibility="gone">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle"
-            android:text="Mono" />
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/mono_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AxisNameTextStyle"
+                android:text="Mono" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/mono_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:gravity="center_vertical">
+            	
+            <ImageView
+                android:id="@+id/monospace_info_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:contentDescription="@string/axis_info_button_description"
+                android:tooltipText="@string/axis_info_button_description" />
+                
+        </LinearLayout>
+        
     </LinearLayout>
-    
-    <ImageView
-        android:id="@+id/monospace_info_icon"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="7dp"
-        android:src="@drawable/ic_oui_info_outline"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:contentDescription="@string/axis_info_button_description"
-        android:tooltipText="@string/axis_info_button_description" />
 
 </LinearLayout>
