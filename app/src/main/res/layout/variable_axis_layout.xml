@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:layoutDirection="ltr"
-    android:layoit_gravity="center_vertical">
+    android:layout_gravity="center_vertical">
 
     <LinearLayout
         android:id="@+id/weight_axis_container"
