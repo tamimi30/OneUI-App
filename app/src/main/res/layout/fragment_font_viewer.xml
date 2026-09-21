@@ -7,25 +7,24 @@
     android:overScrollMode="always"
     android:scrollbars="vertical"
     android:fillViewport="true">
-
+    	
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingBottom="104dp">
-
+        android:paddingBottom="104dp">	
+    	
         <LinearLayout
             android:id="@+id/variable_axes_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:orientation="vertical">
-
+            
             <dev.oneuiproject.oneui.widget.Separator
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textDirection="ltr"
-                android:clipToOutline="false"
                 android:text="Variable Axes" />
 
             <LinearLayout
@@ -41,26 +40,19 @@
                     android:layoutDirection="ltr"
                     android:scrollbars="none"
                     android:overScrollMode="always">
-
-                    <!-- تُملأ بالبطاقات من الكود (item_variable_axis) -->
-                    <LinearLayout
-                        android:id="@+id/variable_axes_row"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layoutDirection="ltr"
-                        android:layout_gravity="center_vertical" />
-
+                    	
+                    <include layout="@layout/variable_axis_layout" />
+                
                 </com.oneui.fontviewer.widget.OneUiHorizontalScrollView>
 
             </LinearLayout>
-
+            
         </LinearLayout>
-
+        
         <dev.oneuiproject.oneui.widget.Separator
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
+       
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -80,16 +72,16 @@
                 android:textSize="17sp"
                 android:layout_marginBottom="14dp"
                 android:visibility="gone" />
-
+                    
             <TextView
                 android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="34dp"
                 android:textColor="@color/font_preview_text_color" />
-
+                
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
-
+        
     </LinearLayout>
-
+    
 </com.oneui.fontviewer.widget.OneUiNestedScrollView>
