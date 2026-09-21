@@ -32,24 +32,13 @@
         <style name="AxisNameTextStyle" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">13dp</item>
+        <item name="android:layout_marginStart">24dp</item>
         <item name="android:minWidth">100sp</item>
         <item name="android:layout_marginEnd">35dp</item>
+	    <item name="android:layout_marginTop">14dp</item>
         <item name="android:textSize">13sp</item>
         <item name="fontFamily">sec-roboto-light</item>
         <item name="android:textColor">?android:attr/textColorSecondary</item>
-    </style>
-    
-    <!-- Axis container style -->
-	<style name="AxisContainerStyle" parent="">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="android:paddingTop">14dp</item>
-        <item name="android:paddingStart">11dp</item>
-    	<item name="android:paddingEnd">11dp</item>
-        <item name="android:paddingBottom">10dp</item>
-        <item name="android:background">@drawable/vf_axis_item_bg</item>
     </style>
     	
 </resources>
