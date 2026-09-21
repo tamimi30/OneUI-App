@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/axis_item_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_marginEnd="13dp"
     android:orientation="horizontal"
-    android:background="@drawable/vf_axis_item_bg">
+    android:background="@drawable/vf_axis_item_bg"
+    android:visibility="gone">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -12,7 +15,7 @@
         android:layout_gravity="center_vertical">
 
         <TextView
-            android:id="@+id/axis_name"
+            android:id="@+id/axis_name_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/AxisNameTextStyle" />
@@ -34,28 +37,27 @@
         android:layout_marginEnd="11dp"
         android:background="?attr/listDividerColor" />
 
-    <!-- الضغط والربل على الحاوية (46dp × 46dp) وليس على الأيقونة -->
     <LinearLayout
-        android:id="@+id/axis_info_container"
+        android:id="@+id/axis_info_icon_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginEnd="11dp"
         android:padding="13dp"
+        android:layout_marginEnd="11dp"
         android:orientation="vertical"
+        android:layout_gravity="center"
+        android:background="@drawable/sort_btn_ripple_oval"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/sort_btn_ripple_oval"
         android:contentDescription="@string/axis_info_button_description"
         android:tooltipText="@string/axis_info_button_description">
 
         <ImageView
+            android:id="@+id/axis_info_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_gravity="center"
             android:src="@drawable/ic_oui_info_outline"
             android:tint="?android:attr/textColorSecondary"
-            android:importantForAccessibility="no" />
+            android:layout_gravity="center" />
 
     </LinearLayout>
 
