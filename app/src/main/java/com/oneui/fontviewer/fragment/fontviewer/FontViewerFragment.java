@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -92,7 +91,13 @@ public class FontViewerFragment extends Fragment {
     private TextView weightLabelText;
 
     private View variableAxesContainer;
-    private LinearLayout variableAxesRow;
+    private AxisSpinnerUi weightAxisUi;
+    private AxisSpinnerUi widthAxisUi;
+    private AxisSpinnerUi italicAxisUi;
+    private AxisSpinnerUi gradeAxisUi;
+    private AxisSpinnerUi roundnessAxisUi;
+    private AxisSpinnerUi monoAxisUi;
+    private List<AxisSpinnerUi> allAxisUis;
 
     private String currentFontPath;
     private String currentFontFileName;
@@ -122,34 +127,21 @@ public class FontViewerFragment extends Fragment {
     private BoldItalicFormatting formattingHelper = new BoldItalicFormatting();
 
     /**
-     * وصف ثابت لكل محور: وسمه، الاسم المعروض على بطاقته، وبيانات نافذة المعلومات الخاصة به.
+     * تمثل ربط عنصر واجهة واحد بمحور من محاور الخط المتغير (الحاوية + Spinner).
+     * الحاوية نفسها هي جذر vf_axis_item.xml المنفوخ لهذا المحور.
      */
-    private static class AxisSpec {
+    private static class AxisSpinnerUi {
         final String tag;
-        final String displayName;
-        final String infoTitle;
-        final int infoImageRes;
-        final int infoDescriptionRes;
+        final View container;
+        final AppCompatSpinner spinner;
+        List<VariableFontHelper.VariableInstance> instances = new ArrayList<>();
 
-        AxisSpec(String tag, String displayName, String infoTitle,
-                 int infoImageRes, int infoDescriptionRes) {
+        AxisSpinnerUi(String tag, View container, AppCompatSpinner spinner) {
             this.tag = tag;
-            this.displayName = displayName;
-            this.infoTitle = infoTitle;
-            this.infoImageRes = infoImageRes;
-            this.infoDescriptionRes = infoDescriptionRes;
+            this.container = container;
+            this.spinner = spinner;
         }
     }
-
-    // ترتيب هذه المصفوفة هو ترتيب ظهور البطاقات
-    private static final AxisSpec[] AXIS_SPECS = {
-        new AxisSpec(VariableFontHelper.AXIS_WGHT, "Weight",    "Weight (wght)",    R.drawable.weight_info_img,    R.string.axis_info_weight_description),
-        new AxisSpec(VariableFontHelper.AXIS_WDTH, "Width",     "Width (wdth)",     R.drawable.width_info_img,     R.string.axis_info_width_description),
-        new AxisSpec(VariableFontHelper.AXIS_ITAL, "Italic",    "Italic (ital)",    R.drawable.italic_info_img,    R.string.axis_info_italic_description),
-        new AxisSpec(VariableFontHelper.AXIS_GRAD, "Grade",     "Grade (GRAD)",     R.drawable.grade_info_img,     R.string.axis_info_grade_description),
-        new AxisSpec(VariableFontHelper.AXIS_ROND, "Roundness", "Roundness (ROND)", R.drawable.roundness_info_img, R.string.axis_info_roundness_description),
-        new AxisSpec(VariableFontHelper.AXIS_MONO, "Mono",      "Monospace (MONO)", R.drawable.monospace_info_img, R.string.axis_info_monospace_description)
-    };
 
 
     public interface OnFontChangedListener {
@@ -301,12 +293,18 @@ public class FontViewerFragment extends Fragment {
         }
         axisAnimators.clear();
 
-        formattingHelper.unbind();
+    	formattingHelper.unbind();
         super.onDestroyView();
         previewSentence        = null;
         weightLabelText        = null;
         variableAxesContainer  = null;
-        variableAxesRow        = null;
+        weightAxisUi           = null;
+        widthAxisUi             = null;
+        italicAxisUi            = null;
+        gradeAxisUi              = null;
+        roundnessAxisUi          = null;
+        monoAxisUi               = null;
+        allAxisUis               = null;
     }
 
     @Override
@@ -418,7 +416,57 @@ public class FontViewerFragment extends Fragment {
         weightLabelText = view.findViewById(R.id.weight_label_text);
 
         variableAxesContainer = view.findViewById(R.id.variable_axes_container);
-        variableAxesRow       = view.findViewById(R.id.variable_axes_row);
+        ViewGroup axesRow = view.findViewById(R.id.variable_axes_row);
+
+        weightAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_WGHT,
+                "Weight", "Weight (wght)", R.drawable.weight_info_img, R.string.axis_info_weight_description);
+        widthAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_WDTH,
+                "Width", "Width (wdth)", R.drawable.width_info_img, R.string.axis_info_width_description);
+        italicAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_ITAL,
+                "Italic", "Italic (ital)", R.drawable.italic_info_img, R.string.axis_info_italic_description);
+        gradeAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_GRAD,
+                "Grade", "Grade (GRAD)", R.drawable.grade_info_img, R.string.axis_info_grade_description);
+        roundnessAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_ROND,
+                "Roundness", "Roundness (ROND)", R.drawable.roundness_info_img, R.string.axis_info_roundness_description);
+        monoAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_MONO,
+                "Mono", "Monospace (MONO)", R.drawable.monospace_info_img, R.string.axis_info_monospace_description);
+
+        allAxisUis = new ArrayList<>();
+        allAxisUis.add(weightAxisUi);
+        allAxisUis.add(widthAxisUi);
+        allAxisUis.add(italicAxisUi);
+        allAxisUis.add(gradeAxisUi);
+        allAxisUis.add(roundnessAxisUi);
+        allAxisUis.add(monoAxisUi);
+    }
+
+    /**
+     * ★ ينفخ (Inflate) نسخة واحدة من قالب البطاقة الموحّد vf_axis_item لهذا المحور، ويربط
+     *   اسم المحور وزر المعلومات الخاص به، ثم يضيفها الى صف المحاور. هذا يحدث مرة واحدة فقط
+     *   عند إنشاء الـ Fragment (initViews)، وليس عند كل فتح خط، فلا توجد أي كلفة أداء إضافية
+     *   عند فتح الخطوط لاحقاً — نفس عدد الـ Views ونفس منطق الإظهار/الإخفاء كما كان سابقاً ★
+     */
+    private AxisSpinnerUi inflateAxisItem(ViewGroup parent, String axisTag, String labelText,
+                                           String infoTitle, int infoImageRes, int infoDescriptionRes) {
+        View item = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.vf_axis_item, parent, false);
+
+        TextView nameText = item.findViewById(R.id.axis_name_text);
+        if (nameText != null) {
+            nameText.setText(labelText);
+        }
+
+        AppCompatSpinner spinner = item.findViewById(R.id.axis_spinner);
+
+        View infoContainer = item.findViewById(R.id.axis_info_icon_container);
+        if (infoContainer != null) {
+            infoContainer.setOnClickListener(v ->
+                    AxisInfoDialog.show(requireContext(), infoTitle, infoImageRes, infoDescriptionRes));
+        }
+
+        parent.addView(item);
+
+        return new AxisSpinnerUi(axisTag, item, spinner);
     }
 
 
@@ -641,39 +689,28 @@ public class FontViewerFragment extends Fragment {
 
 
     private void setupAxisSpinners(Map<String, List<VariableFontHelper.VariableInstance>> axisInstancesMap) {
-        if (!isAdded() || variableAxesContainer == null || weightLabelText == null || variableAxesRow == null) return;
+        if (!isAdded() || variableAxesContainer == null || weightLabelText == null || allAxisUis == null) return;
 
         weightLabelText.setVisibility(View.GONE);
         variableAxesContainer.setVisibility(View.VISIBLE);
 
-        variableAxesRow.removeAllViews();
-
-        // نُنشئ بطاقة فقط للمحاور التي يدعمها الخط، فلا حاجة لإخفاء أي شيء
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
-        for (AxisSpec spec : AXIS_SPECS) {
-            List<VariableFontHelper.VariableInstance> instances = axisInstancesMap.get(spec.tag);
-            if (instances == null || instances.isEmpty()) continue;
-
-            View item = inflater.inflate(R.layout.vf_axis_item, variableAxesRow, false);
-            variableAxesRow.addView(item);
-            bindAxisItem(item, spec, instances);
+        for (AxisSpinnerUi ui : allAxisUis) {
+            List<VariableFontHelper.VariableInstance> instances = axisInstancesMap.get(ui.tag);
+            setupSingleAxisSpinner(ui, instances);
         }
     }
 
-    private void bindAxisItem(View item, AxisSpec spec,
-                              List<VariableFontHelper.VariableInstance> instances) {
-        TextView nameView = item.findViewById(R.id.axis_name);
-        AppCompatSpinner spinner = item.findViewById(R.id.axis_spinner);
-        View infoContainer = item.findViewById(R.id.axis_info_container);
+    private void setupSingleAxisSpinner(AxisSpinnerUi ui, List<VariableFontHelper.VariableInstance> instances) {
+        if (ui == null || ui.container == null || ui.spinner == null) return;
 
-        nameView.setText(spec.displayName);
+        if (instances == null || instances.isEmpty()) {
+            ui.container.setVisibility(View.GONE);
+            ui.instances = new ArrayList<>();
+            return;
+        }
 
-        // الضغط على الحاوية وليس على الأيقونة
-        infoContainer.setOnClickListener(v ->
-                AxisInfoDialog.show(requireContext(), spec.infoTitle, spec.infoImageRes, spec.infoDescriptionRes));
-
-        // الـ IDs مكررة بين البطاقات، فنعطّل حفظ الحالة لتفادي تعارضها
-        spinner.setSaveEnabled(false);
+        ui.instances = instances;
+        ui.container.setVisibility(View.VISIBLE);
 
         List<String> instanceNames = new ArrayList<>();
         for (VariableFontHelper.VariableInstance inst : instances) {
@@ -686,9 +723,10 @@ public class FontViewerFragment extends Fragment {
             instanceNames
         );
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
 
-        Float currentValue = currentAxisValues.get(spec.tag);
+        ui.spinner.setAdapter(adapter);
+
+        Float currentValue = currentAxisValues.get(ui.tag);
         int selectedIndex = 0;
         if (currentValue != null) {
             float closestDiff = Float.MAX_VALUE;
@@ -700,15 +738,16 @@ public class FontViewerFragment extends Fragment {
                 }
             }
         }
-        spinner.setSelection(selectedIndex);
+        ui.spinner.setSelection(selectedIndex);
 
-        spinner.post(() -> {
-            if (!isAdded()) return;
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        final List<VariableFontHelper.VariableInstance> finalInstances = instances;
+        ui.spinner.post(() -> {
+            if (ui.spinner == null || !isAdded()) return;
+            ui.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (position >= 0 && position < instances.size()) {
-                        onAxisValueChanged(spec.tag, instances.get(position));
+                    if (position >= 0 && position < finalInstances.size()) {
+                        onAxisValueChanged(ui.tag, finalInstances.get(position));
                     }
                 }
 
@@ -932,7 +971,7 @@ public class FontViewerFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        formattingHelper.saveState(outState);
+    	formattingHelper.saveState(outState);
         super.onSaveInstanceState(outState);
         if (currentFontPath != null) {
             outState.putString(KEY_FONT_PATH, currentFontPath);
@@ -964,4 +1003,4 @@ public class FontViewerFragment extends Fragment {
     public boolean hasFontSelected() {
         return currentFontPath != null && !currentFontPath.isEmpty();
     }
-             }
+    }
