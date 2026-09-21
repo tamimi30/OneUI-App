@@ -11,7 +11,8 @@
         android:id="@+id/weight_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/AxisContainerStyle"
+        android:orientation="horizontal"
+        android:background="@drawable/vf_axis_item_bg"
         android:visibility="gone">
 
         <LinearLayout
@@ -29,20 +30,25 @@
             <com.oneui.fontviewer.widget.AxisSpinner
                 android:id="@+id/weight_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="11dp" 
+                android:layout_marginBottom="10dp" />
 
         </LinearLayout>
         
         <View
             android:layout_width="1dp"
-            android:layout_height="35dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="11dp"
             android:background="?attr/listDividerColor" />
         
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="14dp"
+            android:padding="13dp"
+            android:layout_marginEnd="11dp"
             android:orientation="vertical"
             android:layout_gravity="center">
             	
@@ -77,7 +83,8 @@
         android:id="@+id/width_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/AxisContainerStyle"
+        android:orientation="horizontal"
+        android:background="@drawable/vf_axis_item_bg"
         android:visibility="gone">
 
         <LinearLayout
@@ -95,20 +102,25 @@
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/width_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_marginBottom="10dp" />
             
         </LinearLayout>
         
         <View
             android:layout_width="1dp"
-            android:layout_height="35dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="11dp"
             android:background="?attr/listDividerColor" />
         
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="14dp"
+            android:padding="13dp"
+            android:layout_marginEnd="11dp"
             android:orientation="vertical"
             android:layout_gravity="center">
             	
@@ -143,7 +155,8 @@
         android:id="@+id/italic_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/AxisContainerStyle"
+        android:orientation="horizontal"
+        android:background="@drawable/vf_axis_item_bg"
         android:visibility="gone">
 
         <LinearLayout
@@ -161,20 +174,25 @@
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/ital_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_marginBottom="10dp" />
             
         </LinearLayout>
         
         <View
             android:layout_width="1dp"
-            android:layout_height="35dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="11dp"
             android:background="?attr/listDividerColor" />
         
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="14dp"
+            android:padding="13dp"
+            android:layout_marginEnd="11dp"
             android:orientation="vertical"
             android:layout_gravity="center">
             	
@@ -209,7 +227,8 @@
         android:id="@+id/grade_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/AxisContainerStyle"
+        android:orientation="horizontal"
+        android:background="@drawable/vf_axis_item_bg"
         android:visibility="gone">
 
         <LinearLayout
@@ -227,20 +246,25 @@
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/grad_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content" 
+                android:layout_marginStart="11dp"
+                android:layout_marginBottom="10dp" />
                 
         </LinearLayout>
         
         <View
             android:layout_width="1dp"
-            android:layout_height="35dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="11dp"
             android:background="?attr/listDividerColor" />
                 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="14dp"
+            android:padding="13dp"
+            android:layout_marginEnd="11dp"
             android:orientation="vertical"
             android:layout_gravity="center">
             	
@@ -275,7 +299,8 @@
         android:id="@+id/roundness_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/AxisContainerStyle"
+        android:orientation="horizontal"
+        android:background="@drawable/vf_axis_item_bg"
         android:visibility="gone">
 
         <LinearLayout
@@ -293,20 +318,25 @@
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/rond_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content" 
+                android:layout_marginStart="11dp"
+                android:layout_marginBottom="10dp" />
             
         </LinearLayout>
         
         <View
             android:layout_width="1dp"
-            android:layout_height="35dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="11dp"
             android:background="?attr/listDividerColor" />
         
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="14dp"
+            android:padding="13dp"
+            android:layout_marginEnd="11dp"
             android:orientation="vertical"
             android:layout_gravity="center">
             	
@@ -341,7 +371,8 @@
         android:id="@+id/mono_axis_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/AxisContainerStyle"
+        android:orientation="horizontal"
+        android:background="@drawable/vf_axis_item_bg"
         android:visibility="gone">
 
         <LinearLayout
@@ -359,19 +390,25 @@
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/mono_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content" 
+                android:layout_marginStart="11dp"
+                android:layout_marginBottom="10dp" />
             
         </LinearLayout>
+        
         <View
             android:layout_width="1dp"
-            android:layout_height="35dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="11dp"
             android:background="?attr/listDividerColor" />
         
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="14dp"
+            android:padding="13dp"
+            android:layout_marginEnd="11dp"
             android:orientation="vertical"
             android:layout_gravity="center">
             	
