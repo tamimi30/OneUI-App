@@ -28,17 +28,4 @@
         <item name="cardCornerRadius">28dp</item>
     </style>
         
-        <!-- Axis name text style -->
-        <style name="AxisNameTextStyle" parent="">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">24dp</item>
-        <item name="android:minWidth">100sp</item>
-        <item name="android:layout_marginEnd">35dp</item>
-	    <item name="android:layout_marginTop">14dp</item>
-        <item name="android:textSize">13sp</item>
-        <item name="fontFamily">sec-roboto-light</item>
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
-    </style>
-    	
 </resources>
