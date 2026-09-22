@@ -563,12 +563,17 @@ public class FontViewerFragment extends Fragment {
                 Map<String, Float> resolvedAxisValues = new LinkedHashMap<>();
 
                 if (isVar) {
-                    axisInstancesMap.put(VariableFontHelper.AXIS_WGHT, VariableFontHelper.extractVariableInstances(fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_WDTH, VariableFontHelper.extractWidthInstances(fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_ITAL, VariableFontHelper.extractItalicInstances(fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_GRAD, VariableFontHelper.extractGradeInstances(fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_ROND, VariableFontHelper.extractRoundnessInstances(fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_MONO, VariableFontHelper.extractMonoInstances(fontFile, currentTtcIndex));
+                    // ★ إصلاح أداء: نقرأ جدول fvar مرة واحدة فقط لكل محاوره (بدل اعادة فتح الملف
+                    //   ومسح الجدول ٦ مرات منفصلة + مرة إضافية لكل قيمة افتراضية)، وهذا هو سبب
+                    //   البطء الملحوظ عند فتح خط متغير من متصفح ملفات خارجي
+                    Map<String, float[]> allAxesRanges = VariableFontHelper.readAllAxesFromFvar(fontFile, currentTtcIndex);
+
+                    axisInstancesMap.put(VariableFontHelper.AXIS_WGHT, VariableFontHelper.extractVariableInstances(allAxesRanges));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_WDTH, VariableFontHelper.extractWidthInstances(allAxesRanges));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_ITAL, VariableFontHelper.extractItalicInstances(allAxesRanges));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_GRAD, VariableFontHelper.extractGradeInstances(allAxesRanges));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_ROND, VariableFontHelper.extractRoundnessInstances(allAxesRanges));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_MONO, VariableFontHelper.extractMonoInstances(allAxesRanges));
 
                     for (Map.Entry<String, List<VariableFontHelper.VariableInstance>> entry : axisInstancesMap.entrySet()) {
                         String axisTag = entry.getKey();
@@ -580,7 +585,7 @@ public class FontViewerFragment extends Fragment {
 
                         Float fallbackBoxed = AXIS_FALLBACK_DEFAULTS.get(axisTag);
                         float fallback = fallbackBoxed != null ? fallbackBoxed : 0f;
-                        float fontDefault = VariableFontHelper.readAxisDefaultValue(fontFile, currentTtcIndex, axisTag, fallback);
+                        float fontDefault = VariableFontHelper.readAxisDefaultValue(allAxesRanges, axisTag, fallback);
 
                         float resolvedValue;
                         if (restoreAxisValues != null && restoreAxisValues.containsKey(axisTag)) {
@@ -608,6 +613,11 @@ public class FontViewerFragment extends Fragment {
                 } catch (Exception e) {
                     Log.e(TAG, "★ Typeface creation failed - font might be corrupted", e);
                     mainHandler.post(() -> {
+                        // ★ إصلاح الكراش: نتأكد أن الـ Fragment ما زال متصلاً بالـ Activity قبل
+                        //   استدعاء requireContext()/getString()، فالعملية في الخلفية قد تنتهي
+                        //   بعد أن يكون المستخدم قد غادر الشاشة
+                        if (!isAdded()) return;
+
                         currentFontRealName = null;
                         currentTypeface     = null;
 
@@ -638,6 +648,9 @@ public class FontViewerFragment extends Fragment {
                     final Map<String, Float> finalResolvedValues = resolvedAxisValues;
 
                     mainHandler.post(() -> {
+                        // ★ إصلاح الكراش: نفس فحص isAdded() قبل لمس أي شيء متعلق بالـ Fragment
+                        if (!isAdded()) return;
+
                         currentTypeface = finalTypeface;
                         isVariableFont  = finalIsVariable;
 
@@ -659,7 +672,9 @@ public class FontViewerFragment extends Fragment {
 
             } catch (Exception e) {
                 mainHandler.post(() -> {
-                   
+                    // ★ إصلاح الكراش: فحص isAdded() هنا أيضاً لنفس السبب أعلاه
+                    if (!isAdded()) return;
+
                     currentFontRealName = null;
 
 
@@ -782,6 +797,12 @@ public class FontViewerFragment extends Fragment {
         }
         isSystemFont     = false;
 
+        // ★ إصلاح الكراش الأساسي: نلتقط نص "خط غير معروف" هنا على الـ Main Thread، لأن
+        //   getString()/requireContext() لا يجوز استدعاؤهما من داخل bgExecutor (خيط خلفي)
+        //   خصوصاً بعد أن يكون الـ Fragment قد انفصل عن الـ Activity — وهذا بالضبط سبب
+        //   الكراش: IllegalStateException: Fragment ... not attached to a context
+        final String unknownFontLabel = isAdded() ? getString(R.string.unknown_font) : "Unknown Font";
+
         bgExecutor.execute(() -> {
             File copiedFont = storageManager.copyFontForViewing(uri, fileName);
 
@@ -795,12 +816,15 @@ public class FontViewerFragment extends Fragment {
                     Log.e(TAG, "Failed to extract font metadata from URI", e);
                 }
 
-                if (realName == null || realName.isEmpty() || "Unknown Font".equals(realName) || getString(R.string.unknown_font).equals(realName)) {
+                if (realName == null || realName.isEmpty() || "Unknown Font".equals(realName) || unknownFontLabel.equals(realName)) {
                     String finalFileName = fileName != null ? fileName : copiedFont.getName();
                     realName = null;
 
                     final String finalRealName = realName;
                     mainHandler.post(() -> {
+                        // ★ إصلاح الكراش: فحص isAdded() قبل أي استدعاء يلمس الـ Context
+                        if (!isAdded()) return;
+
                         loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
 
                         Toast.makeText(requireContext(),
@@ -813,11 +837,17 @@ public class FontViewerFragment extends Fragment {
 
 
                     mainHandler.post(() -> {
+                        // ★ إصلاح الكراش: فحص isAdded() قبل أي استدعاء يلمس الـ Context
+                        if (!isAdded()) return;
+
                         loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
                     });
                 }
             } else {
                 mainHandler.post(() -> {
+                    // ★ إصلاح الكراش: فحص isAdded() قبل أي استدعاء يلمس الـ Context
+                    if (!isAdded()) return;
+
                     Toast.makeText(requireContext(),
                             getString(R.string.font_viewer_error_loading_font),
                             Toast.LENGTH_SHORT).show();
@@ -1003,4 +1033,4 @@ public class FontViewerFragment extends Fragment {
     public boolean hasFontSelected() {
         return currentFontPath != null && !currentFontPath.isEmpty();
     }
-    }
+            }
