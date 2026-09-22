@@ -4,61 +4,56 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginEnd="13dp"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:background="@drawable/vf_axis_item_bg"
     android:visibility="gone">
-
+    	
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical">
-
+        android:orientation="horizontal">
+        
         <TextView
             android:id="@+id/axis_name_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AxisNameTextStyle" />
-
-        <com.oneui.fontviewer.widget.AxisSpinner
-            android:id="@+id/axis_spinner"
-            android:layout_width="match_parent"
+            android:minWidth="100sp"
+            android:textSize="13sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginTop="14dp"
+            android:layout_marginStart="24dp" />
+        
+        <LinearLayout
+            android:id="@+id/axis_info_icon_container"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="11dp"
-            android:layout_marginBottom="10dp" />
+            android:padding="14dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:background="@drawable/sort_btn_ripple_oval"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="@string/axis_info_button_description"
+            android:tooltipText="@string/axis_info_button_description">
 
+            <ImageView
+                android:id="@+id/axis_info_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_oui_info_outline"
+                android:tint="?android:attr/textColorSecondary"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+        
     </LinearLayout>
 
-    <View
-        android:layout_width="1dp"
-        android:layout_height="20dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="11dp"
-        android:background="?attr/listDividerColor" />
-
-    <LinearLayout
-        android:id="@+id/axis_info_icon_container"
-        android:layout_width="wrap_content"
+    <com.oneui.fontviewer.widget.AxisSpinner
+        android:id="@+id/axis_spinner"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="13dp"
-        android:layout_marginEnd="11dp"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:background="@drawable/sort_btn_ripple_oval"
-        android:clickable="true"
-        android:focusable="true"
-        android:contentDescription="@string/axis_info_button_description"
-        android:tooltipText="@string/axis_info_button_description">
-
-        <ImageView
-            android:id="@+id/axis_info_icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_oui_info_outline"
-            android:tint="?android:attr/textColorSecondary"
-            android:layout_gravity="center" />
-
-    </LinearLayout>
+        android:layout_marginStart="11dp"
+        android:layout_marginBottom="10dp" />
 
 </LinearLayout>
