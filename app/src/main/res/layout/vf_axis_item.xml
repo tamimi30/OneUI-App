@@ -3,7 +3,7 @@
     android:id="@+id/axis_item_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="16dp"
+    android:layout_marginEnd="13dp"
     android:orientation="horizontal"
     android:background="@drawable/vf_axis_item_bg"
     android:visibility="gone">
@@ -45,7 +45,7 @@
         android:layout_marginEnd="11dp"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:foreground="@drawable/sort_btn_ripple_oval"
+        android:background="@drawable/sort_btn_ripple_oval"
         android:clickable="true"
         android:focusable="true"
         android:contentDescription="@string/axis_info_button_description"
