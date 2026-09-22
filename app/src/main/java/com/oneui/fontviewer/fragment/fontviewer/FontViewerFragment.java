@@ -776,10 +776,17 @@ public class FontViewerFragment extends Fragment {
     }
 
     public void loadFontFromUri(Uri uri, String fileName) {
-        originalFontPath = storageManager.getRealPathFromUri(uri);
-        if (originalFontPath == null || originalFontPath.isEmpty()) {
-            originalFontPath = android.net.Uri.decode(uri.toString());
-        }
+        // ★ إصلاح مشكلة البطء و"خط غير معروف" عند فتح خط من داخل أرشيف مضغوط (zip)
+        // لم يُفك ضغطه بعد (مثل ميزة الفتح بدون استخراج في ZArchiver) ★
+        // كنا هنا نستدعي storageManager.getRealPathFromUri(uri) على الخيط الرئيسي مباشرة،
+        // قبل حتى بدء نسخ الخط في الخلفية. لملفات الأرشيف غير المستخرجة، هذا الاستدعاء
+        // يجعل التطبيق الخارجي يفك ضغط الملف بالكامل فقط ليعرف مساره الحقيقي، مما كان
+        // يُجمّد الواجهة، ثم يُعاد فك ضغط نفس الملف مرة أخرى أثناء النسخ الفعلي بالأسفل —
+        // أي فك ضغط مزدوج غير ضروري، وهو ما يفسر البطء وأحياناً فساد النسخة المنسوخة
+        // (فيظهر "خط غير معروف"). الحل: نكتفي بنسخة مفكوكة الترميز من الرابط كمسار عرض
+        // مبدئي (سريع تماماً، بدون أي اتصال بمزوّد المحتوى)، ولا نحاول معرفة المسار
+        // الحقيقي هنا إطلاقاً — فهو يُستخدم فقط لعرض حقل "المسار" في نافذة معلومات الخط.
+        originalFontPath = android.net.Uri.decode(uri.toString());
         isSystemFont     = false;
 
         bgExecutor.execute(() -> {
