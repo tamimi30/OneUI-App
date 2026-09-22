@@ -18,11 +18,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="100sp"
-            android:layout_gravity="center_vertical"
             android:textSize="13sp"
             android:textColor="?android:attr/textColorSecondary"
             android:layout_marginTop="14dp"
-            android:layout_marginStart="24dp" />
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="14dp" />
         
         <LinearLayout
             android:id="@+id/axis_info_icon_container"
