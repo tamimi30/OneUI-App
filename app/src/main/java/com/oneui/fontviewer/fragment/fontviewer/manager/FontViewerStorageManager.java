@@ -18,7 +18,7 @@ public class FontViewerStorageManager {
     
     private static final String TAG = "FontViewerStorageManager";
     private static final String VIEWER_FONTS_DIR = "fonts";
-    private static final int BUFFER_SIZE = 8192;
+    private static final int BUFFER_SIZE = 100000;
     
     private final Context context;
     
