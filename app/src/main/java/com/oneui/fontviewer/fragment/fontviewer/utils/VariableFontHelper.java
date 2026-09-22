@@ -8,6 +8,7 @@ import android.graphics.fonts.FontVariationAxis;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -131,7 +132,94 @@ public class VariableFontHelper {
         }
         return false;
     }
-    
+
+    // ════════════════════════════════════════════════════════════
+    // ★ إصلاح أداء: قراءة جدول fvar دفعة واحدة لكل محاوره
+    // قبل هذا التعديل، كانت كل دالة استخراج (extractVariableInstances،
+    // extractWidthInstances، ...) ودالة readAxisDefaultValue تعيد فتح
+    // نفس ملف الخط ومسح جدول fvar من جديد بحثاً عن وسم واحد فقط — أي
+    // نحو 12 عملية فتح/مسح لنفس الملف لكل خط متغير واحد يتم فتحه. وهذا
+    // هو السبب الرئيسي للبطء الملحوظ عند فتح خط متغير من متصفح ملفات
+    // خارجي (حيث القراءة أصلاً أبطأ عبر ContentResolver/SAF).
+    // الحل: قراءة الجدول مرة واحدة فقط هنا، ثم تمرير النتيجة كخريطة
+    // جاهزة لكل دوال الاستخراج بدل اعادة الفتح في كل مرة.
+    // ════════════════════════════════════════════════════════════
+
+    /**
+     * يقرأ جدول fvar الخاص بالخط مرة واحدة فقط، ويعيد خريطة تحوي لكل محور موجود فعلياً
+     * في الخط القيم [min, default, max] الخاصة به (بنفس ترتيب المحاور كما وردت في fvar).
+     * تعيد خريطة فارغة اذا لم يكن للخط جدول fvar أو تعذّرت قراءته.
+     */
+    public static Map<String, float[]> readAllAxesFromFvar(File fontFile, int ttcIndex) {
+        Map<String, float[]> result = new LinkedHashMap<>();
+
+        try (RandomAccessFile raf = new RandomAccessFile(fontFile, "r")) {
+            byte[] header = new byte[4];
+            raf.read(header);
+            String tag = new String(header, "US-ASCII");
+
+            long fontOffset = 0;
+
+            if ("ttcf".equals(tag)) {
+                raf.seek(8);
+                long numFonts = readUInt32(raf);
+                if (ttcIndex >= numFonts) {
+                    return result;
+                }
+
+                raf.seek(12 + (ttcIndex * 4));
+                fontOffset = readUInt32(raf);
+            }
+
+            raf.seek(fontOffset + 4);
+            int numTables = readUInt16(raf);
+
+            long fvarOffset = -1;
+            for (int i = 0; i < numTables; i++) {
+                raf.seek(fontOffset + 12 + i * 16);
+                byte[] tableTag = new byte[4];
+                raf.read(tableTag);
+                String tagStr = new String(tableTag, "US-ASCII");
+
+                if ("fvar".equals(tagStr)) {
+                    raf.seek(fontOffset + 12 + i * 16 + 8);
+                    fvarOffset = readUInt32(raf);
+                    break;
+                }
+            }
+
+            if (fvarOffset == -1) {
+                return result;
+            }
+
+            raf.seek(fvarOffset + 4);
+            int axesArrayOffset = readUInt16(raf);
+            raf.seek(fvarOffset + 8);
+            int axisCount = readUInt16(raf);
+            int axisSize = readUInt16(raf);
+
+            for (int i = 0; i < axisCount; i++) {
+                long axisPos = fvarOffset + axesArrayOffset + (i * axisSize);
+                raf.seek(axisPos);
+
+                byte[] axisTag = new byte[4];
+                raf.read(axisTag);
+                String axisTagStr = new String(axisTag, "US-ASCII");
+
+                float minValue     = readFixed(raf);
+                float defaultValue = readFixed(raf);
+                float maxValue     = readFixed(raf);
+
+                result.put(axisTagStr, new float[]{minValue, defaultValue, maxValue});
+            }
+
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Failed to read all axes from fvar", e);
+        }
+
+        return result;
+    }
+
     public static List<VariableInstance> extractVariableInstances(File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
         
@@ -160,6 +248,36 @@ public class VariableFontHelper {
             android.util.Log.e(TAG, "Failed to extract instances", e);
         }
         
+        return instances;
+    }
+
+    /**
+     * ★ نسخة تستخدم خريطة محاور تم قراءتها مسبقاً دفعة واحدة (عبر readAllAxesFromFvar)
+     *   بدل اعادة فتح الملف ومسح جدول fvar من جديد. هذه هي النسخة التي يجب استخدامها عند
+     *   معالجة اكثر من محور لنفس الخط في نفس العملية (كما في loadFontFromPathWithAxes).
+     */
+    public static List<VariableInstance> extractVariableInstances(Map<String, float[]> allAxesRanges) {
+        List<VariableInstance> instances = new ArrayList<>();
+
+        try {
+            float[] range = readWeightRangeFromFvar(allAxesRanges);
+            float minWeight = range[0];
+            float maxWeight = range[1];
+
+            addWeightIfInRange(instances, "Thin", 100, minWeight, maxWeight);
+            addWeightIfInRange(instances, "Extra Light", 200, minWeight, maxWeight);
+            addWeightIfInRange(instances, "Light", 300, minWeight, maxWeight);
+            addWeightIfInRange(instances, "Regular", 400, minWeight, maxWeight);
+            addWeightIfInRange(instances, "Medium", 500, minWeight, maxWeight);
+            addWeightIfInRange(instances, "Semi Bold", 600, minWeight, maxWeight);
+            addWeightIfInRange(instances, "Bold", 700, minWeight, maxWeight);
+            addWeightIfInRange(instances, "Extra Bold", 800, minWeight, maxWeight);
+            addWeightIfInRange(instances, "Black", 900, minWeight, maxWeight);
+
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Failed to extract instances", e);
+        }
+
         return instances;
     }
 
@@ -192,12 +310,53 @@ public class VariableFontHelper {
     }
 
     /**
+     * ★ نسخة تستخدم خريطة محاور جاهزة (readAllAxesFromFvar) بدل اعادة فتح الملف.
+     */
+    public static List<VariableInstance> extractWidthInstances(Map<String, float[]> allAxesRanges) {
+        List<VariableInstance> instances = new ArrayList<>();
+
+        float[] range = allAxesRanges != null ? allAxesRanges.get(AXIS_WDTH) : null;
+        if (range == null) {
+            return instances;
+        }
+
+        float minWidth = range[0];
+        float maxWidth = range[2];
+
+        addNamedInstanceIfInRange(instances, "Condensed", AXIS_WDTH, 75f, minWidth, maxWidth);
+        addNamedInstanceIfInRange(instances, "Normal", AXIS_WDTH, 100f, minWidth, maxWidth);
+        addNamedInstanceIfInRange(instances, "Expanded", AXIS_WDTH, 125f, minWidth, maxWidth);
+
+        return instances;
+    }
+
+    /**
      * محور الميل (ital). محور ثنائي عادة: 0 = Upright، 1 = Italic.
      */
     public static List<VariableInstance> extractItalicInstances(File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
 
         float[] range = readAxisRangeFromFvar(fontFile, ttcIndex, AXIS_ITAL);
+        if (range == null) {
+            return instances;
+        }
+
+        float minItal = range[0];
+        float maxItal = range[2];
+
+        addNamedInstanceIfInRange(instances, "Upright", AXIS_ITAL, 0f, minItal, maxItal);
+        addNamedInstanceIfInRange(instances, "Italic", AXIS_ITAL, 1f, minItal, maxItal);
+
+        return instances;
+    }
+
+    /**
+     * ★ نسخة تستخدم خريطة محاور جاهزة (readAllAxesFromFvar) بدل اعادة فتح الملف.
+     */
+    public static List<VariableInstance> extractItalicInstances(Map<String, float[]> allAxesRanges) {
+        List<VariableInstance> instances = new ArrayList<>();
+
+        float[] range = allAxesRanges != null ? allAxesRanges.get(AXIS_ITAL) : null;
         if (range == null) {
             return instances;
         }
@@ -240,12 +399,60 @@ public class VariableFontHelper {
     }
 
     /**
+     * ★ نسخة تستخدم خريطة محاور جاهزة (readAllAxesFromFvar) بدل اعادة فتح الملف.
+     */
+    public static List<VariableInstance> extractGradeInstances(Map<String, float[]> allAxesRanges) {
+        List<VariableInstance> instances = new ArrayList<>();
+
+        float[] range = allAxesRanges != null ? allAxesRanges.get(AXIS_GRAD) : null;
+        if (range == null) {
+            return instances;
+        }
+
+        float minGrade     = range[0];
+        float defaultGrade = range[1];
+        float maxGrade     = range[2];
+
+        if (minGrade < defaultGrade) {
+            instances.add(new VariableInstance("Low", AXIS_GRAD, minGrade));
+        }
+        instances.add(new VariableInstance("Normal", AXIS_GRAD, defaultGrade));
+        if (maxGrade > defaultGrade) {
+            instances.add(new VariableInstance("High", AXIS_GRAD, maxGrade));
+        }
+
+        return instances;
+    }
+
+    /**
      * محور الاستدارة (ROND). Sharp = الحد الأدنى الفعلي، Rounded = الحد الأقصى الفعلي للخط.
      */
     public static List<VariableInstance> extractRoundnessInstances(File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
 
         float[] range = readAxisRangeFromFvar(fontFile, ttcIndex, AXIS_ROND);
+        if (range == null) {
+            return instances;
+        }
+
+        float minRound = range[0];
+        float maxRound = range[2];
+
+        if (maxRound > minRound) {
+            instances.add(new VariableInstance("Sharp", AXIS_ROND, minRound));
+            instances.add(new VariableInstance("Rounded", AXIS_ROND, maxRound));
+        }
+
+        return instances;
+    }
+
+    /**
+     * ★ نسخة تستخدم خريطة محاور جاهزة (readAllAxesFromFvar) بدل اعادة فتح الملف.
+     */
+    public static List<VariableInstance> extractRoundnessInstances(Map<String, float[]> allAxesRanges) {
+        List<VariableInstance> instances = new ArrayList<>();
+
+        float[] range = allAxesRanges != null ? allAxesRanges.get(AXIS_ROND) : null;
         if (range == null) {
             return instances;
         }
@@ -284,6 +491,28 @@ public class VariableFontHelper {
         return instances;
     }
 
+    /**
+     * ★ نسخة تستخدم خريطة محاور جاهزة (readAllAxesFromFvar) بدل اعادة فتح الملف.
+     */
+    public static List<VariableInstance> extractMonoInstances(Map<String, float[]> allAxesRanges) {
+        List<VariableInstance> instances = new ArrayList<>();
+
+        float[] range = allAxesRanges != null ? allAxesRanges.get(AXIS_MONO) : null;
+        if (range == null) {
+            return instances;
+        }
+
+        float minMono = range[0];
+        float maxMono = range[2];
+
+        if (maxMono > minMono) {
+            instances.add(new VariableInstance("Proportional", AXIS_MONO, minMono));
+            instances.add(new VariableInstance("Monospaced", AXIS_MONO, maxMono));
+        }
+
+        return instances;
+    }
+
     private static void addNamedInstanceIfInRange(List<VariableInstance> instances, String name,
                                                    String axisTag, float value,
                                                    float min, float max) {
@@ -298,6 +527,20 @@ public class VariableFontHelper {
         float[] defaultRange = {100f, 900f};
 
         float[] axisRange = readAxisRangeFromFvar(fontFile, ttcIndex, AXIS_WGHT);
+        if (axisRange == null) {
+            return defaultRange;
+        }
+
+        return new float[]{axisRange[0], axisRange[2]};
+    }
+
+    /**
+     * ★ نسخة تستخدم خريطة محاور جاهزة (readAllAxesFromFvar) بدل اعادة فتح الملف.
+     */
+    private static float[] readWeightRangeFromFvar(Map<String, float[]> allAxesRanges) {
+        float[] defaultRange = {100f, 900f};
+
+        float[] axisRange = allAxesRanges != null ? allAxesRanges.get(AXIS_WGHT) : null;
         if (axisRange == null) {
             return defaultRange;
         }
@@ -385,6 +628,18 @@ public class VariableFontHelper {
      */
     public static float readAxisDefaultValue(File fontFile, int ttcIndex, String axisTag, float fallback) {
         float[] range = readAxisRangeFromFvar(fontFile, ttcIndex, axisTag);
+        if (range == null) {
+            return fallback;
+        }
+        return range[1];
+    }
+
+    /**
+     * ★ نسخة تستخدم خريطة محاور تم قراءتها مسبقاً دفعة واحدة (عبر readAllAxesFromFvar) بدل
+     *   اعادة فتح الملف — هذه هي النسخة المستخدمة في loadFontFromPathWithAxes بعد الإصلاح.
+     */
+    public static float readAxisDefaultValue(Map<String, float[]> allAxesRanges, String axisTag, float fallback) {
+        float[] range = allAxesRanges != null ? allAxesRanges.get(axisTag) : null;
         if (range == null) {
             return fallback;
         }
@@ -532,4 +787,4 @@ public class VariableFontHelper {
             }
         }
     }
-                        }
+            }
