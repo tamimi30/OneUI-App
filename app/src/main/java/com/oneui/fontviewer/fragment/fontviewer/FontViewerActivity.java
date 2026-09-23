@@ -49,6 +49,10 @@ public class FontViewerActivity extends BaseActivity
     private View formatBar;
     private View btnBold;
     private View btnItalic;
+    // أيقونتا bold/italic نفسهما (ImageView) بداخل حاوياتهما، نحتاجهما منفصلتين عن الحاويات
+    // لتطبيق أنيميشن iconScale المتأخر عليهما فقط (انظر شرح showFormatBarWithFabMotion).
+    private View iconBold;
+    private View iconItalic;
 
     private String currentFontRealName;
     private String currentFontFileName;
@@ -67,6 +71,8 @@ public class FontViewerActivity extends BaseActivity
         formatBar = findViewById(R.id.format_bar);
         btnBold = findViewById(R.id.btn_bold_container);
         btnItalic = findViewById(R.id.btn_italic_container);
+        iconBold = findViewById(R.id.btn_bold);
+        iconItalic = findViewById(R.id.btn_italic);
 
         if (fabFontSize != null) {
             fabFontSize.setVisibility(View.INVISIBLE);
@@ -122,12 +128,39 @@ public class FontViewerActivity extends BaseActivity
      * الحل: ننشئ الأنيميترز يدويًا بقيمة from/to صريحة (بنفس أسلوب
      * FloatingActionButtonImpl.createAnimator())، ونطبّق عليها فقط توقيت الحركة
      * (spec.getTiming) القادم من ملف الـ motion spec.
+     *
+     * ملاحظة إضافية (مطابقة سلوك ظهور أيقونة الـ FAB):
+     * في FloatingActionButtonImpl.createAnimator() هناك أنيميشن مستقل باسم "iconScale" يُطبَّق
+     * فقط على مصفوفة رسم الأيقونة داخل الـ FAB (وليس على جسم الزر كاملاً)، وتوقيته
+     * startOffset=90 / duration=240، بينما أنيميشن "scale" الخاص بجسم الزر نفسه يبدأ فوراً
+     * (startOffset=0) ومدته 330. بما أن الأيقونة المرسومة هي حاصل ضرب (تراكب) بين تحويل الزر
+     * الأب وتحويل الأيقونة الخاص بها، فإنها تبقى بحجم صفر (غير ظاهرة) خلال أول 90ms حتى لو كان
+     * الزر نفسه قد بدأ بالتكبّر فعلاً، ثم تلحق بالتكبير لتصل الحجم الكامل في نفس لحظة انتهاء
+     * أنيميشن الزر (330ms). هذا هو ما يجعل أيقونة الـ FAB "تظهر بعد الزر بقليل".
+     *
+     * لمحاكاة هذا في format_bar: نطبّق أنيميشن "scale" على البطاقة نفسها (formatBar) بدءًا من
+     * الصفر كما كان، ونضيف أنيميشن "iconScale" منفصلاً ومتأخرًا على أيقونتي bold/italic تحديدًا
+     * (وليس على حاويتيهما)، فتُصبح الأيقونتان أيضًا بحجم صفر خلال أول 90ms بغض النظر عن نمو
+     * البطاقة نفسها، بفضل تراكب (تضاعف) تحويلي القياس بين البطاقة الأم والأيقونة الابنة —
+     * تمامًا كما يحصل بين الزر ومصفوفة أيقونته في الـ FAB.
      */
     private void showFormatBarWithFabMotion() {
         formatBar.setVisibility(View.VISIBLE);
         formatBar.setAlpha(0f);
         formatBar.setScaleX(0f);
         formatBar.setScaleY(0f);
+
+        // تصفير حجم الأيقونتين قبل بدء الأنيميشن: أنيميشن iconScale أدناه يبدأ متأخراً
+        // (startOffset=90) عن أنيميشن scale الخاص بالبطاقة (startOffset=0)، فيجب أن تكونا
+        // بحجم صفر بمجرد ظهور البطاقة، تمامًا كأيقونة الـ FAB.
+        if (iconBold != null) {
+            iconBold.setScaleX(0f);
+            iconBold.setScaleY(0f);
+        }
+        if (iconItalic != null) {
+            iconItalic.setScaleX(0f);
+            iconItalic.setScaleY(0f);
+        }
 
         MotionSpec spec = MotionSpec.createFromResource(this, R.animator.mtrl_fab_show_motion_spec);
         List<Animator> animators = new ArrayList<>();
@@ -143,6 +176,28 @@ public class FontViewerActivity extends BaseActivity
         ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(formatBar, View.SCALE_Y, 1f);
         spec.getTiming("scale").apply(scaleYAnimator);
         animators.add(scaleYAnimator);
+
+        // أنيميشن ظهور الأيقونتين، مطابق لتوقيت "iconScale" في الـ FAB (متأخر ومنفصل عن
+        // أنيميشن البطاقة نفسها) — راجع الشرح في التعليق أعلى الدالة.
+        if (iconBold != null) {
+            ObjectAnimator iconBoldScaleX = ObjectAnimator.ofFloat(iconBold, View.SCALE_X, 1f);
+            spec.getTiming("iconScale").apply(iconBoldScaleX);
+            animators.add(iconBoldScaleX);
+
+            ObjectAnimator iconBoldScaleY = ObjectAnimator.ofFloat(iconBold, View.SCALE_Y, 1f);
+            spec.getTiming("iconScale").apply(iconBoldScaleY);
+            animators.add(iconBoldScaleY);
+        }
+
+        if (iconItalic != null) {
+            ObjectAnimator iconItalicScaleX = ObjectAnimator.ofFloat(iconItalic, View.SCALE_X, 1f);
+            spec.getTiming("iconScale").apply(iconItalicScaleX);
+            animators.add(iconItalicScaleX);
+
+            ObjectAnimator iconItalicScaleY = ObjectAnimator.ofFloat(iconItalic, View.SCALE_Y, 1f);
+            spec.getTiming("iconScale").apply(iconItalicScaleY);
+            animators.add(iconItalicScaleY);
+        }
 
         AnimatorSet set = new AnimatorSet();
         set.playTogether(animators);
@@ -340,4 +395,4 @@ public class FontViewerActivity extends BaseActivity
         dismissLoadingDialog();
         super.onDestroy();
     }
-                       }
+                    }
