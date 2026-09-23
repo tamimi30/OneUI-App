@@ -2,6 +2,7 @@ package com.oneui.fontviewer.fragment.fontviewer;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -112,6 +113,15 @@ public class FontViewerActivity extends BaseActivity
     /**
      * MaterialCardView لا يملك showMotionSpec، لذلك نعيد بناء نفس حركة الـ FAB
      * (opacity + scale) يدويًا هنا ونطبّقها على format_bar.
+     *
+     * ملاحظة إصلاح: كنا نستخدم spec.getAnimator(name, target, property)، لكن هذه الدالة
+     * تعتمد على قيم from/to معرّفة داخل ملف الـ motion spec نفسه، وهي غير موجودة في
+     * mtrl_fab_show_motion_spec.xml (الذي يحتوي فقط على توقيت الحركة: duration/interpolator).
+     * لذلك كان format_bar يبقى عند alpha = 0 و scale = 0 بشكل دائم (أي غير ظاهر) رغم أن
+     * visibility تصبح VISIBLE، فيستمر باستقبال لمسات المستخدم رغم عدم ظهوره.
+     * الحل: ننشئ الأنيميترز يدويًا بقيمة from/to صريحة (بنفس أسلوب
+     * FloatingActionButtonImpl.createAnimator())، ونطبّق عليها فقط توقيت الحركة
+     * (spec.getTiming) القادم من ملف الـ motion spec.
      */
     private void showFormatBarWithFabMotion() {
         formatBar.setVisibility(View.VISIBLE);
@@ -122,14 +132,17 @@ public class FontViewerActivity extends BaseActivity
         MotionSpec spec = MotionSpec.createFromResource(this, R.animator.mtrl_fab_show_motion_spec);
         List<Animator> animators = new ArrayList<>();
 
-        if (spec.hasPropertyValues("opacity")) {
-            animators.add(spec.getAnimator("opacity", formatBar, View.ALPHA));
-        }
+        ObjectAnimator opacityAnimator = ObjectAnimator.ofFloat(formatBar, View.ALPHA, 1f);
+        spec.getTiming("opacity").apply(opacityAnimator);
+        animators.add(opacityAnimator);
 
-        if (spec.hasPropertyValues("scale")) {
-            animators.add(spec.getAnimator("scale", formatBar, View.SCALE_X));
-            animators.add(spec.getAnimator("scale", formatBar, View.SCALE_Y));
-        }
+        ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(formatBar, View.SCALE_X, 1f);
+        spec.getTiming("scale").apply(scaleXAnimator);
+        animators.add(scaleXAnimator);
+
+        ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(formatBar, View.SCALE_Y, 1f);
+        spec.getTiming("scale").apply(scaleYAnimator);
+        animators.add(scaleYAnimator);
 
         AnimatorSet set = new AnimatorSet();
         set.playTogether(animators);
@@ -327,4 +340,4 @@ public class FontViewerActivity extends BaseActivity
         dismissLoadingDialog();
         super.onDestroy();
     }
-    }
+                       }
