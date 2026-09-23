@@ -33,13 +33,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="3dp"
+            android:padding="5dp"
             android:layout_gravity="center_vertical">
 
             <FrameLayout
                 android:id="@+id/btn_bold_container"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/bold_italic_btn_ripple"
@@ -59,8 +59,8 @@
 
             <FrameLayout
                 android:id="@+id/btn_italic_container"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/bold_italic_btn_ripple"
