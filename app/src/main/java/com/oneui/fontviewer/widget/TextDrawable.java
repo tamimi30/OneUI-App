@@ -15,6 +15,11 @@ import androidx.annotation.Nullable;
 public class TextDrawable extends Drawable {
     private final String text;
     private final Paint paint;
+    // الحجم الجوهري (intrinsic size) للرسم. FloatingActionButtonImpl يحتاجه لحساب
+    // مصفوفة تحجيم/تموضع الأيقونة (image matrix) أثناء أنيميشن show()/hide() الخاص بالـ FAB.
+    // بدونه كانت القيمة الافتراضية -1x-1 تكسر هذا الحساب، فيظهر رقم حجم الخط مشوّهًا
+    // أو بمكان خاطئ أثناء ظهور الزر بدل الأنيميشن الجميل المعتاد.
+    private final int intrinsicSize;
 
     public TextDrawable(Context context, String text, float textSizeInDp, int textColor) {
         this.text = text;
@@ -28,6 +33,8 @@ public class TextDrawable extends Drawable {
                 context.getResources().getDisplayMetrics()
         );
         this.paint.setTextSize(textSizeInPx);
+
+        this.intrinsicSize = Math.round(textSizeInPx);
     }
 
     @Override
@@ -46,4 +53,10 @@ public class TextDrawable extends Drawable {
 
     @Override
     public int getOpacity() { return PixelFormat.TRANSLUCENT; }
+
+    @Override
+    public int getIntrinsicWidth() { return intrinsicSize; }
+
+    @Override
+    public int getIntrinsicHeight() { return intrinsicSize; }
 }
