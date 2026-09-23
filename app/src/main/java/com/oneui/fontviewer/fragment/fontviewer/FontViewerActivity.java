@@ -1,5 +1,7 @@
 package com.oneui.fontviewer.fragment.fontviewer;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,13 +10,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.view.animation.AnimationUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.animation.MotionSpec;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
@@ -45,6 +49,8 @@ public class FontViewerActivity extends BaseActivity
     private View formatBar;
     private ImageView btnBold;
     private ImageView btnItalic;
+    private View containerBold;
+    private View containerItalic;
 
     private String currentFontRealName;
     private String currentFontFileName;
@@ -63,6 +69,8 @@ public class FontViewerActivity extends BaseActivity
         formatBar = findViewById(R.id.format_bar);
         btnBold = findViewById(R.id.btn_bold);
         btnItalic = findViewById(R.id.btn_italic);
+        containerBold = findViewById(R.id.container_bold);
+        containerItalic = findViewById(R.id.container_italic);
 
         if (fabFontSize != null) {
             fabFontSize.setVisibility(View.INVISIBLE);
@@ -93,8 +101,7 @@ public class FontViewerActivity extends BaseActivity
 
     private void setupFab() {
         if (fabFontSize != null) {
-            fabFontSize.setVisibility(View.VISIBLE);
-            fabFontSize.startAnimation(AnimationUtils.loadAnimation(this, R.anim.font_viewer_controls_enter));
+            playShowMotionSpec(fabFontSize);
             fabFontSize.setOnClickListener(v -> {
                 if (mFontViewerFragment != null) {
                     mFontViewerFragment.showFontSizeDialogPublic();
@@ -102,9 +109,37 @@ public class FontViewerActivity extends BaseActivity
             });
         }
         if (formatBar != null) {
-            formatBar.setVisibility(View.VISIBLE);
-            formatBar.startAnimation(AnimationUtils.loadAnimation(this, R.anim.font_viewer_controls_enter));
+            playShowMotionSpec(formatBar);
         }
+    }
+
+    private void playShowMotionSpec(View target) {
+        MotionSpec spec = MotionSpec.createFromResource(this, R.animator.design_fab_show_motion_spec);
+
+        target.setAlpha(0f);
+        target.setScaleX(0f);
+        target.setScaleY(0f);
+        target.setVisibility(View.VISIBLE);
+
+        if (spec == null) {
+            target.setAlpha(1f);
+            target.setScaleX(1f);
+            target.setScaleY(1f);
+            return;
+        }
+
+        List<Animator> animators = new ArrayList<>();
+        if (spec.hasPropertyValues("opacity")) {
+            animators.add(spec.getAnimator("opacity", target, View.ALPHA));
+        }
+        if (spec.hasPropertyValues("scale")) {
+            animators.add(spec.getAnimator("scale", target, View.SCALE_X));
+            animators.add(spec.getAnimator("scale", target, View.SCALE_Y));
+        }
+
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(animators);
+        set.start();
     }
 
     private void loadFontFromIntent(Intent intent) {
@@ -128,6 +163,8 @@ public class FontViewerActivity extends BaseActivity
 
     public ImageView getBtnBold() { return btnBold; }
     public ImageView getBtnItalic() { return btnItalic; }
+    public View getContainerBold() { return containerBold; }
+    public View getContainerItalic() { return containerItalic; }
 
     public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
@@ -258,13 +295,13 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void showLoadingDialog() {
-    dismissLoadingDialog();
-    try {
-        loadingDialog = new ProgressDialog(this);
-        loadingDialog.setMessage(getString(R.string.translating));
-        loadingDialog.setCancelable(false);
-        loadingDialog.show();
-        loadingDialogShownAt = System.currentTimeMillis();
+        dismissLoadingDialog();
+        try {
+            loadingDialog = new ProgressDialog(this);
+            loadingDialog.setMessage(getString(R.string.translating));
+            loadingDialog.setCancelable(false);
+            loadingDialog.show();
+            loadingDialogShownAt = System.currentTimeMillis();
         } catch (Exception ignored) {}
     }
 
@@ -298,4 +335,4 @@ public class FontViewerActivity extends BaseActivity
         dismissLoadingDialog();
         super.onDestroy();
     }
-              } 
+                         }
