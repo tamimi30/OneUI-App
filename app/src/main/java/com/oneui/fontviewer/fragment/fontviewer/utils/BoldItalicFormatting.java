@@ -1,7 +1,7 @@
 package com.oneui.fontviewer.fragment.fontviewer.utils;
 
 import android.os.Bundle;
-import android.widget.ImageView;
+import android.view.View;
 
 public class BoldItalicFormatting {
 
@@ -11,15 +11,15 @@ public class BoldItalicFormatting {
     private boolean isBoldActive   = false;
     private boolean isItalicActive = false;
 
-    private ImageView btnBold;
-    private ImageView btnItalic;
+    private View btnBold;
+    private View btnItalic;
     private OnStyleChangedListener listener;
 
     public interface OnStyleChangedListener {
         void onStyleChanged(boolean isFakeBold, boolean isFakeItalic);
     }
 
-    public void setup(ImageView btnBold, ImageView btnItalic, OnStyleChangedListener listener) {
+    public void setup(View btnBold, View btnItalic, OnStyleChangedListener listener) {
         this.btnBold   = btnBold;
         this.btnItalic = btnItalic;
         this.listener  = listener;
