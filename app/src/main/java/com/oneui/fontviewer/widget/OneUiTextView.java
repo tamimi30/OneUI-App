@@ -2,6 +2,7 @@ package com.oneui.fontviewer.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
+
 import androidx.appcompat.widget.AppCompatTextView;
 
 public class OneUiTextView extends AppCompatTextView {
@@ -22,7 +23,9 @@ public class OneUiTextView extends AppCompatTextView {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        if (attrs == null) return;
+        if (attrs == null) {
+            return;
+        }
         OneUiTextHelper.applyFontLevel(this, context, attrs);
     }
 }

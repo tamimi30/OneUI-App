@@ -24,8 +24,9 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.activity.OnBackPressedCallback;
+import androidx.core.content.ContextCompat;
+
 import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,10 +34,10 @@ import androidx.annotation.Px;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.TooltipCompat;
-import androidx.core.content.ContextCompat;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+
 
 import dev.oneuiproject.oneui.design.R;
 import dev.oneuiproject.oneui.utils.ViewUtils;
@@ -47,14 +48,14 @@ import dev.oneuiproject.oneui.utils.ViewUtils;
 public class OneUiDrawerLayout extends OneUiToolBarLayout {
     private static final String TAG = "OneUiDrawerLayout";
 
-    private static final float DEFAULT_DRAWER_RADIUS = 15.f;
+    private static final float DEFAULT_DRAWER_RADIUS = 15.F;
 
     private static final int DRAWER_HEADER = 4;
     private static final int DRAWER_PANEL = 5;
 
-    private NumberFormat mNumberFormat
+    private final NumberFormat mNumberFormat
             = NumberFormat.getInstance(Locale.getDefault());
-    private OnBackPressedCallback mOnBackPressedCallback
+    private final OnBackPressedCallback mOnBackPressedCallback
             = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
@@ -70,7 +71,7 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
     private final DrawerListener mDrawerListener = new DrawerListener();
 
     private boolean mIsRtl;
-    private static boolean sIsDrawerOpened = false;
+    private static boolean sIsDrawerOpened;
 
     private androidx.drawerlayout.widget.DrawerLayout mDrawer;
     private LinearLayout mToolbarContent;
@@ -424,9 +425,14 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
             Window window = mActivity.getWindow();
 
             float slideX = drawerView.getWidth() * slideOffset;
-            if (mIsRtl) slideX *= -1;
-            if (translationView != null) translationView.setTranslationX(slideX);
-            else mToolbarContent.setTranslationX(slideX);
+            if (mIsRtl) {
+                slideX *= -1;
+            }
+            if (translationView != null) {
+                translationView.setTranslationX(slideX);
+            } else {
+                mToolbarContent.setTranslationX(slideX);
+            }
 
             float[] hsv = new float[3];
             Color.colorToHSV(systemBarsColor, hsv);

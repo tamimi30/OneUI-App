@@ -19,8 +19,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
-import dev.oneuiproject.oneui.utils.internal.ToolbarLayoutUtils;
 
+import dev.oneuiproject.oneui.utils.internal.ToolbarLayoutUtils;
 import com.oneui.fontviewer.R;
 
 public class HomeFragment extends Fragment {
@@ -31,7 +31,7 @@ public class HomeFragment extends Fragment {
     private Toolbar mToolbar;
     private View mSwipeUpContainer;
     private ViewGroup mBottomContainer;
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     private AppBarOffsetListener mOffsetListener;
 
@@ -186,7 +186,7 @@ public class HomeFragment extends Fragment {
                 } else if (abs == 0) {
                     mSwipeUpContainer.setAlpha(1f);
                 } else {
-                    float offsetAlpha = (appBarLayout.getY() / totalScrollRange);
+                    float offsetAlpha = appBarLayout.getY() / totalScrollRange;
                     float arrowAlpha = 1 - (offsetAlpha * -3);
 
                     if (arrowAlpha < 0) {

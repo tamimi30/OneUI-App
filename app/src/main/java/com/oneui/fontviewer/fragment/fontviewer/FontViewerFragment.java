@@ -1,5 +1,8 @@
 package com.oneui.fontviewer.fragment.fontviewer;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -15,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -26,11 +30,6 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
-import android.view.animation.AccelerateDecelerateInterpolator;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,18 +39,19 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.oneui.fontviewer.dialog.FontSizeDialog;
-import com.oneui.fontviewer.dialog.AxisInfoDialog;
+
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.dialog.AxisInfoDialog;
+import com.oneui.fontviewer.dialog.FontSizeDialog;
+import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerPreferenceManager;
+import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerStorageManager;
+import com.oneui.fontviewer.fragment.fontviewer.utils.BoldItalicFormatting;
 import com.oneui.fontviewer.fragment.fontviewer.utils.VariableFontHelper;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
-import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerStorageManager;
-import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerPreferenceManager;
+import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
 import com.oneui.fontviewer.metadata.FontMetadataExtractor;
-import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
-import com.oneui.fontviewer.fragment.fontviewer.utils.BoldItalicFormatting;
 
 public class FontViewerFragment extends Fragment {
 
@@ -68,10 +68,10 @@ public class FontViewerFragment extends Fragment {
     private static final String KEY_WEIGHT_WIDTH_LABEL = "weight_width_label";
     private static final String TAG = "FontViewerFragment";
 
-    private static final float DEFAULT_FONT_SIZE   = 34f;
-    private static final float MIN_FONT_SIZE       = 12f;
-    private static final float MAX_FONT_SIZE       = 520f;
-    private static final float DEFAULT_FONT_WEIGHT = 400f;
+    private static final float DEFAULT_FONT_SIZE   = 34F;
+    private static final float MIN_FONT_SIZE       = 12F;
+    private static final float MAX_FONT_SIZE       = 520F;
+    private static final float DEFAULT_FONT_WEIGHT = 400F;
 
     // القيم الافتراضية الاحتياطية لكل محور، تُستخدم فقط اذا تعذّرت قراءة القيمة الافتراضية الفعلية
     // من جدول fvar الخاص بالخط نفسه
@@ -105,9 +105,9 @@ public class FontViewerFragment extends Fragment {
     public String originalFontPath;
     private Typeface currentTypeface;
     private float currentFontSize   = DEFAULT_FONT_SIZE;
-    private boolean isVariableFont  = false;
-    private int currentTtcIndex     = 0;
-    private boolean isSystemFont    = false;
+    private boolean isVariableFont;
+    private int currentTtcIndex;
+    private boolean isSystemFont;
 
     // القيم الحالية المُطبّقة فعلياً لكل محور مدعوم (المفتاح هو وسم المحور مثل wght أو GRAD)
     private final Map<String, Float> currentAxisValues = new LinkedHashMap<>();
@@ -124,7 +124,7 @@ public class FontViewerFragment extends Fragment {
     private FontViewerStorageManager storageManager;
     private FontViewerPreferenceManager preferenceManager;
     private SettingsViewModel settingsViewModel;
-    private BoldItalicFormatting formattingHelper = new BoldItalicFormatting();
+    private final BoldItalicFormatting formattingHelper = new BoldItalicFormatting();
 
     /**
      * تمثل ربط عنصر واجهة واحد بمحور من محاور الخط المتغير (الحاوية + Spinner).
@@ -174,7 +174,7 @@ public class FontViewerFragment extends Fragment {
 
         settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
-        currentFontSize = (sSessionFontSize > 0f) ? sSessionFontSize : DEFAULT_FONT_SIZE;
+        currentFontSize = sSessionFontSize > 0f ? sSessionFontSize : DEFAULT_FONT_SIZE;
     }
 
     @Override
@@ -509,7 +509,9 @@ public class FontViewerFragment extends Fragment {
     }
 
     private String extractRealPathFromUri(String pathOrUri) {
-        if (pathOrUri == null) return null;
+        if (pathOrUri == null) {
+            return null;
+        }
 
         if (pathOrUri.startsWith("content://")) {
             Uri uri = Uri.parse(pathOrUri);
@@ -689,7 +691,9 @@ public class FontViewerFragment extends Fragment {
 
 
     private void setupAxisSpinners(Map<String, List<VariableFontHelper.VariableInstance>> axisInstancesMap) {
-        if (!isAdded() || variableAxesContainer == null || weightLabelText == null || allAxisUis == null) return;
+        if (!isAdded() || variableAxesContainer == null || weightLabelText == null || allAxisUis == null) {
+            return;
+        }
 
         weightLabelText.setVisibility(View.GONE);
         variableAxesContainer.setVisibility(View.VISIBLE);
@@ -701,7 +705,9 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void setupSingleAxisSpinner(AxisSpinnerUi ui, List<VariableFontHelper.VariableInstance> instances) {
-        if (ui == null || ui.container == null || ui.spinner == null) return;
+        if (ui == null || ui.container == null || ui.spinner == null) {
+            return;
+        }
 
         if (instances == null || instances.isEmpty()) {
             ui.container.setVisibility(View.GONE);
@@ -742,7 +748,9 @@ public class FontViewerFragment extends Fragment {
 
         final List<VariableFontHelper.VariableInstance> finalInstances = instances;
         ui.spinner.post(() -> {
-            if (ui.spinner == null || !isAdded()) return;
+            if (ui.spinner == null || !isAdded()) {
+                return;
+            }
             ui.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -758,7 +766,9 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void showWeightLabel(String label) {
-        if (weightLabelText == null || variableAxesContainer == null) return;
+        if (weightLabelText == null || variableAxesContainer == null) {
+            return;
+        }
 
         variableAxesContainer.setVisibility(View.GONE);
 
@@ -771,8 +781,12 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void hideAxisUi() {
-        if (weightLabelText != null) weightLabelText.setVisibility(View.GONE);
-        if (variableAxesContainer != null) variableAxesContainer.setVisibility(View.GONE);
+        if (weightLabelText != null) {
+            weightLabelText.setVisibility(View.GONE);
+        }
+        if (variableAxesContainer != null) {
+            variableAxesContainer.setVisibility(View.GONE);
+        }
     }
 
     public void loadFontFromUri(Uri uri, String fileName) {
@@ -812,16 +826,14 @@ public class FontViewerFragment extends Fragment {
                     final String finalRealName = realName;
 
 
-                    mainHandler.post(() -> {
-                        loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
-                    });
+                    mainHandler.post(() ->
+                        loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false));
                 }
             } else {
-                mainHandler.post(() -> {
+                mainHandler.post(() ->
                     Toast.makeText(requireContext(),
                             getString(R.string.font_viewer_error_loading_font),
-                            Toast.LENGTH_SHORT).show();
-                });
+                            Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -882,7 +894,9 @@ public class FontViewerFragment extends Fragment {
         currentWeightWidthLabel  = null;
 
         Typeface defaultTypeface = Typeface.DEFAULT;
-        if (previewSentence != null) previewSentence.setTypeface(defaultTypeface);
+        if (previewSentence != null) {
+            previewSentence.setTypeface(defaultTypeface);
+        }
 
         hideAxisUi();
 
@@ -946,7 +960,7 @@ public class FontViewerFragment extends Fragment {
             metadata = new HashMap<>();
         }
 
-        String displayPath = (originalFontPath != null && !originalFontPath.isEmpty())
+        String displayPath = originalFontPath != null && !originalFontPath.isEmpty()
             ? originalFontPath
             : currentFontPath;
 

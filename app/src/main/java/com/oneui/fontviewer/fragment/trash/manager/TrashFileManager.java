@@ -6,13 +6,14 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.oneui.fontviewer.utils.FileUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+
+
+import com.oneui.fontviewer.utils.FileUtils;
 
 public class TrashFileManager {
 

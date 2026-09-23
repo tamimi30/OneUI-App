@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
-
 import androidx.core.widget.NestedScrollView;
 
 public class OneUiNestedScrollView extends NestedScrollView {
@@ -29,22 +28,18 @@ public class OneUiNestedScrollView extends NestedScrollView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        switch (ev.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                mDownX = ev.getX();
-                mDownY = ev.getY();
-                break;
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            mDownX = ev.getX();
+            mDownY = ev.getY();
+        } else if (ev.getActionMasked() == MotionEvent.ACTION_MOVE) {
+            float dx = Math.abs(ev.getX() - mDownX);
+            float dy = Math.abs(ev.getY() - mDownY);
 
-            case MotionEvent.ACTION_MOVE:
-                float dx = Math.abs(ev.getX() - mDownX);
-                float dy = Math.abs(ev.getY() - mDownY);
-
-                // إذا كانت الحركة أفقية بوضوح، لا تعترض اللمسة إطلاقاً
-                // ودع الأبناء (CustomHorizontalScrollView أو الـ Spinner) يتصرفون بها
-                if (dx > mTouchSlop && dx > dy) {
-                    return false;
-                }
-                break;
+            // إذا كانت الحركة أفقية بوضوح، لا تعترض اللمسة إطلاقاً
+            // ودع الأبناء (CustomHorizontalScrollView أو الـ Spinner) يتصرفون بها
+            if (dx > mTouchSlop && dx > dy) {
+                return false;
+            }
         }
         return super.onInterceptTouchEvent(ev);
     }

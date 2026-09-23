@@ -8,14 +8,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.activity.BaseActivity;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
+import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.activity.BaseActivity;
 
 public class LicensesActivity extends BaseActivity {
 
@@ -48,7 +48,9 @@ public class LicensesActivity extends BaseActivity {
     }
 
     private void loadLicenseText() {
-        if (mLicenseTextView == null) return;
+        if (mLicenseTextView == null) {
+            return;
+        }
 
         StringBuilder text = new StringBuilder();
         try {

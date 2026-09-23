@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 
 public class BaseActivity extends AppCompatActivity {

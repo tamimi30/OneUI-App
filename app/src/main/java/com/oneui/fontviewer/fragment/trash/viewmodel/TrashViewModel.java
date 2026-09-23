@@ -5,22 +5,23 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import androidx.core.content.ContextCompat;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.oneui.fontviewer.data.entity.FontEntity;
-import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
-import com.oneui.fontviewer.dialog.TrashActionDialogs; 
-import com.oneui.fontviewer.utils.notification.BatchOperationState;
-import com.oneui.fontviewer.utils.notification.OperationForegroundService; 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.data.entity.FontEntity;
+import com.oneui.fontviewer.dialog.TrashActionDialogs;
+import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
+import com.oneui.fontviewer.utils.notification.BatchOperationState;
+import com.oneui.fontviewer.utils.notification.OperationForegroundService;
 
 public class TrashViewModel extends AndroidViewModel {
 
@@ -92,7 +93,9 @@ public class TrashViewModel extends AndroidViewModel {
     } 
 
     public void restoreFonts(@NonNull List<FontEntity> fonts) {
-        if (fonts.isEmpty()) return;
+        if (fonts.isEmpty()) {
+            return;
+        }
 
         BatchOperationState.setProcessing(true, 5);
         cancelFlag = new AtomicBoolean(false);
@@ -149,7 +152,9 @@ public class TrashViewModel extends AndroidViewModel {
     }
 
     public void deletePermanently(@NonNull List<FontEntity> fonts) {
-        if (fonts.isEmpty()) return;
+        if (fonts.isEmpty()) {
+            return;
+        }
 
         BatchOperationState.setProcessing(true, 5);
 

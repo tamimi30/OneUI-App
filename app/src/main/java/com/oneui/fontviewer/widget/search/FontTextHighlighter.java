@@ -5,9 +5,11 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import androidx.core.content.ContextCompat;
-import com.oneui.fontviewer.R;
 
 import java.util.Locale;
+
+
+import com.oneui.fontviewer.R;
 
 public class FontTextHighlighter {
     

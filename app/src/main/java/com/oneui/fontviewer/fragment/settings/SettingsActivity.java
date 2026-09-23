@@ -6,10 +6,10 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.activity.BaseActivity;
 
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
+import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.activity.BaseActivity;
 
 public class SettingsActivity extends BaseActivity {
 
