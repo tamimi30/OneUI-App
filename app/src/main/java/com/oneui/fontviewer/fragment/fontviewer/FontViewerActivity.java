@@ -1,20 +1,23 @@
 package com.oneui.fontviewer.fragment.fontviewer;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.Toast;
-import android.view.animation.AnimationUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.animation.MotionSpec;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
@@ -43,8 +46,8 @@ public class FontViewerActivity extends BaseActivity
 
     private FloatingActionButton fabFontSize;
     private View formatBar;
-    private ImageView btnBold;
-    private ImageView btnItalic;
+    private View btnBold;
+    private View btnItalic;
 
     private String currentFontRealName;
     private String currentFontFileName;
@@ -61,8 +64,8 @@ public class FontViewerActivity extends BaseActivity
         mToolbarLayout = findViewById(R.id.toolbar_layout);
         fabFontSize = findViewById(R.id.fab_font_size);
         formatBar = findViewById(R.id.format_bar);
-        btnBold = findViewById(R.id.btn_bold);
-        btnItalic = findViewById(R.id.btn_italic);
+        btnBold = findViewById(R.id.btn_bold_container);
+        btnItalic = findViewById(R.id.btn_italic_container);
 
         if (fabFontSize != null) {
             fabFontSize.setVisibility(View.INVISIBLE);
@@ -93,8 +96,8 @@ public class FontViewerActivity extends BaseActivity
 
     private void setupFab() {
         if (fabFontSize != null) {
-            fabFontSize.setVisibility(View.VISIBLE);
-            fabFontSize.startAnimation(AnimationUtils.loadAnimation(this, R.anim.font_viewer_controls_enter));
+            // FabStyle يضبط showMotionSpec على mtrl_fab_show_motion_spec، لذلك show() تشغّلها تلقائيًا.
+            fabFontSize.show();
             fabFontSize.setOnClickListener(v -> {
                 if (mFontViewerFragment != null) {
                     mFontViewerFragment.showFontSizeDialogPublic();
@@ -102,9 +105,35 @@ public class FontViewerActivity extends BaseActivity
             });
         }
         if (formatBar != null) {
-            formatBar.setVisibility(View.VISIBLE);
-            formatBar.startAnimation(AnimationUtils.loadAnimation(this, R.anim.font_viewer_controls_enter));
+            showFormatBarWithFabMotion();
         }
+    }
+
+    /**
+     * MaterialCardView لا يملك showMotionSpec، لذلك نعيد بناء نفس حركة الـ FAB
+     * (opacity + scale) يدويًا هنا ونطبّقها على format_bar.
+     */
+    private void showFormatBarWithFabMotion() {
+        formatBar.setVisibility(View.VISIBLE);
+        formatBar.setAlpha(0f);
+        formatBar.setScaleX(0f);
+        formatBar.setScaleY(0f);
+
+        MotionSpec spec = MotionSpec.createFromResource(this, R.animator.mtrl_fab_show_motion_spec);
+        List<Animator> animators = new ArrayList<>();
+
+        if (spec.hasPropertyValues("opacity")) {
+            animators.add(spec.getAnimator("opacity", formatBar, View.ALPHA));
+        }
+
+        if (spec.hasPropertyValues("scale")) {
+            animators.add(spec.getAnimator("scale", formatBar, View.SCALE_X));
+            animators.add(spec.getAnimator("scale", formatBar, View.SCALE_Y));
+        }
+
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(animators);
+        set.start();
     }
 
     private void loadFontFromIntent(Intent intent) {
@@ -126,8 +155,8 @@ public class FontViewerActivity extends BaseActivity
         }
     }
 
-    public ImageView getBtnBold() { return btnBold; }
-    public ImageView getBtnItalic() { return btnItalic; }
+    public View getBtnBold() { return btnBold; }
+    public View getBtnItalic() { return btnItalic; }
 
     public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
@@ -298,4 +327,4 @@ public class FontViewerActivity extends BaseActivity
         dismissLoadingDialog();
         super.onDestroy();
     }
-              } 
+    }
