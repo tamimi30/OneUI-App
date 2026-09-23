@@ -18,7 +18,7 @@
     <!-- Format bar style-->  
     <style name="FormatBarStyle" parent="Widget.MaterialComponents.CardView">
     	<item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">100dp</item>
+        <item name="android:layout_height">56dp</item>
         <item name="android:layout_gravity">bottom|start</item>
         <item name="android:layout_margin">24dp</item>
         <item name="cardBackgroundColor">@color/fab_bg_color</item>
