@@ -31,14 +31,14 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="54dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_vertical">
 
             <LinearLayout
                 android:id="@+id/container_bold"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/bold_italic_btn_ripple"
                 android:clickable="true"
@@ -57,8 +57,8 @@
 
             <LinearLayout
                 android:id="@+id/container_italic"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/bold_italic_btn_ripple"
                 android:clickable="true"
