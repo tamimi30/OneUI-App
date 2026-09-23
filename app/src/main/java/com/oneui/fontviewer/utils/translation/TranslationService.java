@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+
 import org.json.JSONArray;
 
 import java.io.BufferedReader;
@@ -14,7 +15,6 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
 
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
@@ -45,7 +45,7 @@ public class TranslationService {
         
         String targetLanguage = getCurrentLanguage();
         
-        if ("en".equals(targetLanguage)) {
+        if (targetLanguage.equals("en")) {
             callback.onTranslationComplete(metadata);
             return;
         }
@@ -187,7 +187,7 @@ public class TranslationService {
             Locale currentLocale = SettingsHelper.getLocale(context);
             String language = currentLocale.getLanguage();
             
-            if ("ar".equals(language)) {
+            if (language.equals("ar")) {
                 return "ar";
             } else {
                 return "en";

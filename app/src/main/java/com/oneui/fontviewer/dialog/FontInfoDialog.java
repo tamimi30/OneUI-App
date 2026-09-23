@@ -12,7 +12,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import java.util.Map;
 
-
 import com.oneui.fontviewer.R;
 
 public class FontInfoDialog {
@@ -64,7 +63,7 @@ public class FontInfoDialog {
                 "Path"
         };
 
-        boolean isArabic = "ar".equals(java.util.Locale.getDefault().getLanguage());
+        boolean isArabic = java.util.Locale.getDefault().getLanguage().equals("ar");
         String[] displayNames = isArabic ? new String[]{
                 "الاسم الكامل",
                 "اسم PostScript",

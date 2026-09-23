@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
 
-
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 
@@ -123,17 +122,11 @@ public class FontUIStateManager {
 
         if (noResultsTextView != null) {
             if (isSearchActive) {
-                if (emptyTitleView != null) {
-                    emptyTitleView.setVisibility(View.GONE);
-                }
-                if (emptyTextView != null) {
-                    emptyTextView.setVisibility(View.GONE);
-                }
+                if (emptyTitleView != null) emptyTitleView.setVisibility(View.GONE);
+                if (emptyTextView  != null) emptyTextView.setVisibility(View.GONE);
                 noResultsTextView.setVisibility(View.VISIBLE);
             } else {
-                if (emptyTitleView != null) {
-                    emptyTitleView.setVisibility(View.VISIBLE);
-                }
+                if (emptyTitleView != null) emptyTitleView.setVisibility(View.VISIBLE);
                 if (emptyTextView  != null) {
                     emptyTextView.setVisibility(View.VISIBLE);
                     emptyTextView.setText(context.getString(defaultEmptyMessageResId));
@@ -174,7 +167,7 @@ public class FontUIStateManager {
         }
         
         int totalScrollRange = appBarLayout.getTotalScrollRange();
-        float translationY = 0F;
+        float translationY = 0f;
         
         if (totalScrollRange != 0) {
             translationY = (Math.abs(verticalOffset) - totalScrollRange) / 2.0f;
@@ -223,15 +216,9 @@ public class FontUIStateManager {
     }
     
     public void showLoadingState() {
-        if (recyclerView != null) {
-            recyclerView.setVisibility(View.GONE);
-        }
-        if (emptyView != null) {
-            emptyView.setVisibility(View.GONE);
-        }
-        if (loadingContainer != null) {
-            loadingContainer.setVisibility(View.VISIBLE);
-        } 
+        if (recyclerView != null) recyclerView.setVisibility(View.GONE);
+        if (emptyView != null) emptyView.setVisibility(View.GONE);
+        if (loadingContainer != null) loadingContainer.setVisibility(View.VISIBLE); 
     }
     
     public void hideLoadingState() {

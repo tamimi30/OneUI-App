@@ -14,9 +14,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent == null) {
-            return;
-        }
+        if (intent == null) return;
 
         if (ACTION_CANCEL.equals(intent.getAction())) {
             Log.d(TAG, "Cancel requested from notification — setting global cancel flag");

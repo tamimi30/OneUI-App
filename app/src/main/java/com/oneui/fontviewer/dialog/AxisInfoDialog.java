@@ -11,7 +11,6 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 
-
 import com.oneui.fontviewer.R;
 
 public class AxisInfoDialog {

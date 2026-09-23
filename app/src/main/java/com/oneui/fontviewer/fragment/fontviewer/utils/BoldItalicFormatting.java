@@ -8,8 +8,8 @@ public class BoldItalicFormatting {
     private static final String KEY_IS_BOLD_ACTIVE   = "is_bold_active";
     private static final String KEY_IS_ITALIC_ACTIVE = "is_italic_active";
 
-    private boolean isBoldActive;
-    private boolean isItalicActive;
+    private boolean isBoldActive   = false;
+    private boolean isItalicActive = false;
 
     private ImageView btnBold;
     private ImageView btnItalic;
@@ -50,34 +50,22 @@ public class BoldItalicFormatting {
     public void reset() {
         isBoldActive   = false;
         isItalicActive = false;
-        if (btnBold != null) {
-            btnBold.setSelected(false);
-        }
-        if (btnItalic != null) {
-            btnItalic.setSelected(false);
-        }
+        if (btnBold   != null) btnBold.setSelected(false);
+        if (btnItalic != null) btnItalic.setSelected(false);
         notifyStyleChanged();
     }
 
     public void unbind() {
-        if (btnBold != null) {
-            btnBold.setOnClickListener(null);
-        }
-        if (btnItalic != null) {
-            btnItalic.setOnClickListener(null);
-        }
+        if (btnBold   != null) btnBold.setOnClickListener(null);
+        if (btnItalic != null) btnItalic.setOnClickListener(null);
         btnBold   = null;
         btnItalic = null;
         listener  = null;
     }
 
     public void syncViewState() {
-        if (btnBold != null) {
-            btnBold.setSelected(isBoldActive);
-        }
-        if (btnItalic != null) {
-            btnItalic.setSelected(isItalicActive);
-        }
+        if (btnBold   != null) btnBold.setSelected(isBoldActive);
+        if (btnItalic != null) btnItalic.setSelected(isItalicActive);
     }
 
     public void saveState(Bundle outState) {

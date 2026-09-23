@@ -5,10 +5,9 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-
 import com.oneui.fontviewer.activity.AppScreen;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BatchOperationState {
 
@@ -17,7 +16,7 @@ public class BatchOperationState {
     private static final MutableLiveData<Boolean> _isProcessing =
             new MutableLiveData<>(false);
 
-    private static volatile AppScreen _sourceScreen;
+    private static volatile AppScreen _sourceScreen = null;
 
     public static class ProgressData {
         public final int    current;
@@ -40,9 +39,9 @@ public class BatchOperationState {
     private static final MutableLiveData<ProgressData> _progress =
             new MutableLiveData<>();
     
-    private static volatile AtomicBoolean _currentCancelFlag;
+    private static volatile AtomicBoolean _currentCancelFlag = null;
 
-    private static volatile boolean _shouldReopenDialog;
+    private static volatile boolean _shouldReopenDialog = false;
 
     public static void setShouldReopenDialog(boolean shouldReopen) {
         _shouldReopenDialog = shouldReopen;
@@ -69,9 +68,7 @@ public class BatchOperationState {
     
     @Deprecated
     public static int getSourceFragmentIndex() {
-        if (_sourceScreen == null) {
-            return -1;
-        }
+        if (_sourceScreen == null) return -1;
         switch (_sourceScreen) {
             case LOCAL_FONTS:  return 2;
             case SYSTEM_FONTS: return 3;

@@ -30,50 +30,37 @@
         android:visibility="invisible">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="118dp"
+            android:layout_height="54dp"
             android:orientation="horizontal"
             android:layout_gravity="center_vertical">
 
-            <LinearLayout
-                android:id="@+id/container_bold"
-                android:layout_width="54dp"
-                android:layout_height="54dp"
+            <ImageView
+                android:id="@+id/btn_bold"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_oui_text_bold"
                 android:background="@drawable/bg_format_toggle"
-                android:foreground="@drawable/bold_italic_btn_ripple"
+                android:foreground="@drawable/sort_btn_ripple_oval"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginEnd="3dp"
-                android:tooltipText="@string/btn_bold">
+                android:layout_gravity="center_vertical"
+                android:tooltipText="@string/btn_bold" />
 
-                <ImageView
-                    android:id="@+id/btn_bold"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_oui_text_bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/container_italic"
-                android:layout_width="54dp"
-                android:layout_height="54dp"
+            <ImageView
+                android:id="@+id/btn_italic"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_oui_text_italic"
                 android:background="@drawable/bg_format_toggle"
-                android:foreground="@drawable/bold_italic_btn_ripple"
+                android:foreground="@drawable/sort_btn_ripple_oval"
                 android:clickable="true"
                 android:focusable="true"
-                android:tooltipText="@string/btn_italic">
-
-                <ImageView
-                    android:id="@+id/btn_italic"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_oui_text_italic" />
-
-            </LinearLayout>
-
+                android:layout_gravity="center_vertical"
+                android:tooltipText="@string/btn_italic" />
+            
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>

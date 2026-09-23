@@ -2,15 +2,17 @@ package com.oneui.fontviewer.utils.translation;
 
 import android.content.Context;
 import android.util.Log;
+
 import androidx.datastore.preferences.core.MutablePreferences;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStore;
+
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public final class TranslationDataStore {
+public class TranslationDataStore {
     
     private static final String TAG = "TranslationDataStore";
     private static final String DATASTORE_NAME = "translation_cache";

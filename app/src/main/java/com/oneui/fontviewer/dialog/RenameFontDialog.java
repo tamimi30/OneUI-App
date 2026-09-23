@@ -11,13 +11,12 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
+import java.io.File;
+
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-
-import java.io.File;
-
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.utils.FileUtils;
@@ -29,9 +28,7 @@ public class RenameFontDialog {
     }
 
     public static void show(Context context, String currentPath, OnRenameListener listener) {
-        if (context == null || currentPath == null || listener == null) {
-            return;
-        }
+        if (context == null || currentPath == null || listener == null) return;
 
         File file = new File(currentPath);
         String currentFileName = file.getName();
@@ -59,9 +56,7 @@ public class RenameFontDialog {
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
-                }
+                if (imm != null) imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
             }, 100);
 
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
@@ -113,9 +108,7 @@ public class RenameFontDialog {
                 listener.onRename(currentPath, extension.isEmpty() ? newName : newName + "." + extension);
 
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-                }
+                if (imm != null) imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
 
                 dialog.dismiss();
             });
@@ -125,14 +118,10 @@ public class RenameFontDialog {
     }
 
     private static boolean isValidFileName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            return false;
-        }
+        if (name == null || name.trim().isEmpty()) return false;
         String[] forbiddenChars = {"/", "\\", ":", "*", "?", "\"", "<", ">", "|"};
         for (String forbidden : forbiddenChars) {
-            if (name.contains(forbidden)) {
-                return false;
-            }
+            if (name.contains(forbidden)) return false;
         }
         return true;
     }

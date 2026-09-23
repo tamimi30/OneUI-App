@@ -24,9 +24,7 @@ public class OneUiButton extends AppCompatButton {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        if (attrs == null) {
-            return;
-        }
+        if (attrs == null) return;
         OneUiTextHelper.applyFontLevel(this, context, attrs);
     }
 }

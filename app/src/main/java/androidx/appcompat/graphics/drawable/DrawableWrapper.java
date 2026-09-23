@@ -5,7 +5,6 @@ import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -26,23 +25,17 @@ public class DrawableWrapper extends Drawable implements Drawable.Callback {
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        if (mDrawable != null) {
-            mDrawable.draw(canvas);
-        }
+        if (mDrawable != null) mDrawable.draw(canvas);
     }
 
     @Override
     protected void onBoundsChange(@NonNull Rect bounds) {
-        if (mDrawable != null) {
-            mDrawable.setBounds(bounds);
-        }
+        if (mDrawable != null) mDrawable.setBounds(bounds);
     }
 
     @Override
     public void setChangingConfigurations(int configs) {
-        if (mDrawable != null) {
-            mDrawable.setChangingConfigurations(configs);
-        }
+        if (mDrawable != null) mDrawable.setChangingConfigurations(configs);
     }
 
     @Override
@@ -52,30 +45,22 @@ public class DrawableWrapper extends Drawable implements Drawable.Callback {
 
     @Override
     public void setDither(boolean dither) {
-        if (mDrawable != null) {
-            mDrawable.setDither(dither);
-        }
+        if (mDrawable != null) mDrawable.setDither(dither);
     }
 
     @Override
     public void setFilterBitmap(boolean filter) {
-        if (mDrawable != null) {
-            mDrawable.setFilterBitmap(filter);
-        }
+        if (mDrawable != null) mDrawable.setFilterBitmap(filter);
     }
 
     @Override
     public void setAlpha(int alpha) {
-        if (mDrawable != null) {
-            mDrawable.setAlpha(alpha);
-        }
+        if (mDrawable != null) mDrawable.setAlpha(alpha);
     }
 
     @Override
     public void setColorFilter(@Nullable ColorFilter colorFilter) {
-        if (mDrawable != null) {
-            mDrawable.setColorFilter(colorFilter);
-        }
+        if (mDrawable != null) mDrawable.setColorFilter(colorFilter);
     }
 
     @Override

@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 
-
 import com.oneui.fontviewer.fragment.fontviewer.FontViewerActivity;
 
 public class FontOpenTriggerActivity extends Activity {

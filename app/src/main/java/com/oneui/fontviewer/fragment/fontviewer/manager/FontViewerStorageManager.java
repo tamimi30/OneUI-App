@@ -3,9 +3,10 @@ package com.oneui.fontviewer.fragment.fontviewer.manager;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.provider.DocumentsContract;
+
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
@@ -160,9 +161,7 @@ public class FontViewerStorageManager {
     
     
     public String getRealPathFromUri(Uri uri) {
-        if (uri == null) {
-            return null;
-        }
+        if (uri == null) return null;
 
         String realPath = null;
 
@@ -201,9 +200,7 @@ public class FontViewerStorageManager {
 
     private String resolveSamsungMyFilesPath(Uri uri) {
         java.util.List<String> segments = uri.getPathSegments();
-        if (segments.size() < 2) {
-            return null;
-        }
+        if (segments.size() < 2) return null;
 
         String storageType = segments.get(0);
         String storageId    = segments.get(1);

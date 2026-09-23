@@ -1,21 +1,21 @@
 package com.oneui.fontviewer.data.database;
 
 import android.content.Context;
+
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-
 import com.oneui.fontviewer.data.dao.FontDao;
 import com.oneui.fontviewer.data.entity.FontEntity;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Database(
-        entities = {FontEntity.class},
-        version = 4,
-        exportSchema = false
+    entities = {FontEntity.class},
+    version = 4,          
+    exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
     

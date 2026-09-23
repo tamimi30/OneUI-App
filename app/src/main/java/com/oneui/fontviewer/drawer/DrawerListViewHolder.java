@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.oneui.fontviewer.R;
 
 public class DrawerListViewHolder extends RecyclerView.ViewHolder {

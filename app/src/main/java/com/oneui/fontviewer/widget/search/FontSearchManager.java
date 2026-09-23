@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
 import com.oneui.fontviewer.data.entity.FontFileInfo;
+import com.oneui.fontviewer.utils.FileUtils;
 
 public class FontSearchManager {
     

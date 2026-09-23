@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public final class CrashHandler implements Thread.UncaughtExceptionHandler {
+public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static CrashHandler instance;
     private Thread.UncaughtExceptionHandler defaultHandler;
     private Context ctx;
@@ -72,9 +72,7 @@ public final class CrashHandler implements Thread.UncaughtExceptionHandler {
             } else {
                 // Legacy path for Android 9 and below — requires WRITE_EXTERNAL_STORAGE permission (runtime on M+)
                 File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "OneUIApp");
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
+                if (!dir.exists()) dir.mkdirs();
                 File out = new File(dir, fileName);
                 try (FileWriter fw = new FileWriter(out, false)) {
                     fw.write(report.toString());

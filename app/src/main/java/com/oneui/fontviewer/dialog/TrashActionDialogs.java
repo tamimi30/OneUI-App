@@ -5,15 +5,15 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-
-
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
+
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.activity.MainActivity;
@@ -53,9 +53,7 @@ public final class TrashActionDialogs {
             int count,
             @NonNull OnConfirmListener listener) {
 
-        if (count <= 0) {
-            return;
-        }
+        if (count <= 0) return;
 
         String message = context.getResources()
                 .getQuantityString(R.plurals.dialog_delete_permanently_question, count, count);
@@ -138,9 +136,7 @@ public final class TrashActionDialogs {
     private static void createChannelIfNeeded(@NonNull Context context) {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (nm == null || nm.getNotificationChannel(CHANNEL_ID) != null) {
-            return;
-        }
+        if (nm == null || nm.getNotificationChannel(CHANNEL_ID) != null) return;
 
         NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,

@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
-
 import com.oneui.fontviewer.R;
 
 public class FontErrorDialog {

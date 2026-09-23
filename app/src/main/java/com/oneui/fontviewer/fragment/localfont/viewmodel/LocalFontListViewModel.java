@@ -4,15 +4,6 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import androidx.core.content.ContextCompat;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,16 +13,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.Transformations;
 
-import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
-import com.oneui.fontviewer.dialog.TrashActionDialogs;
+import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontRepository;
+import com.oneui.fontviewer.fragment.trash.data.TrashRepository;   
+import com.oneui.fontviewer.dialog.TrashActionDialogs;          
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontPreferenceManager;
-import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
-import com.oneui.fontviewer.utils.notification.OperationForegroundService;
+import com.oneui.fontviewer.utils.notification.OperationForegroundService;                  
 
 public class LocalFontListViewModel extends AndroidViewModel {
     
@@ -48,8 +47,8 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
     private final MutableLiveData<List<FontEntity>> favoritesLiveData;
 
-    private boolean mIsFolderSyncing;
-    private List<FontEntity> mPendingSyncFonts;
+    private boolean mIsFolderSyncing = false;
+    private List<FontEntity> mPendingSyncFonts = null;
 
     private AtomicBoolean trashCancelFlag = new AtomicBoolean(false);
 
@@ -187,9 +186,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
     }
 
     public void toggleFavoritesBatch(List<String> paths, boolean isFavorite, Runnable onSuccess) {
-        if (paths == null || paths.isEmpty()) {
-            return;
-        }
+        if (paths == null || paths.isEmpty()) return;
 
         BatchOperationState.setProcessing(true);
 
@@ -302,16 +299,12 @@ public class LocalFontListViewModel extends AndroidViewModel {
     public void moveFontsToTrashInMemory(@NonNull List<String> paths,
                                           TrashRepository.OnProgressListener progressListener,
                                           Runnable onComplete) {
-        if (paths.isEmpty()) {
-            return;
-        }
+        if (paths.isEmpty()) return;
 
         List<FontEntity> currentList = fontsLiveData.getValue();
         if (currentList == null || currentList.isEmpty()) {
             Log.w(TAG, "moveFontsToTrashInMemory: font list is empty");
-            if (onComplete != null) {
-                new Handler(Looper.getMainLooper()).post(onComplete);
-            }
+            if (onComplete != null) new Handler(Looper.getMainLooper()).post(onComplete);
             return;
         }
 
@@ -324,16 +317,12 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
         if (fontsToMove.isEmpty()) {
             Log.w(TAG, "moveFontsToTrashInMemory: no matching entities found for given paths");
-            if (onComplete != null) {
-                new Handler(Looper.getMainLooper()).post(onComplete);
-            }
+            if (onComplete != null) new Handler(Looper.getMainLooper()).post(onComplete);
             return;
         }
 
         int sourceIndex = BatchOperationState.getSourceFragmentIndex();
-        if (sourceIndex == -1) {
-            sourceIndex = 2;
-        } 
+        if (sourceIndex == -1) sourceIndex = 2; 
         BatchOperationState.setProcessing(true, sourceIndex);
 
         trashCancelFlag = new AtomicBoolean(false);
