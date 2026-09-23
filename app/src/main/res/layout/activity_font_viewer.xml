@@ -35,32 +35,44 @@
             android:orientation="horizontal"
             android:layout_gravity="center_vertical">
 
-            <ImageView
-                android:id="@+id/btn_bold"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_oui_text_bold"
+            <LinearLayout
+                android:id="@+id/container_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/sort_btn_ripple_oval"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_gravity="center_vertical"
-                android:tooltipText="@string/btn_bold" />
+                android:tooltipText="@string/btn_bold">
 
-            <ImageView
-                android:id="@+id/btn_italic"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_oui_text_italic"
+                <ImageView
+                    android:id="@+id/btn_bold"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_oui_text_bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/container_italic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/sort_btn_ripple_oval"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_gravity="center_vertical"
-                android:tooltipText="@string/btn_italic" />
-            
+                android:tooltipText="@string/btn_italic">
+
+                <ImageView
+                    android:id="@+id/btn_italic"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_oui_text_italic" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
