@@ -2,6 +2,7 @@ package com.oneui.fontviewer.fragment.fontviewer;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -114,13 +115,12 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void playShowMotionSpec(View target) {
-        MotionSpec spec = MotionSpec.createFromResource(this, R.animator.design_fab_show_motion_spec);
-
         target.setAlpha(0f);
         target.setScaleX(0f);
         target.setScaleY(0f);
         target.setVisibility(View.VISIBLE);
 
+        MotionSpec spec = MotionSpec.createFromResource(this, R.animator.design_fab_show_motion_spec);
         if (spec == null) {
             target.setAlpha(1f);
             target.setScaleX(1f);
@@ -129,12 +129,28 @@ public class FontViewerActivity extends BaseActivity
         }
 
         List<Animator> animators = new ArrayList<>();
+
         if (spec.hasPropertyValues("opacity")) {
-            animators.add(spec.getAnimator("opacity", target, View.ALPHA));
+            ObjectAnimator animatorOpacity = ObjectAnimator.ofFloat(target, View.ALPHA, 1f);
+            spec.getTiming("opacity").apply(animatorOpacity);
+            animators.add(animatorOpacity);
         }
+
         if (spec.hasPropertyValues("scale")) {
-            animators.add(spec.getAnimator("scale", target, View.SCALE_X));
-            animators.add(spec.getAnimator("scale", target, View.SCALE_Y));
+            ObjectAnimator animatorScaleX = ObjectAnimator.ofFloat(target, View.SCALE_X, 1f);
+            spec.getTiming("scale").apply(animatorScaleX);
+            animators.add(animatorScaleX);
+
+            ObjectAnimator animatorScaleY = ObjectAnimator.ofFloat(target, View.SCALE_Y, 1f);
+            spec.getTiming("scale").apply(animatorScaleY);
+            animators.add(animatorScaleY);
+        }
+
+        if (animators.isEmpty()) {
+            target.setAlpha(1f);
+            target.setScaleX(1f);
+            target.setScaleY(1f);
+            return;
         }
 
         AnimatorSet set = new AnimatorSet();
@@ -335,4 +351,4 @@ public class FontViewerActivity extends BaseActivity
         dismissLoadingDialog();
         super.onDestroy();
     }
-                         }
+                        }
