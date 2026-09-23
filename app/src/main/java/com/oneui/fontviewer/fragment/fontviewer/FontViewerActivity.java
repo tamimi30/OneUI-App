@@ -1,20 +1,32 @@
 package com.oneui.fontviewer.fragment.fontviewer;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.ImageView;
+import android.util.Property;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
-import android.view.animation.AnimationUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.animation.MotionSpec;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import dev.oneuiproject.oneui.dialog.ProgressDialog;
@@ -38,13 +50,26 @@ public class FontViewerActivity extends BaseActivity
     public static final String EXTRA_IS_SYSTEM_FONT     = "extra_is_system_font";
     public static final String EXTRA_WEIGHT_WIDTH_LABEL = "extra_weight_width_label";
 
+    // تأخير ظهور الـ FAB وشريط التنسيق بعد فتح الشاشة
+    private static final long FAB_SHOW_DELAY_MS = 300;
+    // مدة احتياطية للحركة اذا تعذّر تحميل mtrl_fab_show_motion_spec لأي سبب
+    private static final long FALLBACK_MOTION_DURATION_MS = 330;
+    // حجم صندوق أيقونة الـ FAB (design_fab_image_size = 24dp)، تُستخدم كحجم ذاتي احتياطي لأيقونة الرقم
+    private static final float FAB_ICON_BOX_DP = 24f;
+
     private ToolbarLayout mToolbarLayout;
     private FontViewerFragment mFontViewerFragment;
 
     private FloatingActionButton fabFontSize;
     private View formatBar;
-    private ImageView btnBold;
-    private ImageView btnItalic;
+    private View btnBold;
+    private View btnItalic;
+
+    // المحتوى الداخلي لشريط التنسيق (زرا Bold/Italic)، يقابل أيقونة الـ FAB التي لها حركة iconScale مستقلة
+    private View formatBarContent;
+    // حركة ظهور شريط التنسيق، نحتفظ بها لإلغائها عند إغلاق الشاشة
+    private AnimatorSet formatBarAnimator;
+    private final Handler uiHandler = new Handler(Looper.getMainLooper());
 
     private String currentFontRealName;
     private String currentFontFileName;
@@ -61,8 +86,13 @@ public class FontViewerActivity extends BaseActivity
         mToolbarLayout = findViewById(R.id.toolbar_layout);
         fabFontSize = findViewById(R.id.fab_font_size);
         formatBar = findViewById(R.id.format_bar);
-        btnBold = findViewById(R.id.btn_bold);
-        btnItalic = findViewById(R.id.btn_italic);
+        btnBold = findViewById(R.id.btn_bold_container);
+        btnItalic = findViewById(R.id.btn_italic_container);
+
+        // الـ LinearLayout الداخلي للشريط: يأخذ حركة iconScale تماماً كما تأخذها أيقونة الـ FAB
+        if (formatBar instanceof ViewGroup && ((ViewGroup) formatBar).getChildCount() > 0) {
+            formatBarContent = ((ViewGroup) formatBar).getChildAt(0);
+        }
 
         if (fabFontSize != null) {
             fabFontSize.setVisibility(View.INVISIBLE);
@@ -88,23 +118,152 @@ public class FontViewerActivity extends BaseActivity
                     .findFragmentById(R.id.font_viewer_container);
         }
 
-        new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 300);
+        uiHandler.postDelayed(this::setupFab, FAB_SHOW_DELAY_MS);
     }
 
     private void setupFab() {
+        if (isFinishing() || isDestroyed()) return;
+
         if (fabFontSize != null) {
-            fabFontSize.setVisibility(View.VISIBLE);
-            fabFontSize.startAnimation(AnimationUtils.loadAnimation(this, R.anim.font_viewer_controls_enter));
             fabFontSize.setOnClickListener(v -> {
                 if (mFontViewerFragment != null) {
                     mFontViewerFragment.showFontSizeDialogPublic();
                 }
             });
         }
-        if (formatBar != null) {
-            formatBar.setVisibility(View.VISIBLE);
-            formatBar.startAnimation(AnimationUtils.loadAnimation(this, R.anim.font_viewer_controls_enter));
+
+        // show() لا تشغّل الأنيميشن الا اذا كان الـ View قد تم تخطيطه (isLaidOut)، وإلا يظهر الزر فجأة بدون حركة.
+        // لذلك ننتظر التخطيط أولاً، ثم نشغّل حركة الـ FAB وحركة شريط التنسيق في نفس اللحظة تماماً.
+        View trigger = fabFontSize != null ? fabFontSize : formatBar;
+        if (trigger == null) return;
+        doWhenLaidOut(trigger, this::playEntranceAnimations);
+    }
+
+    /**
+     * يشغّل حركة ظهور الـ FAB وحركة ظهور شريط التنسيق معاً.
+     */
+    private void playEntranceAnimations() {
+        if (isFinishing() || isDestroyed()) return;
+
+        if (fabFontSize != null) {
+            // FabStyle يضبط showMotionSpec على mtrl_fab_show_motion_spec، لذلك show() تشغّلها تلقائيًا.
+            fabFontSize.show();
         }
+        if (formatBar != null) {
+            showFormatBarWithFabMotion();
+        }
+    }
+
+    /**
+     * ينفّذ الإجراء عندما يصبح الـ View مُخطَّطاً وله أبعاد فعلية.
+     * داخل onLayoutChange لا تكون isLaidOut() قد أصبحت true بعد، لذلك نؤجّل التنفيذ بـ post().
+     */
+    private void doWhenLaidOut(View view, Runnable action) {
+        if (view.isLaidOut() && view.getWidth() > 0 && view.getHeight() > 0) {
+            action.run();
+            return;
+        }
+        view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (right - left > 0 && bottom - top > 0) {
+                    v.removeOnLayoutChangeListener(this);
+                    v.post(action);
+                }
+            }
+        });
+    }
+
+    /**
+     * MaterialCardView لا يملك showMotionSpec، لذلك نعيد بناء نفس حركة الـ FAB
+     * (opacity + scale) يدويًا هنا ونطبّقها على format_bar.
+     *
+     * ★ ملف mtrl_fab_show_motion_spec يحتوي على التوقيتات (timing) فقط بدون قيم (valueFrom/valueTo)،
+     *   وهذا ما يفعله FloatingActionButtonImpl.createAnimator: ينشئ ObjectAnimator.ofFloat بنفسه
+     *   ثم يطبّق عليه spec.getTiming(...). أما spec.hasPropertyValues() و spec.getAnimator() فهما
+     *   مخصصتان للـ ExtendedFloatingActionButton (الذي تحمل مواصفاته قيماً جاهزة)، وترجعان false هنا،
+     *   ولذلك لم تكن تُنشأ أي حركة وكان الشريط يبقى (alpha=0, scale=0) رغم أنه VISIBLE ويستجيب للمس.
+     *
+     * ★ نطبّق أيضاً حركة iconScale على محتوى الشريط (زرا Bold/Italic) كما تُطبَّق على أيقونة الـ FAB.
+     */
+    private void showFormatBarWithFabMotion() {
+        if (formatBarAnimator != null) {
+            formatBarAnimator.cancel();
+        }
+
+        // الحالة الابتدائية قبل إظهار الشريط حتى لا يظهر لحظياً بحجمه الكامل
+        formatBar.setAlpha(0f);
+        formatBar.setScaleX(0f);
+        formatBar.setScaleY(0f);
+        if (formatBarContent != null) {
+            formatBarContent.setScaleX(0f);
+            formatBarContent.setScaleY(0f);
+        }
+        formatBar.setVisibility(View.VISIBLE);
+
+        MotionSpec spec = MotionSpec.createFromResource(this, R.animator.mtrl_fab_show_motion_spec);
+        List<Animator> animators = new ArrayList<>();
+
+        animators.add(createMotionAnimator(spec, "opacity", formatBar, View.ALPHA, 0f, 1f));
+        animators.add(createMotionAnimator(spec, "scale", formatBar, View.SCALE_X, 0f, 1f));
+        animators.add(createMotionAnimator(spec, "scale", formatBar, View.SCALE_Y, 0f, 1f));
+
+        if (formatBarContent != null) {
+            animators.add(createMotionAnimator(spec, "iconScale", formatBarContent, View.SCALE_X, 0f, 1f));
+            animators.add(createMotionAnimator(spec, "iconScale", formatBarContent, View.SCALE_Y, 0f, 1f));
+        }
+
+        AnimatorSet set = new AnimatorSet();
+        playTogetherCompat(set, animators);
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // ضمان الحالة النهائية حتى لا يبقى الشريط شفافاً أو مصغّراً مهما حدث
+                formatBar.setAlpha(1f);
+                formatBar.setScaleX(1f);
+                formatBar.setScaleY(1f);
+                if (formatBarContent != null) {
+                    formatBarContent.setScaleX(1f);
+                    formatBarContent.setScaleY(1f);
+                }
+            }
+        });
+
+        formatBarAnimator = set;
+        set.start();
+    }
+
+    /**
+     * ينشئ ObjectAnimator ويطبّق عليه توقيت (تأخير + مدة + interpolator) الخاص بالاسم المطلوب
+     * من الـ MotionSpec، تماماً كما يفعل FloatingActionButtonImpl.createAnimator.
+     */
+    private static ObjectAnimator createMotionAnimator(MotionSpec spec, String timingName, View target,
+                                                       Property<View, Float> property,
+                                                       float from, float to) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(target, property, from, to);
+        if (spec != null && spec.hasTiming(timingName)) {
+            spec.getTiming(timingName).apply(animator);
+        } else {
+            animator.setDuration(FALLBACK_MOTION_DURATION_MS);
+        }
+        return animator;
+    }
+
+    /**
+     * نفس الحل الذي تستخدمه مكتبة Material في AnimatorSetCompat: نضيف animator وهمياً مدته
+     * تساوي أطول (تأخير + مدة) حتى لا يخطئ AnimatorSet في حساب المدة الكلية عندما يكون لبعض
+     * العناصر startDelay (خطأ معروف في الأجهزة القديمة).
+     */
+    private static void playTogetherCompat(AnimatorSet set, List<Animator> items) {
+        long totalDuration = 0;
+        for (Animator animator : items) {
+            totalDuration = Math.max(totalDuration, animator.getStartDelay() + animator.getDuration());
+        }
+        ValueAnimator fix = ValueAnimator.ofInt(0, 0);
+        fix.setDuration(totalDuration);
+        items.add(0, fix);
+        set.playTogether(items);
     }
 
     private void loadFontFromIntent(Intent intent) {
@@ -126,19 +285,27 @@ public class FontViewerActivity extends BaseActivity
         }
     }
 
-    public ImageView getBtnBold() { return btnBold; }
-    public ImageView getBtnItalic() { return btnItalic; }
+    public View getBtnBold() { return btnBold; }
+    public View getBtnItalic() { return btnItalic; }
 
     public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
             int textColor = getColor(dev.oneuiproject.oneui.design.R.color.oui_primary_text_color);
             String sizeText = String.valueOf(Math.round(size));
             float fabTextSizeDp = sizeText.length() >= 3 ? 19f : 24f;
-            fabFontSize.setImageDrawable(new TextDrawable(
-                    this,
-                    sizeText,
-                    fabTextSizeDp,
-                    textColor
+
+            // الـ FAB يحرّك أيقونته (iconScale) عبر Matrix تعتمد على الحجم الذاتي للـ Drawable.
+            // اذا لم يكن للـ TextDrawable حجم ذاتي، يتجاهل الـ FAB هذه الحركة فيظهر الرقم مع الدائرة
+            // بدل أن ينبثق بعدها. FabIconDrawable يضمن وجود حجم ذاتي دون تغيير شكل الرقم.
+            int iconBoxPx = Math.round(FAB_ICON_BOX_DP * getResources().getDisplayMetrics().density);
+            fabFontSize.setImageDrawable(new FabIconDrawable(
+                    new TextDrawable(
+                            this,
+                            sizeText,
+                            fabTextSizeDp,
+                            textColor
+                    ),
+                    iconBoxPx
             ));
         }
     }
@@ -295,7 +462,83 @@ public class FontViewerActivity extends BaseActivity
 
     @Override
     protected void onDestroy() {
+        // إيقاف تشغيل الـ FAB المؤجَّل وحركة الشريط الجارية عند إغلاق الشاشة
+        uiHandler.removeCallbacksAndMessages(null);
+        if (formatBarAnimator != null) {
+            formatBarAnimator.cancel();
+            formatBarAnimator = null;
+        }
         dismissLoadingDialog();
         super.onDestroy();
     }
-              } 
+
+    /**
+     * Drawable يلفّ أيقونة الرقم داخل الـ FAB ويضمن أن يكون لها حجم ذاتي موجب.
+     * يستخدم الحجم الذاتي للأيقونة الأصلية اذا كان موجباً، وإلا يستخدم حجم صندوق أيقونة الـ FAB
+     * (24dp) حتى تعمل حركة iconScale الخاصة بالـ FAB على الرقم. شكل الرقم الثابت لا يتغير.
+     */
+    private static class FabIconDrawable extends Drawable implements Drawable.Callback {
+
+        private final Drawable inner;
+        private final int fallbackSizePx;
+
+        FabIconDrawable(Drawable inner, int fallbackSizePx) {
+            this.inner = inner;
+            this.fallbackSizePx = fallbackSizePx;
+            inner.setCallback(this);
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            inner.draw(canvas);
+        }
+
+        @Override
+        protected void onBoundsChange(Rect bounds) {
+            inner.setBounds(bounds);
+        }
+
+        @Override
+        public int getIntrinsicWidth() {
+            int w = inner.getIntrinsicWidth();
+            return w > 0 ? w : fallbackSizePx;
+        }
+
+        @Override
+        public int getIntrinsicHeight() {
+            int h = inner.getIntrinsicHeight();
+            return h > 0 ? h : fallbackSizePx;
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            inner.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter colorFilter) {
+            inner.setColorFilter(colorFilter);
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public int getOpacity() {
+            return inner.getOpacity();
+        }
+
+        @Override
+        public void invalidateDrawable(Drawable who) {
+            invalidateSelf();
+        }
+
+        @Override
+        public void scheduleDrawable(Drawable who, Runnable what, long when) {
+            scheduleSelf(what, when);
+        }
+
+        @Override
+        public void unscheduleDrawable(Drawable who, Runnable what) {
+            unscheduleSelf(what);
+        }
+    }
+                }
