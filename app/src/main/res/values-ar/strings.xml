@@ -61,6 +61,14 @@
 	<string name="toast_translation_api_error">فشلت ترجمة البيانات الوصفية، خدمة الترجمة غير متوفرة.</string>
 	<string name="toast_invalid_font_size">تم إدخال قيمة غير صالحة.</string>
 	<string name="font_size_dialog_tip">إضغط على الرقم لتعديل حجم النص بدقة.</string>
+
+	<!-- TODO: fill in the explanatory text for each axis -->
+    <string name="axis_info_weight_description">قم بضبط النمط من الأخف إلى الأثقل في اللون الطباعي، من خلال تغيير أوزان الخطوط والفواصل والمسافات بين الحروف وجوانب أخرى للطباعة. عادةً ما يؤدي هذا إلى تغيير العرض الكلي، وبالتالي يمكن استخدامه بالتزامن مع محاور العرض والدرجة.</string>
+    <string name="axis_info_width_description">Adjust the style from narrower to wider, by varying the proportions of counters, strokes, spacing and kerning, and other aspects of the type. This typically changes the typographic color in a subtle way, and so may be used in conjunction with Weight and Grade axes.</string>
+    <string name="axis_info_italic_description">Adjust the style from roman to italic. This can be provided as a continuous range within a single font file, like most axes, or as a toggle between two roman and italic files that form a family as a pair.</string>
+    <string name="axis_info_grade_description">Finesse the style from lighter to bolder in typographic color, without any changes overall width, line breaks or page layout. Negative grade makes the style lighter, while positive grade makes it bolder. The units are the same as in the Weight axis.</string>
+    <string name="axis_info_roundness_description">Adjust shapes from angular defaults (0%) to become increasingly rounded (up to 100%).</string>
+    <string name="axis_info_monospace_description">Adjust the style from Proportional (natural widths, default) to Monospace (fixed width). With proportional spacing, each glyph takes up a unique amount of space on a line, while monospace is when all glyphs have the same total character width.</string>
     
     <!-- الخطوط المحلية -->
     <string name="drawer_local_fonts">الخطوط المحلية</string>
