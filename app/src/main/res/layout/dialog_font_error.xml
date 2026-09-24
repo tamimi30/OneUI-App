@@ -13,17 +13,28 @@
         android:layout_marginBottom="15dp"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/ic_oui_error" />
+        
+    <TextView
+        android:id="@+id/font_error_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:gravity="center"
+        android:text="@string/font_metadata_error_title"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary" />
 
     <TextView
         android:id="@+id/font_error_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/font_metadata_error_message"
+        android:gravity="center"
         android:textSize="13sp"
         app:fontFamily="sec-roboto-light"
         android:textStyle="normal"
         android:textColor="@color/sesl_description_text_color"
-        
         android:lineSpacingExtra="4sp" />
 
 </LinearLayout>
