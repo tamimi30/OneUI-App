@@ -21,6 +21,19 @@ public class TextDrawable extends Drawable {
     // أو بمكان خاطئ أثناء ظهور الزر بدل الأنيميشن الجميل المعتاد.
     private final int intrinsicSize;
 
+    // ★ إصلاح: حجم مرجعي ثابت يُستخدم فقط لحساب الحجم الجوهري (intrinsicSize)، بمعزل عن
+    // textSizeInDp الفعلي الذي يُرسم به النص. السبب: FloatingActionButtonImpl يعيد تحجيم أي
+    // Drawable ليملأ maxImageSize بالكامل اعتمادًا على نسبة drawable.getIntrinsicWidth/Height
+    // (ScaleToFit.CENTER) — فلو كان الحجم الجوهري يساوي textSizeInPx دائمًا (كما كان سابقًا)،
+    // فإن "الصندوق" الذي يُقاس عليه النص يصغر بنفس نسبة تصغير الخط، فيُلغي إعادة التحجيم
+    // التلقائي أثر التصغير عمليًا، ويخرج النص بنفس الحجم المرئي تقريبًا سواء كان 19dp أو 24dp.
+    // بتثبيت الحجم الجوهري على REFERENCE_TEXT_SIZE_DP دائمًا، يصبح النص الأصغر (19dp عند 3
+    // خانات) يشغل مساحة أصغر فعليًا من نفس الصندوق الثابت، فيظهر أصغر بالفعل بعد إعادة
+    // التحجيم النهائية الى maxImageSize. لاحظ أن REFERENCE_TEXT_SIZE_DP تساوي قيمة الحالة غير
+    // المصغّرة (24dp) عمدًا، حتى يبقى شكل الأرقام ذات الخانتين مطابقًا تمامًا لما كان عليه سابقًا،
+    // ويتغيّر فقط شكل الأرقام ذات الثلاث خانات (وهي الحالة المقصودة بالتصغير أصلاً).
+    private static final float REFERENCE_TEXT_SIZE_DP = 24f;
+
     public TextDrawable(Context context, String text, float textSizeInDp, int textColor) {
         this.text = text;
         this.paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -34,7 +47,12 @@ public class TextDrawable extends Drawable {
         );
         this.paint.setTextSize(textSizeInPx);
 
-        this.intrinsicSize = Math.round(textSizeInPx);
+        float referenceSizeInPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                REFERENCE_TEXT_SIZE_DP,
+                context.getResources().getDisplayMetrics()
+        );
+        this.intrinsicSize = Math.round(referenceSizeInPx);
     }
 
     @Override
