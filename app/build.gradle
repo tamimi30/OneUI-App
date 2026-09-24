@@ -75,7 +75,7 @@ configurations.all {
 
     resolutionStrategy {
         force 'org.jetbrains.kotlin:kotlin-stdlib:2.4.20'
-        force 'androidx.annotation:annotation:1.10.0'
+        force 'androidx.annotation:annotation:1.11.0'
         force 'com.google.guava:guava:33.7.1-jre'
     }
 }
@@ -120,7 +120,7 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxjava:3.1.12'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
     
-    implementation 'androidx.annotation:annotation:1.10.0'
+    implementation 'androidx.annotation:annotation:1.11.0'
     implementation 'androidx.documentfile:documentfile:1.1.0'
     implementation 'androidx.core:core-splashscreen:1.2.0'
    // implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
