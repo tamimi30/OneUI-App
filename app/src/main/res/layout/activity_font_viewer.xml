@@ -16,8 +16,10 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_font_size"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
-        style="@style/FabStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24.0dip"
         android:visibility="invisible"
         app:layout_location="root"
         android:tooltipText="@string/font_size_dialog_title" />
