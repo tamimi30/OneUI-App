@@ -14,7 +14,7 @@ public class FontErrorDialog {
 
     public static void show(Context context) {
         AlertDialog dialog = new AlertDialog.Builder(context)
-                .setTitle(R.string.font_metadata_error_title)
+                .setTitle(R.string.unknown_font)
                 .setMessage(" ")
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
