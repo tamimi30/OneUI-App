@@ -23,7 +23,7 @@
         app:fontFamily="sec-roboto-light"
         android:textStyle="normal"
         android:textColor="@color/sesl_description_text_color"
-        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
         android:lineSpacingExtra="4sp" />
 
 </LinearLayout>
