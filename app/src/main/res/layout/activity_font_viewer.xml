@@ -18,7 +18,7 @@
         android:id="@+id/fab_font_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
+        android:theme="Theme.MaterialComponents.Light.NoActionBar"
         android:layout_gravity="bottom|end"
         android:layout_margin="24.0dip"
         android:visibility="invisible"
