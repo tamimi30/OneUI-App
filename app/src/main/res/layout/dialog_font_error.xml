@@ -20,6 +20,8 @@
         android:layout_height="wrap_content"
         android:text="@string/font_metadata_error_message"
         android:textSize="13sp"
+        app:fontFamily="sec-roboto-light"
+        android:textStyle="normal"
         android:textColor="?android:attr/textColorSecondary"
         android:lineSpacingExtra="4sp" />
 
