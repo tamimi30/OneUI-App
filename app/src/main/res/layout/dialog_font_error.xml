@@ -22,7 +22,7 @@
         android:textSize="13sp"
         app:fontFamily="sec-roboto-light"
         android:textStyle="normal"
-        android:textColor="?android:attr/textColorSecondary"
+        android:textColor="@color/sesl_description_text_color"
         android:layout_gravity="center_horizontal"
         android:lineSpacingExtra="4sp" />
 
