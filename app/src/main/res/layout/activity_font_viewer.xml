@@ -38,7 +38,7 @@
 
             <FrameLayout
                 android:id="@+id/btn_bold_container"
-                android:layout_width="66dp"
+                android:layout_width="61dp"
                 android:layout_height="46dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/bg_format_toggle"
@@ -59,7 +59,7 @@
 
             <FrameLayout
                 android:id="@+id/btn_italic_container"
-                android:layout_width="66dp"
+                android:layout_width="61dp"
                 android:layout_height="46dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/bg_format_toggle"
