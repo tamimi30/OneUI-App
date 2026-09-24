@@ -40,7 +40,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginBottom="7dp"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:tint="#ff0381fe"
                     android:src="@drawable/ic_oui_device_outline" />
 
@@ -50,7 +50,6 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sec-roboto-light"
                     android:textStyle="normal"
-                    android:layout_gravity="center"
                     android:gravity="center"
                     android:layout_marginBottom="7dp"
                     android:text="@string/local_fonts_empty_title"
@@ -63,7 +62,6 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sec-roboto-light"
                     android:textStyle="normal"
-                    android:layout_gravity="center"
                     android:gravity="center"
                     android:lineSpacingExtra="4sp"
                     android:text="@string/local_fonts_empty_message"
@@ -74,7 +72,6 @@
                     android:id="@+id/no_results_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/no_results_found"
                     android:fontFamily="sec-roboto-light"
@@ -94,14 +91,12 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_gravity="center"
-            android:gravity="center"
             android:visibility="gone">
 
             <androidx.appcompat.widget.SeslProgressBar
                 style="@style/Widget.AppCompat.ProgressBar.Large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_gravity="center" />
 
             <TextView
@@ -130,7 +125,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_gravity="center"
-            android:gravity="center"
             android:paddingStart="33dp"
             android:paddingEnd="33dp">
 
@@ -143,7 +137,6 @@
                 android:textSize="17sp"
                 android:lineSpacingExtra="5dp"
                 android:textColor="@color/drawer_icon_color"
-                android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_marginBottom="7dp"/>
             
@@ -153,7 +146,8 @@
                 android:minHeight="52dp"
                 android:backgroundTint="?attr/colorPrimary"
                 style="@style/OneUI.AppInfoButton"
-                android:textSize="18sp"
+                android:layout_gravity="center"
+                android:textSize="17sp"
                 android:textColor="@color/oui_appinfolayout_button_primary_text"
                 android:text="@string/local_fonts_select_folder_button" />
 
