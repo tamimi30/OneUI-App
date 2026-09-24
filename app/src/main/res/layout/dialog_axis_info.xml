@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
+        android:antialias="true"
         android:importantForAccessibility="no" />
 
     <TextView
