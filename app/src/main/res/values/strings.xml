@@ -135,6 +135,6 @@
     <string name="sort_descending">Descending</string>
 
     <string name="exit_on_double_back">Press again to exit</string>
-    <string name="no_fonts_found"></string>
+    <string name="no_fonts_found">    </string>
 
 </resources>
