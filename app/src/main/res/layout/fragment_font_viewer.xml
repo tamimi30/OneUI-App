@@ -65,7 +65,7 @@
             android:paddingVertical="27dp"
             android:paddingHorizontal="24dp"
             android:clipToOutline="false"
-            android:background="@color/oui_background_color"
+            android:background="@color/oui_round_and_bgcolor"
             android:orientation="vertical">
 
             <!-- وصف الوزن والعرض للخطوط الثابتة -->
