@@ -5,6 +5,8 @@
 -keepattributes SourceFile, LineNumberTable
 
 # 3. حماية الكود الخاص بك وكلاسات BuildConfig
+-keep class com.oneui.fontviewer.** { *; }
+-keep class **.BuildConfig { *; }
 
 # 4. حماية مكتبة OneUI Design (إبقاء الحماية كما طلبت)
 -keep class dev.oneuiproject.oneui.** {*;}
