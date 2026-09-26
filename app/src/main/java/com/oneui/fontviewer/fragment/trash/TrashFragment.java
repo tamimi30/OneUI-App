@@ -591,6 +591,10 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
             Integer count = mViewModel.getTrashedFontsCountLiveData().getValue();
             if (count != null) updateSubtitle(count);
         } else {
+            // إعادة القائمة إلى الأعلى وهي مخفية، حتى تبدأ من الأعلى فعلياً
+            // في المرة القادمة التي تُعرض فيها، دون أي قفزة مرئية
+            mUIManager.scrollRecyclerViewToTop();
+
             if (mSelectionManager != null && mSelectionManager.isSelecting()) {
                 mSelectionManager.setSelecting(false);
             }
