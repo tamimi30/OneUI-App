@@ -202,6 +202,15 @@ public class FontUIStateManager {
             Log.d(TAG, "RecyclerView state restored");
         }
     }
+
+    // تُستخدم عند إخفاء الشاشة، لإعادة القائمة إلى الأعلى وهي غير مرئية،
+    // حتى تبدأ من الأعلى فعلياً في المرة القادمة التي تُعرض فيها، دون أي قفزة مرئية
+    public void scrollRecyclerViewToTop() {
+        if (recyclerView != null) {
+            recyclerView.scrollToPosition(0);
+        }
+        recyclerViewState = null;
+    }
     
     public void setRecyclerViewState(Parcelable state) {
         this.recyclerViewState = state;
