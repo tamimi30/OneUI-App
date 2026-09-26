@@ -455,7 +455,9 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         }
 
         if (hidden) {
-            mUIManager.saveRecyclerViewState();
+            // إعادة القائمة إلى الأعلى وهي مخفية، حتى تبدأ من الأعلى فعلياً
+            // في المرة القادمة التي تُعرض فيها، دون أي قفزة مرئية
+            mUIManager.scrollRecyclerViewToTop();
 
             if (mRecyclerView != null) {
                 mRecyclerView.setItemAnimator(null);
@@ -466,8 +468,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
             if (mAdapter != null) mAdapter.smartUpdate();
 
             updateMainActivityFontsCount(mCurrentFontsList.size());
-
-            mMainHandler.post(() -> mUIManager.restoreRecyclerViewState());
 
             if (mRecyclerView != null) {
                 mRecyclerView.postDelayed(() -> {
