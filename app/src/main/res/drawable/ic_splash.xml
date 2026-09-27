@@ -36,8 +36,8 @@
                 android:pivotY="0"
                 android:scaleX="0.26308"
                 android:scaleY="0.26308"
-                android:translateX="-6.4185"
-                android:translateY="-2.7842">
+                android:translateX="-6.5655"
+                android:translateY="-2.7706">
 
                 <path
                     android:fillType="nonZero"
