@@ -15,10 +15,10 @@
         <group
             android:pivotX="0"
             android:pivotY="0"
-            android:scaleX="0.2687"
-            android:scaleY="0.2687"
-            android:translateX="-6.598"
-            android:translateY="-3.098">
+            android:scaleX="0.26308"
+            android:scaleY="0.26308"
+            android:translateX="-6.4185"
+            android:translateY="-2.7842">
 
             <path
                 android:fillType="nonZero"
