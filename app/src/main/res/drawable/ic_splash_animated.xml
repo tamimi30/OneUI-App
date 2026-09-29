@@ -3,58 +3,66 @@
     xmlns:aapt="http://schemas.android.com/aapt">
     <aapt:attr name="android:drawable">
         <vector
-            android:width="24dp"
-            android:height="24dp"
-            android:viewportWidth="24"
-            android:viewportHeight="24">
+            android:width="36dp"
+            android:height="36dp"
+            android:viewportWidth="36"
+            android:viewportHeight="36">
 
             <group
-                android:name="main"
-                android:pivotX="12"
-                android:pivotY="12"
-                android:scaleX="1.1"
-                android:scaleY="1.1">
+                android:pivotX="0"
+                android:pivotY="0"
+                android:translateX="6"
+                android:translateY="6">
 
                 <group
-                    android:name="squircle"
-                    android:pivotX="6.8"
-                    android:pivotY="6.8"
-                    android:scaleX="0.12"
-                    android:scaleY="0.12">
-
-                    <path
-                        android:fillColor="@color/primary_color_themed"
-                        android:pathData="M99,50C99,6.935,77.063,1,50,1 C22.935,1,1,6.935,1,50c0,43.063,21.935,49,49,49C77.063,99,99,93.063,99,50z" />
-
-                </group>
-
-                <group
-                    android:name="foreground"
+                    android:name="main"
                     android:pivotX="12"
                     android:pivotY="12"
-                    android:scaleX="0.4"
-                    android:scaleY="0.4">
+                    android:scaleX="1.1"
+                    android:scaleY="1.1">
 
                     <group
-                        android:pivotX="0"
-                        android:pivotY="0"
-                        android:scaleX="0.04497"
-                        android:scaleY="0.04497"
-                        android:translateX="5.487"
-                        android:translateY="7.385">
+                        android:name="squircle"
+                        android:pivotX="6.8"
+                        android:pivotY="6.8"
+                        android:scaleX="0.12"
+                        android:scaleY="0.12">
 
                         <path
-                            android:name="bigA"
-                            android:fillType="nonZero"
-                            android:fillColor="#ffffff"
-                            android:pathData="M87.99 36.4L37.65 171.34L32 171.34L84.16 32L89.13 32Z M136.99 171.34L86.65 36.4L85.59 32L90.47 32L142.63 171.34Z M122.25 124.54L122.25 129.71L52.48 129.71L52.48 124.54Z" />
+                            android:fillColor="@color/primary_color_themed"
+                            android:pathData="M99,50C99,6.935,77.063,1,50,1 C22.935,1,1,6.935,1,50c0,43.063,21.935,49,49,49C77.063,99,99,93.063,99,50z" />
 
-                        <path
-                            android:name="smallA"
-                            android:fillType="nonZero"
-                            android:fillColor="#ffffff"
-                            android:fillAlpha="1"
-                            android:pathData="M227.33 151.92L227.33 98.42Q227.33 89.8 223.65 83.68Q219.96 77.55 212.93 74.3Q205.89 71.05 195.75 71.05Q186.37 71.05 178.86 74.35Q171.34 77.65 166.99 83.39Q162.63 89.13 162.63 96.31L157.47 96.12Q157.47 90.09 160.29 84.64Q163.11 79.18 168.23 74.97Q173.35 70.76 180.39 68.32Q187.42 65.88 195.75 65.88Q206.56 65.88 214.84 69.52Q223.12 73.15 227.81 80.43Q232.5 87.7 232.5 98.61L232.5 150.48Q232.5 156.03 233.22 161.68Q233.93 167.32 235.18 170.48L235.18 171.34L229.24 171.34Q228.29 167.61 227.81 162.3Q227.33 156.99 227.33 151.92ZM229.63 113.54L229.82 118.8L202.83 118.8Q192.78 118.8 184.84 120.76Q176.89 122.73 171.34 126.27Q165.79 129.81 162.83 134.69Q159.86 139.57 159.86 145.5Q159.86 151.72 163.26 156.89Q166.65 162.06 172.68 165.12Q178.71 168.19 186.56 168.19Q197.47 168.19 205.89 164.6Q214.31 161.01 220.15 154.5Q225.99 147.99 229.05 139.09L231.35 143.88Q229.53 149.24 225.94 154.45Q222.35 159.67 216.8 163.93Q211.25 168.19 203.74 170.72Q196.23 173.26 186.56 173.26Q176.89 173.26 169.72 169.67Q162.54 166.08 158.62 159.72Q154.69 153.35 154.69 145.12Q154.69 138.23 157.95 132.44Q161.2 126.65 167.37 122.39Q173.54 118.13 182.45 115.84Q191.35 113.54 202.54 113.54Z" />
+                    </group>
+
+                    <group
+                        android:name="foreground"
+                        android:pivotX="12"
+                        android:pivotY="12"
+                        android:scaleX="0.4"
+                        android:scaleY="0.4">
+
+                        <group
+                            android:pivotX="0"
+                            android:pivotY="0"
+                            android:scaleX="0.04497"
+                            android:scaleY="0.04497"
+                            android:translateX="5.487"
+                            android:translateY="7.385">
+
+                            <path
+                                android:name="bigA"
+                                android:fillType="nonZero"
+                                android:fillColor="#ffffff"
+                                android:pathData="M87.99 36.4L37.65 171.34L32 171.34L84.16 32L89.13 32Z M136.99 171.34L86.65 36.4L85.59 32L90.47 32L142.63 171.34Z M122.25 124.54L122.25 129.71L52.48 129.71L52.48 124.54Z" />
+
+                            <path
+                                android:name="smallA"
+                                android:fillType="nonZero"
+                                android:fillColor="#ffffff"
+                                android:fillAlpha="1"
+                                android:pathData="M227.33 151.92L227.33 98.42Q227.33 89.8 223.65 83.68Q219.96 77.55 212.93 74.3Q205.89 71.05 195.75 71.05Q186.37 71.05 178.86 74.35Q171.34 77.65 166.99 83.39Q162.63 89.13 162.63 96.31L157.47 96.12Q157.47 90.09 160.29 84.64Q163.11 79.18 168.23 74.97Q173.35 70.76 180.39 68.32Q187.42 65.88 195.75 65.88Q206.56 65.88 214.84 69.52Q223.12 73.15 227.81 80.43Q232.5 87.7 232.5 98.61L232.5 150.48Q232.5 156.03 233.22 161.68Q233.93 167.32 235.18 170.48L235.18 171.34L229.24 171.34Q228.29 167.61 227.81 162.3Q227.33 156.99 227.33 151.92ZM229.63 113.54L229.82 118.8L202.83 118.8Q192.78 118.8 184.84 120.76Q176.89 122.73 171.34 126.27Q165.79 129.81 162.83 134.69Q159.86 139.57 159.86 145.5Q159.86 151.72 163.26 156.89Q166.65 162.06 172.68 165.12Q178.71 168.19 186.56 168.19Q197.47 168.19 205.89 164.6Q214.31 161.01 220.15 154.5Q225.99 147.99 229.05 139.09L231.35 143.88Q229.53 149.24 225.94 154.45Q222.35 159.67 216.8 163.93Q211.25 168.19 203.74 170.72Q196.23 173.26 186.56 173.26Q176.89 173.26 169.72 169.67Q162.54 166.08 158.62 159.72Q154.69 153.35 154.69 145.12Q154.69 138.23 157.95 132.44Q161.2 126.65 167.37 122.39Q173.54 118.13 182.45 115.84Q191.35 113.54 202.54 113.54Z" />
+
+                        </group>
 
                     </group>
 
