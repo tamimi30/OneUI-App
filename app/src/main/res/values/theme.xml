@@ -6,9 +6,9 @@
 
     <style name="AppTheme.Starting" parent="Theme.SplashScreen">
         <item name="postSplashScreenTheme">@style/AppTheme</item>
-        <item name="android:windowSplashScreenBackground">@color/oui_round_and_bgcolor</item>
-        <item name="androod:windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
-        <item name="android:windowSplashScreenAnimationDuration">1300</item>
+        <item name="windowSplashScreenBackground">@color/oui_round_and_bgcolor</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="windowSplashScreenAnimationDuration">1300</item>
     </style>
         
 </resources>
