@@ -32,10 +32,10 @@
                     android:name="foreground"
                     android:pivotX="0"
                     android:pivotY="0"
-                    android:scaleX="0.017988"
-                    android:scaleY="0.017988"
-                    android:translateX="9.3948"
-                    android:translateY="10.154">
+                    android:scaleX="0.035974"
+                    android:scaleY="0.035974"
+                    android:translateX="6.7897"
+                    android:translateY="8.3080">
 
                     <path
                         android:name="bigA"
