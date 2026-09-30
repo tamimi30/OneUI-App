@@ -32,8 +32,8 @@
                     android:name="foreground"
                     android:pivotX="12"
                     android:pivotY="12"
-                    android:scaleX="0.4"
-                    android:scaleY="0.4">
+                    android:scaleX="0.3675"
+                    android:scaleY="0.3675">
 
                     <path
                         android:name="bigA"
@@ -87,6 +87,17 @@
                 android:propertyName="fillAlpha"
                 android:valueFrom="1.0"
                 android:valueTo="0.6" />
+        </aapt:attr>
+    </target>
+
+    <target android:name="foreground">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="400"
+                android:startOffset="1550"
+                android:propertyName="translateX"
+                android:valueFrom="0"
+                android:valueTo="0" />
         </aapt:attr>
     </target>
 
