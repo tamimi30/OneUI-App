@@ -9,14 +9,12 @@
             android:viewportHeight="24">
 
             <group
-                android:name="main"
                 android:pivotX="12"
                 android:pivotY="12"
                 android:scaleX="1.1"
                 android:scaleY="1.1">
 
                 <group
-                    android:name="squircle"
                     android:pivotX="6.7592"
                     android:pivotY="6.7592"
                     android:scaleX="0.1212"
@@ -29,7 +27,6 @@
                 </group>
 
                 <group
-                    android:name="foreground"
                     android:pivotX="12"
                     android:pivotY="12"
                     android:scaleX="0.3788"
