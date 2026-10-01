@@ -5,7 +5,7 @@
         <item name="postSplashScreenTheme">@style/AppTheme</item>
         <item name="android:windowSplashScreenBackground">@color/oui_round_and_bgcolor</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash_animated</item>
-        <item name="android:windowSplashScreenAnimationDuration">3550</item>
+        <item name="android:windowSplashScreenAnimationDuration">2325</item>
     </style>
         
 </resources>
