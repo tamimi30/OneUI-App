@@ -126,7 +126,7 @@ public class MainActivity extends BaseActivity
         requestNotificationPermissionIfNeeded();
 
         long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
-        long remainingDelay = Math.max(0L, 3325L - elapsedTime);
+        long remainingDelay = Math.max(0L, 3700L - elapsedTime);
 
         Handler splashHandler = new Handler(getMainLooper());
 
@@ -355,10 +355,10 @@ public class MainActivity extends BaseActivity
                     warmupHandler.postDelayed(() -> {
                         if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
                         warmUpScreenSilently(null);
-                    }, 120);
-                }, 120);
-            }, 120);
-        }, 120);
+                    }, 750);
+                }, 750);
+            }, 750);
+        }, 750);
     }
 
     private void warmUpScreenSilently(AppScreen screenToShow) {
