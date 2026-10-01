@@ -92,7 +92,7 @@ public class OperationForegroundService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(dev.oneuiproject.oneui.R.drawable.ic_oui_delete)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText("0/" + total)
                 .setProgress(total, 0, false)
@@ -106,7 +106,7 @@ public class OperationForegroundService extends Service {
     private Notification buildFallbackNotification() {
         ensureChannelCreated();
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(dev.oneuiproject.oneui.R.drawable.ic_oui_delete)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.app_name))
                 .setOngoing(true)
                 .build();
