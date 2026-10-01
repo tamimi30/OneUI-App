@@ -28,8 +28,8 @@
             android:name="foreground"
             android:pivotX="12"
             android:pivotY="12"
-            android:scaleX="0.3675"
-            android:scaleY="0.3675">
+            android:scaleX="0.3788"
+            android:scaleY="0.3788">
 
             <path
                 android:fillType="nonZero"
