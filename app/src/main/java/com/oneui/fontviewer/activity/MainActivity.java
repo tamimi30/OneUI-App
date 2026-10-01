@@ -355,10 +355,10 @@ public class MainActivity extends BaseActivity
                     warmupHandler.postDelayed(() -> {
                         if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
                         warmUpScreenSilently(null);
-                    }, 750);
-                }, 750);
-            }, 750);
-        }, 750);
+                    }, 120);
+                }, 120);
+            }, 120);
+        }, 120);
     }
 
     private void warmUpScreenSilently(AppScreen screenToShow) {
