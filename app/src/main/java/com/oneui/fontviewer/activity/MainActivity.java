@@ -126,7 +126,7 @@ public class MainActivity extends BaseActivity
         requestNotificationPermissionIfNeeded();
 
         long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
-        long remainingDelay = Math.max(0L, 4000L - elapsedTime);
+        long remainingDelay = Math.max(0L, 4500L - elapsedTime);
 
         Handler splashHandler = new Handler(getMainLooper());
 
