@@ -17,10 +17,10 @@
 
                 <group
                     android:name="squircle"
-                    android:pivotX="6.8"
-                    android:pivotY="6.8"
-                    android:scaleX="0.12"
-                    android:scaleY="0.12">
+                    android:pivotX="6.7592"
+                    android:pivotY="6.7592"
+                    android:scaleX="0.1212"
+                    android:scaleY="0.1212">
 
                     <path
                         android:fillColor="@color/primary_color_themed"
@@ -93,7 +93,7 @@
     <target android:name="foreground">
         <aapt:attr name="android:animation">
             <objectAnimator
-                android:duration="400"
+                android:duration="2000"
                 android:startOffset="1550"
                 android:propertyName="translateX"
                 android:valueFrom="0"
