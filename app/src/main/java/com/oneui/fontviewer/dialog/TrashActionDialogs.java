@@ -181,7 +181,7 @@ public final class TrashActionDialogs {
             int total) {
 
         return new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_oui_image)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(progress + "/" + total)
                 .setProgress(total, progress, false)
