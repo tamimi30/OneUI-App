@@ -83,6 +83,7 @@
 	<string name="toast_storage_permission_required">مطلوب إذن التخزين. يرجى منح الوصول.</string>
     <string name="toast_folder_selection_cancelled">تم إلغاء اختيار المجلد.</string>
 	<string name="toast_error_with_message">خطأ: %1$s</string>
+	<string name="error_folder_path_conversion_failed">تعذّر تحويل المجلد المحدد إلى مسار مباشر. يرجى اختيار مجلد في التخزين الداخلي أو الخارجي.</string>
     
     <!-- خطوط النظام -->
     <string name="drawer_system_fonts">خطوط النظام</string>
