@@ -80,9 +80,9 @@
     <string name="local_fonts_select_folder_description">إختر مجلد الخطوط</string>
     <string name="loading_fonts">جارٍ التحميل...</string>
     <string name="action_change_folder">تغيير مجلد الخطوط</string>
-	<string name="font_fragment_permission_denied">صلاحية الوصول للتخزين مطلوبة للبحث عن ملفات الخطوط في جهازك.\n\nيمكنك منح هذه الصلاحية من الإعدادات، أو نسخ ملفات الخطوط يدوياً إلى مجلد المستندات/FontViewer+</string>
 	<string name="toast_storage_permission_required">مطلوب إذن التخزين. يرجى منح الوصول.</string>
     <string name="toast_folder_selection_cancelled">تم إلغاء اختيار المجلد.</string>
+	<string name="toast_error_with_message">خطأ: %1$s</string>
     
     <!-- خطوط النظام -->
     <string name="drawer_system_fonts">خطوط النظام</string>
@@ -99,7 +99,7 @@
     <string name="drawer_trash">سلة المحذوفات</string>
     <string name="toast_prepare_file_to_open">استعد هذا الملف لفتحه</string>
     <string name="trash_items_expiry_info">تظهر العناصر الأيام المتبقية حتى يتم حذفها نهائياً.</string>
-    <string name="trash_empty_title">لا توجد ملفات</string>
+    <string name="trash_empty_title">سلة المحذوفات فارغة</string>
     <string name="trash_empty_description">ستبقى الملفات التي تقوم بحذفها في سلة المحذوفات لمدة ٣٠ يوماً قبل حذفها نهائياً.</string>
     <string name="action_empty_trash">إفراغ</string>
     
