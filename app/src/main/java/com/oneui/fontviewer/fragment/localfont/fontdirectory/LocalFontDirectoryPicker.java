@@ -7,6 +7,8 @@ import android.util.Log;
 import androidx.fragment.app.Fragment;
 import java.io.File;
 
+import com.oneui.fontviewer.R;
+
 public class LocalFontDirectoryPicker {
     
     private static final String TAG = "LocalFontDirectoryPicker";
@@ -73,7 +75,7 @@ public class LocalFontDirectoryPicker {
                         Log.e(TAG, "Could not convert URI to direct path: " + treeUri);
                         if (listener != null) {
                             listener.onDirectorySelectionError(
-                                new Exception("Could not convert selected folder to direct path. Please select a folder in internal or external storage.")
+                                new Exception(fragment.getString(R.string.error_folder_path_conversion_failed))
                             );
                         }
                     }
