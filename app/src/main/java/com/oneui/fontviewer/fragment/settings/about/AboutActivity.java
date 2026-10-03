@@ -23,7 +23,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
     appInfoLayout = findViewById(R.id.appInfoLayout);
 
-    setButtonsWidth(0.67f,
+    setButtonsWidth(0.68f,
             R.id.button_status,
             R.id.button_licenses,
             R.id.app_info_update);
