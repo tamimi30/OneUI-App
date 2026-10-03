@@ -149,7 +149,7 @@
             
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/select_folder_button"
-                android:layout_width="200dp"
+                android:layout_width="215dp"
                 android:backgroundTint="?attr/colorPrimary"
                 style="@style/OneUI.AppInfoButton"
                 android:textSize="18sp"
