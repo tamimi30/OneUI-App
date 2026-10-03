@@ -10,7 +10,7 @@
         <item name="backgroundTint">@color/fab_bg_color</item>
         <item name="fabSize">normal</item>
         <item name="elevation">4dp</item>
-        <item name="borderWidth">1dp</item>
+        <item name="borderWidth">0.5dp</item>
         <item name="rippleColor">@color/ripple_color</item>
         <item name="showMotionSpec">@animator/mtrl_fab_show_motion_spec</item>
     </style>
