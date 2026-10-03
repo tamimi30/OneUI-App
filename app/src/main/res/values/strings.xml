@@ -85,6 +85,7 @@
     <string name="toast_storage_permission_required">Storage permission required. Please grant access.</string>
     <string name="toast_folder_selection_cancelled">Folder selection cancelled.</string>
 	<string name="toast_error_with_message">Error: %1$s</string>
+	<string name="error_folder_path_conversion_failed">Could not convert selected folder to direct path. Please select a folder in internal or external storage.</string>
     
     <!-- خطوط النظام -->
     <string name="drawer_system_fonts">System fonts</string>
