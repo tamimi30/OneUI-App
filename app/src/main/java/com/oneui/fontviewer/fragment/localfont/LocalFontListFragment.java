@@ -154,11 +154,11 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             }
 
             public void onDirectorySelectionCancelled() {
-                Toast.makeText(mContext, "Folder selection cancelled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, R.string.toast_folder_selection_cancelled, Toast.LENGTH_SHORT).show();
             }
 
             public void onDirectorySelectionError(Exception e) {
-                Toast.makeText(mContext, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, getString(R.string.toast_error_with_message, e.getMessage()), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -170,11 +170,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             }
 
             public void onPermissionDenied() {
-                Toast.makeText(mContext, getString(R.string.font_fragment_permission_denied), Toast.LENGTH_LONG).show();
-            }
-
-            public void onManageStoragePermissionRequired() {
-                Toast.makeText(mContext, "Storage permission required. Please grant access.", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, getString(R.string.toast_storage_permission_required), Toast.LENGTH_LONG).show();
             }
         });
     }
