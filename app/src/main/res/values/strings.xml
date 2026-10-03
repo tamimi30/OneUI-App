@@ -61,6 +61,7 @@
 	<string name="toast_no_internet_connection">The metadata has not been translated, no internet connection.</string>
 	<string name="toast_translation_api_error">Metadata translation failed, translation service unavailable.</string>
     <string name="toast_invalid_font_size">Invalid value entered.</string>
+	<string name="toast_font_name_extraction_warning">Font name could not be extracted.</string>
 	<string name="font_size_dialog_tip">Click the number to adjust the text size accurately.</string>
 	
 	<string name="axis_info_button_description">Axis info</string>
@@ -82,6 +83,8 @@
     <string name="loading_fonts">Loading…</string>
     <string name="action_change_folder">Change fonts folder</string>
 	<string name="font_fragment_permission_denied">Storage permission is required to search for font files on your device.\n\nYou can grant this permission in Settings, or manually copy font files to Documents/FontViewer+ folder.</string>
+    <string name="toast_storage_permission_required">Storage permission required. Please grant access.</string>
+    <string name="toast_folder_selection_cancelled">Folder selection cancelled.</string>
     
     <!-- خطوط النظام -->
     <string name="drawer_system_fonts">System fonts</string>
@@ -98,7 +101,7 @@
     <string name="drawer_trash">Trash</string>
     <string name="toast_prepare_file_to_open">Prepare this file to open</string>
     <string name="trash_items_expiry_info">The items are displayed with the remaining days to be permanently deleted.</string>
-    <string name="trash_empty_title">No files</string>
+    <string name="trash_empty_title">The Trash is empty</string>
     <string name="trash_empty_description">Any files you delete will stay in the Trash for 30 days before being permanently deleted.</string>
     <string name="action_empty_trash">Empty</string>
     
@@ -136,6 +139,6 @@
     <string name="sort_descending">Descending</string>
 
     <string name="exit_on_double_back">Press again to exit</string>
-    <string name="no_fonts_found">    </string>
+    <string name="no_fonts_found"></string>
 
 </resources>
