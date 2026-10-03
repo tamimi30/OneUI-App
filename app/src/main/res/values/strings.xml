@@ -82,7 +82,6 @@
     <string name="local_fonts_select_folder_description">Select the fonts folder</string>
     <string name="loading_fonts">Loading…</string>
     <string name="action_change_folder">Change fonts folder</string>
-	<string name="font_fragment_permission_denied">Storage permission is required to search for font files on your device.\n\nYou can grant this permission in Settings, or manually copy font files to Documents/FontViewer+ folder.</string>
     <string name="toast_storage_permission_required">Storage permission required. Please grant access.</string>
     <string name="toast_folder_selection_cancelled">Folder selection cancelled.</string>
 	<string name="toast_error_with_message">Error: %1$s</string>
