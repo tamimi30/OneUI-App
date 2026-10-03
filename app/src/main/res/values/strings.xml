@@ -26,6 +26,7 @@
     <string name="settings_report_issue">Report bug or improvement</string>
     <string name="settings_report_issue_email_subject">Bug report / Improvement suggestion</string>
     <string name="feedback_email" translatable="false">feedback@example.com</string>
+	<string name="settings_preview_text_updated">Preview text updated</string>
 	
 	<!-- حول التطبيق -->
 	<string name="about_title">About Font Viewer Plus</string>
