@@ -804,7 +804,7 @@ public class FontViewerFragment extends Fragment {
                         loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
 
                         Toast.makeText(requireContext(),
-                            "Warning: Font name could not be extracted",
+                            R.string.toast_font_name_extraction_warning,
                             Toast.LENGTH_SHORT).show();
                     });
                 } else {
