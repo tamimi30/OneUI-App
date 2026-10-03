@@ -12,7 +12,6 @@
     <com.oneui.fontviewer.widget.OneUiButton
         style="@style/OneUI.AppInfoButton"
         android:minHeight="52dp"
-        android:minWidth="400dp"
         android:onClick="changeStatus"
         android:text="@string/about_button_status" />
 
