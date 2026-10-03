@@ -266,7 +266,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private void handleSettingsEvent(SettingsViewModel.SettingsEvent event) {
         switch (event.getType()) {
             case SHOW_TOAST:
-                if (event.getMessage() != null) {
+                if (event.getMessageResId() != 0) {
+                    Toast.makeText(mContext, event.getMessageResId(), Toast.LENGTH_SHORT).show();
+                } else if (event.getMessage() != null) {
                     Toast.makeText(mContext, event.getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 break;
