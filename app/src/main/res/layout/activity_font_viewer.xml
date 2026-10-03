@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="5dp"
-            android:layout_gravity="center_vertical">
+            android:layout_gravity="center">
 
             <FrameLayout
                 android:id="@+id/btn_bold_container"
