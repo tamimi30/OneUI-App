@@ -61,6 +61,7 @@
 	<string name="toast_no_internet_connection">لم تتم ترجمة البيانات الوصفية، لا يتوفر اتصال بالانترنت</string>
 	<string name="toast_translation_api_error">فشلت ترجمة البيانات الوصفية، خدمة الترجمة غير متوفرة.</string>
 	<string name="toast_invalid_font_size">تم إدخال قيمة غير صالحة.</string>
+	<string name="toast_font_name_extraction_warning">تعذّر استخراج اسم الخط.</string>
 	<string name="font_size_dialog_tip">إضغط على الرقم لتعديل حجم النص بدقة.</string>
 
 	<!-- TODO: fill in the explanatory text for each axis -->
@@ -80,6 +81,8 @@
     <string name="loading_fonts">جارٍ التحميل...</string>
     <string name="action_change_folder">تغيير مجلد الخطوط</string>
 	<string name="font_fragment_permission_denied">صلاحية الوصول للتخزين مطلوبة للبحث عن ملفات الخطوط في جهازك.\n\nيمكنك منح هذه الصلاحية من الإعدادات، أو نسخ ملفات الخطوط يدوياً إلى مجلد المستندات/FontViewer+</string>
+	<string name="toast_storage_permission_required">مطلوب إذن التخزين. يرجى منح الوصول.</string>
+    <string name="toast_folder_selection_cancelled">تم إلغاء اختيار المجلد.</string>
     
     <!-- خطوط النظام -->
     <string name="drawer_system_fonts">خطوط النظام</string>
