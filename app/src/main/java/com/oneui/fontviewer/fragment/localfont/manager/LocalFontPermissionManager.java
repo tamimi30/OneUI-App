@@ -25,7 +25,6 @@ public class LocalFontPermissionManager {
     public interface PermissionResultListener {
         void onPermissionGranted();
         void onPermissionDenied();
-        void onManageStoragePermissionRequired();
     }
     
     public LocalFontPermissionManager(Fragment fragment) {
@@ -52,9 +51,6 @@ public class LocalFontPermissionManager {
         }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
-                if (listener != null) {
-                    listener.onManageStoragePermissionRequired();
-                }
                 requestManageStoragePermission();
             }
         } else {
