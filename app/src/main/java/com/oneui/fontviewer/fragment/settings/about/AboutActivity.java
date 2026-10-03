@@ -23,7 +23,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
     appInfoLayout = findViewById(R.id.appInfoLayout);
 
-    setButtonsWidth(0.65f, R.id.button_status, R.id.button_licenses);
+    setButtonsWidth(0.66f, R.id.button_status, R.id.button_licenses);
 
     appInfoLayout.addOptionalText("Extra 1");
     appInfoLayout.addOptionalText("Extra 2");
