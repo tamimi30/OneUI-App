@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
                 headerVersion.setText(versionText);
             }
 
-            TextView bottomVersion = view.findViewById(R.id.bottom_app_version);
+            TextView bottomVersion = view.findViewById(R.id.about_bottom_app_version);
             if (bottomVersion != null) {
                 bottomVersion.setText(versionText);
             }
