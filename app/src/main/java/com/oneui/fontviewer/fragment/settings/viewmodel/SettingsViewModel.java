@@ -5,6 +5,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -13,6 +14,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 
@@ -299,7 +301,7 @@ public class SettingsViewModel extends AndroidViewModel {
                         Log.d(TAG, "Preview text updated");
                         settingsEvent.setValue(new SettingsEvent(
                             SettingsEventType.SHOW_TOAST,
-                            "Preview text updated"
+                            R.string.settings_preview_text_updated
                         ));
                     },
                     error -> Log.e(TAG, "Error setting preview text", error)
@@ -318,15 +320,25 @@ public class SettingsViewModel extends AndroidViewModel {
     public static class SettingsEvent {
         private final SettingsEventType type;
         private final String message;
+        private final int messageResId;
         private boolean handled = false;
 
         public SettingsEvent(SettingsEventType type) {
-            this(type, null);
+            this(type, null, 0);
         }
 
         public SettingsEvent(SettingsEventType type, String message) {
+            this(type, message, 0);
+        }
+
+        public SettingsEvent(SettingsEventType type, @StringRes int messageResId) {
+            this(type, null, messageResId);
+        }
+
+        private SettingsEvent(SettingsEventType type, String message, int messageResId) {
             this.type = type;
             this.message = message;
+            this.messageResId = messageResId;
         }
 
         public SettingsEventType getType() {
@@ -335,6 +347,10 @@ public class SettingsViewModel extends AndroidViewModel {
 
         public String getMessage() {
             return message;
+        }
+
+        public int getMessageResId() {
+            return messageResId;
         }
 
         public boolean getContentIfNotHandled() {
