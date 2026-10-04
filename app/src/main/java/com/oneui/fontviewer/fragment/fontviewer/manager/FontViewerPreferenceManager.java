@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
@@ -235,6 +238,26 @@ public class FontViewerPreferenceManager {
             return getFontMono(defaultValue);
         }
         return defaultValue;
+    }
+
+    // ★ وسوم المحاور المعروضة بوضع SeekBar (رقم القيمة). تُحفظ كمجموعة واحدة، فتبقى بين الجلسات ★
+    public void saveSeekBarAxes(Set<String> axisTags) {
+        dataStore.setViewerSeekBarAxes(axisTags)
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    prefs -> Log.d(TAG, "Saved seekbar axes: " + axisTags),
+                    error -> Log.e(TAG, "Error saving seekbar axes: " + error.getMessage())
+                );
+    }
+
+    public Set<String> getSeekBarAxes() {
+        try {
+            Set<String> value = dataStore.getViewerSeekBarAxes().blockingFirst();
+            return value != null ? value : new HashSet<>();
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting seekbar axes: " + e.getMessage());
+            return new HashSet<>();
+        }
     }
     
     
