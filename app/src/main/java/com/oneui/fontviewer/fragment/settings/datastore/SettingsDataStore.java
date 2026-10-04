@@ -8,10 +8,6 @@ import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStore;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 
@@ -67,9 +63,6 @@ public class SettingsDataStore {
     private final Preferences.Key<Float> KEY_VIEWER_FONT_ROUNDNESS;
     private final Preferences.Key<Float> KEY_VIEWER_FONT_ITALIC_AXIS;
     private final Preferences.Key<Float> KEY_VIEWER_FONT_MONO;
-
-    // ★ وسوم المحاور التي اختار المستخدم عرضها بوضع SeekBar (رقم القيمة) بدل الـ Spinner ★
-    private final Preferences.Key<Set<String>> KEY_VIEWER_SEEKBAR_AXES;
     
     // Default values
     public static final int DEFAULT_LANGUAGE_MODE = 0;
@@ -138,9 +131,6 @@ public class SettingsDataStore {
         KEY_VIEWER_FONT_ROUNDNESS   = PreferencesKeys.floatKey("viewer_font_roundness");
         KEY_VIEWER_FONT_ITALIC_AXIS = PreferencesKeys.floatKey("viewer_font_italic_axis");
         KEY_VIEWER_FONT_MONO        = PreferencesKeys.floatKey("viewer_font_mono");
-
-        // ★ Initialize SeekBar-mode axes key ★
-        KEY_VIEWER_SEEKBAR_AXES = PreferencesKeys.stringSetKey("viewer_seekbar_axes");
     }
     
     public static SettingsDataStore getInstance(Context context) {
@@ -625,25 +615,6 @@ public class SettingsDataStore {
             prefs.get(KEY_VIEWER_FONT_MONO) : DEFAULT_VIEWER_FONT_MONO
         );
     }
-
-    // ════════════════════════════════════════════════════════════
-    // Font Viewer - Axes shown in SeekBar mode
-    // ════════════════════════════════════════════════════════════
-
-    public Flowable<Set<String>> getViewerSeekBarAxes() {
-        return dataStore.data().map(prefs -> {
-            Set<String> axes = prefs.get(KEY_VIEWER_SEEKBAR_AXES);
-            return axes != null ? axes : Collections.<String>emptySet();
-        });
-    }
-
-    public Single<Preferences> setViewerSeekBarAxes(Set<String> axes) {
-        return dataStore.updateDataAsync(prefs -> {
-            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            mutablePrefs.set(KEY_VIEWER_SEEKBAR_AXES, new HashSet<>(axes));
-            return Single.just(mutablePrefs);
-        });
-    }
     
     // ════════════════════════════════════════════════════════════
     // Clear All
@@ -656,4 +627,4 @@ public class SettingsDataStore {
             return Single.just(mutablePrefs);
         });
     }
-                                                         }
+                    }

@@ -33,19 +33,15 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.oneui.fontviewer.dialog.FontSizeDialog;
 import com.oneui.fontviewer.dialog.AxisInfoDialog;
-import com.oneui.fontviewer.dialog.AxisValueDialog;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.fontviewer.utils.VariableFontHelper;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
@@ -91,9 +87,6 @@ public class FontViewerFragment extends Fragment {
 
     private static float sSessionFontSize = -1f;
 
-    // المحاور التي تدعم وضع SeekBar (زر التبديل + ديالوج القيمة). لإضافة محور لاحقاً أضف وسمه هنا فقط.
-    private static final List<String> SEEKBAR_AXES = Arrays.asList(VariableFontHelper.AXIS_WGHT);
-
     private TextView previewSentence;
     private TextView weightLabelText;
 
@@ -120,8 +113,6 @@ public class FontViewerFragment extends Fragment {
     private final Map<String, Float> currentAxisValues = new LinkedHashMap<>();
     // أنيميشن منفصل لكل محور، حتى يمكن تحريك أكثر من محور في آنٍ واحد دون أن يتعارض أحدهما مع الآخر
     private final Map<String, ValueAnimator> axisAnimators = new HashMap<>();
-    // {min, default, max} لكل محور مدعوم، مقروءة من جدول fvar (يحتاجها ديالوج الـ SeekBar)
-    private final Map<String, float[]> currentAxisRanges = new HashMap<>();
 
     private String currentWeightWidthLabel;
 
@@ -138,29 +129,17 @@ public class FontViewerFragment extends Fragment {
     /**
      * تمثل ربط عنصر واجهة واحد بمحور من محاور الخط المتغير (الحاوية + Spinner).
      * الحاوية نفسها هي جذر vf_axis_item.xml المنفوخ لهذا المحور.
-     * وتضم أيضاً رقم القيمة وزر التبديل بين وضعي Spinner وSeekBar (يظهر للمحاور المدعومة فقط).
      */
     private static class AxisSpinnerUi {
         final String tag;
-        final String label;
         final View container;
         final AppCompatSpinner spinner;
-        final TextView valueText;
-        final View toggleButton;
         List<VariableFontHelper.VariableInstance> instances = new ArrayList<>();
-        // true: يظهر رقم القيمة بدل الـ Spinner، والنقر عليه يفتح ديالوج الـ SeekBar
-        boolean seekBarMode = false;
-        // آخر موضع ضبطناه برمجياً أو اختاره المستخدم في الـ Spinner، لتجاهل الاختيار البرمجي
-        int shownIndex = 0;
 
-        AxisSpinnerUi(String tag, String label, View container, AppCompatSpinner spinner,
-                      TextView valueText, View toggleButton) {
+        AxisSpinnerUi(String tag, View container, AppCompatSpinner spinner) {
             this.tag = tag;
-            this.label = label;
             this.container = container;
             this.spinner = spinner;
-            this.valueText = valueText;
-            this.toggleButton = toggleButton;
         }
     }
 
@@ -459,12 +438,6 @@ public class FontViewerFragment extends Fragment {
         allAxisUis.add(gradeAxisUi);
         allAxisUis.add(roundnessAxisUi);
         allAxisUis.add(monoAxisUi);
-
-        // استعادة وضع العرض (Spinner أو SeekBar) الذي تركه المستخدم لكل محور في الجلسة السابقة
-        Set<String> savedSeekBarAxes = preferenceManager.getSeekBarAxes();
-        for (AxisSpinnerUi ui : allAxisUis) {
-            ui.seekBarMode = savedSeekBarAxes.contains(ui.tag);
-        }
     }
 
     /**
@@ -472,7 +445,6 @@ public class FontViewerFragment extends Fragment {
      *   اسم المحور وزر المعلومات الخاص به، ثم يضيفها الى صف المحاور. هذا يحدث مرة واحدة فقط
      *   عند إنشاء الـ Fragment (initViews)، وليس عند كل فتح خط، فلا توجد أي كلفة أداء إضافية
      *   عند فتح الخطوط لاحقاً — نفس عدد الـ Views ونفس منطق الإظهار/الإخفاء كما كان سابقاً ★
-     *   ويربط كذلك زر التبديل بين Spinner وSeekBar ورقم القيمة (اللذين يظهران للمحاور المدعومة فقط).
      */
     private AxisSpinnerUi inflateAxisItem(ViewGroup parent, String axisTag, String labelText,
                                            String infoTitle, int infoImageRes, int infoDescriptionRes) {
@@ -485,8 +457,6 @@ public class FontViewerFragment extends Fragment {
         }
 
         AppCompatSpinner spinner = item.findViewById(R.id.axis_spinner);
-        TextView valueText = item.findViewById(R.id.axis_value_text);
-        View toggleButton = item.findViewById(R.id.axis_mode_toggle_container);
 
         View infoContainer = item.findViewById(R.id.axis_info_icon_container);
         if (infoContainer != null) {
@@ -496,16 +466,7 @@ public class FontViewerFragment extends Fragment {
 
         parent.addView(item);
 
-        AxisSpinnerUi ui = new AxisSpinnerUi(axisTag, labelText, item, spinner, valueText, toggleButton);
-
-        if (toggleButton != null) {
-            toggleButton.setOnClickListener(v -> toggleAxisMode(ui));
-        }
-        if (valueText != null) {
-            valueText.setOnClickListener(v -> showAxisValueDialog(ui));
-        }
-
-        return ui;
+        return new AxisSpinnerUi(axisTag, item, spinner);
     }
 
 
@@ -600,8 +561,6 @@ public class FontViewerFragment extends Fragment {
                 Map<String, List<VariableFontHelper.VariableInstance>> axisInstancesMap = new LinkedHashMap<>();
                 // القيم المختارة فعلياً لكل محور مدعوم
                 Map<String, Float> resolvedAxisValues = new LinkedHashMap<>();
-                // {min, default, max} لكل محور مدعوم (يحتاجها ديالوج الـ SeekBar)
-                Map<String, float[]> resolvedAxisRanges = new HashMap<>();
 
                 if (isVar) {
                     axisInstancesMap.put(VariableFontHelper.AXIS_WGHT, VariableFontHelper.extractVariableInstances(fontFile, currentTtcIndex));
@@ -621,13 +580,7 @@ public class FontViewerFragment extends Fragment {
 
                         Float fallbackBoxed = AXIS_FALLBACK_DEFAULTS.get(axisTag);
                         float fallback = fallbackBoxed != null ? fallbackBoxed : 0f;
-
-                        // قراءة {min, default, max} من fvar مرة واحدة: القيمة الافتراضية للمحور ومداه لوضع الـ SeekBar
-                        float[] axisRange = VariableFontHelper.readAxisRangeFromFvar(fontFile, currentTtcIndex, axisTag);
-                        if (axisRange != null) {
-                            resolvedAxisRanges.put(axisTag, axisRange);
-                        }
-                        float fontDefault = axisRange != null ? axisRange[1] : fallback;
+                        float fontDefault = VariableFontHelper.readAxisDefaultValue(fontFile, currentTtcIndex, axisTag, fallback);
 
                         float resolvedValue;
                         if (restoreAxisValues != null && restoreAxisValues.containsKey(axisTag)) {
@@ -683,7 +636,6 @@ public class FontViewerFragment extends Fragment {
                     final boolean finalIsVariable  = isVar;
                     final Map<String, List<VariableFontHelper.VariableInstance>> finalInstancesMap = axisInstancesMap;
                     final Map<String, Float> finalResolvedValues = resolvedAxisValues;
-                    final Map<String, float[]> finalRanges = resolvedAxisRanges;
 
                     mainHandler.post(() -> {
                         currentTypeface = finalTypeface;
@@ -691,9 +643,6 @@ public class FontViewerFragment extends Fragment {
 
                         currentAxisValues.clear();
                         currentAxisValues.putAll(finalResolvedValues);
-
-                        currentAxisRanges.clear();
-                        currentAxisRanges.putAll(finalRanges);
 
                         if (finalIsVariable && !finalResolvedValues.isEmpty()) {
                             setupAxisSpinners(finalInstancesMap);
@@ -780,11 +729,16 @@ public class FontViewerFragment extends Fragment {
         Float currentValue = currentAxisValues.get(ui.tag);
         int selectedIndex = 0;
         if (currentValue != null) {
-            selectedIndex = findNearestInstanceIndex(instances, currentValue);
+            float closestDiff = Float.MAX_VALUE;
+            for (int i = 0; i < instances.size(); i++) {
+                float diff = Math.abs(instances.get(i).value - currentValue);
+                if (diff < closestDiff) {
+                    closestDiff = diff;
+                    selectedIndex = i;
+                }
+            }
         }
-        ui.shownIndex = selectedIndex;
         ui.spinner.setSelection(selectedIndex);
-        applyAxisMode(ui);
 
         final List<VariableFontHelper.VariableInstance> finalInstances = instances;
         ui.spinner.post(() -> {
@@ -792,11 +746,6 @@ public class FontViewerFragment extends Fragment {
             ui.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    // الاختيار البرمجي (نفس الموضع الذي ضبطناه نحن) يُتجاهل، فلا تقفز قيمة مثل 550 إلى 500.
-                    // فقط تغيير المستخدم الفعلي لموضع الـ Spinner يُطبَّق.
-                    if (position == ui.shownIndex) return;
-                    ui.shownIndex = position;
-
                     if (position >= 0 && position < finalInstances.size()) {
                         onAxisValueChanged(ui.tag, finalInstances.get(position));
                     }
@@ -805,162 +754,6 @@ public class FontViewerFragment extends Fragment {
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}
             });
-        });
-    }
-
-    /** يعيد فهرس أقرب قيمة مسمّاة (مثل Medium) إلى قيمة المحور الحالية (مثل 550). */
-    private int findNearestInstanceIndex(List<VariableFontHelper.VariableInstance> instances, float value) {
-        int nearest = 0;
-        float closestDiff = Float.MAX_VALUE;
-        for (int i = 0; i < instances.size(); i++) {
-            float diff = Math.abs(instances.get(i).value - value);
-            if (diff < closestDiff) {
-                closestDiff = diff;
-                nearest = i;
-            }
-        }
-        return nearest;
-    }
-
-    private boolean isSeekBarAvailable(AxisSpinnerUi ui) {
-        float[] range = currentAxisRanges.get(ui.tag);
-        return SEEKBAR_AXES.contains(ui.tag) && range != null && range[2] > range[0];
-    }
-
-    /** يعرض إما الـ Spinner أو رقم القيمة، ويُظهر زر التبديل فقط للمحاور المدعومة. */
-    private void applyAxisMode(AxisSpinnerUi ui) {
-        boolean canUseSeekBar = isSeekBarAvailable(ui);
-        boolean showValue = ui.seekBarMode && canUseSeekBar;
-
-        if (ui.toggleButton != null) {
-            ui.toggleButton.setVisibility(canUseSeekBar ? View.VISIBLE : View.GONE);
-        }
-        if (ui.spinner != null) {
-            // INVISIBLE وليس GONE: يحافظ الـ Spinner على حجمه فلا يتغير حجم البطاقة عند التبديل
-            ui.spinner.setVisibility(showValue ? View.INVISIBLE : View.VISIBLE);
-        }
-        if (ui.valueText != null) {
-            ui.valueText.setVisibility(showValue ? View.VISIBLE : View.GONE);
-            if (showValue) updateAxisValueText(ui);
-        }
-    }
-
-    private void updateAxisValueText(AxisSpinnerUi ui) {
-        Float value = currentAxisValues.get(ui.tag);
-        if (ui.valueText != null && value != null) {
-            ui.valueText.setText(String.valueOf(Math.round(value)));
-        }
-    }
-
-    private void toggleAxisMode(AxisSpinnerUi ui) {
-        if (ui.seekBarMode) {
-            ui.seekBarMode = false;
-            applyAxisMode(ui);
-            snapAxisToNearestInstance(ui);
-            saveSeekBarModes();
-        } else if (isSeekBarAvailable(ui)) {
-            ui.seekBarMode = true;
-            applyAxisMode(ui);
-            saveSeekBarModes();
-        }
-    }
-
-    /**
-     * يحفظ وسوم المحاور التي هي حالياً بوضع SeekBar. يشمل كل المحاور حتى التي لا يدعمها الخط المفتوح،
-     * فلا يضيع اختيار المستخدم لمحور عند فتح خط آخر لا يحتويه.
-     */
-    private void saveSeekBarModes() {
-        if (allAxisUis == null) return;
-
-        Set<String> seekBarTags = new HashSet<>();
-        for (AxisSpinnerUi ui : allAxisUis) {
-            if (ui.seekBarMode) seekBarTags.add(ui.tag);
-        }
-        preferenceManager.saveSeekBarAxes(seekBarTags);
-    }
-
-    /** عند الرجوع إلى الـ Spinner: تقريب القيمة (مثل 550) إلى أقرب اسم (Medium) وتطبيقه فعلياً. */
-    private void snapAxisToNearestInstance(AxisSpinnerUi ui) {
-        Float value = currentAxisValues.get(ui.tag);
-        if (value == null || ui.instances == null || ui.instances.isEmpty()) return;
-
-        int nearest = findNearestInstanceIndex(ui.instances, value);
-        ui.shownIndex = nearest;
-        ui.spinner.setSelection(nearest);
-        onAxisValueChanged(ui.tag, ui.instances.get(nearest));
-    }
-
-    private void showAxisValueDialog(AxisSpinnerUi ui) {
-        if (!isAdded()) return;
-
-        ValueAnimator running = axisAnimators.get(ui.tag);
-        if (running != null && running.isRunning()) {
-            running.cancel();
-        }
-
-        float[] range = currentAxisRanges.get(ui.tag);
-        Float current = currentAxisValues.get(ui.tag);
-        if (range == null || current == null || currentFontPath == null) return;
-
-        final float originalValue = current;
-
-        AxisValueDialog dialog = new AxisValueDialog(
-                requireContext(), ui.label, originalValue, range[0], range[2]);
-
-        dialog.setListener(new AxisValueDialog.Listener() {
-            @Override
-            public void onPreview(float value) {
-                applyAxisValueLive(ui.tag, value);
-                updateAxisValueText(ui);
-            }
-
-            @Override
-            public void onConfirmed(float value) {
-                applyAxisValueLive(ui.tag, value);
-                updateAxisValueText(ui);
-                preferenceManager.saveFontAxisValue(ui.tag, value);
-                rebuildTypefaceAsync();
-            }
-
-            @Override
-            public void onCancelled() {
-                applyAxisValueLive(ui.tag, originalValue);
-                updateAxisValueText(ui);
-            }
-        });
-        dialog.show();
-    }
-
-    /** يطبّق قيمة المحور على المعاينة فوراً (بدون حفظ ولا إعادة بناء الـ Typeface). */
-    private void applyAxisValueLive(String axisTag, float value) {
-        currentAxisValues.put(axisTag, value);
-        if (previewSentence != null) {
-            previewSentence.setFontVariationSettings(
-                    VariableFontHelper.buildVariationSettingsString(currentAxisValues));
-        }
-    }
-
-    /** يبني الـ Typeface النهائي في الخلفية بالقيم الحالية (بعد تأكيد الديالوج). */
-    private void rebuildTypefaceAsync() {
-        if (currentFontPath == null) return;
-
-        final String path = currentFontPath;
-        final File fontFile = new File(path);
-        final boolean system = isSystemFont;
-        final int ttcIndex = currentTtcIndex;
-        final Map<String, Float> snapshot = new LinkedHashMap<>(currentAxisValues);
-
-        bgExecutor.execute(() -> {
-            Typeface finalTypeface;
-            if (system) {
-                finalTypeface = SystemFontCache.getInstance()
-                        .getTypefaceWithAxes(path, snapshot, ttcIndex);
-            } else {
-                finalTypeface = VariableFontHelper.createTypefaceWithAxes(fontFile, snapshot, ttcIndex);
-            }
-            if (finalTypeface != null) {
-                mainHandler.post(() -> currentTypeface = finalTypeface);
-            }
         });
     }
 
@@ -1084,7 +877,6 @@ public class FontViewerFragment extends Fragment {
         originalFontPath        = null;
         isVariableFont          = false;
         currentAxisValues.clear();
-        currentAxisRanges.clear();
         currentTtcIndex         = 0;
         isSystemFont            = false;
         currentWeightWidthLabel  = null;
@@ -1211,4 +1003,4 @@ public class FontViewerFragment extends Fragment {
     public boolean hasFontSelected() {
         return currentFontPath != null && !currentFontPath.isEmpty();
     }
-    }
+            }
