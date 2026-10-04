@@ -3,6 +3,8 @@
 	
     <string name="app_name">Font Viewer Plus</string>
     <string name="app_subtitle">Modern One UI Experience</string>
+
+	<string name="axis_mode_toggle_description">التبديل بين القائمة والشريط</string>
     
     <!-- الإعدادات -->
     <string name="drawer_settings">Settings</string>
