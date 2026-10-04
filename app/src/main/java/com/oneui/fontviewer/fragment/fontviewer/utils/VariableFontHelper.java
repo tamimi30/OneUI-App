@@ -309,7 +309,7 @@ public class VariableFontHelper {
      * يقرأ الحد الأدنى والقيمة الافتراضية والحد الأقصى لمحور معيّن (بالبحث عن وسمه) من جدول fvar.
      * يعيد null اذا كان هذا المحور غير موجود في الخط (اي أن الخط لا يدعمه).
      */
-    private static float[] readAxisRangeFromFvar(File fontFile, int ttcIndex, String targetTag) {
+    public static float[] readAxisRangeFromFvar(File fontFile, int ttcIndex, String targetTag) {
         try (RandomAccessFile raf = new RandomAccessFile(fontFile, "r")) {
             byte[] header = new byte[4];
             raf.read(header);
@@ -532,4 +532,4 @@ public class VariableFontHelper {
             }
         }
     }
-                        }
+                           }
