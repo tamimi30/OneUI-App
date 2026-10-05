@@ -87,6 +87,12 @@ public class MainActivity extends BaseActivity
         }
 
         setContentView(R.layout.activity_main);
+        
+        if (Build.VERSION.SDK_INT >= 33) {
+        setTaskDescription(new android.app.ActivityManager.TaskDescription.Builder()
+            .setBackgroundColor(getColor(R.color.oui_round_and_bgcolor))
+            .build());
+    }
 
         // التحقق مما إذا كان هذا فتحاً جديداً للتطبيق (Cold Start) أم إعادة بناء بسبب تغيير اللغة أو الثيم (Hot Start).
         // عند إعادة البناء، البيانات والواجهات محفوظة مسبقًا، لذا نتخطى الانتظار الاصطناعي فورًا
@@ -414,8 +420,6 @@ public class MainActivity extends BaseActivity
 
                     if (screen == AppScreen.FONT_VIEWER) {
                         Intent intent = new Intent(MainActivity.this, FontViewerActivity.class);
-                        // إضافة هذه العلامة لإخبار الشاشة بأن الفتح تم من درج التنقل
-                        intent.putExtra("is_from_drawer", true); 
                         startActivity(intent);
                         return false;
                     }
