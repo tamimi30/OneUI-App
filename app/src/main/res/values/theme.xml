@@ -9,6 +9,8 @@
         <item name="windowSplashScreenBackground">@color/oui_round_and_bgcolor</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
         <item name="windowSplashScreenAnimationDuration">2900</item>
+        <item name="android:colorBackground">@color/oui_round_and_bgcolor</item>
+        <item name="android:windowBackground">@color/oui_round_and_bgcolor</item>
     </style>
         
 </resources>
