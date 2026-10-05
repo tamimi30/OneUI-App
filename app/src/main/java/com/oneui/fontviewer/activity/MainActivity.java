@@ -80,19 +80,13 @@ public class MainActivity extends BaseActivity
 
         super.onCreate(savedInstanceState);
 
-      //  splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
+       // splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
         if (android.os.Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out);
         }
 
         setContentView(R.layout.activity_main);
-        
-        if (Build.VERSION.SDK_INT >= 33) {
-        setTaskDescription(new android.app.ActivityManager.TaskDescription.Builder()
-            .setBackgroundColor(0xFFFF0000)
-            .build());
-    }
 
         // التحقق مما إذا كان هذا فتحاً جديداً للتطبيق (Cold Start) أم إعادة بناء بسبب تغيير اللغة أو الثيم (Hot Start).
         // عند إعادة البناء، البيانات والواجهات محفوظة مسبقًا، لذا نتخطى الانتظار الاصطناعي فورًا
@@ -420,6 +414,8 @@ public class MainActivity extends BaseActivity
 
                     if (screen == AppScreen.FONT_VIEWER) {
                         Intent intent = new Intent(MainActivity.this, FontViewerActivity.class);
+                        // إضافة هذه العلامة لإخبار الشاشة بأن الفتح تم من درج التنقل
+                        intent.putExtra("is_from_drawer", true); 
                         startActivity(intent);
                         return false;
                     }
