@@ -2,6 +2,7 @@ package com.oneui.fontviewer.fragment.fontviewer;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -36,6 +37,7 @@ public class FontViewerActivity extends BaseActivity
     public static final String EXTRA_TTC_INDEX          = "extra_ttc_index";
     public static final String EXTRA_IS_SYSTEM_FONT     = "extra_is_system_font";
     public static final String EXTRA_WEIGHT_WIDTH_LABEL = "extra_weight_width_label";
+    public static final String EXTRA_USE_DEPTH_ANIMATION = "extra_use_depth_animation";
 
     private ToolbarLayout mToolbarLayout;
     private FontViewerFragment mFontViewerFragment;
@@ -60,6 +62,18 @@ public class FontViewerActivity extends BaseActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_font_viewer);
+
+        if (getIntent().getBooleanExtra(EXTRA_USE_DEPTH_ANIMATION, false)) {
+            if (Build.VERSION.SDK_INT >= 34) {
+                overrideActivityTransition(OVERRIDE_TRANSITION_OPEN,
+                        R.anim.depth_in_current_view, R.anim.depth_in_previous_view);
+                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,
+                        R.anim.depth_out_current_view, R.anim.depth_out_previous_view);
+            } else if (savedInstanceState == null) {
+                overridePendingTransition(
+                        R.anim.depth_in_current_view, R.anim.depth_in_previous_view);
+            }
+        }
 
         mToolbarLayout = findViewById(R.id.toolbar_layout);
         fabFontSize = findViewById(R.id.fab_font_size);
@@ -93,7 +107,7 @@ public class FontViewerActivity extends BaseActivity
                     .findFragmentById(R.id.font_viewer_container);
         }
 
-        new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 400);
+        new Handler(Looper.getMainLooper()).postDelayed(this::setupFab, 500);
     }
 
     private void setupFab() {
@@ -297,6 +311,16 @@ public class FontViewerActivity extends BaseActivity
         }
         dismissLoadingDialog();
         action.run();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        if (Build.VERSION.SDK_INT < 34
+                && getIntent().getBooleanExtra(EXTRA_USE_DEPTH_ANIMATION, false)) {
+            overridePendingTransition(
+                    R.anim.depth_out_current_view, R.anim.depth_out_previous_view);
+        }
     }
 
     @Override
