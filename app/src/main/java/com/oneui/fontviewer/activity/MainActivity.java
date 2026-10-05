@@ -75,12 +75,12 @@ public class MainActivity extends BaseActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-       // SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         mSplashStartTime = System.currentTimeMillis();
 
         super.onCreate(savedInstanceState);
 
-       // splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
+        splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
 
         if (android.os.Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out);
