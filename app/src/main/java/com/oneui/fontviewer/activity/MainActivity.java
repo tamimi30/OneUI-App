@@ -414,6 +414,8 @@ public class MainActivity extends BaseActivity
 
                     if (screen == AppScreen.FONT_VIEWER) {
                         Intent intent = new Intent(MainActivity.this, FontViewerActivity.class);
+                        // إضافة هذه العلامة لإخبار الشاشة بأن الفتح تم من درج التنقل
+                        intent.putExtra("is_from_drawer", true); 
                         startActivity(intent);
                         return false;
                     }
@@ -563,7 +565,6 @@ public class MainActivity extends BaseActivity
         intent.putExtra(FontViewerActivity.EXTRA_TTC_INDEX, ttcIndex);
         intent.putExtra(FontViewerActivity.EXTRA_IS_SYSTEM_FONT, isSystemFont);
         intent.putExtra(FontViewerActivity.EXTRA_WEIGHT_WIDTH_LABEL, weightWidthLabel);
-        intent.putExtra(FontViewerActivity.EXTRA_USE_DEPTH_ANIMATION, true);
         startActivity(intent);
     }
 
