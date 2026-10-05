@@ -9,8 +9,13 @@
         <item name="windowSplashScreenBackground">@color/oui_round_and_bgcolor</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
         <item name="windowSplashScreenAnimationDuration">2900</item>
-        <item name="android:colorBackground">@color/oui_round_and_bgcolor</item>
+    </style>
+
+        <style name="AppTheme.FontViewer" parent="AppTheme">
         <item name="android:windowBackground">@color/oui_round_and_bgcolor</item>
+        <item name="android:colorBackground">@color/oui_round_and_bgcolor</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowDisablePreview">true</item>
     </style>
         
 </resources>
