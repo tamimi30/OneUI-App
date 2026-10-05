@@ -90,7 +90,7 @@ public class MainActivity extends BaseActivity
         
         if (Build.VERSION.SDK_INT >= 33) {
         setTaskDescription(new android.app.ActivityManager.TaskDescription.Builder()
-            .setBackgroundColor(getColor(R.color.oui_round_and_bgcolor))
+            .setBackgroundColor(0xFFFF0000)
             .build());
     }
 
