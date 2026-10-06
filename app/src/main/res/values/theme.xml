@@ -2,6 +2,7 @@
 <resources>
 
     <style name="AppTheme" parent="OneUITheme">
+        <item name="android:windowActivityTransitions">true</item>
     </style>
 
     <style name="AppTheme.Starting" parent="Theme.SplashScreen">
