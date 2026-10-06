@@ -59,6 +59,8 @@ public class FontViewerActivity extends BaseActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        getWindow().setDimAmount(0f);
         
         // التحقق مما إذا كان الفتح من درج التنقل
         boolean isFromDrawer = getIntent().getBooleanExtra("is_from_drawer", false);
