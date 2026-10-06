@@ -10,9 +10,5 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
         <item name="windowSplashScreenAnimationDuration">2900</item>
     </style>
-
-    <style name="AppTheme.FontViewer" parent="AppTheme">
-    <item name="android:backgroundDimEnabled">false</item>
-</style>
         
 </resources>
