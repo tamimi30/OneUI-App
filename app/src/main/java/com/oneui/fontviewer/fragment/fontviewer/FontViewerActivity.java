@@ -65,10 +65,7 @@ public class FontViewerActivity extends BaseActivity
         
         // تشغيل الأنيميشن فقط إذا لم يكن الفتح من درج التنقل
         if (!isFromDrawer) {
-            boolean rtl = isRtlLayout();
-            overridePendingTransition(
-                    rtl ? R.anim.slide_fragment_open_enter_rtl : R.anim.slide_fragment_open_enter,
-                    rtl ? R.anim.slide_fragment_open_exit_rtl : R.anim.slide_fragment_open_exit);
+            overridePendingTransition(R.anim.fragment_open_enter, R.anim.fragment_open_exit);
         }
         
         setContentView(R.layout.activity_font_viewer);
@@ -268,11 +265,6 @@ public class FontViewerActivity extends BaseActivity
     }
     
     
-    private boolean isRtlLayout() {
-        return getResources().getConfiguration().getLayoutDirection()
-                == View.LAYOUT_DIRECTION_RTL;
-    }
-    
 
     private void showNoFontDialog() {
         new AlertDialog.Builder(this)
@@ -327,10 +319,7 @@ public class FontViewerActivity extends BaseActivity
         
         // تشغيل أنيميشن الخروج فقط إذا لم يكن الفتح من درج التنقل
         if (!isFromDrawer) {
-            boolean rtl = isRtlLayout();
-            overridePendingTransition(
-                    rtl ? R.anim.slide_fragment_close_enter_rtl : R.anim.slide_fragment_close_enter,
-                    rtl ? R.anim.slide_fragment_close_exit_rtl : R.anim.slide_fragment_close_exit);
+            overridePendingTransition(R.anim.fragment_close_enter, R.anim.fragment_close_exit);
         }
     }
 
@@ -339,4 +328,4 @@ public class FontViewerActivity extends BaseActivity
         dismissLoadingDialog();
         super.onDestroy();
     }
-    }
+        }
