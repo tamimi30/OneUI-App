@@ -54,8 +54,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    app:tint="?attr/colorPrimary"
-                    app:srcCompat="@drawable/ic_oui_text_bold" />
+                    android:tint="?attr/colorPrimary"
+                    android:src="@drawable/ic_oui_text_bold" />
 
             </FrameLayout>
 
@@ -76,8 +76,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    app:tint="?attr/colorPrimary"
-                    app:srcCompat="@drawable/ic_oui_text_italic" />
+                    android:tint="?attr/colorPrimary"
+                    android:src="@drawable/ic_oui_text_italic" />
 
             </FrameLayout>
 
