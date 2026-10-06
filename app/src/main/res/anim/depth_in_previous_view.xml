@@ -9,7 +9,7 @@
         android:fromXDelta="0%"
         android:toXDelta="-27.8%"
         android:fillEnabled="true"/>
-   <alpha
+  <!-- <alpha
         android:interpolator="@android:anim/linear_interpolator"
         android:duration="100"
         android:fillBefore="true"
@@ -17,5 +17,5 @@
         android:startOffset="50"
         android:fromAlpha="1"
         android:toAlpha="0"
-        android:fillEnabled="true"/>
+        android:fillEnabled="true"/>-->
 </set>
