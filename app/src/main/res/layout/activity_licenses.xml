@@ -32,7 +32,7 @@
                 android:textAlignment="viewStart"
                 android:autoLink="web"
                 android:fadingEdge="vertical"
-                android:textColorLink="@color/oui_primary_color"
+                android:textColorLink="?attr/colorPrimaryDark"
                 android:linksClickable="true"/>
 
         </LinearLayout>
