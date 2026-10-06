@@ -2,8 +2,6 @@
 <resources>
 
     <style name="AppTheme" parent="OneUITheme">
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:backgroundDimAmount">0</item>
     </style>
 
     <style name="AppTheme.Starting" parent="Theme.SplashScreen">
