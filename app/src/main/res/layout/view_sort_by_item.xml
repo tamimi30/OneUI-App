@@ -63,7 +63,7 @@
              android:layout_height="19dp"
              android:gravity="center"
              android:layout_gravity="center"
-             app:tint="@color/drawer_icon_color />
+             app:tint="@color/drawer_icon_color" />
 
      </LinearLayout>
 
