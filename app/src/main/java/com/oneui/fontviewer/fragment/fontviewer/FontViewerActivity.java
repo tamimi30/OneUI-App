@@ -65,7 +65,7 @@ public class FontViewerActivity extends BaseActivity
         
         // تشغيل الأنيميشن فقط إذا لم يكن الفتح من درج التنقل
         if (!isFromDrawer) {
-            overridePendingTransition(R.anim.fragment_open_enter, R.anim.fragment_open_exit);
+            overridePendingTransition(R.anim.slide_fragment_open_enter, R.anim.slide_fragment_open_exit);
         }
         
         setContentView(R.layout.activity_font_viewer);
@@ -319,7 +319,7 @@ public class FontViewerActivity extends BaseActivity
         
         // تشغيل أنيميشن الخروج فقط إذا لم يكن الفتح من درج التنقل
         if (!isFromDrawer) {
-            overridePendingTransition(R.anim.fragment_close_enter, R.anim.fragment_close_exit);
+            overridePendingTransition(R.anim.slide_fragment_close_enter, R.anim.slide_fragment_close_exit);
         }
     }
 
