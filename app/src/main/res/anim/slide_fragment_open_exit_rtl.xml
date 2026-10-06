@@ -7,7 +7,7 @@
         android:fillAfter="true"
         android:fromAlpha="1"
         android:toAlpha="0"
-        android:fillEnabled="true"/> F 
+        android:fillEnabled="true"/>
     <translate
         android:interpolator="@interpolator/interpolator_022_05_0_1"
         android:duration="450"
