@@ -4,7 +4,7 @@
     <color name="oui_primary_color">#ff3e91ff</color>
     
     <color name="sort_bar_text_color">#ffa9a9a9</color>
-    <color name="primary_text_color">?android:attr/textColorPrimary</color>
+    <color name="primary_text_color">#ff010101</color>
     <color name="font_preview_text_color">@color/sesl_description_text_color_dark</color>
     <color name="sesl_description_text_color">@color/sesl_description_text_color_dark</color>
     <color name="about_page_secondary_text_color">#ff747474</color>
