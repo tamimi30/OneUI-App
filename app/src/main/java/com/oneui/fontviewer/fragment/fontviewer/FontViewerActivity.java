@@ -59,17 +59,13 @@ public class FontViewerActivity extends BaseActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        getWindow().setDimAmount(0f);
         
         // التحقق مما إذا كان الفتح من درج التنقل
         boolean isFromDrawer = getIntent().getBooleanExtra("is_from_drawer", false);
         
         // تشغيل الأنيميشن فقط إذا لم يكن الفتح من درج التنقل
         if (!isFromDrawer) {
-            overridePendingTransition(R.anim.depth_in_current_view,
-        R.anim.depth_in_previous_view,
-        getColor(R.color.oui_round_and_bgcolor));
+            overridePendingTransition(R.anim.depth_in_current_view, R.anim.depth_in_previous_view);
         }
         
         setContentView(R.layout.activity_font_viewer);
@@ -321,9 +317,7 @@ public class FontViewerActivity extends BaseActivity
         
         // تشغيل أنيميشن الخروج فقط إذا لم يكن الفتح من درج التنقل
         if (!isFromDrawer) {
-            overridePendingTransition(R.anim.depth_out_current_view,
-        R.anim.depth_out_previous_view,
-        getColor(R.color.oui_round_and_bgcolor));
+            overridePendingTransition(R.anim.depth_out_current_view, R.anim.depth_out_previous_view);
         }
     }
 
