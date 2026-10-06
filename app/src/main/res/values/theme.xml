@@ -2,6 +2,7 @@
 <resources>
 
     <style name="AppTheme" parent="OneUITheme">
+        <item name="android:windowActivityTransitions">false</item>
     </style>
 
     <style name="AppTheme.Starting" parent="Theme.SplashScreen">
@@ -9,7 +10,6 @@
         <item name="windowSplashScreenBackground">@color/oui_round_and_bgcolor</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
         <item name="windowSplashScreenAnimationDuration">2900</item>
-        <item name="android:windowActivityTransitions">false</item>
     </style>
         
 </resources>
