@@ -48,7 +48,7 @@
                 android:focusable="true"
                 android:tooltipText="@string/btn_bold">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_bold"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -70,7 +70,7 @@
                 android:focusable="true"
                 android:tooltipText="@string/btn_italic">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_italic"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
