@@ -65,7 +65,10 @@ public class FontViewerActivity extends BaseActivity
         
         // تشغيل الأنيميشن فقط إذا لم يكن الفتح من درج التنقل
         if (!isFromDrawer) {
-            overridePendingTransition(R.anim.depth_in_current_view, R.anim.depth_in_previous_view);
+            boolean rtl = isRtlLayout();
+            overridePendingTransition(
+                    rtl ? R.anim.sesl_fragment_open_enter_rtl : R.anim.sesl_fragment_open_enter,
+                    rtl ? R.anim.sesl_fragment_open_exit_rtl : R.anim.sesl_fragment_open_exit);
         }
         
         setContentView(R.layout.activity_font_viewer);
@@ -263,6 +266,13 @@ public class FontViewerActivity extends BaseActivity
         FontInfoDialog dialog = new FontInfoDialog(this, metadata, fileName, path);
         dialog.show();
     }
+    
+    
+    private boolean isRtlLayout() {
+        return getResources().getConfiguration().getLayoutDirection()
+                == View.LAYOUT_DIRECTION_RTL;
+    }
+    
 
     private void showNoFontDialog() {
         new AlertDialog.Builder(this)
@@ -317,7 +327,10 @@ public class FontViewerActivity extends BaseActivity
         
         // تشغيل أنيميشن الخروج فقط إذا لم يكن الفتح من درج التنقل
         if (!isFromDrawer) {
-            overridePendingTransition(R.anim.depth_out_current_view, R.anim.depth_out_previous_view);
+            boolean rtl = isRtlLayout();
+            overridePendingTransition(
+                    rtl ? R.anim.sesl_fragment_close_enter_rtl : R.anim.sesl_fragment_close_enter,
+                    rtl ? R.anim.sesl_fragment_close_exit_rtl : R.anim.sesl_fragment_close_exit);
         }
     }
 
