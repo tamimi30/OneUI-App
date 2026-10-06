@@ -10,7 +10,7 @@
     <color name="seekbar_color">#5903BEFF</color>
     
     <color name="sort_bar_text_color">#ff636363</color>
-    <color name="primary_text_color">?android:attr/textColorPrimary</color>
+    <color name="primary_text_color">#ff010101</color>
     <color name="font_preview_text_color">#ff010101</color>
     <color name="sesl_description_text_color">@color/sesl_description_text_color_light</color>
     <color name="about_page_secondary_text_color">#ff8c8c8c</color>
