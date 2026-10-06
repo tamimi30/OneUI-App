@@ -48,13 +48,13 @@
                 android:focusable="true"
                 android:tooltipText="@string/btn_bold">
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/btn_bold"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    app:tint="?attr/colorPrimary"
+                    android:tint="@color/sesl_primary_color_dark"
                     android:src="@drawable/ic_oui_text_bold" />
 
             </FrameLayout>
@@ -70,13 +70,13 @@
                 android:focusable="true"
                 android:tooltipText="@string/btn_italic">
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/btn_italic"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    app:tint="?attr/colorPrimary"
+                    android:tint="@color/sesl_primary_color_dark"
                     android:src="@drawable/ic_oui_text_italic" />
 
             </FrameLayout>
