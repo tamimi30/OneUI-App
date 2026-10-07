@@ -9,7 +9,7 @@
         android:fillBefore="true"
         android:fillAfter="true"
         android:fromAlpha="1"
-        android:toAlpha="0"
+        android:toAlpha="0.5"
         android:fillEnabled="true"/>
     <translate
         android:interpolator="@interpolator/interpolator_022_025_0_1"
