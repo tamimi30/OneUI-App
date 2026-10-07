@@ -3,6 +3,15 @@
     android:shareInterpolator="false"
     android:showBackdrop="true"
     android:backdropColor="@color/oui_round_and_bgcolor">
+    <alpha
+        android:interpolator="@interpolator/interpolator_0_0_1_1"
+        android:duration="150"
+        android:fillBefore="true"
+        android:fillAfter="true"
+        android:fromAlpha="1"
+        android:toAlpha="0"
+        android:fillEnabled="true"/>
+    
     <translate
         android:interpolator="@interpolator/interpolator_022_025_0_1"
         android:duration="400"
