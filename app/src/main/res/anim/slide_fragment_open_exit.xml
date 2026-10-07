@@ -6,7 +6,7 @@
         android:interpolator="@interpolator/interpolator_0_0_1_1"
         android:duration="150"
         android:fillBefore="true"
-        android:fillAfter="true"
+        android:fillAfter="false"
         android:fromAlpha="1"
         android:toAlpha="0"
         android:fillEnabled="true"/>
@@ -14,7 +14,7 @@
         android:interpolator="@interpolator/interpolator_022_05_0_1"
         android:duration="450"
         android:fillBefore="true"
-        android:fillAfter="true"
+        android:fillAfter="false"
         android:fromXDelta="0%"
         android:toXDelta="-33.3%"
         android:fillEnabled="true"/>
