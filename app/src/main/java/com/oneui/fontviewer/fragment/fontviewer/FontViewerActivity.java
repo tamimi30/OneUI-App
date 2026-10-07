@@ -65,7 +65,14 @@ public class FontViewerActivity extends BaseActivity
         
         // تشغيل الأنيميشن فقط إذا لم يكن الفتح من درج التنقل
         if (!isFromDrawer) {
-            overridePendingTransition(R.anim.slide_fragment_open_enter, R.anim.slide_fragment_open_exit);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                overridePendingTransition(
+                        R.anim.slide_fragment_open_enter,
+                        R.anim.slide_fragment_open_exit,
+                        getColor(R.color.oui_round_and_bgcolor));
+            } else {
+                overridePendingTransition(R.anim.slide_fragment_open_enter, R.anim.slide_fragment_open_exit);
+            }
         }
         
         setContentView(R.layout.activity_font_viewer);
@@ -319,7 +326,14 @@ public class FontViewerActivity extends BaseActivity
         
         // تشغيل أنيميشن الخروج فقط إذا لم يكن الفتح من درج التنقل
         if (!isFromDrawer) {
-            overridePendingTransition(R.anim.slide_fragment_close_enter, R.anim.slide_fragment_close_exit);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                overridePendingTransition(
+                        R.anim.slide_fragment_close_enter,
+                        R.anim.slide_fragment_close_exit,
+                        getColor(R.color.oui_round_and_bgcolor));
+            } else {
+                overridePendingTransition(R.anim.slide_fragment_close_enter, R.anim.slide_fragment_close_exit);
+            }
         }
     }
 
