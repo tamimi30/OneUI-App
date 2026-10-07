@@ -67,7 +67,7 @@ public class FontViewerActivity extends BaseActivity
         if (!isFromDrawer) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 overridePendingTransition(
-                        R.anim.sesl_hierarchy_up_enter,
+                        R.anim.sesl_hierarchy_up_enter
                         getColor(R.color.oui_round_and_bgcolor));
             } else {
                 overridePendingTransition(R.anim.sesl_hierarchy_up_enter);
@@ -327,7 +327,7 @@ public class FontViewerActivity extends BaseActivity
         if (!isFromDrawer) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 overridePendingTransition(
-                        R.anim.sesl_hierarchy_up_exit,
+                        R.anim.sesl_hierarchy_up_exit
                         getColor(R.color.oui_round_and_bgcolor));
             } else {
                 overridePendingTransition(R.anim.sesl_hierarchy_up_exit);
