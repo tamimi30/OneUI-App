@@ -67,11 +67,11 @@ public class FontViewerActivity extends BaseActivity
         if (!isFromDrawer) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 overridePendingTransition(
-                        R.anim.slide_fragment_open_enter,
-                        R.anim.slide_fragment_open_exit,
+                        R.anim.depth_in_current_view,
+                        R.anim.depth_in_previous_view,
                         getColor(R.color.oui_round_and_bgcolor));
             } else {
-                overridePendingTransition(R.anim.slide_fragment_open_enter, R.anim.slide_fragment_open_exit);
+                overridePendingTransition(R.anim.depth_in_current_view, R.anim.depth_in_previous_view);
             }
         }
         
@@ -328,11 +328,11 @@ public class FontViewerActivity extends BaseActivity
         if (!isFromDrawer) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 overridePendingTransition(
-                        R.anim.slide_fragment_close_enter,
-                        R.anim.slide_fragment_close_exit,
+                        R.anim.depth_out_current_view,
+                        R.anim.depth_out_previous_view,
                         getColor(R.color.oui_round_and_bgcolor));
             } else {
-                overridePendingTransition(R.anim.slide_fragment_close_enter, R.anim.slide_fragment_close_exit);
+                overridePendingTransition(R.anim.depth_out_current_view, R.anim.depth_out_previous_view);
             }
         }
     }
