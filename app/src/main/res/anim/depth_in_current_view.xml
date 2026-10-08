@@ -19,5 +19,5 @@
         android:startOffset="50"
         android:fromAlpha="0"
         android:toAlpha="1"
-        android:fillEnabled="true"/>-->
+        android:fillEnabled="true"/>
 </set>
