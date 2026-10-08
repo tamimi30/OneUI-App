@@ -67,11 +67,11 @@ public class FontViewerActivity extends BaseActivity
         if (!isFromDrawer) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 overridePendingTransition(
-                        R.anim.sesl_hierarchy_up_enter,
-                        R.anim.sesl_hierarchy_up_exit,
+                        R.anim.slide_fragment_open_enter,
+                        R.anim.slide_fragment_open_exit,
                         getColor(R.color.oui_round_and_bgcolor));
             } else {
-                overridePendingTransition(R.anim.sesl_hierarchy_up_enter, R.anim.sesl_hierarchy_up_exit);
+                overridePendingTransition(R.anim.slide_fragment_open_enter, R.anim.slide_fragment_open_exit);
             }
         }
         
@@ -328,11 +328,11 @@ public class FontViewerActivity extends BaseActivity
         if (!isFromDrawer) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 overridePendingTransition(
-                        R.anim.sesl_hierarchy_up_enter,
-                        R.anim.sesl_hierarchy_up_exit,
+                        R.anim.slide_fragment_close_enter,
+                        R.anim.slide_fragment_close_exit,
                         getColor(R.color.oui_round_and_bgcolor));
             } else {
-                overridePendingTransition(R.anim.sesl_hierarchy_up_enter, R.anim.sesl_hierarchy_up_exit);
+                overridePendingTransition(R.anim.slide_fragment_close_enter, R.anim.slide_fragment_close_exit);
             }
         }
     }
@@ -342,4 +342,4 @@ public class FontViewerActivity extends BaseActivity
         dismissLoadingDialog();
         super.onDestroy();
     }
-    }
+            }
