@@ -69,8 +69,6 @@ configurations.all {
     exclude group: 'androidx.recyclerview', module: 'recyclerview'
     exclude group: 'androidx.fragment', module: 'fragment'
     exclude group: 'androidx.preference', module: 'preference'
-    exclude group: 'androidx.viewpager', module: 'viewpager'
-    exclude group: 'androidx.viewpager2', module: 'viewpager2'
 
 
     resolutionStrategy {
@@ -123,7 +121,6 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.11.0'
     implementation 'androidx.documentfile:documentfile:1.1.0'
     implementation 'androidx.core:core-splashscreen:1.2.0'
-   // implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
