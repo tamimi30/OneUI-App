@@ -16,7 +16,8 @@
 
 <!-- Original code by Samsung, all rights reserved to the original author. -->
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shareInterpolator="false">
+    android:shareInterpolator="false"
+     android:showBackdrop="true">
     <translate
         android:duration="400"
         android:fillEnabled="true"
