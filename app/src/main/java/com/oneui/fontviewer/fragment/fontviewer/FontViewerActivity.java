@@ -59,6 +59,22 @@ public class FontViewerActivity extends BaseActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // التحقق مما إذا كان الفتح من درج التنقل
+        boolean isFromDrawer = getIntent().getBooleanExtra("is_from_drawer", false);
+        
+        // تشغيل الأنيميشن فقط إذا لم يكن الفتح من درج التنقل
+        if (!isFromDrawer) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                overridePendingTransition(
+                        R.anim.depth_in_current_view,
+                        R.anim.depth_in_previous_view,
+                        getColor(R.color.oui_round_and_bgcolor));
+            } else {
+                overridePendingTransition(R.anim.depth_in_current_view, R.anim.depth_in_previous_view);
+            }
+        }
+        
         setContentView(R.layout.activity_font_viewer);
 
         mToolbarLayout = findViewById(R.id.toolbar_layout);
@@ -137,7 +153,7 @@ public class FontViewerActivity extends BaseActivity
 
     public void updateFabFontSizeText(float size) {
         if (fabFontSize != null) {
-            int textColor = getColor(dev.oneuiproject.oneui.design.R.color.oui_primary_text_color);
+            int textColor = getColor(R.color.sesl_primary_color_dark);
             String sizeText = String.valueOf(Math.round(size));
             float fabTextSizeDp = sizeText.length() >= 3 ? 19f : 24f;
             fabFontSize.setImageDrawable(new TextDrawable(
@@ -254,6 +270,8 @@ public class FontViewerActivity extends BaseActivity
         FontInfoDialog dialog = new FontInfoDialog(this, metadata, fileName, path);
         dialog.show();
     }
+    
+    
 
     private void showNoFontDialog() {
         new AlertDialog.Builder(this)
@@ -297,6 +315,26 @@ public class FontViewerActivity extends BaseActivity
         }
         dismissLoadingDialog();
         action.run();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        
+        // التحقق مما إذا كان الفتح من درج التنقل
+        boolean isFromDrawer = getIntent().getBooleanExtra("is_from_drawer", false);
+        
+        // تشغيل أنيميشن الخروج فقط إذا لم يكن الفتح من درج التنقل
+        if (!isFromDrawer) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                overridePendingTransition(
+                        R.anim.depth_out_current_view,
+                        R.anim.depth_out_previous_view,
+                        getColor(R.color.oui_round_and_bgcolor));
+            } else {
+                overridePendingTransition(R.anim.depth_out_current_view, R.anim.depth_out_previous_view);
+            }
+        }
     }
 
     @Override
