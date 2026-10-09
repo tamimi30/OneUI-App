@@ -14,7 +14,6 @@
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="10dp"
             android:clickable="false"
             android:focusable="false"
             android:importantForAccessibility="no">
@@ -23,6 +22,7 @@
                 android:id="@+id/system_font_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingHorizontal="10dp" 
                 android:background="@color/oui_background_color"
                 android:scrollbarStyle="outsideOverlay" />
 
