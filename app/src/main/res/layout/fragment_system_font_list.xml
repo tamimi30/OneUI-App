@@ -12,7 +12,7 @@
         android:visibility="visible">
         	
         <dev.oneuiproject.oneui.widget.RoundFrameLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="false"
             android:focusable="false"
@@ -23,7 +23,6 @@
                 android:id="@+id/system_font_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/roundedCornerColor"
                 android:paddingHorizontal="10dp"
                 android:scrollbarStyle="outsideOverlay"
                 android:scrollbars="vertical" />
