@@ -14,6 +14,7 @@
         <dev.oneuiproject.oneui.widget.RoundFrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginHorizontal="10dp"
             android:clickable="false"
             android:focusable="false"
             android:importantForAccessibility="no"
