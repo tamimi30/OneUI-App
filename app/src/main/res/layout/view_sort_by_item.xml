@@ -22,7 +22,7 @@
             android:layout_height="19dp"
             android:gravity="center_vertical"
             android:layout_gravity="center_vertical"
-            android:tint="?android:attr/textColorSecondary"
+            android:tint="@color/drawer_icon_color"
             android:src="@drawable/ic_oui_list_sort" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_marginStart="7dp"
             android:gravity="center_vertical"
             android:layout_gravity="center_vertical"
-            android:textColor="?android:attr/textColorSecondary"
+            android:textColor="@color/drawer_icon_color"
             android:textSize="15dp" />
             
      </LinearLayout>
@@ -52,7 +52,7 @@
          android:id="@+id/sort_order_container"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:padding="5dp"
+         android:padding="6dp"
          android:background="@drawable/sort_btn_ripple_oval"
          android:gravity="center_vertical"
          android:layout_gravity="center_vertical">
@@ -63,7 +63,7 @@
              android:layout_height="19dp"
              android:gravity="center"
              android:layout_gravity="center"
-             android:tint="?android:attr/textColorSecondary" />
+             android:tint="@color/drawer_icon_color" />
 
      </LinearLayout>
 
