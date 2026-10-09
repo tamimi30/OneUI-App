@@ -17,7 +17,6 @@
             android:layout_marginHorizontal="10dp"
             android:clickable="false"
             android:focusable="false"
-            android:clipToOutline="true"
             android:background="@color/oui_background_color"
             android:importantForAccessibility="no">
 
