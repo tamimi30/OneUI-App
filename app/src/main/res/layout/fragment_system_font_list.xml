@@ -11,9 +11,9 @@
         android:orientation="vertical"
         android:visibility="visible">
         	
-        <dev.oneuiproject.oneui.widget.RoundFrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <dev.oneuiproject.oneui.widget.RoundLinearayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
@@ -25,7 +25,7 @@
                 android:scrollbarStyle="outsideOverlay"
                 android:scrollbars="vertical" />
                 
-        </dev.oneuiproject.oneui.widget.RoundFrameLayout>
+        </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/empty_view"
