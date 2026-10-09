@@ -10,70 +10,68 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="visible">
-        	
-        <dev.oneuiproject.oneui.widget.RoundFrameLayout
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/system_font_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="10dp"
-            android:clickable="false"
-            android:focusable="false"
-            android:importantForAccessibility="no"
-            app:roundedCorners="top_left|top_right|bottom_left|bottom_right">
+            android:paddingHorizontal="10dp"
+            android:scrollbars="vertical"
+            android:scrollbarStyle="outsideOverlay" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/system_font_recycler_view"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:id="@+id/empty_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingHorizontal="10dp"
-                android:scrollbarStyle="outsideOverlay"
-                android:scrollbars="vertical" />
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:paddingStart="33dp"
+                android:paddingEnd="33dp">
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/empty_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-                <LinearLayout
-                    android:id="@+id/empty_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/empty_icon"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:layout_gravity="center"
-                    android:paddingStart="33dp"
-                    android:paddingEnd="33dp">
+                    android:layout_marginBottom="7dp"
+                    android:tint="#ff34a853"
+                    android:src="@drawable/ic_android_3"
+                    android:visibility="gone" />
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/empty_icon"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="7dp"
-                        android:tint="#ff34a853"
-                        android:src="@drawable/ic_android_3"
-                       android:visibility="gone" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/no_results_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/no_results_found"
+                    android:fontFamily="sec-roboto-light"
+                    android:textStyle="normal"
+                    android:textSize="17sp"
+                    android:textColor="@color/drawer_icon_color"
+                    android:visibility="gone" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/no_results_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/no_results_found"
-                        android:fontFamily="sec-roboto-light"
-                        android:textStyle="normal"
-                        android:textSize="17sp"
-                        android:textColor="@color/drawer_icon_color"
-                        android:visibility="gone" />
+            </LinearLayout>
 
-                </LinearLayout>
-
-            </androidx.core.widget.NestedScrollView>
-            
-        </dev.oneuiproject.oneui.widget.RoundFrameLayout>
+        </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
+    
+    <dev.oneuiproject.oneui.widget.RoundFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="10dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        app:roundedCorners="top_left|top_right|bottom_left|bottom_right" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/unsupported_view"
