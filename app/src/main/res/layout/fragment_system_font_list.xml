@@ -24,6 +24,7 @@
                 android:layout_height="match_parent"
                 android:paddingHorizontal="10dp" 
                 android:background="@color/oui_background_color"
+                android:scrollbars="vertical"
                 android:scrollbarStyle="outsideOverlay" />
 
             <androidx.core.widget.NestedScrollView
