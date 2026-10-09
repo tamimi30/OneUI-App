@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     app:expanded="false"
     app:navigationIcon="@drawable/ic_oui_back"
-    app:title="@string/about_button_licenses">
+    app:title="@string/about_licenses">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -31,7 +31,6 @@
                 android:lineSpacingExtra="4dp"
                 android:textAlignment="viewStart"
                 android:autoLink="web"
-                android:fadingEdge="vertical"
                 android:textColorLink="?attr/colorPrimaryDark"
                 android:linksClickable="true"/>
 
