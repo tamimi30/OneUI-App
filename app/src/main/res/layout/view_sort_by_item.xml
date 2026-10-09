@@ -22,7 +22,7 @@
             android:layout_height="19dp"
             android:gravity="center_vertical"
             android:layout_gravity="center_vertical"
-            android:tint="?android:attr/textColorPrimary"
+            android:tint="@color/drawer_icon_color"
             android:src="@drawable/ic_oui_list_sort" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_marginStart="7dp"
             android:gravity="center_vertical"
             android:layout_gravity="center_vertical"
-            android:textColor="?android:attr/textColorPrimary"
+            android:textColor="@color/drawer_icon_color"
             android:textSize="15dp" />
             
      </LinearLayout>
@@ -63,7 +63,7 @@
              android:layout_height="19dp"
              android:gravity="center"
              android:layout_gravity="center"
-             android:tint="?android:attr/textColorPrimary" />
+             android:tint="@color/drawer_icon_color" />
 
      </LinearLayout>
 
