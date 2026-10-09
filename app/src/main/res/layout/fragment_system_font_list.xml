@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:visibility="visible">
         	
-        <dev.oneuiproject.oneui.widget.RoundLinearayout
+        <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/oui_background_color"
