@@ -14,7 +14,7 @@
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/oui_background_color"
+            
             android:orientation="vertical">
 
             <com.oneui.fontviewer.widget.OneUiRecyclerView
@@ -22,6 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingHorizontal="10dp"
+                android:background="@color/oui_background_color"
                 android:scrollbarStyle="outsideOverlay"
                 android:scrollbars="vertical" />
                 
