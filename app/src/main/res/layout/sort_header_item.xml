@@ -12,4 +12,4 @@
     android:paddingEnd="17dp"
     android:paddingTop="8dp"
     android:paddingBottom="6dp"
-    android:background="@android:color/transparent" />
+    android:background="@color/oui_round_and_bgcolor" />
