@@ -10,15 +10,23 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="visible">
-
-        <com.oneui.fontviewer.widget.CardRecyclerView
-            android:id="@+id/system_font_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingHorizontal="10dp"
+        	
+        <dev.oneuiproject.oneui.widget.RoundLinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@color/oui_background_color"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbars="vertical" />
+            android:orientation="vertical">
+
+            <com.oneui.fontviewer.widget.CardRecyclerView
+                android:id="@+id/system_font_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="10dp"
+                android:background="@color/oui_background_color"
+                android:scrollbarStyle="outsideOverlay"
+                android:scrollbars="vertical" />
+                
+        </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/empty_view"
@@ -62,7 +70,7 @@
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
-
+        
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
