@@ -4,7 +4,7 @@
     <string name="app_name">Font Viewer Plus</string>
     <string name="app_subtitle">تجربة One UI الحديثة</string>
     
-    <!-- الإعدادات -->
+    <!-- Setting -->
     <string name="drawer_settings">الضبط</string>
     <string name="settings_general">عام</string>
     <string name="settings_font_preview">معاينة الخط</string>
@@ -28,12 +28,13 @@
     <string name="feedback_email" translatable="false">feedback@example.com</string>
 	<string name="settings_preview_text_updated">تم تحديث نص المعاينة</string>
 	
-	<!-- حول التطبيق -->
+	<!-- About -->
 	<string name="about_title">حول Font Viewer Plus</string>
-	<string name="about_button_licenses">تراخيص مفتوحة المصدر</string>
+	<string name="about_licenses">تراخيص مفتوحة المصدر</string>
+	<string name="about_button_licenses">تراخيص المصدر</string>
 	<string name="about_button_status">الحالة</string>
 	
-    <!-- الرئيسية -->
+    <!-- Home -->
     <string name="drawer_home">الرئيسية</string>
     <string name="title_features">الميزات الرئيسية</string>
     <string name="swipe_up">إسحب للأعلى</string>
@@ -44,7 +45,7 @@
     <string name="about_text">هذا تطبيق تجريبي لعرض تصميم OneUI</string>
 	<string name="title_about">حول</string>
 
-    <!-- معاينة الخط -->
+    <!-- Font preview -->
     <string name="drawer_font_viewer">معاينة الخط</string>
     <string name="font_viewer_select_description">إختر ملف خط من الذاكرة الداخلية (ttf. او otf.)</string>
     <string name="font_viewer_select_font">إختر ملف خط</string>
@@ -72,7 +73,7 @@
     <string name="axis_info_roundness_description">Adjust shapes from angular defaults (0%) to become increasingly rounded (up to 100%).</string>
     <string name="axis_info_monospace_description">Adjust the style from Proportional (natural widths, default) to Monospace (fixed width). With proportional spacing, each glyph takes up a unique amount of space on a line, while monospace is when all glyphs have the same total character width.</string>
     
-    <!-- الخطوط المحلية -->
+    <!-- Local fonts -->
     <string name="drawer_local_fonts">الخطوط المحلية</string>
     <string name="local_fonts_empty_title">لا توجد خطوط في هذا المجلد</string>
     <string name="local_fonts_empty_message">إنسخ الخطوط إلى هذا المجلد لعرضها هنا، او اضغط على ايقونة الثلاث نقاط في الاعلى وإختر مجلداً آخر.</string>
@@ -85,18 +86,18 @@
 	<string name="toast_error_with_message">خطأ: %1$s</string>
 	<string name="error_folder_path_conversion_failed">تعذّر تحويل المجلد المحدد إلى مسار مباشر. يرجى اختيار مجلد في التخزين الداخلي أو الخارجي.</string>
     
-    <!-- خطوط النظام -->
+    <!-- System Fonts -->
     <string name="drawer_system_fonts">خطوط النظام</string>
     <string name="system_fonts_empty">No system fonts found</string>
     <string name="system_fonts_api_unavailable">System Fonts API is not available</string>
     <string name="system_fonts_requires_api_29">This feature requires Android 10 (API 29) or higher</string>
     
-    <!-- المفضلة -->
+    <!-- Favorites -->
     <string name="drawer_favorites">المفضلة</string>
     <string name="favorites_empty_title">لا توجد خطوط في المفضلة بعد</string>
     <string name="favorites_empty_message">اضغط ضغطه مطوله على أي خط في قائمة الخطوط المحلية لإضافته هنا.</string>
     
-    <!-- سلة المحذوفات -->
+    <!-- Trash -->
     <string name="drawer_trash">سلة المحذوفات</string>
     <string name="toast_prepare_file_to_open">استعد هذا الملف لفتحه</string>
     <string name="trash_items_expiry_info">تظهر العناصر الأيام المتبقية حتى يتم حذفها نهائياً.</string>
@@ -104,33 +105,33 @@
     <string name="trash_empty_description">ستبقى الملفات التي تقوم بحذفها في سلة المحذوفات لمدة ٣٠ يوماً قبل حذفها نهائياً.</string>
     <string name="action_empty_trash">إفراغ</string>
     
-    <!-- شريط الاجراءات -->
+    <!-- Action bar -->
     <string name="action_favorite">إضافة الى المفضلة</string>
     <string name="action_unfavorite">إزالة من المفضلة</string>
     <string name="action_rename">إعادة تسمية</string>
-    <string name="rename_dialog_title">إعادة تسمية الخط</string>
-	<string name="rename_dialog_hint">أدخل اسماً جديداً</string>
-    <string name="action_delete">حذف</string>
-    <string name="action_delete_all">حذف الكل</string>
-    <string name="error_rename_failed">فشلت إعادة التسمية</string>
-    <string name="error_delete_failed">فشل الحذف</string>
-    <string name="error_file_exists">اسم الملف مستخدم مسبقاً</string>
-    <string name="error_invalid_name">اسم غير صالح</string>
-    <string name="success_renamed">تمت إعادة التسمية بنجاح</string>
     <string name="action_restore">استعادة</string>
     <string name="action_restore_all">استعادة الكل</string>
     <string name="action_move_to_trash">نقل إلى سلة المحذوفات</string>
     <string name="action_hide_dialog">إخفاء الإطار المنبثق</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_delete_all">حذف الكل</string>
+    <string name="rename_dialog_title">إعادة تسمية الخط</string>
+	<string name="rename_dialog_hint">أدخل اسماً جديداً</string>
+	<string name="success_renamed">تمت إعادة التسمية بنجاح</string>
+    <string name="error_rename_failed">فشلت إعادة التسمية</string>
+    <string name="error_delete_failed">فشل الحذف</string>
+    <string name="error_file_exists">اسم الملف مستخدم مسبقاً</string>
+    <string name="error_invalid_name">اسم غير صالح</string>
     
-    <!-- الإشعارات -->
+    <!-- Notification -->
     <string name="trash_notif_channel_name">سلة المحذوفات</string>
     <string name="trash_notif_channel_desc">إشعارات عمليات سلة المحذوفات</string>
     
-     <!-- البحث -->
+     <!-- Search -->
     <string name="search_font">بحث</string>
     <string name="no_results_found">لم يتم العثور على أي نتيجة</string>
     
-    <!-- شريط الفرز -->
+    <!-- Sort bar -->
     <string name="sort_size">الحجم</string>
     <string name="sort_date">التاريخ</string>
     <string name="sort_name">الاسم</string>
