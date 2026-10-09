@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.oneui.fontviewer.widget.CardRecyclerView
             android:id="@+id/system_font_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
