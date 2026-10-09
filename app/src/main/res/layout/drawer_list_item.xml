@@ -28,8 +28,7 @@
                 android:layout_height="28dp"
                 android:layout_gravity="center"
                 android:scaleType="fitXY"
-                android:alpha=".75"
-                app:tint="?android:attr/textColorPrimary" />
+                app:tint="@color/drawer_icon_color" />
 
         </FrameLayout>
 
