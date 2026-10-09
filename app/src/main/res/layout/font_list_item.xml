@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<dev.oneuiproject.oneui.widget.RoundLinearLayout 
+<LinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,78 +8,87 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_vertical"
-    android:background="@drawable/list_ripple">
+    android:background="@color/oui_round_and_bgcolor">
     
-    <com.oneui.fontviewer.widget.SelectableLinearLayout
-        android:id="@+id/selectable_layout"
+    <dev.oneuiproject.oneui.widget.RoundLinearLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/listPreferredItemHeightSmall"
-        android:paddingTop="14.0dip"
-        android:paddingBottom="14.0dip"
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:orientation="horizontal"
-        app:checkableButtonSpacing="24.0dip"
-        android:animateLayoutChanges="true"
+        android:orientation="vertical"
         android:gravity="center_vertical"
-        app:checkMode="checkBox">
-        
-        <LinearLayout
-            android:layout_width="wrap_content"
+        android:background="@drawable/list_ripple">
+    
+        <com.oneui.fontviewer.widget.SelectableLinearLayout
+            android:id="@+id/selectable_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="?attr/listPreferredItemHeightSmall"
+            android:paddingTop="14.0dip"
+            android:paddingBottom="14.0dip"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:orientation="horizontal"
+            app:checkableButtonSpacing="24.0dip"
+            android:animateLayoutChanges="true"
             android:gravity="center_vertical"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/font_item_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:paddingBottom="4sp"
-                android:includeFontPadding="false"
-                android:textAppearance="?attr/textAppearanceListItem"
-                tools:text="Font Name Example" />
-                
+            app:checkMode="checkBox">
+        
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
-                
+                android:orientation="vertical">
+
                 <TextView
-                    android:id="@+id/font_item_weight_width"
+                    android:id="@+id/font_item_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
+                    android:paddingBottom="4sp"
                     android:includeFontPadding="false"
-                    android:layout_marginEnd="17dp"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    tools:text="Bold, Condensed" />
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    tools:text="Font Name Example" />
+                
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                
+                    <TextView
+                        android:id="@+id/font_item_weight_width"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:includeFontPadding="false"
+                        android:layout_marginEnd="17dp"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        tools:text="Bold, Condensed" />
                     
-                <ImageView
-                    android:id="@+id/font_item_favorite_icon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_oui_favorite_on"
-                    android:tint="#D4AF37"
-                    android:visibility="invisible"
-                    tools:visibility="visible" />
+                    <ImageView
+                        android:id="@+id/font_item_favorite_icon"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_oui_favorite_on"
+                        android:tint="#D4AF37"
+                        android:visibility="invisible"
+                        tools:visibility="visible" />
                     
-            </LinearLayout>
+                </LinearLayout>
 
-        </LinearLayout>  
+            </LinearLayout>  
         
-    </com.oneui.fontviewer.widget.SelectableLinearLayout>
+        </com.oneui.fontviewer.widget.SelectableLinearLayout>
     
-    <View
-        android:id="@+id/item_divider"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
-        android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:background="@color/oui_list_divider_color" />
+        <View
+            android:id="@+id/item_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
+            android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:background="@color/oui_list_divider_color" />
     
-</dev.oneuiproject.oneui.widget.RoundLinearLayout>
+    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+    
+</LinearLayout>
