@@ -10,23 +10,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="visible">
-        	
-        <dev.oneuiproject.oneui.widget.RoundLinearLayout
+
+        <com.oneui.fontviewer.widget.OneUiRecyclerView
+            android:id="@+id/system_font_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            
-            android:orientation="vertical">
-
-            <com.oneui.fontviewer.widget.OneUiRecyclerView
-                android:id="@+id/system_font_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingHorizontal="10dp"
-                android:background="@color/oui_background_color"
-                android:scrollbarStyle="outsideOverlay"
-                android:scrollbars="vertical" />
-                
-        </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+            android:paddingHorizontal="10dp"
+            android:background="@color/oui_background_color"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/empty_view"
