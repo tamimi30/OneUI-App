@@ -21,7 +21,7 @@ import com.oneui.fontviewer.R;
  *
  * الاستخدام: android:paddingHorizontal="10dp" و android:scrollbarStyle="outsideOverlay"
  */
-public class CardRecyclerView extends RecyclerView {
+public class OneUiRecyclerView extends RecyclerView {
 
     // يطابق الثابت RADIUS في SeslRoundedCorner، وهو نصف قطر زوايا عناصر القائمة
     private static final float CORNER_RADIUS_DP = 26f;
@@ -31,7 +31,7 @@ public class CardRecyclerView extends RecyclerView {
     private final RectF mCard = new RectF();
     private final float mRadius;
 
-    public CardRecyclerView(@NonNull Context context, AttributeSet attrs) {
+    public OneUiRecyclerView(@NonNull Context context, AttributeSet attrs) {
         super(context, attrs);
 
         mPaint.setColor(ContextCompat.getColor(context, R.color.oui_round_and_bgcolor));
