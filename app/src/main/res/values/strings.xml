@@ -4,7 +4,7 @@
     <string name="app_name">Font Viewer Plus</string>
     <string name="app_subtitle">Modern One UI Experience</string>
     
-    <!-- الإعدادات -->
+    <!-- Settings -->
     <string name="drawer_settings">Settings</string>
     <string name="settings_general">General</string>
     <string name="settings_font_preview">Font preview</string>
@@ -28,12 +28,13 @@
     <string name="feedback_email" translatable="false">feedback@example.com</string>
 	<string name="settings_preview_text_updated">Preview text updated</string>
 	
-	<!-- حول التطبيق -->
+	<!-- About -->
 	<string name="about_title">About Font Viewer Plus</string>
-	<string name="about_button_licenses">Open Source licenses</string>
+	<string name="about_button_licenses">Source licenses</string>
+	<string name="about_licenses">Open source licenses</string>
 	<string name="about_button_status">Status</string>
     
-    <!-- الرئيسية -->
+    <!-- Home -->
     <string name="drawer_home">Home</string>
     <string name="title_features">Main features</string>
     <string name="swipe_up">Swipe up</string>
@@ -44,7 +45,7 @@
     <string name="about_text">This is a demo app to showcase the OneUI design</string>
 	<string name="title_about">About</string>
 
-    <!-- معاينة الخط -->
+    <!-- Font preview -->
     <string name="drawer_font_viewer">Font preview</string>
     <string name="font_viewer_select_description">Select font file from storage (.ttf or .otf)</string>
     <string name="font_viewer_select_font">Select font file</string>
@@ -110,19 +111,19 @@
     <string name="action_favorite">Add to favorites</string>
     <string name="action_unfavorite">Remove from favorites</string>
     <string name="action_rename">Rename</string>
-    <string name="rename_dialog_title">Rename font</string>
-	<string name="rename_dialog_hint">Enter new name</string>
     <string name="action_delete">Delete</string>
     <string name="action_delete_all">Delete all</string>
+    <string name="action_restore_all">Restore All</string>
+    <string name="action_move_to_trash">Move to Trash</string>
+    <string name="action_hide_dialog">Hide pop-up</string>
+    <string name="action_restore">Restore</string>
+    <string name="rename_dialog_title">Rename font</string>
+	<string name="rename_dialog_hint">Enter new name</string>
+	<string name="success_renamed">Renamed successfully</string>
     <string name="error_rename_failed">The renaming failed</string>
     <string name="error_delete_failed">Deletion failed</string>
     <string name="error_file_exists">The file name already in use</string>
     <string name="error_invalid_name">Invalid name</string>
-    <string name="success_renamed">Renamed successfully</string>
-    <string name="action_restore">Restore</string>
-    <string name="action_restore_all">Restore All</string>
-    <string name="action_move_to_trash">Move to Trash</string>
-    <string name="action_hide_dialog">Hide pop-up</string>
     
     <!-- الإشعارات -->
     <string name="trash_notif_channel_name">Trash</string>
