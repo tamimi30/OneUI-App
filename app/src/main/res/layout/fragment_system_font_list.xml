@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <dev.oneuiproject.oneui.widget.RoundFrameLayout 
+    <LinearLayout 
         android:id="@+id/main_content_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -63,7 +63,7 @@
 
         </androidx.core.widget.NestedScrollView>
         
-    </dev.oneuiproject.oneui.widget.RoundFrameLayout>
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/unsupported_view"
