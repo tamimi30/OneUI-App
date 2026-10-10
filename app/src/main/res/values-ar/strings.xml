@@ -5,7 +5,7 @@
     <string name="app_subtitle">تجربة One UI الحديثة</string>
     
     <!-- Setting -->
-    <string name="drawer_settings">الضبط</string>
+    <string name="drawer_settings">الإعدادات</string>
     <string name="settings_general">عام</string>
     <string name="settings_font_preview">معاينة الخط</string>
     <string name="settings_font_preview_description">عرض معاينة الخط على اسمه في قوائم الخطوط</string>
