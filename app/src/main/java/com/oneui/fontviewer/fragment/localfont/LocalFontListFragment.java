@@ -42,6 +42,7 @@ import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontSelectionManager;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontPermissionManager;
 import com.oneui.fontviewer.fragment.localfont.fontdirectory.LocalFontDirectoryPicker;
+import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.widget.search.SearchViewModel;
 import com.oneui.fontviewer.widget.search.FontSearchManager;
@@ -506,6 +507,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         mRecyclerView.setAdapter(mAdapter);
 
+        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext));
+
         mAdapter.updateSortOptionsOnly(
             mSortManager.getCurrentSortType(),
             mSortManager.isSortAscending()
@@ -513,8 +516,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         setupRecyclerViewAnimator();
 
-        mRecyclerView.seslSetFillBottomEnabled(false);
-        mRecyclerView.seslSetLastRoundedCorner(false);
+        mRecyclerView.seslSetFillBottomEnabled(true);
+        mRecyclerView.seslSetLastRoundedCorner(true);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
@@ -1081,4 +1084,4 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         return null;
     }
 
-                }
+    }
