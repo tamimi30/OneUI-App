@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.SectionIndexer;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.util.SeslRoundedCorner;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
@@ -26,8 +25,6 @@ import com.oneui.fontviewer.utils.FileUtils;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.localfont.viewmodel.LocalFontListViewModel;
 
-import dev.oneuiproject.oneui.widget.RoundLinearLayout;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +36,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     public static final int VIEW_TYPE_FONT   = 1;
     public static final int VIEW_TYPE_SPACE  = 2;
 
-    private static final String PAYLOAD_UPDATE_CORNERS   = "UPDATE_CORNERS";
     private static final String PAYLOAD_UPDATE_HIGHLIGHT = "UPDATE_HIGHLIGHT";
 
     private static final String PAYLOAD_UPDATE_FAVORITE  = "UPDATE_FAVORITE";
@@ -191,35 +187,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         );
 
         setHasStableIds(true); 
-
-        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                updateListEdges();
-            }
-
-            @Override
-            public void onItemRangeRemoved(int positionStart, int itemCount) {
-                updateListEdges();
-            }
-
-            @Override
-            public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-                updateListEdges();
-            }
-
-            private void updateListEdges() {
-                if (recyclerView == null) return;
-
-                recyclerView.post(() -> {
-                    if (recyclerView == null || recyclerView.isComputingLayout()) return;
-                    int total = getItemCount();
-                    if (total > 0) {
-                        notifyItemRangeChanged(0, total, PAYLOAD_UPDATE_CORNERS);
-                    }
-                });
-            }
-        });
     }
 
     @Override
@@ -431,17 +398,12 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         } else if (holder instanceof LocalFontViewHolder) {
             bindLocalFontViewHolder((LocalFontViewHolder) holder, mSortedList.get(position - 1), position);
         }
-        updateItemAppearance(holder, position);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position,
                                  @NonNull List<Object> payloads) {
         if (!payloads.isEmpty()) {
-            if (payloads.contains(PAYLOAD_UPDATE_CORNERS)) {
-                updateItemAppearance(holder, position);
-            }
-
             boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
             if ((payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) || !isSearchActive)
                     && holder instanceof LocalFontViewHolder) {
@@ -452,11 +414,11 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     android.text.Spannable highlighted = highlighter.highlightText(displayName, currentSearchQuery);
                     ((LocalFontViewHolder) holder).fontNameTextView.setText(highlighted);
                 } else {
-                CharSequence curr = ((LocalFontViewHolder) holder).fontNameTextView.getText();
-                if (curr instanceof android.text.Spanned || !displayName.contentEquals(curr)) {
-                    ((LocalFontViewHolder) holder).fontNameTextView.setText(displayName);
+                    CharSequence curr = ((LocalFontViewHolder) holder).fontNameTextView.getText();
+                    if (curr instanceof android.text.Spanned || !displayName.contentEquals(curr)) {
+                        ((LocalFontViewHolder) holder).fontNameTextView.setText(displayName);
+                    }
                 }
-            }
 
                 boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
                 if (isSearchActive) isLastOpened = false; 
@@ -494,34 +456,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         } else {
             super.onBindViewHolder(holder, position, payloads);
-        }
-    }
-
-    private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof SortHeaderViewHolder) return;
-
-        if (holder instanceof LocalFontViewHolder) {
-            LocalFontViewHolder fh = (LocalFontViewHolder) holder;
-            RoundLinearLayout root = (RoundLinearLayout) fh.itemView;
-            int totalFonts         = mSortedList.size();
-            boolean isFirst        = (position == 1);
-            boolean isLast         = (position == getItemCount() - 2);
-
-            if (totalFonts == 1) {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_ALL);
-                if (fh.dividerView != null) fh.dividerView.setVisibility(View.GONE);
-            } else if (isFirst) {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
-                                     | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
-                if (fh.dividerView != null) fh.dividerView.setVisibility(View.VISIBLE);
-            } else if (isLast) {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
-                                     | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
-                if (fh.dividerView != null) fh.dividerView.setVisibility(View.INVISIBLE);
-            } else {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_NONE);
-                if (fh.dividerView != null) fh.dividerView.setVisibility(View.VISIBLE);
-            }
         }
     }
 
@@ -627,4 +561,4 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (adj < 0 || adj >= positionSections.size()) return 0;
         return positionSections.get(adj);
     }
-                        }
+    }
