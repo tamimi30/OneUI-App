@@ -34,8 +34,8 @@ import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.dialog.TrashActionDialogs;
-import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.utils.FontUIStateManager;  
+import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.fragment.trash.manager.TrashSelectionManager;
 import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
 import com.oneui.fontviewer.fragment.trash.viewmodel.TrashViewModel;
@@ -178,9 +178,10 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mAdapter = new TrashListAdapter(mContext);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        mRecyclerView.setAdapter(mAdapter);
 
+        // الفواصل وزوايا (الأول / الأخير / الوحيد) تُرسم هنا، مع تجاوز شريط الفرز و Bottom space
         mRecyclerView.addItemDecoration(new FontItemDecoration(mContext));
+        mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.seslSetFillBottomEnabled(true);
         mRecyclerView.seslSetLastRoundedCorner(true);
@@ -650,4 +651,4 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         super.onDestroy();
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
     }
-                    }
+}
