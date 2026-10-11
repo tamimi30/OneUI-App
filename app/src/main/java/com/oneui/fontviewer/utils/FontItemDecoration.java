@@ -3,6 +3,7 @@ package com.oneui.fontviewer.utils;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.View;
@@ -10,8 +11,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.util.SeslRoundedCorner;
-import androidx.appcompat.util.SeslSubheaderRoundedCorner;
 import androidx.recyclerview.widget.RecyclerView;
+
 
 /**
  * FontItemDecoration - فئة لرسم الفواصل بين عناصر القائمة
@@ -23,16 +24,18 @@ import androidx.recyclerview.widget.RecyclerView;
  * شريط الفرز (أول عنصر في الـ Adapter) و Bottom space (آخر عنصر في الـ Adapter)
  * لا يُعتبران عناصر خطوط، لذلك لا يُرسم لهما فاصل.
  *
- * البطاقة (لون خلفية الـ RecyclerView) هي المنطقة بين شريط الفرز و Bottom space.
- * الزوايا العلوية تُرسم أسفل شريط الفرز مباشرة، والزوايا السفلية أعلى Bottom space مباشرة،
- * وتتبعهما أثناء حركة العناصر (Default item animator)، فلا تظهر خلفية سوداء
- * ولا حواف حادة مهما تحركت العناصر بينهما.
+ * شريط الفرز و Bottom space شفافان دائماً (بدون أي لون خلفية)، ولا يؤثر فيهما الأنيميشن إطلاقاً.
+ * لون الصفحة (oui_round_and_bgcolor) يُرسم هنا خلفهما، ولون البطاقة (خلفية الـ RecyclerView)
+ * يبقى فقط بين أسفل شريط الفرز وأسفل آخر عنصر خط، لذلك يتعامل الـ RecyclerView مع عناصر الخطوط فقط.
  *
- * ما تحت Bottom space يُطلى بلون الصفحة فوق العناصر، حتى لا تظهر عناصر محذوفة
- * (تبقى في مكانها وتتلاشى) فوقه أو تحته. ولهذا لا نستخدم ملء الأسفل الخاص بالـ RecyclerView
- * (seslSetFillBottomEnabled / seslSetLastRoundedCorner) لأنه يحسب حافته من آخر عنصر
- * في الـ RecyclerView أثناء الأنيميشن وقد يكون عنصراً محذوفاً وليس Bottom space.
- * الرسم يتم في seslOnDispatchDraw (بعد العناصر وقبل شريط التمرير) وليس في onDrawOver.
+ * حواف البطاقة:
+ * - الحافة العلوية ثابتة أسفل شريط الفرز مباشرة، فلا يظهر لون الصفحة بينه وبين العناصر
+ *   حتى لو كانت العناصر تتحرك أثناء الأنيميشن.
+ * - الحافة السفلية تتبع آخر عنصر خط، فلا تتأثر بحركة Bottom space.
+ * - العنصر المحذوف (يبقى في مكانه ويتلاشى) يُرسم خلفه لون البطاقة بنفس شفافيته.
+ *
+ * ولهذا لا نستخدم ملء الأسفل الخاص بالـ RecyclerView
+ * (seslSetFillBottomEnabled / seslSetLastRoundedCorner).
  */
 public class FontItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -43,8 +46,15 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
     private static final int FOOTER_COUNT = 1;
 
     private final Drawable divider;
-    private final SeslSubheaderRoundedCorner roundedCorner;
+    private final SeslRoundedCorner roundedCorner;
     private final Paint pagePaint = new Paint();
+    private final Paint cardPaint = new Paint();
+
+    // حواف البطاقة: تُحسب في onDraw ثم تُستخدم في seslOnDispatchDraw (نفس الإطار، onDraw أولاً)
+    private boolean hasCardTop;
+    private boolean hasCardBottom;
+    private int cardTop;
+    private int cardBottom;
     
     public FontItemDecoration(@NonNull Context context) {
         TypedValue typedValue = new TypedValue();
@@ -62,11 +72,12 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
         divider = (dividerDrawable != null) ? dividerDrawable.mutate() : null;
 
         // لون الزوايا الافتراضي هو نفس لون الصفحة (round and bgcolor)
-        roundedCorner = new SeslSubheaderRoundedCorner(context);
+        roundedCorner = new SeslRoundedCorner(context, true);
 
-        // لون الصفحة نفسه الذي تُرسم به الزوايا (round and bgcolor)
         pagePaint.setStyle(Paint.Style.FILL);
         pagePaint.setColor(roundedCorner.getRoundedCornerColor(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT));
+
+        cardPaint.setStyle(Paint.Style.FILL);
     }
     
     @Override
@@ -74,12 +85,90 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
         super.onDraw(canvas, parent, state);
         
         RecyclerView.Adapter<?> adapter = parent.getAdapter();
-        if (divider == null || adapter == null) {
+        if (adapter == null) {
             return;
         }
 
+        int width = parent.getWidth();
+        int height = parent.getHeight();
+
+        // لون البطاقة هو لون خلفية الـ RecyclerView نفسه
+        boolean hasCardColor = parent.getBackground() instanceof ColorDrawable;
+        if (hasCardColor) {
+            cardPaint.setColor(((ColorDrawable) parent.getBackground()).getColor());
+        }
+
+        int headerPosition = HEADER_COUNT - 1;
         int firstFontPosition = HEADER_COUNT;
         int lastFontPosition = adapter.getItemCount() - FOOTER_COUNT - 1;
+
+        // العنصر الأول: حافة البطاقة العلوية ثابتة أسفل شريط الفرز
+        // العنصر الأخير: حافة البطاقة السفلية عند أسفل آخر عنصر خط (بعد حركته)
+        // إذا لم يكن أحدهما ظاهراً (قائمة ممرّرة) فالبطاقة تمتد خارج الشاشة من تلك الجهة
+        hasCardTop = false;
+        hasCardBottom = false;
+        cardTop = 0;
+        cardBottom = height;
+
+        boolean hasFontItem = false;
+        int lowestFontBottom = Integer.MIN_VALUE;
+
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            int position = parent.getChildAdapterPosition(child);
+
+            if (position == headerPosition) {
+                hasCardTop = true;
+                cardTop = Math.round(child.getY()) + child.getHeight();
+            } else if (position >= firstFontPosition && position <= lastFontPosition) {
+                hasFontItem = true;
+                lowestFontBottom = Math.max(lowestFontBottom, Math.round(child.getY()) + child.getHeight());
+                if (position == lastFontPosition) {
+                    hasCardBottom = true;
+                }
+            }
+        }
+
+        if (hasCardBottom) {
+            cardBottom = lowestFontBottom;
+        } else if (!hasFontItem && hasCardTop) {
+            // لا توجد عناصر خطوط: لا توجد بطاقة أصلاً
+            hasCardBottom = true;
+            cardBottom = cardTop;
+        }
+
+        if (hasCardBottom && hasCardTop && cardBottom < cardTop) {
+            cardBottom = cardTop;
+        }
+
+        // لون الصفحة خلف شريط الفرز (فوق البطاقة) وخلف Bottom space (تحتها)
+        if (hasCardTop && cardTop > 0) {
+            canvas.drawRect(0, 0, width, Math.min(cardTop, height), pagePaint);
+        }
+        if (hasCardBottom && cardBottom < height) {
+            canvas.drawRect(0, Math.max(cardBottom, 0), width, height, pagePaint);
+        }
+
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            int position = parent.getChildAdapterPosition(child);
+
+            // العنصر المحذوف يبقى في مكانه ويتلاشى: يُرسم خلفه لون البطاقة بنفس شفافيته
+            // (داخل البطاقة لا يظهر فرق لأن اللون نفسه)
+            if (hasCardColor && position == RecyclerView.NO_POSITION) {
+                int alpha = Math.round(child.getAlpha() * 255);
+                if (alpha > 0) {
+                    cardPaint.setAlpha(alpha);
+                    int top = Math.round(child.getY());
+                    canvas.drawRect(0, top, width, top + child.getHeight(), cardPaint);
+                }
+            }
+        }
+
+        if (divider == null) {
+            return;
+        }
+
         int dividerHeight = Math.max(divider.getIntrinsicHeight(), 1);
         
         for (int i = 0; i < parent.getChildCount(); i++) {
@@ -112,48 +201,29 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void seslOnDispatchDraw(@NonNull Canvas canvas, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-        RecyclerView.Adapter<?> adapter = parent.getAdapter();
-        if (adapter == null) {
+        // الحواف تُحسب في onDraw (قبل رسم العناصر مباشرة في نفس الإطار)
+        if (!hasCardTop && !hasCardBottom) {
             return;
         }
 
-        int headerPosition = HEADER_COUNT - 1;
-        int footerPosition = adapter.getItemCount() - FOOTER_COUNT;
-
-        View header = null;
-        View footer = null;
-
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            int position = parent.getChildAdapterPosition(child);
-
-            if (position == headerPosition) {
-                header = child;
-            } else if (position == footerPosition) {
-                footer = child;
-            }
+        int corners = SeslRoundedCorner.ROUNDED_CORNER_NONE;
+        if (hasCardTop) {
+            // الزوايا العلوية للبطاقة: أسفل شريط الفرز مباشرة
+            corners |= SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT;
+        }
+        if (hasCardBottom) {
+            // الزوايا السفلية للبطاقة: عند أسفل آخر عنصر خط
+            corners |= SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT;
         }
 
-        // كل ما يبدأ من أعلى Bottom space إلى أسفل القائمة بلون الصفحة، وفوق العناصر
-        // (Bottom space فارغ، وقد يمر فوقه عنصر محذوف أو يبقى تحته أثناء الأنيميشن)
-        if (footer != null) {
-            canvas.drawRect(0, Math.round(footer.getY()), parent.getWidth(), parent.getHeight(), pagePaint);
-        }
+        int top = hasCardTop ? cardTop : 0;
+        int bottom = hasCardBottom ? cardBottom : parent.getHeight();
 
-        // الزوايا العلوية للبطاقة: تُرسم أسفل شريط الفرز مباشرة
-        // (إذا لم يكن شريط الفرز ظاهراً فالبطاقة تمتد خارج الشاشة من الأعلى ولا زوايا)
-        if (header != null) {
-            roundedCorner.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
-                    | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
-            roundedCorner.drawRoundedCorner(header, canvas);
-        }
-
-        // الزوايا السفلية للبطاقة: تُرسم أعلى Bottom space مباشرة
-        // (إذا لم يكن Bottom space ظاهراً فالبطاقة تمتد خارج الشاشة من الأسفل ولا زوايا)
-        if (footer != null) {
-            roundedCorner.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
-                    | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
-            roundedCorner.drawRoundedCorner(footer, canvas);
-        }
+        // drawRoundedCorner(Canvas) ترسم الزوايا داخل حدود القص (clip) الحالية
+        canvas.save();
+        canvas.clipRect(0, top, parent.getWidth(), bottom);
+        roundedCorner.setRoundedCorners(corners);
+        roundedCorner.drawRoundedCorner(canvas);
+        canvas.restore();
     }
 }
