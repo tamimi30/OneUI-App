@@ -13,9 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.util.SeslRoundedCorner;
-
-import dev.oneuiproject.oneui.widget.RoundLinearLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
@@ -32,7 +29,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public static final int VIEW_TYPE_SPACE  = 2;
 
     private static final String PAYLOAD_UPDATE_SELECTION = "UPDATE_SELECTION";
-    private static final String PAYLOAD_UPDATE_CORNERS   = "UPDATE_CORNERS";
 
     private final Context context;
     private List<FontEntity> mItems = new ArrayList<>();
@@ -54,20 +50,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public TrashListAdapter(@NonNull Context context) {
         this.context = context;
         setHasStableIds(true);
-        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override public void onItemRangeInserted(int p, int c) { updateListEdges(); }
-            @Override public void onItemRangeRemoved(int p, int c)  { updateListEdges(); }
-            @Override public void onItemRangeMoved(int f, int t, int c) { updateListEdges(); }
-
-            private void updateListEdges() {
-                if (recyclerView == null) return;
-                recyclerView.post(() -> {
-                    if (recyclerView == null || recyclerView.isComputingLayout()) return;
-                    int total = getItemCount();
-                    if (total > 0) notifyItemRangeChanged(0, total, PAYLOAD_UPDATE_CORNERS);
-                });
-            }
-        });
     }
 
 
@@ -139,6 +121,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 return new TrashItemViewHolder(inf.inflate(R.layout.trash_list_item, parent, false));
         }
     }
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof TrashHeaderViewHolder) {
@@ -146,50 +129,17 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         } else if (holder instanceof TrashItemViewHolder) {
             bindItem((TrashItemViewHolder) holder, mItems.get(position - 1), position);
         }
-        updateItemAppearance(holder, position);
     }
 
-           @Override
+    @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position,
                                  @NonNull List<Object> payloads) {
         if (!payloads.isEmpty()) {
-            if (payloads.contains(PAYLOAD_UPDATE_CORNERS)) {
-                updateItemAppearance(holder, position);
-            }
             if (payloads.contains(PAYLOAD_UPDATE_SELECTION) && holder instanceof TrashItemViewHolder) {
                 updateCheckBoxState((TrashItemViewHolder) holder, position);
             }
         } else {
             super.onBindViewHolder(holder, position, payloads);
-        }
-    }
-
-    private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof TrashHeaderViewHolder || holder instanceof SpaceViewHolder) return;
-
-        if (holder instanceof TrashItemViewHolder) {
-            TrashItemViewHolder th = (TrashItemViewHolder) holder;
-            RoundLinearLayout root = (RoundLinearLayout) th.itemView;
-            
-            int totalFonts = mItems.size();
-            boolean isFirst = (position == 1);
-            boolean isLast  = (position == getItemCount() - 2);
-
-            if (totalFonts == 1) {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_ALL);
-                if (th.dividerView != null) th.dividerView.setVisibility(View.GONE);
-            } else if (isFirst) {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
-                                     | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
-                if (th.dividerView != null) th.dividerView.setVisibility(View.VISIBLE);
-            } else if (isLast) {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
-                                     | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
-                if (th.dividerView != null) th.dividerView.setVisibility(View.INVISIBLE);
-            } else {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_NONE);
-                if (th.dividerView != null) th.dividerView.setVisibility(View.VISIBLE);
-            }
         }
     }
 
@@ -330,14 +280,12 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final SelectableLinearLayout selectableLayout;
         final TextView fontNameTextView;
         final TextView daysRemainingTextView;
-        final View dividerView;
 
         TrashItemViewHolder(@NonNull View itemView) {
             super(itemView);
             selectableLayout      = itemView.findViewById(R.id.selectable_layout);
             fontNameTextView      = itemView.findViewById(R.id.trash_item_font_name);
             daysRemainingTextView = itemView.findViewById(R.id.trash_item_days_remaining);
-            dividerView           = itemView.findViewById(R.id.item_divider);
         }
     }
 
@@ -378,4 +326,4 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     && o.isTrashed() == n.isTrashed();
         }
     }
-    }
+            }
