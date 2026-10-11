@@ -2,6 +2,7 @@ package com.oneui.fontviewer.utils;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.View;
@@ -26,6 +27,12 @@ import androidx.recyclerview.widget.RecyclerView;
  * الزوايا العلوية تُرسم أسفل شريط الفرز مباشرة، والزوايا السفلية أعلى Bottom space مباشرة،
  * وتتبعهما أثناء حركة العناصر (Default item animator)، فلا تظهر خلفية سوداء
  * ولا حواف حادة مهما تحركت العناصر بينهما.
+ *
+ * ما تحت Bottom space يُطلى بلون الصفحة فوق العناصر، حتى لا تظهر عناصر محذوفة
+ * (تبقى في مكانها وتتلاشى) فوقه أو تحته. ولهذا لا نستخدم ملء الأسفل الخاص بالـ RecyclerView
+ * (seslSetFillBottomEnabled / seslSetLastRoundedCorner) لأنه يحسب حافته من آخر عنصر
+ * في الـ RecyclerView أثناء الأنيميشن وقد يكون عنصراً محذوفاً وليس Bottom space.
+ * الرسم يتم في seslOnDispatchDraw (بعد العناصر وقبل شريط التمرير) وليس في onDrawOver.
  */
 public class FontItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -37,6 +44,7 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
 
     private final Drawable divider;
     private final SeslSubheaderRoundedCorner roundedCorner;
+    private final Paint pagePaint = new Paint();
     
     public FontItemDecoration(@NonNull Context context) {
         TypedValue typedValue = new TypedValue();
@@ -55,6 +63,10 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
 
         // لون الزوايا الافتراضي هو نفس لون الصفحة (round and bgcolor)
         roundedCorner = new SeslSubheaderRoundedCorner(context);
+
+        // لون الصفحة نفسه الذي تُرسم به الزوايا (round and bgcolor)
+        pagePaint.setStyle(Paint.Style.FILL);
+        pagePaint.setColor(roundedCorner.getRoundedCornerColor(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT));
     }
     
     @Override
@@ -99,9 +111,7 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void onDrawOver(@NonNull Canvas canvas, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-        super.onDrawOver(canvas, parent, state);
-
+    public void seslOnDispatchDraw(@NonNull Canvas canvas, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         RecyclerView.Adapter<?> adapter = parent.getAdapter();
         if (adapter == null) {
             return;
@@ -122,6 +132,12 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
             } else if (position == footerPosition) {
                 footer = child;
             }
+        }
+
+        // كل ما يبدأ من أعلى Bottom space إلى أسفل القائمة بلون الصفحة، وفوق العناصر
+        // (Bottom space فارغ، وقد يمر فوقه عنصر محذوف أو يبقى تحته أثناء الأنيميشن)
+        if (footer != null) {
+            canvas.drawRect(0, Math.round(footer.getY()), parent.getWidth(), parent.getHeight(), pagePaint);
         }
 
         // الزوايا العلوية للبطاقة: تُرسم أسفل شريط الفرز مباشرة
