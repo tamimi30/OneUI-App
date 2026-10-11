@@ -2,6 +2,7 @@ package com.oneui.fontviewer.utils;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.View;
@@ -21,6 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
  * شريط الفرز (أول عنصر في الـ Adapter) و Bottom space (آخر عنصر في الـ Adapter)
  * لا يُعتبران عناصر خطوط، لذلك لا يُرسم لهما فاصل ولا زوايا،
  * ويُحسب العنصر الأول والأخير من عناصر الخطوط الفعلية فقط.
+ *
+ * خلفية الـ RecyclerView بلون البطاقة، لذلك يُطلى ما فوق أول عنصر خط وما تحت آخر عنصر خط
+ * بلون الصفحة، حتى لا تظهر البطاقة بحواف حادة أثناء حركة العناصر (Default item animator).
  */
 public class FontItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -32,6 +36,7 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
 
     private final Drawable divider;
     private final SeslRoundedCorner roundedCorner;
+    private final Paint pagePaint = new Paint();
     
     public FontItemDecoration(@NonNull Context context) {
         TypedValue typedValue = new TypedValue();
@@ -50,6 +55,10 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
 
         // لون الزوايا الافتراضي هو نفس لون الصفحة (round and bgcolor)
         roundedCorner = new SeslRoundedCorner(context, true);
+
+        // نفس لون الصفحة الذي تُرسم به الزوايا، فيندمج الطلاء مع شريط الفرز و Bottom space
+        pagePaint.setStyle(Paint.Style.FILL);
+        pagePaint.setColor(roundedCorner.getRoundedCornerColor(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT));
     }
     
     @Override
@@ -57,12 +66,19 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
         super.onDraw(canvas, parent, state);
         
         RecyclerView.Adapter<?> adapter = parent.getAdapter();
-        if (divider == null || adapter == null) {
+        if (adapter == null) {
             return;
         }
 
         int firstFontPosition = HEADER_COUNT;
         int lastFontPosition = adapter.getItemCount() - FOOTER_COUNT - 1;
+
+        drawPageColorOutsideCard(canvas, parent, firstFontPosition, lastFontPosition);
+
+        if (divider == null) {
+            return;
+        }
+
         int dividerHeight = Math.max(divider.getIntrinsicHeight(), 1);
         
         for (int i = 0; i < parent.getChildCount(); i++) {
@@ -91,6 +107,46 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         divider.setAlpha(255);
+    }
+
+    /**
+     * لون خلفية الـ RecyclerView هو لون البطاقة، فعندما يتحرك أول أو آخر عنصر خط أثناء الأنيميشن
+     * يظهر لون البطاقة في الفراغ الذي تركه العنصر. لذلك تُطلى المنطقة التي فوق أول عنصر خط
+     * وتحت آخر عنصر خط بلون الصفحة، ويبقى لون البطاقة بينهما فقط.
+     */
+    private void drawPageColorOutsideCard(@NonNull Canvas canvas, @NonNull RecyclerView parent,
+                                          int firstFontPosition, int lastFontPosition) {
+        int width = parent.getWidth();
+        int height = parent.getHeight();
+
+        // لا توجد عناصر خطوط: لا توجد بطاقة أصلاً
+        if (lastFontPosition < firstFontPosition) {
+            canvas.drawRect(0, 0, width, height, pagePaint);
+            return;
+        }
+
+        // إذا لم يكن العنصر الأول (أو الأخير) ظاهراً فالبطاقة تمتد خارج الشاشة من جهته ولا يُطلى شيء
+        int cardTop = Integer.MIN_VALUE;
+        int cardBottom = Integer.MAX_VALUE;
+
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            int position = parent.getChildAdapterPosition(child);
+
+            if (position == firstFontPosition) {
+                cardTop = Math.round(child.getY());
+            }
+            if (position == lastFontPosition) {
+                cardBottom = Math.round(child.getY()) + child.getHeight();
+            }
+        }
+
+        if (cardTop > 0) {
+            canvas.drawRect(0, 0, width, Math.min(cardTop, height), pagePaint);
+        }
+        if (cardBottom < height) {
+            canvas.drawRect(0, Math.max(cardBottom, 0), width, height, pagePaint);
+        }
     }
 
     @Override
