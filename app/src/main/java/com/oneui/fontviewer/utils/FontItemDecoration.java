@@ -40,9 +40,22 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
         if (divider == null) {
             return;
         }
+
+        RecyclerView.Adapter<?> adapter = parent.getAdapter();
+        int itemCount = adapter != null ? adapter.getItemCount() : 0;
         
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
+
+            // القوائم تتكون من: شريط (أول عنصر) + عناصر الخطوط + مساحة سفلية (آخر عنصر)
+            // لذلك لا نرسم فاصلاً أسفل الشريط العلوي ولا أسفل آخر خط ولا أسفل المساحة السفلية
+            int position = parent.getChildAdapterPosition(child);
+            if (position == RecyclerView.NO_POSITION
+                    || position < 1
+                    || position > itemCount - 3) {
+                continue;
+            }
+
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
             
             int top = child.getBottom() + params.bottomMargin;
