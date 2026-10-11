@@ -284,8 +284,8 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
         setupRecyclerViewAnimator();
 
-        mRecyclerView.seslSetFillBottomEnabled(true);
-        mRecyclerView.seslSetLastRoundedCorner(true);
+        mRecyclerView.seslSetFillBottomEnabled(false);
+        mRecyclerView.seslSetLastRoundedCorner(false);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
