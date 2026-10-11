@@ -36,6 +36,7 @@ import com.oneui.fontviewer.widget.search.FontSearchManager;
 import com.oneui.fontviewer.widget.search.SearchViewModel;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
 import com.oneui.fontviewer.widget.sort.SortByItemLayout;
+import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.fragment.systemfont.adapter.SystemFontListAdapter;
 import com.oneui.fontviewer.R;
@@ -272,6 +273,8 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         });
 
         mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext));
 
         mAdapter.updateSortOptionsOnly(
             mSortManager.getCurrentSortType(),
@@ -514,4 +517,4 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
         if (mExecutor != null)    mExecutor.shutdown();
     }
-    }
+                        }
