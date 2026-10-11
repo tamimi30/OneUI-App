@@ -42,8 +42,8 @@ import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontSelectionManager;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontPermissionManager;
 import com.oneui.fontviewer.fragment.localfont.fontdirectory.LocalFontDirectoryPicker;
-import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.utils.FontUIStateManager;
+import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.widget.search.SearchViewModel;
 import com.oneui.fontviewer.widget.search.FontSearchManager;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
@@ -476,6 +476,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
+        // الفواصل وزوايا (الأول / الأخير / الوحيد) تُرسم هنا، مع تجاوز شريط الفرز و Bottom space
+        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext));
+
         mRecyclerView.setItemViewCacheSize(20);
 
         mAdapter = new LocalFontListAdapter(mContext, mExecutor);
@@ -506,8 +509,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         });
 
         mRecyclerView.setAdapter(mAdapter);
-
-        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext));
 
         mAdapter.updateSortOptionsOnly(
             mSortManager.getCurrentSortType(),
@@ -1084,4 +1085,4 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         return null;
     }
 
-    }
+}
