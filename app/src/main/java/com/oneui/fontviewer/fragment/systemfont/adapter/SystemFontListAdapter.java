@@ -438,4 +438,4 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (adj < 0 || adj >= positionSections.size()) return 0;
         return positionSections.get(adj);
     }
-    }
+}
