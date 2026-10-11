@@ -121,7 +121,6 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 return new TrashItemViewHolder(inf.inflate(R.layout.trash_list_item, parent, false));
         }
     }
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof TrashHeaderViewHolder) {
@@ -326,4 +325,4 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     && o.isTrashed() == n.isTrashed();
         }
     }
-            }
+}
