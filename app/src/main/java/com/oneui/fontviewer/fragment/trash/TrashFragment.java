@@ -34,6 +34,7 @@ import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.dialog.TrashActionDialogs;
+import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.utils.FontUIStateManager;  
 import com.oneui.fontviewer.fragment.trash.manager.TrashSelectionManager;
 import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
@@ -179,8 +180,10 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.seslSetFillBottomEnabled(false);
-        mRecyclerView.seslSetLastRoundedCorner(false);
+        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext));
+
+        mRecyclerView.seslSetFillBottomEnabled(true);
+        mRecyclerView.seslSetLastRoundedCorner(true);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
         mRecyclerView.seslSetSmoothScrollEnabled(true);
@@ -647,4 +650,4 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         super.onDestroy();
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
     }
-    }
+                    }
