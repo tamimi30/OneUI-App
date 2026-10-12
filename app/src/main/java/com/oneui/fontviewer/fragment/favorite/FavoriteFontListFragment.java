@@ -39,8 +39,8 @@ import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
 import com.oneui.fontviewer.dialog.RenameFontDialog;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
-import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.utils.FontItemDecoration;
+import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.fragment.localfont.adapter.LocalFontListAdapter;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontSelectionManager;
@@ -286,9 +286,6 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        // الفواصل وزوايا (الأول / الأخير / الوحيد) تُرسم هنا، مع تجاوز شريط الفرز و Bottom space
-        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext));
-
         mAdapter = new LocalFontListAdapter(mContext, mExecutor, true);
 
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
@@ -309,6 +306,10 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         mRecyclerView.setAdapter(mAdapter);
 
+        mRecyclerView.addItemDecoration(
+            new FontItemDecoration(mContext, LocalFontListAdapter.VIEW_TYPE_FONT)
+        );
+
         mAdapter.updateSortOptionsOnly(
             mSortManager.getCurrentSortType(),
             mSortManager.isSortAscending()
@@ -317,7 +318,8 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         setupRecyclerViewAnimator();
 
         mRecyclerView.seslSetFillBottomEnabled(true);
-        mRecyclerView.seslSetLastRoundedCorner(true);
+        // الـ RecyclerView يعتبر الـ Bottom space آخر عنصر، لذلك الزوايا السفلية يرسمها FontItemDecoration
+        mRecyclerView.seslSetLastRoundedCorner(false);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
@@ -738,4 +740,4 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
         if (mExecutor != null)    mExecutor.shutdown();
     }
-}
+                                        }
