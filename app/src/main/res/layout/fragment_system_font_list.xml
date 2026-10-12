@@ -11,11 +11,13 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <androidx.recyclerview.widget.OneUiRecyclerView
             android:id="@+id/system_font_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingHorizontal="10dp"
             android:background="@color/oui_background_color"
+            android:scrollbarStyle="outsideOverlay"
             android:scrollbars="vertical" />
 
         <androidx.core.widget.NestedScrollView
