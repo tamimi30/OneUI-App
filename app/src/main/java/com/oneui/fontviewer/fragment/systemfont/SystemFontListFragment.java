@@ -36,8 +36,8 @@ import com.oneui.fontviewer.widget.search.FontSearchManager;
 import com.oneui.fontviewer.widget.search.SearchViewModel;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
 import com.oneui.fontviewer.widget.sort.SortByItemLayout;
-import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.utils.FontItemDecoration;
+import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.fragment.systemfont.adapter.SystemFontListAdapter;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.systemfont.viewmodel.SystemFontListViewModel;
@@ -254,9 +254,6 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        // الفواصل وزوايا (الأول / الأخير / الوحيد) تُرسم هنا، مع تجاوز شريط الفرز و Bottom space
-        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext));
-
         mAdapter = new SystemFontListAdapter(mContext, mExecutor);
 
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
@@ -277,6 +274,10 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
         mRecyclerView.setAdapter(mAdapter);
 
+        mRecyclerView.addItemDecoration(
+            new FontItemDecoration(mContext, SystemFontListAdapter.VIEW_TYPE_FONT)
+        );
+
         mAdapter.updateSortOptionsOnly(
             mSortManager.getCurrentSortType(),
             mSortManager.isSortAscending()
@@ -284,7 +285,8 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
         setupRecyclerViewAnimator();
 
-        mRecyclerView.seslSetFillBottomEnabled(false);
+        mRecyclerView.seslSetFillBottomEnabled(true);
+        // الـ RecyclerView يعتبر الـ Bottom space آخر عنصر، لذلك الزوايا السفلية يرسمها FontItemDecoration
         mRecyclerView.seslSetLastRoundedCorner(false);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
@@ -518,4 +520,4 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
         if (mExecutor != null)    mExecutor.shutdown();
     }
-}
+                }
