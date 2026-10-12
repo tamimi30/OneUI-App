@@ -287,7 +287,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
         mRecyclerView.seslSetFillBottomEnabled(true);
         // الـ RecyclerView يعتبر الـ Bottom space آخر عنصر، لذلك الزوايا السفلية يرسمها FontItemDecoration
-        mRecyclerView.seslSetLastRoundedCorner(false);
+        mRecyclerView.seslSetLastRoundedCorner(true);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
