@@ -1,15 +1,23 @@
+
 <?xml version="1.0" encoding="utf-8"?>
 <!-- شريط الفرز -->
-<com.oneui.fontviewer.widget.sort.SortByItemLayout
+<!-- الحاوية الخارجية تحمل لون الخلفية الثابت، أما SortByItemLayout (الذي تُطبَّق عليه الشفافية 0.4 في وضع التحديد)
+     فبدون خلفية، حتى لا يتغير لون الخلفية عند تعطيل الشريط -->
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/sort_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical|end"
-    android:layout_gravity="center_vertical|end"
     android:background="@color/oui_round_and_bgcolor"
     android:paddingEnd="17dp"
     android:paddingTop="8dp"
-    android:paddingBottom="6dp" />
+    android:paddingBottom="6dp">
+
+    <com.oneui.fontviewer.widget.sort.SortByItemLayout
+        android:id="@+id/sort_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|end" />
+
+</FrameLayout>
