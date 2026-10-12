@@ -34,8 +34,8 @@ import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.dialog.TrashActionDialogs;
-import com.oneui.fontviewer.utils.FontUIStateManager;  
 import com.oneui.fontviewer.utils.FontItemDecoration;
+import com.oneui.fontviewer.utils.FontUIStateManager;  
 import com.oneui.fontviewer.fragment.trash.manager.TrashSelectionManager;
 import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
 import com.oneui.fontviewer.fragment.trash.viewmodel.TrashViewModel;
@@ -178,13 +178,15 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mAdapter = new TrashListAdapter(mContext);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-
-        // الفواصل وزوايا (الأول / الأخير / الوحيد) تُرسم هنا، مع تجاوز شريط الفرز و Bottom space
-        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext));
         mRecyclerView.setAdapter(mAdapter);
 
+        mRecyclerView.addItemDecoration(
+            new FontItemDecoration(mContext, TrashListAdapter.VIEW_TYPE_ITEM)
+        );
+
         mRecyclerView.seslSetFillBottomEnabled(true);
-        mRecyclerView.seslSetLastRoundedCorner(true);
+        // الـ RecyclerView يعتبر الـ Bottom space آخر عنصر، لذلك الزوايا السفلية يرسمها FontItemDecoration
+        mRecyclerView.seslSetLastRoundedCorner(false);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
         mRecyclerView.seslSetSmoothScrollEnabled(true);
@@ -651,4 +653,4 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         super.onDestroy();
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
     }
-}
+                }
