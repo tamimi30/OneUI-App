@@ -30,9 +30,9 @@ import java.util.concurrent.ExecutorService;
 
 public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SectionIndexer {
 
-    private static final int VIEW_TYPE_HEADER = 0;
-    private static final int VIEW_TYPE_FONT   = 1;
-    private static final int VIEW_TYPE_SPACE  = 2;
+    public static final int VIEW_TYPE_HEADER = 0;
+    public static final int VIEW_TYPE_FONT   = 1;
+    public static final int VIEW_TYPE_SPACE  = 2;
 
     private static final String PAYLOAD_UPDATE_HIGHLIGHT  = "UPDATE_HIGHLIGHT";
     private static final String PAYLOAD_UPDATE_LAST_OPENED = "UPDATE_LAST_OPENED";
@@ -136,8 +136,6 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         this.currentSortType      = SortByItemLayout.SortType.NAME;
         this.currentSortAscending = true;
-
-        
 
         this.mIsFontPreviewEnabled = SettingsHelper.isFontPreviewEnabled(context);
 
@@ -438,4 +436,4 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (adj < 0 || adj >= positionSections.size()) return 0;
         return positionSections.get(adj);
     }
-}
+            }
