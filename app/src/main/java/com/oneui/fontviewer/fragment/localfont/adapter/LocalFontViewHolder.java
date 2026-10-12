@@ -27,7 +27,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         fontNameTextView    = itemView.findViewById(R.id.font_item_name);
         weightWidthTextView = itemView.findViewById(R.id.font_item_weight_width); 
-        selectableLayout = itemView.findViewById(R.id.selectable_layout);
+        selectableLayout    = itemView.findViewById(R.id.selectable_layout);
         favoriteIconView    = itemView.findViewById(R.id.font_item_favorite_icon); 
         originalTypeface    = fontNameTextView.getTypeface();
     }
@@ -89,27 +89,26 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     }
     
 
-     public void setFavoriteIndicator(boolean isFavorite, boolean animate) {
+    public void setFavoriteIndicator(boolean isFavorite, boolean animate) {
         if (favoriteIconView != null) {
             favoriteIconView.animate().cancel(); 
 
             if (animate) {
-                    boolean isCurrentlyVisible = (favoriteIconView.getVisibility() == View.VISIBLE);
-                    if (isFavorite && !isCurrentlyVisible) {
-                        favoriteIconView.setAlpha(0f);
-                        favoriteIconView.setVisibility(View.VISIBLE);
-                        favoriteIconView.animate().alpha(1f).setDuration(350).start();
-                    } else if (!isFavorite && isCurrentlyVisible) {
-                        favoriteIconView.animate().alpha(0f).setDuration(350).withEndAction(() -> {
-                            favoriteIconView.setVisibility(View.INVISIBLE);
-                        }).start();
-                    } else if (isFavorite && isCurrentlyVisible) {
-                        favoriteIconView.setAlpha(1f); 
-                    } else if (!isFavorite && !isCurrentlyVisible) {
-                        favoriteIconView.setAlpha(0f);
-                    }
-                } else {
-
+                boolean isCurrentlyVisible = (favoriteIconView.getVisibility() == View.VISIBLE);
+                if (isFavorite && !isCurrentlyVisible) {
+                    favoriteIconView.setAlpha(0f);
+                    favoriteIconView.setVisibility(View.VISIBLE);
+                    favoriteIconView.animate().alpha(1f).setDuration(350).start();
+                } else if (!isFavorite && isCurrentlyVisible) {
+                    favoriteIconView.animate().alpha(0f).setDuration(350).withEndAction(() -> {
+                        favoriteIconView.setVisibility(View.INVISIBLE);
+                    }).start();
+                } else if (isFavorite && isCurrentlyVisible) {
+                    favoriteIconView.setAlpha(1f); 
+                } else if (!isFavorite && !isCurrentlyVisible) {
+                    favoriteIconView.setAlpha(0f);
+                }
+            } else {
                 favoriteIconView.setVisibility(isFavorite ? View.VISIBLE : View.INVISIBLE);
                 favoriteIconView.setAlpha(isFavorite ? 1f : 0f);
             }
