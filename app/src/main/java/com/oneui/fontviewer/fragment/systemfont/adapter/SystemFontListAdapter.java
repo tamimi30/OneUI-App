@@ -24,6 +24,7 @@ import com.oneui.fontviewer.fragment.systemfont.manager.SystemFontPreferenceMana
 import com.oneui.fontviewer.utils.FileUtils;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -137,6 +138,8 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.currentSortType      = SortByItemLayout.SortType.NAME;
         this.currentSortAscending = true;
 
+        
+
         this.mIsFontPreviewEnabled = SettingsHelper.isFontPreviewEnabled(context);
 
         this.mSortedList = new SortedList<>(
@@ -145,6 +148,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         );
 
         setHasStableIds(true);
+
     }
 
     @Override
@@ -436,4 +440,4 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (adj < 0 || adj >= positionSections.size()) return 0;
         return positionSections.get(adj);
     }
-            }
+}
