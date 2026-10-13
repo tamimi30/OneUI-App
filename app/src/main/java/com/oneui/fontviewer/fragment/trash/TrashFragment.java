@@ -34,8 +34,8 @@ import com.oneui.fontviewer.activity.AppScreen;
 import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.dialog.TrashActionDialogs;
-import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.utils.FontUIStateManager;  
+import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.fragment.trash.manager.TrashSelectionManager;
 import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
 import com.oneui.fontviewer.fragment.trash.viewmodel.TrashViewModel;
@@ -180,12 +180,13 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.addItemDecoration(
-            new FontItemDecoration(mContext, TrashListAdapter.VIEW_TYPE_ITEM)
-        );
+        // الفواصل وزوايا القائمة تتولاها المكتبة عبر FontItemDecoration،
+        // حيث يُعامل رأس القائمة والـ Bottom space كـ Separator (أول خط، وآخر خط، والخط الوحيد، وعناصر المنتصف)
+        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext, TrashListAdapter.VIEW_TYPE_ITEM));
 
+        // fillBottom يملأ الفراغ تحت آخر عنصر وأثناء الأنيميشن بلون oui_round_and_bgcolor،
+        // وزوايا آخر خط لا ترسمها المكتبة هنا لأن آخر عنصر عندها هو الـ Bottom space
         mRecyclerView.seslSetFillBottomEnabled(true);
-        // الـ RecyclerView يعتبر الـ Bottom space آخر عنصر، لذلك الزوايا السفلية يرسمها FontItemDecoration
         mRecyclerView.seslSetLastRoundedCorner(false);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
@@ -653,4 +654,4 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         super.onDestroy();
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
     }
-                }
+    }
