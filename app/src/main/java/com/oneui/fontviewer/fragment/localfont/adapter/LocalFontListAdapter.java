@@ -29,7 +29,6 @@ import com.oneui.fontviewer.fragment.localfont.viewmodel.LocalFontListViewModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 
 public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SectionIndexer {
@@ -59,10 +58,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private HashMap<String, LocalFontListViewModel.FontFileInfoWithMetadata> fontsMetadataMap;
     private String currentSearchQuery;
-
-    // آخر استعلام بحث طُبّق على نص كل ViewHolder (التمييز ولون آخر خط مفتوح)،
-    // حتى نحدّث الـ ViewHolder مباشرةً دون إرسال أي إشعار تغيير لـ RecyclerView
-    private final WeakHashMap<RecyclerView.ViewHolder, String> mAppliedSearchQueries = new WeakHashMap<>();
 
     private List<String> sections;
     private List<Integer> sectionPositions;
@@ -272,66 +267,77 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void updateFilteredFonts(List<FontFileInfo> fonts, String searchQuery) {
+        String oldQuery = this.currentSearchQuery;
         this.currentSearchQuery = searchQuery != null ? searchQuery : "";
         List<FontFileInfo> newList = fonts != null ? fonts : new ArrayList<>();
 
         mSortedList.replaceAll(newList);
         buildSections();
 
-        // تمييز نص البحث ولون آخر خط مفتوح يُطبَّقان مباشرةً على العناصر الظاهرة، بدل notifyItemRangeChanged.
-        // إشعار التغيير المؤجَّل كان يصل بعد أول Layout، فيستدعي ItemAnimator.animateChange للعنصر نفسه
-        // (animateMove ← resetAnimation ← endAnimation)، وذلك:
-        //   1) يُنهي أنيميشن الظهور (alpha) للعناصر المضافة فتظهر فجأة،
-        //   2) يعيد تشغيل حركة العناصر الباقية فقط دون الـ Bottom space، فتفقد العناصر تزامنها معه.
-        refreshVisibleSearchState();
+        if (!this.currentSearchQuery.equals(oldQuery)) {
+            refreshSearchHighlight();
+        }
     }
 
-    // يحدّث العناصر الظاهرة حاليًا فقط. العناصر المخزّنة (Cached) تُحدَّث في onViewAttachedToWindow
-    private void refreshVisibleSearchState() {
-        if (recyclerView == null) return;
+    /**
+     * يعيد تمييز نص البحث على العناصر الباقية بعد تغيّر الاستعلام، دون أن يُلغي أنيميشن ظهور العناصر الجديدة.
+     *
+     * السبب: أي notifyItemRangeChanged على عنصر يجري إظهاره الآن يجعل DefaultItemAnimator ينفّذ
+     * animateChange ← animateMove ← resetAnimation ← endAnimation، فيُلغي أنيميشن الظهور (alpha من 0 إلى 1)
+     * ويضبط الشفافية على 1 فوراً، فتظهر العناصر فجأة بينما تختفي تدريجياً بشكل صحيح.
+     * لذلك:
+     *  - العناصر المعروضة حالياً تُحدَّث مباشرة على الـ ViewHolder دون أي إشعار للـ RecyclerView.
+     *  - العناصر غير المعروضة (قد تكون محفوظة في الـ cache بتمييز قديم) ليس لها View الآن،
+     *    فيُرسل لها إشعار عادي ولا يتأثر به أي أنيميشن.
+     *  - العناصر الجديدة لا تحتاج شيئاً، لأنها تُربط (bind) بالاستعلام الجديد مباشرة.
+     */
+    private void refreshSearchHighlight() {
+        final int size = mSortedList.size();
+        if (size == 0 || recyclerView == null || recyclerView.isComputingLayout()) return;
 
-        for (int i = 0; i < recyclerView.getChildCount(); i++) {
+        // مواضع العناصر المعروضة حالياً (1..size)، المحسوبة مع التعديلات المعلّقة على الـ Adapter
+        final boolean[] isAttached = new boolean[size + 1];
+
+        for (int i = 0, count = recyclerView.getChildCount(); i < count; i++) {
             RecyclerView.ViewHolder vh = recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
             if (!(vh instanceof LocalFontViewHolder)) continue;
 
-            // العناصر المحذوفة (التي تختفي بالأنيميشن) ترجع NO_POSITION فتبقى بنصها القديم حتى تتلاشى
             int position = vh.getBindingAdapterPosition();
-            if (position > 0 && position <= mSortedList.size()) {
-                syncSearchState((LocalFontViewHolder) vh, mSortedList.get(position - 1));
+            if (position < 1 || position > size) continue;
+
+            isAttached[position] = true;
+            applyHighlight((LocalFontViewHolder) vh, mSortedList.get(position - 1));
+        }
+
+        int runStart = -1;
+        for (int position = 1; position <= size + 1; position++) {
+            boolean needsNotify = position <= size && !isAttached[position];
+            if (needsNotify) {
+                if (runStart == -1) runStart = position;
+            } else if (runStart != -1) {
+                notifyItemRangeChanged(runStart, position - runStart, PAYLOAD_UPDATE_HIGHLIGHT);
+                runStart = -1;
             }
         }
     }
 
-    private void syncSearchState(@NonNull LocalFontViewHolder holder, @NonNull FontFileInfo fontInfo) {
-        if (currentSearchQuery.equals(mAppliedSearchQueries.get(holder))) return;
-        mAppliedSearchQueries.put(holder, currentSearchQuery);
-
-        boolean isSearchActive = !currentSearchQuery.isEmpty();
+    private void applyHighlight(LocalFontViewHolder holder, FontFileInfo fontInfo) {
+        boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
         String displayName = fontInfo.getDisplayName();
 
         if (isSearchActive) {
-            holder.fontNameTextView.setText(highlighter.highlightText(displayName, currentSearchQuery));
-        } else if (displayName != null) {
+            android.text.Spannable highlighted = highlighter.highlightText(displayName, currentSearchQuery);
+            holder.fontNameTextView.setText(highlighted);
+        } else {
             CharSequence curr = holder.fontNameTextView.getText();
             if (curr instanceof android.text.Spanned || !displayName.contentEquals(curr)) {
                 holder.fontNameTextView.setText(displayName);
             }
         }
 
-        holder.updateLastOpenedHighlight(!isSearchActive && preferenceManager.isLastOpenedFont(fontInfo.getPath()));
-    }
-
-    @Override
-    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-
-        // العناصر المخزّنة (setItemViewCacheSize) تعود دون إعادة Bind، فنزامنها هنا مع الاستعلام الحالي
-        if (holder instanceof LocalFontViewHolder) {
-            int position = holder.getBindingAdapterPosition();
-            if (position > 0 && position <= mSortedList.size()) {
-                syncSearchState((LocalFontViewHolder) holder, mSortedList.get(position - 1));
-            }
-        }
+        boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+        if (isSearchActive) isLastOpened = false;
+        holder.updateLastOpenedHighlight(isLastOpened);
     }
 
     public void setSortOptions(SortByItemLayout.SortType sortType, boolean ascending) {
@@ -457,23 +463,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
             if ((payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) || !isSearchActive)
                     && holder instanceof LocalFontViewHolder) {
-                FontFileInfo fontInfo = mSortedList.get(position - 1);
-                String displayName = fontInfo.getDisplayName();
-                mAppliedSearchQueries.put(holder, currentSearchQuery);
-
-                if (isSearchActive) {
-                    android.text.Spannable highlighted = highlighter.highlightText(displayName, currentSearchQuery);
-                    ((LocalFontViewHolder) holder).fontNameTextView.setText(highlighted);
-                } else {
-                CharSequence curr = ((LocalFontViewHolder) holder).fontNameTextView.getText();
-                if (curr instanceof android.text.Spanned || !displayName.contentEquals(curr)) {
-                    ((LocalFontViewHolder) holder).fontNameTextView.setText(displayName);
-                }
-            }
-
-                boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
-                if (isSearchActive) isLastOpened = false; 
-                ((LocalFontViewHolder) holder).updateLastOpenedHighlight(isLastOpened);
+                applyHighlight((LocalFontViewHolder) holder, mSortedList.get(position - 1));
             }
 
             if (payloads.contains(PAYLOAD_UPDATE_FAVORITE) && holder instanceof LocalFontViewHolder) {
@@ -529,7 +519,6 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         holder.bind(displayName, path, isSearchActive, currentSearchQuery,
                     isLastOpened, highlighter, isSelectionMode, isItemSelected(position),
                     weightWidthLabel);
-        mAppliedSearchQueries.put(holder, currentSearchQuery);
 
         boolean isFavorited = favoriteStatusProvider != null && favoriteStatusProvider.isFavorited(path);
         holder.setFavoriteIndicator(isFavorited, false);
@@ -613,4 +602,4 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (adj < 0 || adj >= positionSections.size()) return 0;
         return positionSections.get(adj);
     }
-                        }
+}
