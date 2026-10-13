@@ -76,8 +76,17 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
 
+            RecyclerView.ViewHolder holder = parent.getChildViewHolder(child);
+
             // لا فاصل تحت الرأس ولا تحت الـ Bottom space (الـ Separators)
-            if (parent.getChildViewHolder(child).getItemViewType() != fontViewType) {
+            if (holder.getItemViewType() != fontViewType) {
+                continue;
+            }
+
+            // لا فاصل تحت آخر عنصر خط: الـ Bottom space يليه مباشرةً ويغطي مكان الفاصل أصلًا،
+            // لكن أثناء الأنيميشن يختلف موضع الفاصل (مقرَّب إلى int) عن موضع الـ Bottom space (float)
+            // فكان يظهر الفاصل فوقه لفترة قصيرة ثم يختفي
+            if (isLastFontItem(parent, holder)) {
                 continue;
             }
 
@@ -91,6 +100,20 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
             divider.setAlpha(Math.round(child.getAlpha() * 255));
             divider.draw(canvas);
         }
+    }
+
+    // العنصر الذي يليه (حسب ترتيب المحوّل النهائي) ليس عنصر خط، أي الـ Bottom space، فهو آخر عنصر خط.
+    // العناصر التي تختفي بالأنيميشن ليس لها موضع (NO_POSITION)، فتُرسم فواصلها وتتلاشى معها
+    private boolean isLastFontItem(@NonNull RecyclerView parent, @NonNull RecyclerView.ViewHolder holder) {
+        RecyclerView.Adapter<?> adapter = parent.getAdapter();
+        int position = holder.getBindingAdapterPosition();
+
+        if (adapter == null || position == RecyclerView.NO_POSITION) {
+            return false;
+        }
+
+        int next = position + 1;
+        return next >= adapter.getItemCount() || adapter.getItemViewType(next) != fontViewType;
     }
 
     // تُستدعى في dispatchDraw، أي بعد رسم العناصر، فتظهر الزوايا فوقها
