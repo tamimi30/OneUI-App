@@ -521,7 +521,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         // fillBottom يملأ الفراغ تحت آخر عنصر وأثناء الأنيميشن بلون oui_round_and_bgcolor،
         // وزوايا آخر خط لا ترسمها المكتبة هنا لأن آخر عنصر عندها هو الـ Bottom space
         mRecyclerView.seslSetFillBottomEnabled(true);
-        mRecyclerView.seslSetLastRoundedCorner(false);
+        mRecyclerView.seslSetLastRoundedCorner(true);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
