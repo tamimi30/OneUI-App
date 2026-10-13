@@ -25,6 +25,7 @@ import com.oneui.fontviewer.utils.FileUtils;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.localfont.viewmodel.LocalFontListViewModel;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -177,6 +178,8 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.currentSortType = SortByItemLayout.SortType.NAME;
         this.currentSortAscending = true;
 
+        
+
         this.mIsFontPreviewEnabled = SettingsHelper.isFontPreviewEnabled(context);
 
         this.mSortedList = new SortedList<>(
@@ -185,6 +188,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         );
 
         setHasStableIds(true); 
+
     }
 
     @Override
@@ -412,11 +416,11 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     android.text.Spannable highlighted = highlighter.highlightText(displayName, currentSearchQuery);
                     ((LocalFontViewHolder) holder).fontNameTextView.setText(highlighted);
                 } else {
-                    CharSequence curr = ((LocalFontViewHolder) holder).fontNameTextView.getText();
-                    if (curr instanceof android.text.Spanned || !displayName.contentEquals(curr)) {
-                        ((LocalFontViewHolder) holder).fontNameTextView.setText(displayName);
-                    }
+                CharSequence curr = ((LocalFontViewHolder) holder).fontNameTextView.getText();
+                if (curr instanceof android.text.Spanned || !displayName.contentEquals(curr)) {
+                    ((LocalFontViewHolder) holder).fontNameTextView.setText(displayName);
                 }
+            }
 
                 boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
                 if (isSearchActive) isLastOpened = false; 
@@ -559,4 +563,4 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (adj < 0 || adj >= positionSections.size()) return 0;
         return positionSections.get(adj);
     }
-                                             }
+                        }
