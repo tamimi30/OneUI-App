@@ -279,31 +279,15 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
             mSortManager.isSortAscending()
         );
 
-        setupRecyclerViewAnimator();
-
-        // الفواصل وزوايا القائمة تتولاها المكتبة عبر FontItemDecoration،
-        // حيث يُعامل شريط الفرز والـ Bottom space كـ Separator (أول خط، وآخر خط، والخط الوحيد، وعناصر المنتصف)
+        // الفواصل وزوايا القائمة تتولاها المكتبة عبر FontItemDecoration
         mRecyclerView.addItemDecoration(new FontItemDecoration(mContext, SystemFontListAdapter.VIEW_TYPE_FONT));
 
-        // fillBottom يملأ الفراغ تحت آخر عنصر وأثناء الأنيميشن بلون oui_round_and_bgcolor،
-        // وزوايا آخر خط لا ترسمها المكتبة هنا لأن آخر عنصر عندها هو الـ Bottom space
         mRecyclerView.seslSetFillBottomEnabled(true);
         mRecyclerView.seslSetLastRoundedCorner(false);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
         mRecyclerView.seslSetSmoothScrollEnabled(true);
-    }
-
-    private void setupRecyclerViewAnimator() {
-        if (mRecyclerView == null) return;
-        androidx.recyclerview.widget.DefaultItemAnimator animator =
-            new androidx.recyclerview.widget.DefaultItemAnimator();
-        animator.setAddDuration(150);
-        animator.setRemoveDuration(150);
-        animator.setMoveDuration(250);
-        animator.setSupportsChangeAnimations(false);
-        mRecyclerView.setItemAnimator(animator);
     }
 
     private void setupAppBarLayout() {
@@ -462,27 +446,11 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         }
 
         if (hidden) {
-            // إعادة القائمة إلى الأعلى وهي مخفية، حتى تبدأ من الأعلى فعلياً
-            // في المرة القادمة التي تُعرض فيها، دون أي قفزة مرئية
             mUIManager.scrollRecyclerViewToTop();
-
-            if (mRecyclerView != null) {
-                mRecyclerView.setItemAnimator(null);
-            }
-
             mSearchViewModel.deactivateSearch();
         } else {
             if (mAdapter != null) mAdapter.smartUpdate();
-
             updateMainActivityFontsCount(mCurrentFontsList.size());
-
-            if (mRecyclerView != null) {
-                mRecyclerView.postDelayed(() -> {
-                    if (isAdded() && !isHidden()) {
-                        setupRecyclerViewAnimator();
-                    }
-                }, 100);
-            }
         }
     }
 
@@ -521,4 +489,4 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
         if (mExecutor != null)    mExecutor.shutdown();
     }
-    }
+}
