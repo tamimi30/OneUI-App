@@ -7,11 +7,18 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
  * وترجع قيمًا ثابتة متجاهلة الـ setters الموروثة. هذا الـ subclass يعيد ربط
  * الـ getters بالـ setters حتى تعمل القيم المخصصة فعليًا.
  */
-public class FixedDurationItemAnimator extends DefaultItemAnimator {
+public class DurationItemAnimator extends DefaultItemAnimator {
 
-    private long mAddDuration = 200;
+    //Default duration
+/** private long mAddDuration = 200;
     private long mRemoveDuration = 100;
     private long mMoveDuration = 400;
+    private long mChangeDuration = 400; */
+
+    // هذه هي المدد المستخدمة في قائمة الخطوط المحلية (LocalFontListFragment لا تضبطها بنفسها)
+    private long mAddDuration = 200;
+    private long mRemoveDuration = 200;
+    private long mMoveDuration = 600;
     private long mChangeDuration = 400;
 
     @Override
