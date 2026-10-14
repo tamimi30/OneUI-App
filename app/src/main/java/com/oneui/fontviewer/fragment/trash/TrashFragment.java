@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -188,15 +189,17 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         setupRecyclerViewAnimator();
     }
 
+    // الـ DefaultItemAnimator الافتراضي الذي ينشئه الـ RecyclerView بنفسه، نحتفظ به لإعادته بعد أن يُلغى عند إخفاء الـ Fragment
+    private DefaultItemAnimator mItemAnimator;
+
     private void setupRecyclerViewAnimator() {
         if (mRecyclerView == null) return;
-        androidx.recyclerview.widget.DefaultItemAnimator animator =
-            new androidx.recyclerview.widget.DefaultItemAnimator();
-        animator.setAddDuration(150);
-        animator.setRemoveDuration(250);
-        animator.setMoveDuration(250);
-        animator.setSupportsChangeAnimations(false);
-        mRecyclerView.setItemAnimator(animator);
+        if (mRecyclerView.getItemAnimator() instanceof DefaultItemAnimator) {
+            mItemAnimator = (DefaultItemAnimator) mRecyclerView.getItemAnimator();
+        }
+        if (mItemAnimator == null) return;
+        mItemAnimator.setSupportsChangeAnimations(false);
+        mRecyclerView.setItemAnimator(mItemAnimator);
     }
 
 
@@ -647,4 +650,4 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         super.onDestroy();
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
     }
-    }
+}
