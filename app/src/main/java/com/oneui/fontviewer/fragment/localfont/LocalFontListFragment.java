@@ -53,6 +53,7 @@ import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.localfont.viewmodel.LocalFontListViewModel;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
+import com.oneui.fontviewer.widget.DurationItemAnimator;
 
 public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
@@ -523,11 +524,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private void setupRecyclerViewAnimator() {
         if (mRecyclerView == null) return;
-        com.oneui.fontviewer.widget.FixedDurationItemAnimator animator =
-            new com.oneui.fontviewer.widget.FixedDurationItemAnimator();
-        animator.setAddDuration(200);
-        animator.setRemoveDuration(200);
-        animator.setMoveDuration(600);
+        DurationItemAnimator animator =
+            new DurationItemAnimator();
         animator.setSupportsChangeAnimations(false);
         animator.enableRemoveDelay(true);
         mRecyclerView.setItemAnimator(animator);
@@ -1081,4 +1079,4 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         return null;
     }
 
-                }
+}
