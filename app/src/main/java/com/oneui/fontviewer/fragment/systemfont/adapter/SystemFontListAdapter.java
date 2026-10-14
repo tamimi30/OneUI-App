@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.SectionIndexer;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.util.SeslRoundedCorner;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
@@ -25,7 +24,6 @@ import com.oneui.fontviewer.fragment.systemfont.manager.SystemFontPreferenceMana
 import com.oneui.fontviewer.utils.FileUtils;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 
-import dev.oneuiproject.oneui.widget.RoundLinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +31,10 @@ import java.util.concurrent.ExecutorService;
 
 public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SectionIndexer {
 
-    private static final int VIEW_TYPE_HEADER = 0;
-    private static final int VIEW_TYPE_FONT   = 1;
-    private static final int VIEW_TYPE_SPACE  = 2;
+    public static final int VIEW_TYPE_HEADER = 0;
+    public static final int VIEW_TYPE_FONT   = 1;
+    public static final int VIEW_TYPE_SPACE  = 2;
 
-    private static final String PAYLOAD_UPDATE_CORNERS    = "UPDATE_CORNERS";
     private static final String PAYLOAD_UPDATE_HIGHLIGHT  = "UPDATE_HIGHLIGHT";
     private static final String PAYLOAD_UPDATE_LAST_OPENED = "UPDATE_LAST_OPENED";
 
@@ -217,28 +214,27 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         mSortedList.replaceAll(newList);
         buildSections();
 
-        refreshAttachedItems(true, !this.currentSearchQuery.equals(oldQuery));
+        if (!this.currentSearchQuery.equals(oldQuery)) {
+            refreshSearchHighlight();
+        }
     }
 
     /**
-     * يحدّث الزوايا والفواصل (وتمييز نص البحث عند الحاجة) للعناصر الباقية بعد تغيّر القائمة،
-     * دون أن يُلغي أنيميشن ظهور العناصر الجديدة.
+     * يعيد تمييز نص البحث على العناصر الباقية بعد تغيّر الاستعلام، دون أن يُلغي أنيميشن ظهور العناصر الجديدة.
      *
-     * السبب: كان التحديث يُرسَل عبر recyclerView.post بعد انتهاء الـ layout، وأي notifyItemRangeChanged
-     * على عنصر يجري إظهاره الآن يجعل DefaultItemAnimator ينفّذ
+     * السبب: أي notifyItemRangeChanged على عنصر يجري إظهاره الآن يجعل DefaultItemAnimator ينفّذ
      * animateChange ← animateMove ← resetAnimation ← endAnimation، فيُلغي أنيميشن الظهور (alpha من 0 إلى 1)
      * ويضبط الشفافية على 1 فوراً، فتظهر العناصر فجأة بينما تختفي تدريجياً بشكل صحيح.
      * لذلك:
      *  - العناصر المعروضة حالياً تُحدَّث مباشرة على الـ ViewHolder دون أي إشعار للـ RecyclerView.
-     *  - العناصر غير المعروضة (قد تكون محفوظة في الـ cache بحالة قديمة) ليس لها View الآن،
+     *  - العناصر غير المعروضة (قد تكون محفوظة في الـ cache بتمييز قديم) ليس لها View الآن،
      *    فيُرسل لها إشعار عادي ولا يتأثر به أي أنيميشن.
-     *  - العناصر الجديدة لا تحتاج شيئاً، لأنها تُربط (bind) بالحالة الجديدة مباشرة.
+     *  - العناصر الجديدة لا تحتاج شيئاً، لأنها تُربط (bind) بالاستعلام الجديد مباشرة.
      */
-    private void refreshAttachedItems(boolean refreshCorners, boolean refreshHighlight) {
+    private void refreshSearchHighlight() {
         final int size = mSortedList.size();
         if (size == 0 || recyclerView == null || recyclerView.isComputingLayout()) return;
-        if (!refreshCorners && !refreshHighlight) return;
-        
+
         // مواضع العناصر المعروضة حالياً (1..size)، المحسوبة مع التعديلات المعلّقة على الـ Adapter
         final boolean[] isAttached = new boolean[size + 1];
 
@@ -250,8 +246,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if (position < 1 || position > size) continue;
 
             isAttached[position] = true;
-            if (refreshCorners) updateItemAppearance(vh, position);
-            if (refreshHighlight) applyHighlight((SystemFontViewHolder) vh, mSortedList.get(position - 1));
+            applyHighlight((SystemFontViewHolder) vh, mSortedList.get(position - 1));
         }
 
         int runStart = -1;
@@ -260,9 +255,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if (needsNotify) {
                 if (runStart == -1) runStart = position;
             } else if (runStart != -1) {
-                int length = position - runStart;
-                if (refreshCorners) notifyItemRangeChanged(runStart, length, PAYLOAD_UPDATE_CORNERS);
-                if (refreshHighlight) notifyItemRangeChanged(runStart, length, PAYLOAD_UPDATE_HIGHLIGHT);
+                notifyItemRangeChanged(runStart, position - runStart, PAYLOAD_UPDATE_HIGHLIGHT);
                 runStart = -1;
             }
         }
@@ -293,8 +286,6 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         mSortedList.replaceAll(snapshot);
         buildSections();
-
-        refreshAttachedItems(true, false);
 
         if (recyclerView != null) {
             recyclerView.post(() -> {
@@ -394,17 +385,12 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         } else if (holder instanceof SystemFontViewHolder) {
             bindFontViewHolder((SystemFontViewHolder) holder, mSortedList.get(position - 1));
         }
-        updateItemAppearance(holder, position);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position,
                                  @NonNull List<Object> payloads) {
         if (!payloads.isEmpty()) {
-            if (payloads.contains(PAYLOAD_UPDATE_CORNERS)) {
-                updateItemAppearance(holder, position);
-            }
-
             boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
             if ((payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) || !isSearchActive) && holder instanceof SystemFontViewHolder) {
                 applyHighlight((SystemFontViewHolder) holder, mSortedList.get(position - 1));
@@ -420,34 +406,6 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
         } else {
             super.onBindViewHolder(holder, position, payloads);
-        }
-    }
-
-    private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof SortHeaderViewHolder) return;
-
-        if (holder instanceof SystemFontViewHolder) {
-            SystemFontViewHolder sfh = (SystemFontViewHolder) holder;
-            RoundLinearLayout root   = (RoundLinearLayout) sfh.itemView;
-            int totalFonts           = mSortedList.size();
-            boolean isFirst          = (position == 1);
-            boolean isLast           = (position == getItemCount() - 2);
-
-            if (totalFonts == 1) {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_ALL);
-                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.GONE);
-            } else if (isFirst) {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
-                                     | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
-                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.VISIBLE);
-            } else if (isLast) {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
-                                     | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
-                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.INVISIBLE);
-            } else {
-                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_NONE);
-                if (sfh.dividerView != null) sfh.dividerView.setVisibility(View.VISIBLE);
-            }
         }
     }
 

@@ -43,6 +43,7 @@ import com.oneui.fontviewer.fragment.localfont.manager.LocalFontSelectionManager
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontPermissionManager;
 import com.oneui.fontviewer.fragment.localfont.fontdirectory.LocalFontDirectoryPicker;
 import com.oneui.fontviewer.utils.FontUIStateManager;
+import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.widget.search.SearchViewModel;
 import com.oneui.fontviewer.widget.search.FontSearchManager;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
@@ -53,7 +54,6 @@ import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.localfont.viewmodel.LocalFontListViewModel;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
-import com.oneui.fontviewer.widget.DurationItemAnimator;
 
 public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
@@ -514,7 +514,13 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         setupRecyclerViewAnimator();
 
-        mRecyclerView.seslSetFillBottomEnabled(false);
+        // الفواصل وزوايا القائمة تتولاها المكتبة عبر FontItemDecoration،
+        // حيث يُعامل شريط الفرز والـ Bottom space كـ Separator (أول خط، وآخر خط، والخط الوحيد، وعناصر المنتصف)
+        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext, LocalFontListAdapter.VIEW_TYPE_FONT));
+
+        // fillBottom يملأ الفراغ تحت آخر عنصر وأثناء الأنيميشن بلون oui_round_and_bgcolor،
+        // وزوايا آخر خط لا ترسمها المكتبة هنا لأن آخر عنصر عندها هو الـ Bottom space
+        mRecyclerView.seslSetFillBottomEnabled(true);
         mRecyclerView.seslSetLastRoundedCorner(false);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
@@ -524,8 +530,11 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private void setupRecyclerViewAnimator() {
         if (mRecyclerView == null) return;
-        DurationItemAnimator animator =
-            new DurationItemAnimator();
+        com.oneui.fontviewer.widget.FixedDurationItemAnimator animator =
+            new com.oneui.fontviewer.widget.FixedDurationItemAnimator();
+        animator.setAddDuration(200);
+        animator.setRemoveDuration(200);
+        animator.setMoveDuration(600);
         animator.setSupportsChangeAnimations(false);
         animator.enableRemoveDelay(true);
         mRecyclerView.setItemAnimator(animator);
@@ -1079,4 +1088,4 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         return null;
     }
 
-}
+                }

@@ -12,12 +12,11 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-        <com.oneui.fontviewer.widget.OneUiRecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/font_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingHorizontal="10dp"
-            android:scrollbarStyle="outsideOverlay"
+            android:background="@color/oui_background_color"
             android:scrollbars="vertical" />
 
         <androidx.core.widget.NestedScrollView

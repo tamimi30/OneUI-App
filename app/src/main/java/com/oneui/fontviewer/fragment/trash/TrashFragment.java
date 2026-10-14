@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -36,6 +35,7 @@ import com.oneui.fontviewer.activity.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.dialog.TrashActionDialogs;
 import com.oneui.fontviewer.utils.FontUIStateManager;  
+import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.fragment.trash.manager.TrashSelectionManager;
 import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
 import com.oneui.fontviewer.fragment.trash.viewmodel.TrashViewModel;
@@ -180,7 +180,13 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.seslSetFillBottomEnabled(false);
+        // الفواصل وزوايا القائمة تتولاها المكتبة عبر FontItemDecoration،
+        // حيث يُعامل رأس القائمة والـ Bottom space كـ Separator (أول خط، وآخر خط، والخط الوحيد، وعناصر المنتصف)
+        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext, TrashListAdapter.VIEW_TYPE_ITEM));
+
+        // fillBottom يملأ الفراغ تحت آخر عنصر وأثناء الأنيميشن بلون oui_round_and_bgcolor،
+        // وزوايا آخر خط لا ترسمها المكتبة هنا لأن آخر عنصر عندها هو الـ Bottom space
+        mRecyclerView.seslSetFillBottomEnabled(true);
         mRecyclerView.seslSetLastRoundedCorner(false);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
@@ -189,17 +195,15 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         setupRecyclerViewAnimator();
     }
 
-    // الـ DefaultItemAnimator الافتراضي الذي ينشئه الـ RecyclerView بنفسه، نحتفظ به لإعادته بعد أن يُلغى عند إخفاء الـ Fragment
-    private DefaultItemAnimator mItemAnimator;
-
     private void setupRecyclerViewAnimator() {
         if (mRecyclerView == null) return;
-        if (mRecyclerView.getItemAnimator() instanceof DefaultItemAnimator) {
-            mItemAnimator = (DefaultItemAnimator) mRecyclerView.getItemAnimator();
-        }
-        if (mItemAnimator == null) return;
-        mItemAnimator.setSupportsChangeAnimations(false);
-        mRecyclerView.setItemAnimator(mItemAnimator);
+        androidx.recyclerview.widget.DefaultItemAnimator animator =
+            new androidx.recyclerview.widget.DefaultItemAnimator();
+        animator.setAddDuration(150);
+        animator.setRemoveDuration(250);
+        animator.setMoveDuration(250);
+        animator.setSupportsChangeAnimations(false);
+        mRecyclerView.setItemAnimator(animator);
     }
 
 
@@ -650,4 +654,4 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         super.onDestroy();
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
     }
-}
+    }

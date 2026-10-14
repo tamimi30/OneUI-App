@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<dev.oneuiproject.oneui.widget.RoundLinearLayout 
+<LinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/list_ripple"
-    android:gravity="center_vertical ">
+    android:background="?listChoiceBackgroundIndicator"
+    android:gravity="center_vertical">
     
     <com.oneui.fontviewer.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
@@ -20,7 +20,7 @@
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
         android:orientation="horizontal"
-        app:checkableButtonSpacing="14.0dip"
+        app:checkableButtonSpacing="24.0dip"
         android:animateLayoutChanges="true"
         android:gravity="center_vertical"
         app:checkMode="checkBox">
@@ -73,13 +73,5 @@
         </LinearLayout>  
         
     </com.oneui.fontviewer.widget.SelectableLinearLayout>
-    
-    <View
-        android:id="@+id/item_divider"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
-        android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:background="@color/oui_list_divider_color" />
-    
-</dev.oneuiproject.oneui.widget.RoundLinearLayout>
+
+</LinearLayout>
