@@ -37,7 +37,6 @@ import com.oneui.fontviewer.widget.search.SearchViewModel;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
 import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 import com.oneui.fontviewer.utils.FontUIStateManager;
-import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.fragment.systemfont.adapter.SystemFontListAdapter;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.systemfont.viewmodel.SystemFontListViewModel;
@@ -281,14 +280,8 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
         setupRecyclerViewAnimator();
 
-        // الفواصل وزوايا القائمة تتولاها المكتبة عبر FontItemDecoration،
-        // حيث يُعامل شريط الفرز والـ Bottom space كـ Separator (أول خط، وآخر خط، والخط الوحيد، وعناصر المنتصف)
-        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext, SystemFontListAdapter.VIEW_TYPE_FONT));
-
-        // fillBottom يملأ الفراغ تحت آخر عنصر وأثناء الأنيميشن بلون oui_round_and_bgcolor،
-        // وزوايا آخر خط لا ترسمها المكتبة هنا لأن آخر عنصر عندها هو الـ Bottom space
         mRecyclerView.seslSetFillBottomEnabled(true);
-        mRecyclerView.seslSetLastRoundedCorner(false);
+        mRecyclerView.seslSetLastRoundedCorner(true);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
         mRecyclerView.seslSetGoToTopEnabled(true);
@@ -521,4 +514,4 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
         if (mExecutor != null)    mExecutor.shutdown();
     }
-                                          }
+    }
