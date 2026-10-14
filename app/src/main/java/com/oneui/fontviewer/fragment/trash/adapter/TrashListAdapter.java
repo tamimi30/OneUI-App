@@ -13,6 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.util.SeslRoundedCorner;
+
+import dev.oneuiproject.oneui.widget.RoundLinearLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
@@ -29,6 +32,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public static final int VIEW_TYPE_SPACE  = 2;
 
     private static final String PAYLOAD_UPDATE_SELECTION = "UPDATE_SELECTION";
+    private static final String PAYLOAD_UPDATE_CORNERS   = "UPDATE_CORNERS";
 
     private final Context context;
     private List<FontEntity> mItems = new ArrayList<>();
@@ -83,6 +87,53 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 notifyItemRangeChanged(position + 1, count, payload);
             }
         });
+
+        refreshAttachedCorners();
+    }
+
+    /**
+     * يحدّث الزوايا والفواصل للعناصر الباقية بعد تغيّر القائمة،
+     * دون أن يُلغي أنيميشن ظهور العناصر الجديدة.
+     *
+     * السبب: كان التحديث يُرسَل عبر recyclerView.post بعد انتهاء الـ layout، وأي notifyItemRangeChanged
+     * على عنصر يجري إظهاره الآن يجعل DefaultItemAnimator ينفّذ
+     * animateChange ← animateMove ← resetAnimation ← endAnimation، فيُلغي أنيميشن الظهور (alpha من 0 إلى 1)
+     * ويضبط الشفافية على 1 فوراً، فتظهر العناصر فجأة بينما تختفي تدريجياً بشكل صحيح.
+     * لذلك:
+     *  - العناصر المعروضة حالياً تُحدَّث مباشرة على الـ ViewHolder دون أي إشعار للـ RecyclerView.
+     *  - العناصر غير المعروضة (قد تكون محفوظة في الـ cache بحالة قديمة) ليس لها View الآن،
+     *    فيُرسل لها إشعار عادي ولا يتأثر به أي أنيميشن.
+     *  - العناصر الجديدة لا تحتاج شيئاً، لأنها تُربط (bind) بالحالة الجديدة مباشرة.
+     */
+    private void refreshAttachedCorners() {
+        final int size = mItems.size();
+        if (size == 0 || recyclerView == null || recyclerView.isComputingLayout()) return;
+        
+        // مواضع العناصر المعروضة حالياً (1..size)، المحسوبة مع التعديلات المعلّقة على الـ Adapter
+        final boolean[] isAttached = new boolean[size + 1];
+
+        for (int i = 0, count = recyclerView.getChildCount(); i < count; i++) {
+            RecyclerView.ViewHolder vh = recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
+            if (!(vh instanceof TrashItemViewHolder)) continue;
+
+            int position = vh.getBindingAdapterPosition();
+            if (position < 1 || position > size) continue;
+
+            isAttached[position] = true;
+            updateItemAppearance(vh, position);
+        }
+
+        int runStart = -1;
+        for (int position = 1; position <= size + 1; position++) {
+            boolean needsNotify = position <= size && !isAttached[position];
+            if (needsNotify) {
+                if (runStart == -1) runStart = position;
+            } else if (runStart != -1) {
+                int length = position - runStart;
+                notifyItemRangeChanged(runStart, length, PAYLOAD_UPDATE_CORNERS);
+                runStart = -1;
+            }
+        }
     }
 
 
@@ -128,17 +179,50 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         } else if (holder instanceof TrashItemViewHolder) {
             bindItem((TrashItemViewHolder) holder, mItems.get(position - 1), position);
         }
+        updateItemAppearance(holder, position);
     }
 
            @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position,
                                  @NonNull List<Object> payloads) {
         if (!payloads.isEmpty()) {
+            if (payloads.contains(PAYLOAD_UPDATE_CORNERS)) {
+                updateItemAppearance(holder, position);
+            }
             if (payloads.contains(PAYLOAD_UPDATE_SELECTION) && holder instanceof TrashItemViewHolder) {
                 updateCheckBoxState((TrashItemViewHolder) holder, position);
             }
         } else {
             super.onBindViewHolder(holder, position, payloads);
+        }
+    }
+
+    private void updateItemAppearance(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof TrashHeaderViewHolder || holder instanceof SpaceViewHolder) return;
+
+        if (holder instanceof TrashItemViewHolder) {
+            TrashItemViewHolder th = (TrashItemViewHolder) holder;
+            RoundLinearLayout root = (RoundLinearLayout) th.itemView;
+            
+            int totalFonts = mItems.size();
+            boolean isFirst = (position == 1);
+            boolean isLast  = (position == getItemCount() - 2);
+
+            if (totalFonts == 1) {
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_ALL);
+                if (th.dividerView != null) th.dividerView.setVisibility(View.GONE);
+            } else if (isFirst) {
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_TOP_LEFT
+                                     | SeslRoundedCorner.ROUNDED_CORNER_TOP_RIGHT);
+                if (th.dividerView != null) th.dividerView.setVisibility(View.VISIBLE);
+            } else if (isLast) {
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_LEFT
+                                     | SeslRoundedCorner.ROUNDED_CORNER_BOTTOM_RIGHT);
+                if (th.dividerView != null) th.dividerView.setVisibility(View.INVISIBLE);
+            } else {
+                root.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_NONE);
+                if (th.dividerView != null) th.dividerView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -279,12 +363,14 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final SelectableLinearLayout selectableLayout;
         final TextView fontNameTextView;
         final TextView daysRemainingTextView;
+        final View dividerView;
 
         TrashItemViewHolder(@NonNull View itemView) {
             super(itemView);
             selectableLayout      = itemView.findViewById(R.id.selectable_layout);
             fontNameTextView      = itemView.findViewById(R.id.trash_item_font_name);
             daysRemainingTextView = itemView.findViewById(R.id.trash_item_days_remaining);
+            dividerView           = itemView.findViewById(R.id.item_divider);
         }
     }
 
@@ -325,4 +411,4 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     && o.isTrashed() == n.isTrashed();
         }
     }
-    }
+}
