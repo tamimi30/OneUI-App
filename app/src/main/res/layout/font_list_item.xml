@@ -8,14 +8,19 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/list_ripple"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical ">
     
     <com.oneui.fontviewer.widget.SelectableLinearLayout
         android:id="@+id/selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="?attr/listPreferredItemHeightSmall"
+        android:paddingTop="14.0dip"
+        android:paddingBottom="14.0dip"
+        android:paddingStart="14.0dp"
+        android:paddingEnd="14.0dp"
         android:orientation="horizontal"
-        app:checkableButtonSpacing="15.0dip"
+        app:checkableButtonSpacing="14.0dip"
         android:animateLayoutChanges="true"
         android:gravity="center_vertical"
         app:checkMode="checkBox">
@@ -23,12 +28,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="?attr/listPreferredItemHeightSmall"
             android:gravity="center_vertical"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-            android:paddingTop="14.0dip"
-            android:paddingBottom="14.0dip"
             android:orientation="vertical">
 
             <TextView
@@ -43,15 +43,16 @@
                 tools:text="Font Name Example" />
                 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
                 
                 <TextView
                     android:id="@+id/font_item_weight_width"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:includeFontPadding="false"
@@ -63,7 +64,7 @@
                     android:id="@+id/font_item_favorite_icon"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:layout_gravity="center_vertical|end"
+                    android:gravity="center"
                     android:src="@drawable/ic_oui_favorite_on"
                     android:tint="#D4AF37"
                     android:visibility="invisible"
