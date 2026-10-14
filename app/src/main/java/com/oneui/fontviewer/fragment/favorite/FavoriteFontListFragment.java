@@ -40,7 +40,6 @@ import com.oneui.fontviewer.dialog.RenameFontDialog;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
 import com.oneui.fontviewer.utils.FontUIStateManager;
-import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.fragment.localfont.adapter.LocalFontListAdapter;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.fragment.localfont.manager.LocalFontSelectionManager;
@@ -313,13 +312,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         setupRecyclerViewAnimator();
 
-        // الفواصل وزوايا القائمة تتولاها المكتبة عبر FontItemDecoration،
-        // حيث يُعامل شريط الفرز والـ Bottom space كـ Separator (أول خط، وآخر خط، والخط الوحيد، وعناصر المنتصف)
-        mRecyclerView.addItemDecoration(new FontItemDecoration(mContext, LocalFontListAdapter.VIEW_TYPE_FONT));
-
-        // fillBottom يملأ الفراغ تحت آخر عنصر وأثناء الأنيميشن بلون oui_round_and_bgcolor،
-        // وزوايا آخر خط لا ترسمها المكتبة هنا لأن آخر عنصر عندها هو الـ Bottom space
-        mRecyclerView.seslSetFillBottomEnabled(true);
+        mRecyclerView.seslSetFillBottomEnabled(false);
         mRecyclerView.seslSetLastRoundedCorner(false);
         mRecyclerView.seslSetFastScrollerEnabled(false);
         mRecyclerView.seslSetIndexTipEnabled(false);
