@@ -17,10 +17,10 @@
         android:minHeight="?attr/listPreferredItemHeightSmall"
         android:paddingTop="14.0dip"
         android:paddingBottom="14.0dip"
-        android:paddingStart="14.0dp"
-        android:paddingEnd="14.0dp"
+        android:paddingStart="17.0dip"
+        android:paddingEnd="17.0dip"
         android:orientation="horizontal"
-        app:checkableButtonSpacing="14.0dip"
+        app:checkableButtonSpacing="13.0dip"
         android:animateLayoutChanges="true"
         android:gravity="center_vertical"
         app:checkMode="checkBox">
@@ -50,13 +50,12 @@
                 
                 <TextView
                     android:id="@+id/font_item_weight_width"
-                    android:layout_width="0dp"
+                    android:layout_width="0"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:includeFontPadding="false"
-                    android:layout_marginEnd="17dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     tools:text="Bold, Condensed" />
                     
@@ -64,7 +63,6 @@
                     android:id="@+id/font_item_favorite_icon"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:gravity="center"
                     android:src="@drawable/ic_oui_favorite_on"
                     android:tint="#D4AF37"
                     android:visibility="invisible"
