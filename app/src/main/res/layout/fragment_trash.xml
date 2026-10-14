@@ -17,7 +17,6 @@
             android:id="@+id/trash_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/oui_background_color"
             android:scrollbars="vertical" />
 
     </LinearLayout>
