@@ -42,7 +42,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="3dp"
                     android:tint="#ff34a853"
                     android:src="@drawable/ic_android_3"
                     android:visibility="gone" />
