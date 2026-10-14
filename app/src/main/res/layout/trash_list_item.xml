@@ -36,7 +36,6 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:singleLine="true"
-                android:textStyle="normal"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Cairo Regular" />
                 
