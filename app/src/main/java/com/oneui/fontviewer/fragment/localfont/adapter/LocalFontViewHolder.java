@@ -19,6 +19,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     public final TextView fontNameTextView;
     public final TextView weightWidthTextView;
     public final SelectableLinearLayout selectableLayout;
+    public final View dividerView; 
     public final ImageView favoriteIconView;
     private String currentPath;
     private final Typeface originalTypeface;
@@ -28,6 +29,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         fontNameTextView    = itemView.findViewById(R.id.font_item_name);
         weightWidthTextView = itemView.findViewById(R.id.font_item_weight_width); 
         selectableLayout = itemView.findViewById(R.id.selectable_layout);
+        dividerView         = itemView.findViewById(R.id.item_divider);           
         favoriteIconView    = itemView.findViewById(R.id.font_item_favorite_icon); 
         originalTypeface    = fontNameTextView.getTypeface();
     }
