@@ -19,8 +19,8 @@ public class DurationItemAnimator extends DefaultItemAnimator {
 
     // هذه هي المدد المستخدمة في قائمة الخطوط المحلية (LocalFontListFragment لا تضبطها بنفسها)
     private long mAddDuration = 200;
-    private long mRemoveDuration = 200;
-    private long mMoveDuration = 600;
+    private long mRemoveDuration = 100;
+    private long mMoveDuration = 400;
     private long mChangeDuration = 400;
 
     @Override
