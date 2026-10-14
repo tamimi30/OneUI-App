@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 public class DurationItemAnimator extends DefaultItemAnimator {
 
     //Default duration
-/** private long mAddDuration = 200;
+/** 
+    private long mAddDuration = 200;
     private long mRemoveDuration = 100;
     private long mMoveDuration = 400;
-    private long mChangeDuration = 400; */
+    private long mChangeDuration = 400;
+*/
 
     // هذه هي المدد المستخدمة في قائمة الخطوط المحلية (LocalFontListFragment لا تضبطها بنفسها)
     private long mAddDuration = 200;
