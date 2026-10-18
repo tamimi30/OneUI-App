@@ -16,12 +16,12 @@
     app:checkableButtonSpacing="14.0dip"
     android:animateLayoutChanges="true"
     android:gravity="center_vertical"
-    android:foreground="?attr/listChoiceBackgroundIndicator"
-    app:selectedHighlightColor="?attr/colorControlHighlight"
+    android:foreground="?listChoiceBackgroundIndicator"
+    app:selectedHighlightColor="?colorControlHighlight"
     app:checkMode="checkBox">
         
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="vertical">
@@ -46,11 +46,11 @@
                 
             <TextView
                 android:id="@+id/font_item_weight_width"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:includeFontPadding="false"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 tools:text="Bold, Condensed" />
                     
@@ -58,8 +58,6 @@
                 android:id="@+id/font_item_favorite_icon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:gravity="end|center_vertical"
-                android:layout_gravity="end|center_vertical"
                 android:src="@drawable/ic_oui_favorite_on"
                 android:tint="#D4AF37"
                 android:visibility="invisible"
