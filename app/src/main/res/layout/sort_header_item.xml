@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/oui_round_and_bgcolor"
-    android:paddingEnd="7dp"
     android:paddingTop="20dp"
     android:paddingBottom="10dp">
 
