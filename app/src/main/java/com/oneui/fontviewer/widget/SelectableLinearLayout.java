@@ -50,6 +50,7 @@ public class SelectableLinearLayout extends LinearLayout {
 
     private AnimatorSet slideAnimator;
     private List<View> slideTargets;
+    private final Map<ViewGroup, Boolean> savedClipChildren = new HashMap<>();
     private BitmapDrawable ghostDrawable; // صورة مؤقتة للمربع تتلاشى عند الإخفاء
 
     public SelectableLinearLayout(Context context) {
@@ -137,7 +138,8 @@ public class SelectableLinearLayout extends LinearLayout {
 
         // 1) التقاط مواضع العناصر قبل التغيير (أخذاً بالاعتبار أي أنيميشن جارٍ)
         final List<View> targets = new ArrayList<>();
-        collectLeafViews(this, targets);
+        final List<ViewGroup> containers = new ArrayList<>();
+        collectLeafViews(this, targets, containers);
         final Map<View, Float> before = new HashMap<>();
         for (View v : targets) {
             before.put(v, startEdge(v) + v.getTranslationX());
@@ -189,6 +191,12 @@ public class SelectableLinearLayout extends LinearLayout {
                 }
                 if (animators.isEmpty()) return true;
 
+                // السبب الأرجح لفساد الأنيميشن: الحاويات الوسيطة تقصّ العناصر المُزاحة خارج حدودها
+                for (ViewGroup g : containers) {
+                    savedClipChildren.put(g, g.getClipChildren());
+                    g.setClipChildren(false);
+                }
+
                 slideTargets = targets;
                 slideAnimator = new AnimatorSet();
                 slideAnimator.playTogether(animators);
@@ -224,6 +232,10 @@ public class SelectableLinearLayout extends LinearLayout {
             for (View v : slideTargets) v.setTranslationX(0f);
             slideTargets = null;
         }
+        for (Map.Entry<ViewGroup, Boolean> e : savedClipChildren.entrySet()) {
+            e.getKey().setClipChildren(e.getValue());
+        }
+        savedClipChildren.clear();
         if (checkBox != null) checkBox.setAlpha(1f);
         if (ghostDrawable != null) {
             getOverlay().remove(ghostDrawable);
@@ -232,12 +244,13 @@ public class SelectableLinearLayout extends LinearLayout {
     }
 
     /** يجمع العناصر الطرفية (غير الحاويات) ما عدا الـ CheckBox. */
-    private void collectLeafViews(ViewGroup parent, List<View> out) {
+    private void collectLeafViews(ViewGroup parent, List<View> out, List<ViewGroup> containers) {
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
             if (child == checkBox || child.getVisibility() == View.GONE) continue;
             if (child instanceof ViewGroup) {
-                collectLeafViews((ViewGroup) child, out);
+                containers.add((ViewGroup) child);
+                collectLeafViews((ViewGroup) child, out, containers);
             } else {
                 out.add(child);
             }
