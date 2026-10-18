@@ -14,7 +14,7 @@
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
     android:orientation="horizontal"
     app:checkableButtonSpacing="14.0dip"
-    android:animateLayoutChanges="true"
+    
     android:gravity="center_vertical"
     android:foreground="?listChoiceBackgroundIndicator"
     app:selectedHighlightColor="?attr/colorControlHighlight"
