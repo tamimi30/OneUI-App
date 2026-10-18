@@ -15,7 +15,7 @@
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:animateLayoutChanges="true"
-    android:foreground="?listChoiceBackgroundIndicator"
+    android:foreground="?attr/listChoiceBackgroundIndicator"
     app:checkableButtonSpacing="14dp"
     app:selectedHighlightColor="?attr/colorControlHighlight"
     app:checkMode="checkBox">
@@ -36,9 +36,11 @@
             android:textAppearance="?attr/textAppearanceListItem"
             tools:text="Font Name Example" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/font_item_weight_width"
@@ -48,10 +50,12 @@
                 android:maxLines="1"
                 android:includeFontPadding="false"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="Bold, Condensed" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/font_item_favorite_icon"
@@ -60,12 +64,9 @@
                 android:src="@drawable/ic_oui_favorite_on"
                 android:tint="#D4AF37"
                 android:visibility="invisible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:visibility="visible" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
