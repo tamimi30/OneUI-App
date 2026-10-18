@@ -60,6 +60,7 @@
                 android:layout_height="16dp"
                 android:src="@drawable/ic_oui_favorite_on"
                 android:tint="#D4AF37"
+                android:animateLayoutChanges="false"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
