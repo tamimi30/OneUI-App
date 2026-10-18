@@ -128,7 +128,10 @@ public class SelectableLinearLayout extends LinearLayout {
         isSelectionMode = mode;
         if (checkMode != CHECK_MODE_CHECKBOX || checkBox == null) return;
 
-        boolean canAnimate = animate && isLaidOut() && getWidth() > 0 && isShown();
+        // ملاحظة مهمة: الـ RecyclerView يستدعي onBindViewHolder (مع payload) أثناء الـ layout
+        // والعنصر مفصول مؤقتاً عن أبيه (parent == null) مع بقائه في النافذة.
+        // في هذه الحالة تُرجع isShown() القيمة false دائماً، لذلك لا نستخدمها هنا.
+        boolean canAnimate = animate && isAttachedToWindow() && isLaidOut() && getWidth() > 0;
         if (!canAnimate) {
             cancelSlide();
             checkBox.setAlpha(1f);
