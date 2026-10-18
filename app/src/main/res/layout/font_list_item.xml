@@ -23,8 +23,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/font_item_name"
@@ -33,13 +32,12 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:includeFontPadding="false"
-            android:paddingBottom="3sp"
+            android:paddingBottom="3dp"
             android:textAppearance="?attr/textAppearanceListItem"
             tools:text="Font Name Example" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layoutDirection="locale"
             android:layout_height="wrap_content">
 
             <TextView
