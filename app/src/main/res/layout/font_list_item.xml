@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- تمت إزالة animateLayoutChanges: الأنيميشن يُنفَّذ الآن داخل SelectableLinearLayout.setSelectionMode -->
 <com.oneui.fontviewer.widget.SelectableLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,55 +15,58 @@
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
     android:orientation="horizontal"
     app:checkableButtonSpacing="14.0dip"
-    
     android:gravity="center_vertical"
     android:foreground="?listChoiceBackgroundIndicator"
     app:selectedHighlightColor="?attr/colorControlHighlight"
     app:checkMode="checkBox">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/font_item_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:paddingBottom="3sp"
-            android:includeFontPadding="false"
-            android:textAlignment="viewStart"
-            android:textAppearance="?attr/textAppearanceListItem"
-            tools:text="Font Name Example" />
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/font_item_weight_width"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:includeFontPadding="false"
-            android:paddingEnd="24dp"
-            android:textAlignment="viewStart"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:text="Bold, Condensed" />
+            <TextView
+                android:id="@+id/font_item_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingBottom="3sp"
+                android:includeFontPadding="false"
+                android:textAlignment="viewStart"
+                android:textAppearance="?attr/textAppearanceListItem"
+                tools:text="Font Name Example" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/font_item_weight_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:includeFontPadding="false"
+                android:paddingEnd="24dp"
+                android:textAlignment="viewStart"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:text="Bold, Condensed" />
 
-    <!-- الهامش السالب يجعل النجمة تتراكب فوق نهاية الحاوية دون أخذ مساحة من اسم الخط -->
-    <ImageView
-        android:id="@+id/font_item_favorite_icon"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_gravity="bottom"
-        android:layout_marginStart="-16dp"
-        android:src="@drawable/ic_oui_favorite_on"
-        android:tint="#D4AF37"
-        android:visibility="invisible"
-        tools:visibility="visible" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/font_item_favorite_icon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom|end"
+            android:src="@drawable/ic_oui_favorite_on"
+            android:tint="#D4AF37"
+            android:visibility="invisible"
+            tools:visibility="visible" />
+
+    </FrameLayout>
 
 </com.oneui.fontviewer.widget.SelectableLinearLayout>
