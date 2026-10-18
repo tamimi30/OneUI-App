@@ -35,7 +35,6 @@
             android:maxLines="1"
             android:paddingBottom="3sp"
             android:includeFontPadding="false"
-            android:textAlignment="viewStart"
             android:textAppearance="?attr/textAppearanceListItem"
             tools:text="Font Name Example" />
 
@@ -47,7 +46,6 @@
             android:maxLines="1"
             android:includeFontPadding="false"
             android:paddingEnd="24dp"
-            android:textAlignment="viewStart"
             android:textAppearance="?android:attr/textAppearanceSmall"
             tools:text="Bold, Condensed" />
 
