@@ -16,7 +16,7 @@
     app:checkableButtonSpacing="14.0dip"
     android:animateLayoutChanges="true"
     android:gravity="center_vertical"
-    android:background="?listChoiceBackgroundIndicator"
+    android:foreground="?attr/listChoiceBackgroundIndicator"
     app:selectedHighlightColor="?attr/colorControlHighlight"
     app:checkMode="checkBox">
         
@@ -40,6 +40,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layoutDirection="locale"
             android:gravity="center_vertical"
             android:orientation="horizontal">
                 
