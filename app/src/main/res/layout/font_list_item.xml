@@ -39,6 +39,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:layoutDirection="locale"
             android:layout_height="wrap_content">
 
             <TextView
@@ -60,7 +61,6 @@
                 android:layout_height="16dp"
                 android:src="@drawable/ic_oui_favorite_on"
                 android:tint="#D4AF37"
-                android:animateLayoutChanges="false"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
