@@ -33,7 +33,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:includeFontPadding="false"
-            android:paddingBottom="2sp"
+            android:paddingBottom="3sp"
             android:textAppearance="?attr/textAppearanceListItem"
             tools:text="Font Name Example" />
                 
