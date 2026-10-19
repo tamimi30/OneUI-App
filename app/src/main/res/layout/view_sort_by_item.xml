@@ -48,7 +48,7 @@
          android:clickable="false"
          android:layout_marginStart="8dp"
          android:layout_marginEnd="12dp"
-         android:background="@color/ripple_color" />
+         android:background="@color/about_page_secondary_text_color" />
 
      <LinearLayout
          android:id="@+id/sort_order_container"
