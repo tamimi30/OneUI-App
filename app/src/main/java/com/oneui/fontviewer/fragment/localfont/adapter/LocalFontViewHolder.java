@@ -30,6 +30,11 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         selectableLayout = itemView.findViewById(R.id.selectable_layout);
         favoriteIconView    = itemView.findViewById(R.id.font_item_favorite_icon); 
         originalTypeface    = fontNameTextView.getTypeface();
+
+        // النصان ينزلقان عند ظهور/اختفاء الـ CheckBox؛ أيقونة المفضلة لا تُسجَّل لأن حافة نهايتها ثابتة
+        if (selectableLayout != null) {
+            selectableLayout.setSlideTargets(fontNameTextView, weightWidthTextView);
+        }
     }
 
     private void bindCore(String displayName,
@@ -46,7 +51,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         itemView.setTag(path);
 
         if (selectableLayout != null) {
-            selectableLayout.setSelectionMode(isSelectionMode, false);
+            selectableLayout.setSelectionMode(isSelectionMode);
             selectableLayout.setSelectedAnimate(isSelected);
         }
         Context context = fontNameTextView.getContext();
