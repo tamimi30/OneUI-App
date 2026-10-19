@@ -2,16 +2,17 @@ package com.oneui.fontviewer.widget;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
-import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
-import android.util.Property;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.CheckBox;
@@ -21,6 +22,9 @@ import android.widget.LinearLayout;
 import androidx.appcompat.widget.AppCompatCheckBox;
 
 import com.oneui.fontviewer.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SelectableLinearLayout extends LinearLayout {
 
@@ -37,32 +41,35 @@ public class SelectableLinearLayout extends LinearLayout {
 
     private boolean isSelectionMode = false;
 
-    // قيم مطابقة تماماً لقيم LayoutTransition الافتراضي (animateLayoutChanges="true"):
-    //   كل مرحلة 300ms، والانزلاق Decelerate، والظهور/الاختفاء التدريجي AccelerateDecelerate.
-    //   عند الظهور: ينزلق المحتوى أولاً ثم يظهر الـ CheckBox (يتأخر 300ms)،
-    //   وعند الاختفاء: يختفي الـ CheckBox أولاً ثم ينزلق المحتوى.
-    private static final long SELECTION_ANIM_DURATION = 300;
-    private static final long SELECTION_APPEAR_FADE_DELAY = 0;
-    private static final TimeInterpolator SLIDE_INTERPOLATOR = new DecelerateInterpolator();
-    private static final TimeInterpolator FADE_INTERPOLATOR = new AccelerateDecelerateInterpolator();
+    // ====================== أنيميشن انزلاق النص (اختياري) ======================
+    // لا يعمل إلا للعناصر التي استدعت setSlideTargets (قائمة الخطوط المحلية).
+    // بقية القوائم (مثل المحذوفات) تبقى على سلوكها القديم عبر animateLayoutChanges في الـ XML.
+    //
+    // القيم مطابقة للقيم الافتراضية لـ LayoutTransition (animateLayoutChanges) في AOSP:
+    //  - مدة كل مرحلة 300ms
+    //  - الانزلاق: DecelerateInterpolator (سرعة تبدأ عالية ثم تتباطأ، وليس خطياً)
+    //  - ظهور/اختفاء الـ CheckBox: AccelerateDecelerateInterpolator
+    //  - عند الدخول: ينزلق النص أولاً، ثم يظهر الـ CheckBox بعد 300ms
+    //  - عند الخروج: يختفي الـ CheckBox أولاً، ثم ينزلق النص بعد 300ms
+    private static final long SLIDE_DURATION = 300L;
+    private static final long FADE_DURATION = 300L;
+    private static final long FADE_IN_DELAY = 0L;
+    private static final long SLIDE_OUT_DELAY = 0L;
 
-    private static final Property<SelectableLinearLayout, Float> CONTENT_SLIDE =
-            new Property<SelectableLinearLayout, Float>(Float.class, "contentSlide") {
-                @Override
-                public Float get(SelectableLinearLayout layout) {
-                    return layout.contentSlide;
-                }
+    private final List<View> slideTargets = new ArrayList<>();
+    private ValueAnimator slideAnimator;
+    private ValueAnimator fadeAnimator;
 
-                @Override
-                public void set(SelectableLinearLayout layout, Float value) {
-                    layout.setContentSlide(value);
-                }
-            };
+    // شفافية الـ CheckBox المعروضة حالياً (1 = ظاهر تماماً، 0 = مخفي)
+    private float checkAlpha = 0f;
 
-    // الإزاحة الحالية (translationX) المطبّقة على محتوى العنصر، أي كل أبناء الـ Layout عدا الـ CheckBox
-    private float contentSlide = 0f;
-    private ObjectAnimator slideAnimator;
-    private ObjectAnimator fadeAnimator;
+    // أثناء الاختفاء يكون الـ CheckBox قد خرج من الـ layout (GONE) فيتحرك النص إلى مكانه النهائي فوراً،
+    // ونرسم الـ CheckBox يدوياً في مكانه القديم وهو يتلاشى (ghost).
+    private boolean ghostActive = false;
+    private int ghostLeft = 0;
+    private int ghostTop = 0;
+    // حالة التحديد المطلوبة أثناء الـ ghost، تُطبَّق بعد انتهائه حتى لا تتحول الدائرة المحددة إلى فارغة قبل أن تتلاشى
+    private Boolean deferredChecked = null;
 
     public SelectableLinearLayout(Context context) {
         super(context);
@@ -126,156 +133,156 @@ public class SelectableLinearLayout extends LinearLayout {
     }
 
     /**
-     * تغيير وضع التحديد بلا أنيميشن (الحالة النهائية فوراً).
-     * هذا هو الاستدعاء القديم، ويستخدمه الباقون (مثل قائمة المحذوفات التي تعتمد على animateLayoutChanges).
+     * تسجّل الـ Views التي يجب أن تنزلق (ببدء النص) عند ظهور/اختفاء الـ CheckBox.
+     * تُستدعى مرة واحدة بعد الـ inflate. الـ Views التي تثبت حافة نهايتها (مثل أيقونة المفضلة) لا تُسجَّل.
+     *
+     * لماذا ليس ChangeBounds / animateLayoutChanges هنا؟
+     * هما يحرّكان حدود الحاوية (left/right)، أما الأبناء فيكونون مرتّبين مسبقاً على الحجم النهائي.
+     * في اللغة العربية (RTL) النص محاذٍ لحافة الحاوية اليمنى، والتي لا تتغير إحداثياتها بالنسبة لأبنائها،
+     * فيقفز النص إلى مكانه النهائي فوراً بينما تتحرك الحاوية فقط. في الإنجليزية تتحرك الحافة اليسرى
+     * التي ينطلق منها النص، فيبدو الأنيميشن سليماً.
+     * هنا نحرّك translationX للنصوص نفسها، فلا يعتمد الأمر على اتجاه اللغة ولا على إعادة قياس كل إطار
+     * (فلا تختفي الأحرف واحداً تلو الآخر).
      */
+    public void setSlideTargets(View... targets) {
+        slideTargets.clear();
+        if (targets == null) return;
+        for (View target : targets) {
+            if (target == null) continue;
+            slideTargets.add(target);
+            // translationX يُخرج النص عن حدود الحاويات الوسيطة أثناء الحركة، فلا بد من إيقاف قصّ الأبناء فيها
+            ViewParent p = target.getParent();
+            while (p instanceof ViewGroup && p != this) {
+                ((ViewGroup) p).setClipChildren(false);
+                p = p.getParent();
+            }
+        }
+    }
+
     public void setSelectionMode(boolean mode) {
         setSelectionMode(mode, false);
     }
 
     /**
-     * @param animate true لتشغيل أنيميشن الانزلاق وظهور الـ CheckBox (يُستخدم في قائمة الخطوط المحلية).
-     *                لا يُشغَّل الأنيميشن إلا إذا كان الـ View متصلاً بالنافذة وسبق رسمه،
-     *                لذلك تُربط العناصر الجديدة والمعاد تدويرها مباشرة بالحالة النهائية.
-     *                لا يعتمد على isShown() عمداً: العنصر المفصول مؤقتاً عن الـ RecyclerView أثناء
-     *                الـ layout يرجع isShown() = false رغم أنه متصل بالنافذة.
+     * @param animate true عند التغيير الحي لوضع التحديد (payload)، false عند الـ bind الكامل (إعادة تدوير العنصر).
      */
     public void setSelectionMode(boolean mode, boolean animate) {
-        if (isSelectionMode == mode) return;
+        final boolean changed = isSelectionMode != mode;
         isSelectionMode = mode;
+
         if (checkMode != CHECK_MODE_CHECKBOX || checkBox == null) return;
 
-        if (animate && canAnimateSelectionChange()) {
-            if (mode) animateSelectionOpen();
-            else animateSelectionClose();
-        } else {
-            stopSelectionAnimators();
-            applyFinalSelectionState(mode);
-        }
-    }
-
-    private boolean canAnimateSelectionChange() {
-        return isAttachedToWindow()
-                && getWindowVisibility() == View.VISIBLE
-                && getWidth() > 0
-                && getHeight() > 0;
-    }
-
-    private void applyFinalSelectionState(boolean mode) {
-        if (contentSlide != 0f) setContentSlide(0f);
-        if (checkBox.getAlpha() != 1f) checkBox.setAlpha(1f);
-        checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
-    }
-
-    // ───────── أنيميشن وضع التحديد ─────────
-    //
-    // لماذا لا نستخدم LayoutTransition / ChangeBounds هنا؟
-    // كلاهما يحرّك حدود الحاوية (left/right) لا موضعها. حاوية النص ذات layout_weight=1، وفي RTL
-    // يبقى حدّها الأيسر ثابتاً ويتحرك الأيمن فقط، فيكون النص (المرتّب أصلاً على مخططه النهائي) في مكانه
-    // النهائي من أول إطار، فيقفز دون أي انزلاق.
-    // الحل: يُحسب المخطط النهائي مرة واحدة، ثم يُحرَّك translationX للمحتوى كجسم صلب بنفس
-    // قيم LayoutTransition. لا يتغير أي قياس أثناء الأنيميشن، فلا يعاد تقسيم النص ولا تتقطع الأحرف.
-
-    private void animateSelectionOpen() {
-        stopSelectionAnimators();
-
-        float startSlide = contentSlide;
-        float startAlpha = checkBox.getAlpha();
-
-        if (checkBox.getVisibility() != View.VISIBLE) {
-            // سيُدفع المحتوى بمقدار shift عند ظهور الـ CheckBox في المخطط، فنعوّضه ليبقى في مكانه المرئي
-            startSlide -= getSelectionShift();
-            startAlpha = 0f;
-            checkBox.setAlpha(0f);
-            checkBox.setVisibility(View.VISIBLE);
-        }
-        setContentSlide(startSlide);
-
-        boolean needsSlide = Math.abs(startSlide) > 0.5f;
-        if (needsSlide) {
-            slideAnimator = ObjectAnimator.ofFloat(this, CONTENT_SLIDE, startSlide, 0f);
-            slideAnimator.setDuration(SELECTION_ANIM_DURATION);
-            slideAnimator.setInterpolator(SLIDE_INTERPOLATOR);
-            slideAnimator.start();
-        }
-
-        if (startAlpha < 1f) {
-            fadeAnimator = ObjectAnimator.ofFloat(checkBox, View.ALPHA, startAlpha, 1f);
-            fadeAnimator.setDuration(SELECTION_ANIM_DURATION);
-            fadeAnimator.setInterpolator(FADE_INTERPOLATOR);
-            fadeAnimator.setStartDelay(needsSlide ? SELECTION_APPEAR_FADE_DELAY : 0);
-            fadeAnimator.start();
-        }
-    }
-
-    private void animateSelectionClose() {
-        stopSelectionAnimators();
-
-        if (checkBox.getAlpha() <= 0.01f) {
-            startCloseSlide();
+        // العناصر التي لم تسجّل slideTargets: السلوك القديم كما هو (الأنيميشن عبر animateLayoutChanges في الـ XML)
+        if (slideTargets.isEmpty()) {
+            if (changed) checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
             return;
         }
 
-        fadeAnimator = ObjectAnimator.ofFloat(checkBox, View.ALPHA, checkBox.getAlpha(), 0f);
-        fadeAnimator.setDuration(SELECTION_ANIM_DURATION);
-        fadeAnimator.setInterpolator(FADE_INTERPOLATOR);
+        if (!changed) {
+            // لا نقطع أنيميشن جارياً بسبب إشعار تحديد عنصر؛ أما الـ bind الكامل فيُعيد الحالة النظيفة (العنصر معاد تدويره)
+            if (!animate) snapToState();
+            return;
+        }
+
+        if (animate && canAnimateNow()) {
+            animateCheckBox(mode);
+        } else {
+            snapToState();
+        }
+    }
+
+    // لا نستخدم isShown() هنا عمداً: أثناء إعادة ربط العنصر داخل layout الـ RecyclerView يكون العنصر مفصولاً مؤقتاً عن أبيه
+    // (attached to window لكن parent == null) فترجع isShown() قيمة false دائماً ولا يبدأ الأنيميشن.
+    // العنصر الذي لم يُرتَّب بعد (width == 0) أو غير المرتبط بالنافذة (مخزّن في الـ cache) يأخذ حالته النهائية مباشرة.
+    private boolean canAnimateNow() {
+        return isAttachedToWindow() && getWidth() > 0 && checkBox.getParent() == this;
+    }
+
+    private void animateCheckBox(final boolean enter) {
+        cancelAnimators();
+
+        final float endDir = (getLayoutDirection() == LAYOUT_DIRECTION_RTL) ? -1f : 1f;
+        final float slot = measureCheckBoxSlot();
+
+        // عند الدخول يتحرك بدء النص في الـ layout بمقدار slot نحو النهاية، فنعوّضه بإزاحة معاكسة ثم نعيدها إلى 0
+        // (والعكس عند الخروج). نبدأ من الإزاحة الحالية إن كان هناك أنيميشن جارٍ تم قطعه، فلا يحدث أي قفز.
+        final float startShift = slideTargets.get(0).getTranslationX() + (enter ? -endDir : endDir) * slot;
+        final float startAlpha = checkAlpha;
+
+        if (enter) {
+            ghostActive = false;
+            deferredChecked = null;
+            checkBox.setAlpha(startAlpha);
+            checkBox.setVisibility(View.VISIBLE);
+        } else {
+            ghostLeft = checkBox.getLeft();
+            ghostTop = checkBox.getTop();
+            ghostActive = checkBox.getWidth() > 0 && checkBox.getVisibility() == View.VISIBLE;
+            checkBox.setVisibility(View.GONE);
+        }
+
+        // تُطبَّق فوراً حتى لا يظهر أي إطار بالموضع النهائي قبل بدء الحركة (خاصة مع startDelay)
+        applyShift(startShift);
+
+        slideAnimator = ValueAnimator.ofFloat(startShift, 0f);
+        slideAnimator.setDuration(SLIDE_DURATION);
+        slideAnimator.setInterpolator(new DecelerateInterpolator());
+        slideAnimator.setStartDelay(enter ? 0L : SLIDE_OUT_DELAY);
+        slideAnimator.addUpdateListener(a -> applyShift((float) a.getAnimatedValue()));
+
+        fadeAnimator = ValueAnimator.ofFloat(startAlpha, enter ? 1f : 0f);
+        fadeAnimator.setDuration(FADE_DURATION);
+        fadeAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        fadeAnimator.setStartDelay(enter ? FADE_IN_DELAY : 0L);
+        fadeAnimator.addUpdateListener(a -> {
+            checkAlpha = (float) a.getAnimatedValue();
+            if (ghostActive) {
+                invalidate();
+            } else {
+                checkBox.setAlpha(checkAlpha);
+            }
+        });
         fadeAnimator.addListener(new AnimatorListenerAdapter() {
-            private boolean cancelled = false;
+            private boolean canceled = false;
 
             @Override
             public void onAnimationCancel(Animator animation) {
-                cancelled = true;
+                canceled = true;
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (cancelled) return;
-                fadeAnimator = null;
-                startCloseSlide();
+                if (canceled) return;
+                if (enter) {
+                    checkBox.setAlpha(1f);
+                } else {
+                    ghostActive = false;
+                    flushDeferredChecked();
+                    invalidate();
+                }
             }
         });
+
+        slideAnimator.start();
         fadeAnimator.start();
     }
 
-    private void startCloseSlide() {
-        // الـ CheckBox يغادر المخطط الآن، فينسحب المحتوى بمقدار shift نحو البداية؛ نعوّضه ثم ننزلق
-        float startSlide = contentSlide + getSelectionShift();
-        checkBox.setVisibility(View.GONE);
-        checkBox.setAlpha(1f);
-        setContentSlide(startSlide);
-
-        if (Math.abs(startSlide) <= 0.5f) {
-            setContentSlide(0f);
-            return;
-        }
-        slideAnimator = ObjectAnimator.ofFloat(this, CONTENT_SLIDE, startSlide, 0f);
-        slideAnimator.setDuration(SELECTION_ANIM_DURATION);
-        slideAnimator.setInterpolator(SLIDE_INTERPOLATOR);
-        slideAnimator.start();
-    }
-
-    /**
-     * المسافة التي يدفعها الـ CheckBox بها المحتوى نحو النهاية (موجبة نحو اليمين وسالبة نحو اليسار)،
-     * أي عرضه مع هوامشه، بحسب اتجاه الـ Layout (RTL / LTR).
-     */
-    private float getSelectionShift() {
-        LayoutParams lp = (LayoutParams) checkBox.getLayoutParams();
+    // المساحة التي يشغلها الـ CheckBox في الـ layout: عرضه + هامشاه
+    private float measureCheckBoxSlot() {
         checkBox.measure(
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        float space = checkBox.getMeasuredWidth() + lp.getMarginStart() + lp.getMarginEnd();
-        return getLayoutDirection() == View.LAYOUT_DIRECTION_RTL ? -space : space;
+        LayoutParams lp = (LayoutParams) checkBox.getLayoutParams();
+        return checkBox.getMeasuredWidth() + lp.getMarginStart() + lp.getMarginEnd();
     }
 
-    private void setContentSlide(float value) {
-        contentSlide = value;
-        for (int i = 0, count = getChildCount(); i < count; i++) {
-            View child = getChildAt(i);
-            if (child != checkBox) child.setTranslationX(value);
+    private void applyShift(float shift) {
+        for (int i = 0; i < slideTargets.size(); i++) {
+            slideTargets.get(i).setTranslationX(shift);
         }
     }
 
-    private void stopSelectionAnimators() {
+    private void cancelAnimators() {
         if (slideAnimator != null) {
             slideAnimator.cancel();
             slideAnimator = null;
@@ -286,16 +293,44 @@ public class SelectableLinearLayout extends LinearLayout {
         }
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        // العنصر يُعاد تدويره: نُنهي أي أنيميشن جارٍ ونثبّت الحالة النهائية حتى لا يظهر بحالة نصف منتهية
-        if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            stopSelectionAnimators();
-            applyFinalSelectionState(isSelectionMode);
+    // الحالة النهائية المستقرة حسب isSelectionMode، بلا أنيميشن
+    private void snapToState() {
+        cancelAnimators();
+        ghostActive = false;
+        applyShift(0f);
+        checkAlpha = isSelectionMode ? 1f : 0f;
+        checkBox.setAlpha(1f);
+        checkBox.setVisibility(isSelectionMode ? View.VISIBLE : View.GONE);
+        flushDeferredChecked();
+        invalidate();
+    }
+
+    private void flushDeferredChecked() {
+        if (deferredChecked != null) {
+            checkBox.setChecked(deferredChecked);
+            deferredChecked = null;
         }
     }
 
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        if (ghostActive && checkBox != null && checkBox.getWidth() > 0) {
+            final int w = checkBox.getWidth();
+            final int h = checkBox.getHeight();
+            final int save = canvas.saveLayerAlpha(
+                    ghostLeft, ghostTop, ghostLeft + w, ghostTop + h, Math.round(checkAlpha * 255f));
+            canvas.translate(ghostLeft, ghostTop);
+            checkBox.draw(canvas);
+            canvas.restoreToCount(save);
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (!slideTargets.isEmpty() && checkBox != null) snapToState();
+    }
 
     public boolean isSelectionMode() {
         return isSelectionMode;
@@ -311,7 +346,12 @@ public class SelectableLinearLayout extends LinearLayout {
 
     public void setSelectedAnimate(boolean isSelected) {
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            checkBox.setChecked(isSelected);
+            if (ghostActive) {
+                // الـ CheckBox يتلاشى الآن: لا نغيّر حالته الظاهرة حتى ينتهي
+                deferredChecked = isSelected;
+            } else {
+                checkBox.setChecked(isSelected);
+            }
         } else if (checkMode == CHECK_MODE_OVERLAY && imageTarget != null) {
             imageTarget.setSelected(isSelected);
         }
