@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- تمت إزالة animateLayoutChanges: الأنيميشن يُنفَّذ الآن داخل SelectableLinearLayout.setSelectionMode -->
+<!-- تمت إزالة animateLayoutChanges: الأنيميشن يُنفَّذ الآن في الكلاس المستقل SelectionModeAnimator، ويُفعَّل من LocalFontViewHolder -->
 <com.oneui.fontviewer.widget.SelectableLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
