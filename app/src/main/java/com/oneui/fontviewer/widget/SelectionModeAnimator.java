@@ -16,25 +16,6 @@ import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.NonNull;
 
-/**
- * أنيميشن دخول/خروج وضع التحديد المتعدد لعنصر قائمة الخطوط المحلية (انزلاق المحتوى + ظهور الـ CheckBox تدريجياً).
- *
- * الفكرة (First → Last → Invert → Play) وليست Transition ولا LayoutTransition:
- *  1. قبل التغيير: نحفظ المكان الحالي لكل عنصر مجاور للـ CheckBox (كما يراه المستخدم الآن).
- *  2. نطبّق النتيجة النهائية فوراً (إظهار/إخفاء الـ CheckBox) بلا أي تأخير، فيُقاس النص ويُرتَّب
- *     مرة واحدة فقط على عرضه النهائي. لذلك لا تختفي الأحرف حرفاً حرفاً أثناء الحركة.
- *  3. قبل أول رسم (OnPreDrawListener) نقرأ المكان النهائي ونحسب الفرق.
- *  4. نشغّل translationX من الفرق إلى صفر، مع تغيّر شفافية الـ CheckBox في مكانه دون أن يتحرك.
- *
- * لا يعتمد هذا الكلاس على isShown() ولا على نظام Transition. وبالتالي لا تؤثر عليه حالة العنصر
- * "المرتبط بالنافذة وغير المرتبط بشجرة الـ View" التي يمرّ بها العنصر أثناء إعادة الربط داخل layout الـ RecyclerView،
- * ولا يتأثر باتجاه اللغة، لأن الفرق يُحسب من حدود العنصر الحقيقية (يسار/يمين) دون افتراض اتجاه.
- *
- * القيم مطابقة لقيم LayoutTransition الافتراضية في أندرويد (ما ينشئه android:animateLayoutChanges="true")
- * باستثناء التأخيرات: الحركة والظهور يبدآن معاً فوراً.
- *  - حركة المحتوى (CHANGE_APPEARING / CHANGE_DISAPPEARING): 300ms مع DecelerateInterpolator.
- *  - ظهور/اختفاء الـ CheckBox (APPEARING / DISAPPEARING): 300ms مع AccelerateDecelerateInterpolator.
- */
 public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
 
     public static final long SLIDE_DURATION = 300L;
@@ -45,7 +26,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
     private static final TimeInterpolator SLIDE_INTERPOLATOR = new DecelerateInterpolator();
     private static final TimeInterpolator FADE_INTERPOLATOR  = new AccelerateDecelerateInterpolator();
 
-    // عدد مرات الانتظار القصوى لانتهاء الـ layout قبل البدء، حتى لا ينتظر المستمع إلى ما لا نهاية
     private static final int MAX_LAYOUT_WAIT_PASSES = 3;
 
     private final ViewGroup container;
@@ -54,13 +34,10 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
     private PendingStart pendingStart;
     private ValueAnimator animator;
 
-    // نسخة صورية من الـ CheckBox تُرسم فوق مكانه القديم أثناء اختفائه (لأنه يصبح GONE فوراً ولا يُرسم)
     private BitmapDrawable ghost;
 
-    // قيمة الشفافية المعروضة حالياً، حتى يكمل الأنيميشن العكسي من حيث وصل
     private float currentFade = 1f;
 
-    // بيانات الأنيميشن الجاري
     private View[] activeMovers;
     private float[] activeDeltas;
     private int activeCount;
@@ -74,10 +51,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         container.addOnAttachStateChangeListener(this);
     }
 
-    /**
-     * يبدأ دخول (true) أو خروج (false) وضع التحديد. النتيجة النهائية تُطبَّق فوراً،
-     * والأنيميشن يعرض الانتقال البصري إليها فقط.
-     */
     public void start(boolean entering) {
         if (!canAnimate()) {
             cancel();
@@ -88,7 +61,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         final boolean busy = isBusy();
         final float startFade = busy ? currentFade : (entering ? 0f : 1f);
 
-        // 1) المكان الحالي كما يراه المستخدم (يشمل ما تبقى من أنيميشن سابق إن وُجد)
         final int childCount = container.getChildCount();
         final View[] movers = new View[childCount];
         final float[] firstLeft = new float[childCount];
@@ -103,10 +75,8 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
             moverCount++;
         }
 
-        // 2) إيقاف أي أنيميشن سابق في مكانه (بعد أن حفظنا مكانه الحالي أعلاه)
         cancel();
 
-        // 3) تطبيق النتيجة النهائية فوراً، دون أي تأخير
         if (entering) {
             checkBox.setAlpha(startFade);
             checkBox.setVisibility(View.VISIBLE);
@@ -116,15 +86,10 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         }
         currentFade = startFade;
 
-        // 4) نقرأ المكان النهائي بعد الـ layout وقبل أول رسم، ثم نشغّل الحركة
         pendingStart = new PendingStart(entering, movers, firstLeft, firstRight, moverCount, startFade);
         container.getViewTreeObserver().addOnPreDrawListener(pendingStart);
     }
 
-    /**
-     * يوقف أي أنيميشن أو بدء معلّق، ويعيد العناصر إلى حالتها الطبيعية (translationX = 0 و alpha = 1).
-     * يُستدعى عند الربط العادي للعنصر (bind) وعند فصله عن النافذة.
-     */
     public void cancel() {
         if (!isBusy()) return;
 
@@ -159,7 +124,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
             final View child = p.movers[i];
             final float dLeft = p.firstLeft[i] - child.getLeft();
             final float dRight = p.firstRight[i] - child.getRight();
-            // الحافة التي تحركت فعلاً هي حافة البداية، سواء كانت يساراً (LTR) أو يميناً (RTL)
             deltas[i] = Math.abs(dLeft) >= Math.abs(dRight) ? dLeft : dRight;
         }
 
@@ -172,7 +136,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
 
         final ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
         a.setDuration(TOTAL_DURATION);
-        // الخطية هنا للزمن فقط، أما منحنيات السرعة المتغيرة فتُطبَّق يدوياً في apply()
         a.setInterpolator(new LinearInterpolator());
         animator = a;
 
@@ -276,7 +239,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
                 detach();
                 return true;
             }
-            // لم يُنفَّذ الـ layout بعد (مثلاً أول مرور): ننتظر مروراً آخر بدل قراءة مكان قديم
             if (container.isLayoutRequested() && ++waitedPasses < MAX_LAYOUT_WAIT_PASSES) {
                 return true;
             }
