@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,8 +17,8 @@ import com.oneui.fontviewer.R;
  */
 public class Toast extends android.widget.Toast {
 
-    public static final int LENGTH_SHORT = Toast.LENGTH_SHORT;
-    public static final int LENGTH_LONG = Toast.LENGTH_LONG;
+    public static final int LENGTH_SHORT = android.widget.Toast.LENGTH_SHORT;
+    public static final int LENGTH_LONG = android.widget.Toast.LENGTH_LONG;
 
     public Toast(@Nullable Context context) {
         super(context);
