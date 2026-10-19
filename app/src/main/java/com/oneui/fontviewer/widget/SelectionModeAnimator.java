@@ -18,8 +18,8 @@ import androidx.annotation.NonNull;
 
 public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
 
-    public static final long SLIDE_DURATION = 350L;
-    public static final long FADE_DURATION  = 350L;
+    public static final long SLIDE_DURATION = 300L;
+    public static final long FADE_DURATION  = 200L;
 
     private static final long TOTAL_DURATION = Math.max(SLIDE_DURATION, FADE_DURATION);
 
