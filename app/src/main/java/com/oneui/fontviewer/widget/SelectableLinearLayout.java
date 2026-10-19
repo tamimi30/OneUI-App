@@ -42,7 +42,7 @@ public class SelectableLinearLayout extends LinearLayout {
     //   عند الظهور: ينزلق المحتوى أولاً ثم يظهر الـ CheckBox (يتأخر 300ms)،
     //   وعند الاختفاء: يختفي الـ CheckBox أولاً ثم ينزلق المحتوى.
     private static final long SELECTION_ANIM_DURATION = 300;
-    private static final long SELECTION_APPEAR_FADE_DELAY = 300;
+    private static final long SELECTION_APPEAR_FADE_DELAY = 0;
     private static final TimeInterpolator SLIDE_INTERPOLATOR = new DecelerateInterpolator();
     private static final TimeInterpolator FADE_INTERPOLATOR = new AccelerateDecelerateInterpolator();
 
