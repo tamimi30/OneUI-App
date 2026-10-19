@@ -32,7 +32,9 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         originalTypeface    = fontNameTextView.getTypeface();
 
         // أنيميشن دخول/خروج وضع التحديد (انزلاق المحتوى + ظهور الـ CheckBox تدريجياً) خاص بهذه القائمة
-        if (selectableLayout != null) selectableLayout.enableSelectionAnimation();
+        // ولا يعمل إلا إذا كان font_list_item يحمل android:animateLayoutChanges="true".
+        // أيقونة المفضلة تُمرَّر كعنصر مثبّت حتى تبقى ثابتة في مكانها ولا تنزلق مع المحتوى
+        if (selectableLayout != null) selectableLayout.enableSelectionAnimation(favoriteIconView);
     }
 
     private void bindCore(String displayName,
