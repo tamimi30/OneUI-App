@@ -18,7 +18,7 @@
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
         android:orientation="horizontal"
-        app:checkableButtonSpacing="24dp"
+        app:checkableButtonSpacing="14dp"
         android:gravity="center_vertical"
         android:foreground="?listChoiceBackgroundIndicator"
         app:selectedHighlightColor="?attr/colorControlHighlight"
