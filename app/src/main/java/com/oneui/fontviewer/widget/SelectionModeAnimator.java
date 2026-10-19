@@ -21,7 +21,9 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
     public static final long SLIDE_DURATION = 300L;
     public static final long FADE_DURATION  = 300L;
 
-    private static final long TOTAL_DURATION = Math.max(SLIDE_DURATION, FADE_DURATION);
+    // تأخير بدء ظهور الـ checkbox عند الدخول إلى وضع التحديد، بينما العناصر تنزلق للجانب.
+    // لا يُطبَّق عند الخروج: الـ checkbox يبدأ بالاختفاء فوراً مع رجوع العناصر.
+    public static final long FADE_IN_DELAY  = 150L;
 
     private static final TimeInterpolator SLIDE_INTERPOLATOR = new DecelerateInterpolator();
     private static final TimeInterpolator FADE_INTERPOLATOR  = new AccelerateDecelerateInterpolator();
@@ -44,6 +46,10 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
     private boolean activeEntering;
     private float fadeFrom;
     private float fadeTo;
+
+    // تأخير الظهور الفعلي للحركة الحالية، والمدة الكلية لها (تعتمد على الاتجاه وعلى شفافية البداية)
+    private float activeFadeDelay;
+    private float activeTotalDuration;
 
     public SelectionModeAnimator(@NonNull ViewGroup container, @NonNull View checkBox) {
         this.container = container;
@@ -134,8 +140,13 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         fadeFrom = p.startFade;
         fadeTo = p.entering ? 1f : 0f;
 
+        // التأخير يتناسب مع المتبقي من الظهور: إذا قاطع المستخدم حركة سابقة والـ checkbox شبه ظاهر،
+        // لا معنى لتجميده مدة كاملة قبل أن يكمل ظهوره.
+        activeFadeDelay = p.entering ? FADE_IN_DELAY * (1f - p.startFade) : 0f;
+        activeTotalDuration = Math.max(SLIDE_DURATION, activeFadeDelay + FADE_DURATION);
+
         final ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
-        a.setDuration(TOTAL_DURATION);
+        a.setDuration(Math.round(activeTotalDuration));
         a.setInterpolator(new LinearInterpolator());
         animator = a;
 
@@ -157,9 +168,11 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
     }
 
     private void apply(float fraction) {
-        final float elapsed = fraction * TOTAL_DURATION;
+        final float elapsed = fraction * activeTotalDuration;
         final float slide = SLIDE_INTERPOLATOR.getInterpolation(Math.min(1f, elapsed / SLIDE_DURATION));
-        final float fade = FADE_INTERPOLATOR.getInterpolation(Math.min(1f, elapsed / FADE_DURATION));
+        // الظهور/الاختفاء يبدأ بعد activeFadeDelay (صفر عند الخروج)
+        final float fadeProgress = Math.max(0f, Math.min(1f, (elapsed - activeFadeDelay) / FADE_DURATION));
+        final float fade = FADE_INTERPOLATOR.getInterpolation(fadeProgress);
 
         for (int i = 0; i < activeCount; i++) {
             activeMovers[i].setTranslationX(activeDeltas[i] * (1f - slide));
