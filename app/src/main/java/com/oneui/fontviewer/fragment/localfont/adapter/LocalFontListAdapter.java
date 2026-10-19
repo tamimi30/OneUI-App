@@ -234,67 +234,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void setSelectionMode(boolean enabled) {
         this.isSelectionMode = enabled;
         if (!enabled) selectedItems.clear();
-        dispatchSelectionModeChanged();
-    }
-
-    /**
-     * يطبّق تغيّر وضع التحديد (الأنيميشن المنزلق) على الصفوف دون أن يُعيد الـ RecyclerView ربطها أثناء الـ layout.
-     *
-     * السبب: notifyItemRangeChanged مع payload يجعل الـ RecyclerView يُعيد bind الصفوف المعروضة في مكانها
-     * داخل الـ layout، وفي تلك اللحظة يكون الصف مفصولاً مؤقتاً عن أبيه فتُرجع isShown() القيمة false،
-     * فكانت الأنيميشن لا تبدأ والصفوف تقفز مباشرة.
-     * لذلك:
-     *  - الصفوف المعروضة حالياً تُحدَّث مباشرة على الـ ViewHolder خارج الـ layout، فيبدأ الأنيميشن وهي ظاهرة ومتصلة بأبيها.
-     *  - الصفوف غير المعروضة (قد تكون محفوظة في الـ cache بحالة قديمة) يُرسل لها إشعار عادي،
-     *    وتُربط لاحقاً بحالة الوضع الحالية بلا أنيميشن.
-     */
-    private void dispatchSelectionModeChanged() {
-        // آخر عنصر هو الـ Bottom space ولا يحمل أي حالة تحديد
-        final int lastPosition = getItemCount() - 1;
-        if (lastPosition <= 0) return;
-
-        if (recyclerView == null) {
-            notifyItemRangeChanged(0, lastPosition, PAYLOAD_UPDATE_SELECTION);
-            return;
-        }
-
-        if (recyclerView.isComputingLayout()) {
-            recyclerView.post(this::dispatchSelectionModeChanged);
-            return;
-        }
-
-        final boolean[] isHandled = new boolean[lastPosition];
-
-        for (int i = 0, count = recyclerView.getChildCount(); i < count; i++) {
-            RecyclerView.ViewHolder vh = recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
-
-            int position = vh.getBindingAdapterPosition();
-            if (position < 0 || position >= lastPosition) continue;
-
-            if (vh instanceof LocalFontViewHolder) {
-                LocalFontViewHolder holder = (LocalFontViewHolder) vh;
-                if (holder.selectableLayout == null) continue;
-                holder.selectableLayout.setSelectionMode(isSelectionMode, true);
-                holder.selectableLayout.setSelectedAnimate(isItemSelected(position));
-            } else if (vh instanceof SortHeaderViewHolder) {
-                ((SortHeaderViewHolder) vh).setSortEnabled(!isSelectionMode);
-            } else {
-                continue;
-            }
-
-            isHandled[position] = true;
-        }
-
-        int runStart = -1;
-        for (int position = 0; position <= lastPosition; position++) {
-            boolean needsNotify = position < lastPosition && !isHandled[position];
-            if (needsNotify) {
-                if (runStart == -1) runStart = position;
-            } else if (runStart != -1) {
-                notifyItemRangeChanged(runStart, position - runStart, PAYLOAD_UPDATE_SELECTION);
-                runStart = -1;
-            }
-        }
+        notifyItemRangeChanged(0, getItemCount(), PAYLOAD_UPDATE_SELECTION);
     }
 
     public void setItemSelected(int position, boolean selected) {
@@ -537,7 +477,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 if (holder instanceof LocalFontViewHolder) {
                     LocalFontViewHolder vh = (LocalFontViewHolder) holder;
                     if (vh.selectableLayout != null) {
-                        vh.selectableLayout.setSelectionMode(isSelectionMode, true);
+                        vh.selectableLayout.setSelectionMode(isSelectionMode);
                         vh.selectableLayout.setSelectedAnimate(isItemSelected(position));
                         
                     }
