@@ -46,7 +46,8 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         itemView.setTag(path);
 
         if (selectableLayout != null) {
-            selectableLayout.setSelectionMode(isSelectionMode);
+            // bind كامل لصف جديد أو معاد تدويره: تُطبَّق حالة وضع التحديد فوراً بلا أنيميشن
+            selectableLayout.setSelectionMode(isSelectionMode, false);
             selectableLayout.setSelectedAnimate(isSelected);
         }
         Context context = fontNameTextView.getContext();
