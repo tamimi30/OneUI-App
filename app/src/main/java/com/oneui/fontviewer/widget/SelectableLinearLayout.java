@@ -114,19 +114,13 @@ public class SelectableLinearLayout extends LinearLayout {
      * لا يعمل إلا إذا كان العنصر يحمل android:animateLayoutChanges="true" (كما هو الحال في الوضع العادي)،
      * وإلا يبقى التبديل فورياً دون أنيميشن. وعند تفعيله يُستبدل الـ LayoutTransition الافتراضي بهذا الأنيميشن
      * حتى لا يعمل الاثنان معاً.
-     *
-     * @param anchoredViews عناصر داخل المحتوى المنزلق (مثل أيقونة المفضلة) مثبّتة على حافة لا تتحرك فعلياً،
-     *                      فتبقى ثابتة على الشاشة بدل أن تنزلق مع المحتوى.
      */
-    public void enableSelectionAnimation(View... anchoredViews) {
-        if (checkMode != CHECK_MODE_CHECKBOX || checkBox == null) return;
-        if (selectionAnimator == null) {
-            // getLayoutTransition() ليس null إلا إذا كان animateLayoutChanges="true"
-            if (getLayoutTransition() == null) return;
-            setLayoutTransition(null);
-            selectionAnimator = new SelectionModeAnimator(this, checkBox);
-        }
-        selectionAnimator.setAnchoredViews(anchoredViews);
+    public void enableSelectionAnimation() {
+        if (checkMode != CHECK_MODE_CHECKBOX || checkBox == null || selectionAnimator != null) return;
+        // getLayoutTransition() ليس null إلا إذا كان animateLayoutChanges="true"
+        if (getLayoutTransition() == null) return;
+        setLayoutTransition(null);
+        selectionAnimator = new SelectionModeAnimator(this, checkBox);
     }
 
     /**
