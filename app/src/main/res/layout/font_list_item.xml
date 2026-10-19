@@ -63,7 +63,7 @@
         android:layout_marginBottom="14.0dip"
         android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
         android:src="@drawable/ic_oui_favorite_on"
-        android:tint="#D4AF37"
+        android:tint="#ffd700"
         android:visibility="invisible"
         tools:visibility="visible" />
 
