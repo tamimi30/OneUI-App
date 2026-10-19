@@ -32,6 +32,7 @@ public class SelectableLinearLayout extends LinearLayout {
 
     // يبقى null في القوائم التي تعتمد على animateLayoutChanges (مثل قائمة المحذوفات)،
     // ويُفعَّل فقط عبر enableSelectionAnimation() في قائمة الخطوط المحلية
+    // وحتى في تلك القائمة لا يُنشأ إلا إذا كان الـ layout يحمل android:animateLayoutChanges="true"
     private SelectionModeAnimator selectionAnimator;
 
     public SelectableLinearLayout(Context context) {
@@ -109,11 +110,23 @@ public class SelectableLinearLayout extends LinearLayout {
 
     /**
      * يفعّل أنيميشن وضع التحديد لهذا العنصر. الأنيميشن نفسه موجود في [SelectionModeAnimator].
+     *
+     * لا يعمل إلا إذا كان العنصر يحمل android:animateLayoutChanges="true" (كما هو الحال في الوضع العادي)،
+     * وإلا يبقى التبديل فورياً دون أنيميشن. وعند تفعيله يُستبدل الـ LayoutTransition الافتراضي بهذا الأنيميشن
+     * حتى لا يعمل الاثنان معاً.
+     *
+     * @param anchoredViews عناصر داخل المحتوى المنزلق (مثل أيقونة المفضلة) مثبّتة على حافة لا تتحرك فعلياً،
+     *                      فتبقى ثابتة على الشاشة بدل أن تنزلق مع المحتوى.
      */
-    public void enableSelectionAnimation() {
-        if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null && selectionAnimator == null) {
+    public void enableSelectionAnimation(View... anchoredViews) {
+        if (checkMode != CHECK_MODE_CHECKBOX || checkBox == null) return;
+        if (selectionAnimator == null) {
+            // getLayoutTransition() ليس null إلا إذا كان animateLayoutChanges="true"
+            if (getLayoutTransition() == null) return;
+            setLayoutTransition(null);
             selectionAnimator = new SelectionModeAnimator(this, checkBox);
         }
+        selectionAnimator.setAnchoredViews(anchoredViews);
     }
 
     /**
@@ -146,6 +159,11 @@ public class SelectableLinearLayout extends LinearLayout {
     public void setSelectedAnimate(boolean isSelected) {
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
             checkBox.setChecked(isSelected);
+            // أنيميشن علامة الصح لا يتقدم والـ CheckBox مخفي (GONE)، فيبقى معلّقاً ويُعرض لاحقاً عند ظهوره
+            // (يظهر الـ CheckBox أزرق لجزء من الثانية على عنصر قديم). لذلك ننهيه فوراً عندما يكون مخفياً.
+            if (checkBox.getVisibility() != View.VISIBLE) {
+                checkBox.jumpDrawablesToCurrentState();
+            }
         } else if (checkMode == CHECK_MODE_OVERLAY && imageTarget != null) {
             imageTarget.setSelected(isSelected);
         }
