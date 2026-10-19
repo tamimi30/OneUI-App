@@ -16,20 +16,20 @@ import com.oneui.fontviewer.R;
 /**
  * Custom {@link android.widget.Toast Toast} widget with no icon.
  */
-public class SemToast extends Toast {
+public class Toast extends android.widget.Toast {
 
     public static final int LENGTH_SHORT = Toast.LENGTH_SHORT;
     public static final int LENGTH_LONG = Toast.LENGTH_LONG;
 
-    public SemToast(@Nullable Context context) {
+    public Toast(@Nullable Context context) {
         super(context);
     }
 
     @NonNull
-    public static SemToast makeText(@NonNull Context context,
+    public static Toast makeText(@NonNull Context context,
                                     @Nullable CharSequence text,
                                     int duration) {
-        SemToast toast = new SemToast(context);
+        Toast toast = new Toast(context);
 
         LayoutInflater inflater =
                 (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -42,7 +42,7 @@ public class SemToast extends Toast {
     }
 
     @NonNull
-    public static SemToast makeText(@NonNull Context context,
+    public static Toast makeText(@NonNull Context context,
                                     @StringRes int resId,
                                     int duration) throws Resources.NotFoundException {
         return makeText(context, context.getResources().getText(resId), duration);
