@@ -12,7 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,6 +50,7 @@ import com.oneui.fontviewer.widget.search.SearchViewModel;
 import com.oneui.fontviewer.fragment.localfont.viewmodel.LocalFontListViewModel;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
+import com.oneui.fontviewer.widget.Toast;
 
 public class FavoriteFontListFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
