@@ -16,6 +16,7 @@
     android:orientation="horizontal"
     app:checkableButtonSpacing="14.0dip"
     android:gravity="center_vertical"
+    android:animateLayoutChanges="true"
     android:foreground="?listChoiceBackgroundIndicator"
     app:selectedHighlightColor="?attr/colorControlHighlight"
     app:checkMode="checkBox">
