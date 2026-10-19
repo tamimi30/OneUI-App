@@ -19,7 +19,7 @@ import androidx.annotation.NonNull;
 public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
 
     public static final long SLIDE_DURATION = 300L;
-    public static final long FADE_DURATION  = 300L;
+    public static final long FADE_DURATION  = 150L;
 
     // تأخير بدء ظهور الـ checkbox عند الدخول إلى وضع التحديد، بينما العناصر تنزلق للجانب.
     // لا يُطبَّق عند الخروج: الـ checkbox يبدأ بالاختفاء فوراً مع رجوع العناصر.
