@@ -9,7 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -35,10 +34,6 @@ import androidx.annotation.NonNull;
  * باستثناء التأخيرات: الحركة والظهور يبدآن معاً فوراً.
  *  - حركة المحتوى (CHANGE_APPEARING / CHANGE_DISAPPEARING): 300ms مع DecelerateInterpolator.
  *  - ظهور/اختفاء الـ CheckBox (APPEARING / DISAPPEARING): 300ms مع AccelerateDecelerateInterpolator.
- *
- * العناصر المثبّتة (setAnchoredViews): عناصر داخل المحتوى المنزلق مثل أيقونة المفضلة، ملتصقة بحافة النهاية
- * التي لا تتحرك فعلياً عند دخول/خروج وضع التحديد. لو تُركت تنزلق مع أبيها لبدأت الحركة مزاحة عن مكانها
- * ثم عادت إليه (بعكس اتجاه ثباتها الحقيقي)، لذلك نعاكس حركة أبيها فتبقى ثابتة على الشاشة.
  */
 public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
 
@@ -56,9 +51,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
     private final ViewGroup container;
     private final View checkBox;
 
-    // عناصر مثبّتة على الشاشة (تعاكس حركة أبيها المنزلق)
-    private View[] anchoredViews = new View[0];
-
     private PendingStart pendingStart;
     private ValueAnimator animator;
 
@@ -72,9 +64,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
     private View[] activeMovers;
     private float[] activeDeltas;
     private int activeCount;
-    private View[] activeAnchored;
-    private int[] activeAnchoredMover;
-    private int activeAnchoredCount;
     private boolean activeEntering;
     private float fadeFrom;
     private float fadeTo;
@@ -83,14 +72,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         this.container = container;
         this.checkBox = checkBox;
         container.addOnAttachStateChangeListener(this);
-    }
-
-    /**
-     * يحدد العناصر التي يجب أن تبقى ثابتة على الشاشة أثناء الأنيميشن (مثل أيقونة المفضلة)،
-     * وهي عناصر داخل أحد أبناء الـ container المنزلقين مباشرة.
-     */
-    public void setAnchoredViews(View... views) {
-        anchoredViews = views != null ? views : new View[0];
     }
 
     /**
@@ -189,21 +170,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         fadeFrom = p.startFade;
         fadeTo = p.entering ? 1f : 0f;
 
-        final View[] anchored = new View[anchoredViews.length];
-        final int[] anchoredMover = new int[anchoredViews.length];
-        int anchoredCount = 0;
-        for (View view : anchoredViews) {
-            if (view == null) continue;
-            final int moverIndex = indexOfMover(view, p.movers, p.count);
-            if (moverIndex < 0) continue;
-            anchored[anchoredCount] = view;
-            anchoredMover[anchoredCount] = moverIndex;
-            anchoredCount++;
-        }
-        activeAnchored = anchored;
-        activeAnchoredMover = anchoredMover;
-        activeAnchoredCount = anchoredCount;
-
         final ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
         a.setDuration(TOTAL_DURATION);
         // الخطية هنا للزمن فقط، أما منحنيات السرعة المتغيرة فتُطبَّق يدوياً في apply()
@@ -235,10 +201,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         for (int i = 0; i < activeCount; i++) {
             activeMovers[i].setTranslationX(activeDeltas[i] * (1f - slide));
         }
-        // العناصر المثبّتة تعاكس حركة أبيها تماماً، فتبقى ثابتة في مكانها على الشاشة
-        for (int i = 0; i < activeAnchoredCount; i++) {
-            activeAnchored[i].setTranslationX(-activeDeltas[activeAnchoredMover[i]] * (1f - slide));
-        }
 
         currentFade = fadeFrom + (fadeTo - fadeFrom) * fade;
         if (activeEntering) {
@@ -246,19 +208,6 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         } else if (ghost != null) {
             ghost.setAlpha(Math.round(currentFade * 255f));
         }
-    }
-
-    // يرجع فهرس العنصر المنزلق (ابن مباشر للـ container) الذي يحتوي هذا العنصر، أو -1
-    private int indexOfMover(View view, View[] movers, int count) {
-        View current = view;
-        while (current != null && current != container) {
-            for (int i = 0; i < count; i++) {
-                if (movers[i] == current) return i;
-            }
-            final ViewParent parent = current.getParent();
-            current = parent instanceof View ? (View) parent : null;
-        }
-        return -1;
     }
 
     private void addGhost(float fade) {
@@ -286,17 +235,11 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         for (int i = 0, n = container.getChildCount(); i < n; i++) {
             container.getChildAt(i).setTranslationX(0f);
         }
-        for (View view : anchoredViews) {
-            if (view != null) view.setTranslationX(0f);
-        }
         checkBox.setAlpha(1f);
         removeGhost();
         activeMovers = null;
         activeDeltas = null;
         activeCount = 0;
-        activeAnchored = null;
-        activeAnchoredMover = null;
-        activeAnchoredCount = 0;
     }
 
     @Override
