@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.widget.SelectableLinearLayout;
+import com.oneui.fontviewer.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
