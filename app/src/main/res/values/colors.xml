@@ -8,6 +8,7 @@
     <color name="orange">#EAB65205</color>
     
     <color name="seekbar_color">#5903BEFF</color>
+    <color name="sort_bar_divider_color">#cbcbcb</color>
 
     <color name="font_info_label_text_color">#848487</color>
     <color name="sort_bar_text_color">#797979</color>
