@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,6 +52,7 @@ import com.oneui.fontviewer.metadata.FontMetadataExtractor;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
 import com.oneui.fontviewer.fragment.fontviewer.utils.BoldItalicFormatting;
+import com.oneui.fontviewer.widget.Toast;
 
 public class FontViewerFragment extends Fragment {
 
