@@ -477,7 +477,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 if (holder instanceof LocalFontViewHolder) {
                     LocalFontViewHolder vh = (LocalFontViewHolder) holder;
                     if (vh.selectableLayout != null) {
-                        vh.selectableLayout.setSelectionMode(isSelectionMode);
+                        vh.selectableLayout.setSelectionMode(isSelectionMode, true);
                         vh.selectableLayout.setSelectedAnimate(isItemSelected(position));
                         
                     }
