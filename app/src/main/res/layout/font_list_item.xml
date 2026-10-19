@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- تمت إزالة animateLayoutChanges: الأنيميشن يُنفَّذ الآن في الكلاس المستقل SelectionModeAnimator، ويُفعَّل من LocalFontViewHolder -->
+<!-- android:animateLayoutChanges="true" هو المفتاح الذي يفعّل أنيميشن دخول/خروج وضع التحديد المخصص (SelectionModeAnimator) عبر LocalFontViewHolder.
+     عند وجوده يستبدل SelectableLinearLayout الـ LayoutTransition الافتراضي بالأنيميشن المخصص، وعند حذفه يتم التبديل فوراً دون أي أنيميشن -->
 <com.oneui.fontviewer.widget.SelectableLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/selectable_layout"
+    android:animateLayoutChanges="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?attr/listPreferredItemHeightSmall"
