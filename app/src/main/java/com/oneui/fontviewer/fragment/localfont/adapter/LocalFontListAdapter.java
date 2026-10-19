@@ -237,6 +237,16 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyItemRangeChanged(0, getItemCount(), PAYLOAD_UPDATE_SELECTION);
     }
 
+    /**
+     * الأنيميشن يُشغَّل فقط والقائمة ظاهرة فعلاً على الشاشة. نفحص الـ RecyclerView نفسه (وهو مرتبط بالشجرة دائماً)،
+     * ولا نفحص عنصر القائمة، لأن عنصر القائمة يكون مفصولاً مؤقتاً عن أبيه أثناء إعادة الربط داخل layout الـ RecyclerView،
+     * وفي تلك الحالة ترجع isShown() قيمة false دائماً.
+     * أما إن كانت القائمة مخفية (مثلاً Fragment مخفي)، فيُطبَّق الوضع الجديد فوراً دون أنيميشن.
+     */
+    private boolean canAnimateSelection() {
+        return recyclerView != null && recyclerView.isShown();
+    }
+
     public void setItemSelected(int position, boolean selected) {
         if (selected) selectedItems.put(position, true);
         else selectedItems.delete(position);
@@ -477,7 +487,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 if (holder instanceof LocalFontViewHolder) {
                     LocalFontViewHolder vh = (LocalFontViewHolder) holder;
                     if (vh.selectableLayout != null) {
-                        vh.selectableLayout.setSelectionMode(isSelectionMode);
+                        vh.selectableLayout.setSelectionMode(isSelectionMode, canAnimateSelection());
                         vh.selectableLayout.setSelectedAnimate(isItemSelected(position));
                         
                     }
