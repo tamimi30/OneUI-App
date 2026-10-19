@@ -477,6 +477,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 if (holder instanceof LocalFontViewHolder) {
                     LocalFontViewHolder vh = (LocalFontViewHolder) holder;
                     if (vh.selectableLayout != null) {
+                        // animate = true: هذا هو التغيير الحي لوضع التحديد (الأنيميشن)، أما الـ bind الكامل في LocalFontViewHolder فبلا أنيميشن
                         vh.selectableLayout.setSelectionMode(isSelectionMode, true);
                         vh.selectableLayout.setSelectedAnimate(isItemSelected(position));
                         
