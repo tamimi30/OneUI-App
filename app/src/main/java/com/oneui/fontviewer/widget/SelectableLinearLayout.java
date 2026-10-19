@@ -116,21 +116,95 @@ public class SelectableLinearLayout extends LinearLayout {
      * وعندها تُرجع isShown() القيمة false دائماً. الشرط الوحيد هو isAttachedToWindow().
      */
     public void setSelectionMode(boolean mode, boolean animate) {
-        if (isSelectionMode == mode) return;
+        if (isSelectionMode == mode) {
+            if (!animate) {
+                if (getLayoutTransition() != null) setLayoutTransition(null);
+                resetContentSlide();
+            }
+            return;
+        }
         isSelectionMode = mode;
 
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
             if (animate && isAttachedToWindow()) {
+                final boolean isRtl = getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+
                 if (selectionTransition == null) selectionTransition = createSelectionTransition();
+
+                // سبب الاستثناء في RTL: أنيميشن انزلاق المحتوى في LayoutTransition يحرّك حدود الـ View (left/right)
+                // بينما أبناؤه يبقون في مواضعهم النهائية داخله، فينزلق النص فقط إذا كانت حافة البداية هي الحافة اليسرى (LTR).
+                // في العربية تكون حافة البداية هي اليمنى، وهي لا تتحرك بهذه الطريقة، فيقفز النص مباشرة.
+                // لذلك نعطّل انزلاق LayoutTransition في RTL ونحرّك المحتوى بأنفسنا بنفس المدة والتأخير والسرعة،
+                // ويبقى تلاشي الـ CheckBox (APPEARING / DISAPPEARING) من LayoutTransition كما هو.
+                if (isRtl) {
+                    selectionTransition.disableTransitionType(LayoutTransition.CHANGE_APPEARING);
+                    selectionTransition.disableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
+                } else {
+                    selectionTransition.enableTransitionType(LayoutTransition.CHANGE_APPEARING);
+                    selectionTransition.enableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
+                }
+
                 if (getLayoutTransition() != selectionTransition) {
                     setLayoutTransition(selectionTransition);
                 }
+
+                // المساحة التي سيشغلها الـ CheckBox أو يتركها، وتُحسب قبل تغيير الـ visibility
+                final int shift = isRtl ? getCheckBoxFullWidth() : 0;
+
+                checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
+
+                if (isRtl) slideContentRtl(mode, shift);
             } else {
                 // null يُنهي أي أنيميشن جارٍ فوراً عند حالته النهائية
                 setLayoutTransition(null);
+                resetContentSlide();
+                checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
             }
+        }
+    }
 
-            checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
+    /**
+     * عرض المساحة التي يشغلها الـ CheckBox في الصف (عرضه + هوامشه)، وهي مقدار إزاحة محتوى الصف عند تبديل الوضع.
+     */
+    private int getCheckBoxFullWidth() {
+        checkBox.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        LayoutParams params = (LayoutParams) checkBox.getLayoutParams();
+        return checkBox.getMeasuredWidth() + params.getMarginStart() + params.getMarginEnd();
+    }
+
+    /**
+     * انزلاق المحتوى في RTL: الـ layout يضع المحتوى في موضعه النهائي فوراً،
+     * فنزيحه بمقدار shift ليبقى ظاهرياً في موضعه القديم، ثم نعيده إلى صفر بنفس مدة وتأخير وسرعة LayoutTransition.
+     * الإزاحة تُضاف إلى الإزاحة الحالية، فيستمر الحركة بسلاسة إذا عُكس الوضع أثناء الأنيميشن.
+     */
+    private void slideContentRtl(boolean appearing, int shift) {
+        final int type = appearing ? LayoutTransition.CHANGE_APPEARING : LayoutTransition.CHANGE_DISAPPEARING;
+
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            if (child == checkBox) continue;
+
+            child.animate().cancel();
+            child.setTranslationX(child.getTranslationX() + (appearing ? shift : -shift));
+            child.animate()
+                    .translationX(0f)
+                    .setDuration(selectionTransition.getDuration(type))
+                    .setStartDelay(selectionTransition.getStartDelay(type))
+                    .setInterpolator(selectionTransition.getInterpolator(type))
+                    .start();
+        }
+    }
+
+    private void resetContentSlide() {
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            if (child == checkBox) continue;
+            if (child.getTranslationX() != 0f) {
+                child.animate().cancel();
+                child.setTranslationX(0f);
+            }
         }
     }
 
@@ -167,6 +241,7 @@ public class SelectableLinearLayout extends LinearLayout {
         super.onDetachedFromWindow();
         // الصف خرج من الشاشة أو أُعيد تدويره: أنهِ الأنيميشن فوراً حتى لا يبقى في منتصفه عند إعادة استخدامه
         if (getLayoutTransition() != null) setLayoutTransition(null);
+        resetContentSlide();
     }
 
     public boolean isSelectionMode() {
