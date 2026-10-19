@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- android:animateLayoutChanges="true" هو المفتاح الذي يفعّل أنيميشن دخول/خروج وضع التحديد المخصص (SelectionModeAnimator) عبر LocalFontViewHolder.
-     عند وجوده يستبدل SelectableLinearLayout الـ LayoutTransition الافتراضي بالأنيميشن المخصص، وعند حذفه يتم التبديل فوراً دون أي أنيميشن -->
-<com.oneui.fontviewer.widget.SelectableLinearLayout
+<!-- الجذر FrameLayout يحتوي SelectableLinearLayout (المحتوى + الـ CheckBox) وأيقونة المفضلة كعنصرين متجاورين.
+     الأيقونة خارج SelectableLinearLayout عمداً: لا تتأثر بأنيميشن وضع التحديد فتبقى ثابتة في مكانها،
+     ولا تأخذ مساحة من اسم الخط لأنها تُرسم فوق المحتوى بمحاذاة سطر الوزن والعرض في الأسفل (ولنص الوزن والعرض paddingEnd لكي لا يتداخل معها) -->
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/selectable_layout"
-    android:animateLayoutChanges="true"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="?attr/listPreferredItemHeightSmall"
-    android:paddingTop="14.0dip"
-    android:paddingBottom="14.0dip"
-    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-    android:orientation="horizontal"
-    app:checkableButtonSpacing="14.0dip"
-    android:gravity="center_vertical"
-    android:foreground="?listChoiceBackgroundIndicator"
-    app:selectedHighlightColor="?attr/colorControlHighlight"
-    app:checkMode="checkBox">
+    android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:layout_width="0dp"
+    <!-- android:animateLayoutChanges="true" هو المفتاح الذي يفعّل أنيميشن دخول/خروج وضع التحديد المخصص (SelectionModeAnimator) عبر LocalFontViewHolder.
+         عند وجوده يستبدل SelectableLinearLayout الـ LayoutTransition الافتراضي بالأنيميشن المخصص، وعند حذفه يتم التبديل فوراً دون أي أنيميشن -->
+    <com.oneui.fontviewer.widget.SelectableLinearLayout
+        android:id="@+id/selectable_layout"
+        android:animateLayoutChanges="true"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:minHeight="?attr/listPreferredItemHeightSmall"
+        android:paddingTop="14.0dip"
+        android:paddingBottom="14.0dip"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:orientation="horizontal"
+        app:checkableButtonSpacing="14.0dip"
+        android:gravity="center_vertical"
+        android:foreground="?listChoiceBackgroundIndicator"
+        app:selectedHighlightColor="?attr/colorControlHighlight"
+        app:checkMode="checkBox">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,16 +61,18 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/font_item_favorite_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_gravity="bottom|end"
-            android:src="@drawable/ic_oui_favorite_on"
-            android:tint="#D4AF37"
-            android:visibility="invisible"
-            tools:visibility="visible" />
+    </com.oneui.fontviewer.widget.SelectableLinearLayout>
 
-    </FrameLayout>
+    <ImageView
+        android:id="@+id/font_item_favorite_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="14.0dip"
+        android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:src="@drawable/ic_oui_favorite_on"
+        android:tint="#D4AF37"
+        android:visibility="invisible"
+        tools:visibility="visible" />
 
-</com.oneui.fontviewer.widget.SelectableLinearLayout>
+</FrameLayout>
