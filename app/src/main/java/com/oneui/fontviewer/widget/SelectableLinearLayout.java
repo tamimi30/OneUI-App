@@ -1,8 +1,6 @@
 package com.oneui.fontviewer.widget;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -10,7 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.view.animation.PathInterpolator;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,8 +22,6 @@ public class SelectableLinearLayout extends LinearLayout {
     private static final int CHECK_MODE_CHECKBOX = 0;
     private static final int CHECK_MODE_OVERLAY = 1;
 
-    private static final long SELECTION_ANIM_DURATION = 275L;
-
     private ColorDrawable selectedHighlightColor;
     private int checkMode = CHECK_MODE_CHECKBOX;
 
@@ -36,14 +32,9 @@ public class SelectableLinearLayout extends LinearLayout {
 
     private boolean isSelectionMode = false;
 
-    // تقدّم أنيميشن الـ CheckBox: 0 = مخفي تماماً، 1 = ظاهر تماماً.
-    // الأنيميشن مبني على ValueAnimator بدل TransitionManager، فلا يعتمد على isShown() ولا على
-    // حالة الـ View أثناء الـ layout، ويعمل بنفس الطريقة في LTR وRTL لأن الـ LinearLayout هو من يعكس الاتجاه.
-    private float selectionProgress = 0f;
-    private ValueAnimator selectionAnimator;
-    private int checkBoxRestMarginStart;
-    private int checkBoxRestMarginEnd;
-    private int checkBoxFullWidth = -1;
+    // نفس LayoutTransition الذي ينشئه android:animateLayoutChanges="true" (بمدده وسرعاته الافتراضية)،
+    // لكنه يُركَّب على الصف فقط لحظة تبديل وضع التحديد، حتى لا تتحرك الصفوف أثناء التمرير أو إعادة الـ bind.
+    private LayoutTransition selectionTransition;
 
     public SelectableLinearLayout(Context context) {
         super(context);
@@ -72,18 +63,14 @@ public class SelectableLinearLayout extends LinearLayout {
                 checkBox = new AppCompatCheckBox(context);
                 LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 params.gravity = Gravity.CENTER_VERTICAL;
-                checkBoxRestMarginStart = dpToPx(context, -4);
-                checkBoxRestMarginEnd = spacing;
-                params.setMarginEnd(checkBoxRestMarginEnd);
-                params.setMarginStart(checkBoxRestMarginStart); 
+                params.setMarginEnd(spacing);
+                params.setMarginStart(dpToPx(context, -4)); 
                 checkBox.setLayoutParams(params);
                 checkBox.setClickable(false);
                 checkBox.setLongClickable(false);
                 checkBox.setVisibility(View.GONE);
                 checkBox.setBackground(null);
                 addView(checkBox, 0);
-                // حتى يظهر الـ CheckBox منزلقاً من حافة الصف نفسها لا من حافة الـ padding
-                setClipToPadding(false);
             } else if (checkMode == CHECK_MODE_OVERLAY) {
                 // ★ تم إصلاح الخطأ: الآن نقوم بإنشاء رسمة "علامة الصح" الأنيميشن ★
                 checkDrawable = SelectableAnimatedDrawable.create(context, R.drawable.oui_des_list_item_selection_anim_selector, context.getTheme());
@@ -117,9 +104,10 @@ public class SelectableLinearLayout extends LinearLayout {
     /**
      * يفعّل أو يُلغي وضع التحديد لهذا الصف.
      *
-     * عند animate = true: يظهر الـ CheckBox منزلقاً من جهة البداية (يمين في العربية، يسار في الإنجليزية)
-     * بينما يتحرك محتوى الصف تدريجياً نحو الجهة المقابلة، وتبقى أيقونات نهاية الصف في مكانها.
-     * يتم ذلك بتحريك هامش الـ CheckBox عبر ValueAnimator، فيحسب الـ LinearLayout موضع كل شيء بنفسه.
+     * عند animate = true: يُنفَّذ نفس أنيميشن animateLayoutChanges الافتراضي:
+     * يتحرك محتوى الصف إلى الجانب، ثم تظهر دائرة الـ CheckBox بالتلاشي (alpha) في مكانها.
+     * هذا الأنيميشن يحرّك حدود الـ View فقط (left/right) دون إعادة قياس النص في كل إطار،
+     * لذلك لا تتقطع حروف الأسماء الطويلة.
      *
      * عند animate = false: تُطبَّق الحالة النهائية فوراً (يُستخدم عند bind صف جديد أو معاد تدويره،
      * حتى لا يظهر أنيميشن على صف لا يراه المستخدم).
@@ -128,86 +116,57 @@ public class SelectableLinearLayout extends LinearLayout {
      * وعندها تُرجع isShown() القيمة false دائماً. الشرط الوحيد هو isAttachedToWindow().
      */
     public void setSelectionMode(boolean mode, boolean animate) {
-        if (checkMode != CHECK_MODE_CHECKBOX || checkBox == null) {
-            isSelectionMode = mode;
-            return;
-        }
-
-        if (isSelectionMode == mode) {
-            if (!animate && selectionAnimator != null) selectionAnimator.end();
-            return;
-        }
+        if (isSelectionMode == mode) return;
         isSelectionMode = mode;
 
-        cancelSelectionAnimation();
+        if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
+            if (animate && isAttachedToWindow()) {
+                if (selectionTransition == null) selectionTransition = createSelectionTransition();
+                if (getLayoutTransition() != selectionTransition) {
+                    setLayoutTransition(selectionTransition);
+                }
+            } else {
+                // null يُنهي أي أنيميشن جارٍ فوراً عند حالته النهائية
+                setLayoutTransition(null);
+            }
 
-        final float target = mode ? 1f : 0f;
-
-        if (!animate || !isAttachedToWindow()) {
-            applyProgress(target);
-            return;
+            checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
+    }
 
-        final ValueAnimator animator = ValueAnimator.ofFloat(selectionProgress, target);
-        animator.setDuration(SELECTION_ANIM_DURATION);
-        animator.setInterpolator(new PathInterpolator(0.33f, 0f, 0.67f, 1f));
-        animator.addUpdateListener(a -> applyProgress((float) a.getAnimatedValue()));
-        animator.addListener(new AnimatorListenerAdapter() {
+    private LayoutTransition createSelectionTransition() {
+        // المنشئ الافتراضي = ما ينشئه animateLayoutChanges="true" تماماً:
+        //  - مدة كل أنيميشن 300ms
+        //  - الظهور: تلاشي alpha من 0 إلى 1 بعد تأخير 300ms (أي بعد انتهاء انزلاق المحتوى)، بسرعة AccelerateDecelerate
+        //  - الاختفاء: تلاشي من 1 إلى 0 فوراً، ثم ينزلق المحتوى بعد 300ms
+        //  - انزلاق المحتوى (CHANGE_APPEARING / CHANGE_DISAPPEARING) بسرعة Decelerate
+        final LayoutTransition transition = new LayoutTransition();
+
+        // ارتفاع الصف لا يتغير، وموضعه يتولاه الـ RecyclerView، فلا حاجة لتحريك الأب
+        transition.setAnimateParentHierarchy(false);
+
+        transition.addTransitionListener(new LayoutTransition.TransitionListener() {
             @Override
-            public void onAnimationEnd(Animator a) {
-                if (selectionAnimator == a) selectionAnimator = null;
+            public void startTransition(LayoutTransition t, ViewGroup container, View view, int transitionType) {}
+
+            @Override
+            public void endTransition(LayoutTransition t, ViewGroup container, View view, int transitionType) {
+                // بعد انتهاء كل الأنيميشن نُزيل الـ LayoutTransition حتى لا يؤثر على أي تغيير لاحق في الصف
+                post(() -> {
+                    if (getLayoutTransition() == selectionTransition && !selectionTransition.isRunning()) {
+                        setLayoutTransition(null);
+                    }
+                });
             }
         });
-        selectionAnimator = animator;
-        animator.start();
-    }
-
-    private void cancelSelectionAnimation() {
-        if (selectionAnimator != null) {
-            ValueAnimator running = selectionAnimator;
-            selectionAnimator = null;
-            running.removeAllUpdateListeners();
-            running.cancel();
-        }
-    }
-
-    /**
-     * يطبّق تقدّم الأنيميشن على الـ CheckBox:
-     * المساحة التي يشغلها في الصف = progress × (عرضه + هوامشه)، وشفافيته = progress.
-     * الهامش في جهة البداية يصبح سالباً بمقدار الجزء المخفي، فينزلق الـ CheckBox من خارج الصف.
-     * نستخدم setMarginStart/End مع setLayoutParams حتى يُعاد حلّ الهوامش حسب اتجاه الـ layout.
-     */
-    private void applyProgress(float progress) {
-        selectionProgress = progress;
-        if (checkBox == null) return;
-
-        if (progress <= 0f) {
-            checkBox.setVisibility(View.GONE);
-            return;
-        }
-
-        if (checkBoxFullWidth < 0) {
-            checkBox.measure(
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-            checkBoxFullWidth = checkBox.getMeasuredWidth()
-                    + checkBoxRestMarginStart + checkBoxRestMarginEnd;
-        }
-
-        LayoutParams params = (LayoutParams) checkBox.getLayoutParams();
-        float hiddenPart = (1f - progress) * checkBoxFullWidth;
-        params.setMarginStart(Math.round(checkBoxRestMarginStart - hiddenPart));
-        params.setMarginEnd(checkBoxRestMarginEnd);
-        checkBox.setLayoutParams(params);
-        checkBox.setAlpha(progress);
-        checkBox.setVisibility(View.VISIBLE);
+        return transition;
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         // الصف خرج من الشاشة أو أُعيد تدويره: أنهِ الأنيميشن فوراً حتى لا يبقى في منتصفه عند إعادة استخدامه
-        if (selectionAnimator != null) selectionAnimator.end();
+        if (getLayoutTransition() != null) setLayoutTransition(null);
     }
 
     public boolean isSelectionMode() {
