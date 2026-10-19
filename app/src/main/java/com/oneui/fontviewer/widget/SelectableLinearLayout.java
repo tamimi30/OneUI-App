@@ -30,6 +30,10 @@ public class SelectableLinearLayout extends LinearLayout {
 
     private boolean isSelectionMode = false;
 
+    // يبقى null في القوائم التي تعتمد على animateLayoutChanges (مثل قائمة المحذوفات)،
+    // ويُفعَّل فقط عبر enableSelectionAnimation() في قائمة الخطوط المحلية
+    private SelectionModeAnimator selectionAnimator;
+
     public SelectableLinearLayout(Context context) {
         super(context);
         init(context, null, 0, 0);
@@ -91,31 +95,39 @@ public class SelectableLinearLayout extends LinearLayout {
         }
     }
 
+    /**
+     * تغيير فوري دون أنيميشن. يُستخدم عند ربط العنصر (bind) وفي القوائم التي تعتمد على animateLayoutChanges.
+     */
     public void setSelectionMode(boolean mode) {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            
-        /*    // بداية الحل: إضافة استثناء للـ CheckBox لمنع مشكلة التطاير بعد تدوير الشاشة
-            android.transition.TransitionSet transitionSet = new android.transition.TransitionSet();
-            transitionSet.setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER);
-            transitionSet.setDuration(275);
-
-            // 1. أنيميشن الانزلاق للنصوص والأيقونات
-            android.transition.ChangeBounds slideTransition = new android.transition.ChangeBounds();
-            slideTransition.excludeTarget(checkBox, true); // ★ هذا السطر هو مفتاح الحل، يمنع تطاير الـ CheckBox ★
-            transitionSet.addTransition(slideTransition);
-            
-            // 2. أنيميشن الظهور والاختفاء التدريجي مخصص فقط للـ CheckBox
-            android.transition.Fade fadeTransition = new android.transition.Fade();
-            fadeTransition.addTarget(checkBox);
-            transitionSet.addTransition(fadeTransition);
-
-            android.transition.TransitionManager.beginDelayedTransition(this, transitionSet);
-            // نهاية الحل. **/
-
+            if (selectionAnimator != null) selectionAnimator.cancel();
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
+    }
+
+    /**
+     * يفعّل أنيميشن وضع التحديد لهذا العنصر. الأنيميشن نفسه موجود في [SelectionModeAnimator].
+     */
+    public void enableSelectionAnimation() {
+        if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null && selectionAnimator == null) {
+            selectionAnimator = new SelectionModeAnimator(this, checkBox);
+        }
+    }
+
+    /**
+     * @param animate true لتشغيل أنيميشن الانزلاق والظهور التدريجي (يتطلب enableSelectionAnimation())،
+     *                false لتغيير فوري.
+     */
+    public void setSelectionMode(boolean mode, boolean animate) {
+        if (!animate || selectionAnimator == null || checkMode != CHECK_MODE_CHECKBOX || checkBox == null) {
+            setSelectionMode(mode);
+            return;
+        }
+        if (isSelectionMode == mode) return;
+        isSelectionMode = mode;
+        selectionAnimator.start(mode);
     }
 
 
