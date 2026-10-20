@@ -22,7 +22,7 @@
         android:clipChildren="false"
         app:checkableButtonSpacing="14dp"
         android:gravity="center_vertical"
-        android:foreground="?listChoiceBackgroundIndicator"
+        android:background="?listChoiceBackgroundIndicator"
         app:checkMode="checkBox">
 
         <LinearLayout
@@ -62,7 +62,7 @@
         android:layout_height="16dp"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="14.0dip"
-        android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:layout_marginEnd="40dp"
         android:src="@drawable/ic_oui_favorite_on"
         android:tint="#ffd700"
         android:visibility="invisible"
