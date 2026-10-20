@@ -9,6 +9,8 @@
     android:layout_height="wrap_content"
     android:minHeight="?attr/listPreferredItemHeightSmall"
     android:orientation="horizontal"
+    android:clipToPadding="false"
+    android:clipChildren="false"
     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
     android:paddingTop="14.0dip"
@@ -22,6 +24,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         android:orientation="vertical">
 
         <TextView
