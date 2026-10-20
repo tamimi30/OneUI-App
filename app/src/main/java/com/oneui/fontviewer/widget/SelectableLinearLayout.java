@@ -35,6 +35,11 @@ public class SelectableLinearLayout extends LinearLayout {
     // وحتى في تلك القائمة لا يُنشأ إلا إذا كان الـ layout يحمل android:animateLayoutChanges="true"
     private SelectionModeAnimator selectionAnimator;
 
+    // حالة الـ CheckBox المؤجَّلة أثناء تأخير الظهور (SelectionModeAnimator.APPEAR_DELAY)،
+    // حتى تبدأ أنيميشن الدائرة الزرقاء بعد التأخير مع بداية التلاشي
+    private boolean hasPendingChecked = false;
+    private boolean pendingChecked = false;
+
     public SelectableLinearLayout(Context context) {
         super(context);
         init(context, null, 0, 0);
@@ -121,6 +126,16 @@ public class SelectableLinearLayout extends LinearLayout {
         if (getLayoutTransition() == null) return;
         setLayoutTransition(null);
         selectionAnimator = new SelectionModeAnimator(this, checkBox);
+        selectionAnimator.setCheckHoldListener(this::onCheckHoldEnd);
+    }
+
+    private void onCheckHoldEnd(boolean completed) {
+        if (!hasPendingChecked) return;
+        hasPendingChecked = false;
+        if (checkBox == null) return;
+        checkBox.setChecked(pendingChecked);
+        // إذا قُطع التأخير قبل نهايته (إعادة ربط أو خروج من وضع التحديد) نطبّق الحالة فوراً دون أنيميشن
+        if (!completed) checkBox.jumpDrawablesToCurrentState();
     }
 
     /**
@@ -152,11 +167,17 @@ public class SelectableLinearLayout extends LinearLayout {
 
     public void setSelectedAnimate(boolean isSelected) {
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            checkBox.setChecked(isSelected);
-            // أنيميشن علامة الصح لا يتقدم والـ CheckBox مخفي (GONE)، فيبقى معلّقاً ويُعرض لاحقاً عند ظهوره
-            // (يظهر الـ CheckBox أزرق لجزء من الثانية على عنصر قديم). لذلك ننهيه فوراً عندما يكون مخفياً.
-            if (checkBox.getVisibility() != View.VISIBLE) {
-                checkBox.jumpDrawablesToCurrentState();
+            if (selectionAnimator != null && selectionAnimator.isHoldingCheck()) {
+                // أثناء تأخير الظهور: نؤجل تغيير الحالة، وسيُطبَّق في onCheckHoldEnd عند انتهاء التأخير
+                pendingChecked = isSelected;
+                hasPendingChecked = true;
+            } else {
+                checkBox.setChecked(isSelected);
+                // أنيميشن علامة الصح لا يتقدم والـ CheckBox مخفي (GONE)، فيبقى معلّقاً ويُعرض لاحقاً عند ظهوره
+                // (يظهر الـ CheckBox أزرق لجزء من الثانية على عنصر قديم). لذلك ننهيه فوراً عندما يكون مخفياً.
+                if (checkBox.getVisibility() != View.VISIBLE) {
+                    checkBox.jumpDrawablesToCurrentState();
+                }
             }
         } else if (checkMode == CHECK_MODE_OVERLAY && imageTarget != null) {
             imageTarget.setSelected(isSelected);
@@ -167,4 +188,4 @@ public class SelectableLinearLayout extends LinearLayout {
     private int dpToPx(Context context, int dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
-                    }
+}
