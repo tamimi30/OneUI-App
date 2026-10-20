@@ -14,7 +14,7 @@ public class FontTextHighlighter {
     private final int highlightColor;
     
     public FontTextHighlighter(Context context) {
-        this.highlightColor = ContextCompat.getColor(context, R.color.sesl_primary_dark_color_dark);
+        this.highlightColor = ContextCompat.getColor(context, R.color.oui_primary_color);
     }
     
     
