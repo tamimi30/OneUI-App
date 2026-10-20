@@ -1,47 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout
+     
+<com.oneui.fontviewer.widget.SelectableLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/selectable_layout"
+    android:animateLayoutChanges="true"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-     
-    <com.oneui.fontviewer.widget.SelectableLinearLayout
-        android:id="@+id/selectable_layout"
-        android:animateLayoutChanges="true"
-        android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?attr/listPreferredItemHeightSmall"
+    android:paddingTop="14.0dip"
+    android:paddingBottom="14.0dip"
+    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+    android:orientation="horizontal"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:gravity="center_vertical"
+    android:foreground="?listChoiceBackgroundIndicator"
+    app:checkMode="checkBox">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/listPreferredItemHeightSmall"
-        android:paddingTop="14.0dip"
-        android:paddingBottom="14.0dip"
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:clipToPadding="false"
         android:clipChildren="false"
-        android:gravity="center_vertical"
-        android:foreground="?listChoiceBackgroundIndicator"
-        app:checkMode="checkBox">
+        android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/font_item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="3sp"
+            android:includeFontPadding="false"
+            android:textAppearance="?attr/textAppearanceListItem"
+            tools:text="Font Name Example" />
+            
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:clipToPadding="false"
             android:clipChildren="false"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/font_item_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:paddingBottom="3sp"
-                android:includeFontPadding="false"
-                android:textAppearance="?attr/textAppearanceListItem"
-                tools:text="Font Name Example" />
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/font_item_weight_width"
@@ -49,24 +53,22 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:layout_marginEnd="17dp"
                 android:includeFontPadding="false"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 tools:text="Bold, Condensed" />
+                
+            <ImageView
+                android:id="@+id/font_item_favorite_icon"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/ic_oui_favorite_on"
+                android:tint="#ffd700"
+                android:visibility="invisible"
+                tools:visibility="visible" />
 
         </LinearLayout>
+        
+    </LinearLayout>
 
-    </com.oneui.fontviewer.widget.SelectableLinearLayout>
-
-    <ImageView
-        android:id="@+id/font_item_favorite_icon"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="14.0dip"
-        android:layout_marginEnd="160dp"
-        android:src="@drawable/ic_oui_favorite_on"
-        android:tint="#ffd700"
-        android:visibility="invisible"
-        tools:visibility="visible" />
-
-</FrameLayout>
+</com.oneui.fontviewer.widget.SelectableLinearLayout>
