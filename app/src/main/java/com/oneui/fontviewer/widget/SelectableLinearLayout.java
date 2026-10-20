@@ -30,16 +30,6 @@ public class SelectableLinearLayout extends LinearLayout {
 
     private boolean isSelectionMode = false;
 
-    // يبقى null في القوائم التي تعتمد على animateLayoutChanges (مثل قائمة المحذوفات)،
-    // ويُفعَّل فقط عبر enableSelectionAnimation() في قائمة الخطوط المحلية
-    // وحتى في تلك القائمة لا يُنشأ إلا إذا كان الـ layout يحمل android:animateLayoutChanges="true"
-    private SelectionModeAnimator selectionAnimator;
-
-    // حالة الـ CheckBox المؤجَّلة أثناء تأخير الظهور (SelectionModeAnimator.APPEAR_DELAY)،
-    // حتى تبدأ أنيميشن الدائرة الزرقاء بعد التأخير مع بداية التلاشي
-    private boolean hasPendingChecked = false;
-    private boolean pendingChecked = false;
-
     public SelectableLinearLayout(Context context) {
         super(context);
         init(context, null, 0, 0);
@@ -101,55 +91,31 @@ public class SelectableLinearLayout extends LinearLayout {
         }
     }
 
-    /**
-     * تغيير فوري دون أنيميشن. يُستخدم عند ربط العنصر (bind) وفي القوائم التي تعتمد على animateLayoutChanges.
-     */
     public void setSelectionMode(boolean mode) {
         if (isSelectionMode == mode) return;
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            if (selectionAnimator != null) selectionAnimator.cancel();
+            
+        /*    // بداية الحل: إضافة استثناء للـ CheckBox لمنع مشكلة التطاير بعد تدوير الشاشة
+            android.transition.TransitionSet transitionSet = new android.transition.TransitionSet();
+            transitionSet.setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER);
+            transitionSet.setDuration(275);
+
+            // 1. أنيميشن الانزلاق للنصوص والأيقونات
+            android.transition.ChangeBounds slideTransition = new android.transition.ChangeBounds();
+            slideTransition.excludeTarget(checkBox, true); // ★ هذا السطر هو مفتاح الحل، يمنع تطاير الـ CheckBox ★
+            transitionSet.addTransition(slideTransition);
+            
+            // 2. أنيميشن الظهور والاختفاء التدريجي مخصص فقط للـ CheckBox
+            android.transition.Fade fadeTransition = new android.transition.Fade();
+            fadeTransition.addTarget(checkBox);
+            transitionSet.addTransition(fadeTransition);
+
+            android.transition.TransitionManager.beginDelayedTransition(this, transitionSet);
+            // نهاية الحل. **/
+
             checkBox.setVisibility(mode ? View.VISIBLE : View.GONE);
         }
-    }
-
-    /**
-     * يفعّل أنيميشن وضع التحديد لهذا العنصر. الأنيميشن نفسه موجود في [SelectionModeAnimator].
-     *
-     * لا يعمل إلا إذا كان العنصر يحمل android:animateLayoutChanges="true" (كما هو الحال في الوضع العادي)،
-     * وإلا يبقى التبديل فورياً دون أنيميشن. وعند تفعيله يُستبدل الـ LayoutTransition الافتراضي بهذا الأنيميشن
-     * حتى لا يعمل الاثنان معاً.
-     */
-    public void enableSelectionAnimation() {
-        if (checkMode != CHECK_MODE_CHECKBOX || checkBox == null || selectionAnimator != null) return;
-        // getLayoutTransition() ليس null إلا إذا كان animateLayoutChanges="true"
-        if (getLayoutTransition() == null) return;
-        setLayoutTransition(null);
-        selectionAnimator = new SelectionModeAnimator(this, checkBox);
-        selectionAnimator.setCheckHoldListener(this::onCheckHoldEnd);
-    }
-
-    private void onCheckHoldEnd(boolean completed) {
-        if (!hasPendingChecked) return;
-        hasPendingChecked = false;
-        if (checkBox == null) return;
-        checkBox.setChecked(pendingChecked);
-        // إذا قُطع التأخير قبل نهايته (إعادة ربط أو خروج من وضع التحديد) نطبّق الحالة فوراً دون أنيميشن
-        if (!completed) checkBox.jumpDrawablesToCurrentState();
-    }
-
-    /**
-     * @param animate true لتشغيل أنيميشن الانزلاق والظهور التدريجي (يتطلب enableSelectionAnimation())،
-     *                false لتغيير فوري.
-     */
-    public void setSelectionMode(boolean mode, boolean animate) {
-        if (!animate || selectionAnimator == null || checkMode != CHECK_MODE_CHECKBOX || checkBox == null) {
-            setSelectionMode(mode);
-            return;
-        }
-        if (isSelectionMode == mode) return;
-        isSelectionMode = mode;
-        selectionAnimator.start(mode);
     }
 
 
@@ -167,18 +133,7 @@ public class SelectableLinearLayout extends LinearLayout {
 
     public void setSelectedAnimate(boolean isSelected) {
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
-            if (selectionAnimator != null && selectionAnimator.isHoldingCheck()) {
-                // أثناء تأخير الظهور: نؤجل تغيير الحالة، وسيُطبَّق في onCheckHoldEnd عند انتهاء التأخير
-                pendingChecked = isSelected;
-                hasPendingChecked = true;
-            } else {
-                checkBox.setChecked(isSelected);
-                // أنيميشن علامة الصح لا يتقدم والـ CheckBox مخفي (GONE)، فيبقى معلّقاً ويُعرض لاحقاً عند ظهوره
-                // (يظهر الـ CheckBox أزرق لجزء من الثانية على عنصر قديم). لذلك ننهيه فوراً عندما يكون مخفياً.
-                if (checkBox.getVisibility() != View.VISIBLE) {
-                    checkBox.jumpDrawablesToCurrentState();
-                }
-            }
+            checkBox.setChecked(isSelected);
         } else if (checkMode == CHECK_MODE_OVERLAY && imageTarget != null) {
             imageTarget.setSelected(isSelected);
         }
@@ -188,4 +143,4 @@ public class SelectableLinearLayout extends LinearLayout {
     private int dpToPx(Context context, int dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
-}
+                    }

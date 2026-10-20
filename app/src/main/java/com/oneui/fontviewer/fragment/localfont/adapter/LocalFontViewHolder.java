@@ -30,10 +30,6 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         selectableLayout = itemView.findViewById(R.id.selectable_layout);
         favoriteIconView    = itemView.findViewById(R.id.font_item_favorite_icon); 
         originalTypeface    = fontNameTextView.getTypeface();
-
-        // أنيميشن دخول/خروج وضع التحديد (انزلاق المحتوى + ظهور الـ CheckBox تدريجياً) خاص بهذه القائمة
-        // ولا يعمل إلا إذا كان SelectableLinearLayout في font_list_item يحمل android:animateLayoutChanges="true".
-        if (selectableLayout != null) selectableLayout.enableSelectionAnimation();
     }
 
     private void bindCore(String displayName,
