@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:minHeight="17dp"
         android:gravity="center_vertical"
-        android:textSize="16sp"
+        android:textSize="13sp"
         android:textColor="#fffafafa"
         android:ellipsize="end" />
 
