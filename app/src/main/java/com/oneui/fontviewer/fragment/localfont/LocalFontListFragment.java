@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -55,7 +54,6 @@ import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.localfont.viewmodel.LocalFontListViewModel;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.utils.notification.BatchOperationState;
-import com.oneui.fontviewer.widget.DurationItemAnimator;
 
 public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
@@ -532,10 +530,13 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private void setupRecyclerViewAnimator() {
         if (mRecyclerView == null) return;
-        DurationItemAnimator animator =
-            new DurationItemAnimator();
+        com.oneui.fontviewer.widget.FixedDurationItemAnimator animator =
+            new com.oneui.fontviewer.widget.FixedDurationItemAnimator();
+        animator.setAddDuration(200);
+        animator.setRemoveDuration(200);
+        animator.setMoveDuration(600);
         animator.setSupportsChangeAnimations(false);
-        animator.enableRemoveDelay(false);
+        animator.enableRemoveDelay(true);
         mRecyclerView.setItemAnimator(animator);
     }
 
@@ -1058,7 +1059,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private void setDrawerLocked(boolean locked) {
         if (mDrawerLayout == null) return;
         
-        DrawerLayout inner = findInnerDrawer(mDrawerLayout);
+        androidx.drawerlayout.widget.DrawerLayout inner = findInnerDrawer(mDrawerLayout);
         if (inner != null) {
             inner.setDrawerLockMode(locked ? 1 : 0);
         }
@@ -1075,16 +1076,16 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         }
     }
 
-    private DrawerLayout findInnerDrawer(ViewGroup parent) {
+    private androidx.drawerlayout.widget.DrawerLayout findInnerDrawer(android.view.ViewGroup parent) {
         for (int i = 0; i < parent.getChildCount(); i++) {
             android.view.View child = parent.getChildAt(i);
-            if (child instanceof DrawerLayout) return (DrawerLayout) child;
-            if (child instanceof ViewGroup) {
-                DrawerLayout result = findInnerDrawer((ViewGroup) child);
+            if (child instanceof androidx.drawerlayout.widget.DrawerLayout) return (androidx.drawerlayout.widget.DrawerLayout) child;
+            if (child instanceof android.view.ViewGroup) {
+                androidx.drawerlayout.widget.DrawerLayout result = findInnerDrawer((android.view.ViewGroup) child);
                 if (result != null) return result;
             }
         }
         return null;
     }
 
-}
+                }
