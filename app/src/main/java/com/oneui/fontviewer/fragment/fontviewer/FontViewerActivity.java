@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
-//import android.widget.Toast;
+import android.widget.Toast;
 
 import java.util.Map;
 
@@ -26,7 +26,6 @@ import com.oneui.fontviewer.utils.translation.TranslationService;
 import com.oneui.fontviewer.utils.FileUtils;
 import com.oneui.fontviewer.utils.FormatBarAnimator;
 import com.oneui.fontviewer.widget.TextDrawable;
-import com.oneui.fontviewer.widget.Toast;
 
 public class FontViewerActivity extends BaseActivity
         implements FontViewerFragment.OnFontChangedListener {
