@@ -50,7 +50,7 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
         if (nameView == null) return;
 
         if (isLastOpened) {
-            int primaryColor = ContextCompat.getColor(nameView.getContext(), R.color.oui_primary_color);
+            int primaryColor = ContextCompat.getColor(nameView.getContext(), R.color.sesl_primary_color_dark);
             nameView.setTextColor(primaryColor);
         } else {
             nameView.setTextColor(
