@@ -10,7 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
-//import android.widget.Toast;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +31,6 @@ import com.oneui.fontviewer.App;
 import com.oneui.fontviewer.fragment.settings.about.AboutActivity;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
-import com.oneui.fontviewer.widget.Toast;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
