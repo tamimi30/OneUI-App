@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    
+<dev.oneuiproject.oneui.widget.Separator
+    android:id="@+id/trash_header_message"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center_vertical"
-    android:layout_gravity="center_vertical"
-    android:background="@color/oui_round_and_bgcolor"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="20dp"
-    android:paddingBottom="20dp">
-    
-    <TextView
-        android:id="@+id/trash_header_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="13sp"
-        android:textColor="@color/sesl_description_text_color"
-        android:lineSpacingExtra="4sp"
-        tools:text="تظهر العناصر الأيام المتبقية حتى يتم حذفها نهائياً" />
-
-</LinearLayout>
+    android:textSize="12sp"
+    android:textColor="@color/sesl_description_text_color"
+    android:lineSpacingExtra="4sp"
+    tools:text="تظهر العناصر الأيام المتبقية حتى يتم حذفها نهائياً" />
