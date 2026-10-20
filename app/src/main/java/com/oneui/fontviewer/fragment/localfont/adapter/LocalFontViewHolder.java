@@ -52,7 +52,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         Context context = fontNameTextView.getContext();
 
         if (isLastOpened) {
-            int primaryColor = ContextCompat.getColor(context, R.color.oui_primary_color);
+            int primaryColor = ContextCompat.getColor(context, R.color.sesl_primary_color_dark);
             fontNameTextView.setTextColor(primaryColor);
         } else {
             fontNameTextView.setTextColor(
@@ -120,7 +120,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
     public void updateLastOpenedHighlight(boolean isLastOpened) {
         Context context = fontNameTextView.getContext();
         if (isLastOpened) {
-            int primaryColor = ContextCompat.getColor(context, R.color.oui_primary_color);
+            int primaryColor = ContextCompat.getColor(context, R.color.sesl_primary_color_dark);
             fontNameTextView.setTextColor(primaryColor);
         } else {
             fontNameTextView.setTextColor(
