@@ -200,6 +200,15 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
         }
     }
 
+    /**
+     * يحدّد حالة القفل بناءً على الأوضاع النشطة حالياً: الدرج يبقى مقفلاً
+     * طالما أي من وضع البحث أو وضع التحديد المتعدد (ActionMode) فعّال.
+     * هذا يمنع فتح الدرج بالخطأ عند إغلاق أحد الوضعين بينما الآخر ما زال فعّالاً.
+     */
+    private void updateDrawerLock() {
+        lockDrawerIfAvailable(isActionMode() || isSearchMode());
+    }
+
     private void setDrawerWidth() {
         ViewGroup.LayoutParams lp = mDrawerContent.getLayoutParams();
 
@@ -239,7 +248,7 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
     @Override
     public void dismissActionMode() {
         super.dismissActionMode();
-        lockDrawerIfAvailable(false);
+        updateDrawerLock();
     }
 
     @Override
@@ -251,7 +260,7 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
     @Override
     public void dismissSearchMode() {
         super.dismissSearchMode();
-        lockDrawerIfAvailable(false);
+        updateDrawerLock();
     }
 
     //
