@@ -30,7 +30,7 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
     }
 
     public static final long SLIDE_DURATION = 300L;
-    public static final long FADE_DURATION  = 200L;
+    public static final long FADE_DURATION  = 100L;
 
     // تأخير ظهور الـ CheckBox عند الدخول لوضع التحديد: العناصر تبدأ بالانزلاق فوراً،
     // بينما يتأخر التلاشي (fade) وأنيميشن الدائرة الزرقاء بهذه المدة
