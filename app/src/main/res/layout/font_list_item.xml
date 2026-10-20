@@ -23,7 +23,6 @@
         app:checkableButtonSpacing="14dp"
         android:gravity="center_vertical"
         android:foreground="?listChoiceBackgroundIndicator"
-        app:selectedHighlightColor="@color/oui_round_and_bgcolor"
         app:checkMode="checkBox">
 
         <LinearLayout
