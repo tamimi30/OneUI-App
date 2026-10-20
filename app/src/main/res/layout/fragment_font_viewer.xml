@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingBottom="104dp">	
+        android:paddingBottom="100dp">	
     	
         <LinearLayout
             android:id="@+id/variable_axes_container"
@@ -84,7 +84,8 @@
                 android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="0dp"
+                android:clipToPadding="false"
+                android:clipChildren="false"
                 android:textSize="34dp"
                 android:textColor="@color/font_preview_text_color" />
                 
