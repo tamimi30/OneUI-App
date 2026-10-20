@@ -9,10 +9,10 @@
     android:gravity="center_vertical"
     android:layout_gravity="center_vertical"
     android:background="@color/oui_round_and_bgcolor"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
     android:paddingTop="20dp"
-    android:paddingBottom="20dp">
+    android:paddingBottom="22dp">
     
     <TextView
         android:id="@+id/trash_header_message"
