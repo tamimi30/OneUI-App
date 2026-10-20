@@ -19,8 +19,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import dev.oneuiproject.oneui.widget.TipPopup;
+import dev.oneuiproject.oneui.widget.Toast;
 
-import com.oneui.fontviewer.widget.Toast;
 import com.oneui.fontviewer.R;
 
 public class FontSizeDialog {
