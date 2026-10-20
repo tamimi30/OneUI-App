@@ -20,7 +20,6 @@
         android:orientation="horizontal"
         android:clipToPadding="false"
         android:clipChildren="false"
-        app:checkableButtonSpacing="14dp"
         android:gravity="center_vertical"
         android:background="?listChoiceBackgroundIndicator"
         app:checkMode="checkBox">
