@@ -1060,7 +1060,12 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         
         DrawerLayout inner = findInnerDrawer(mDrawerLayout);
         if (inner != null) {
-            inner.setDrawerLockMode(locked ? 1 : 0);
+            // عند طلب فتح القفل (مثلاً بعد انتهاء التحميل) نتأكد أن البحث ووضع التحديد غير نشطين،
+            // وإلا يبقى الدرج مقفلاً حتى لا يُفتح أثناء البحث أو التحديد
+            boolean keepLocked = locked
+                    || mDrawerLayout.isSearchMode()
+                    || mDrawerLayout.isActionMode();
+            inner.setDrawerLockMode(keepLocked ? 1 : 0);
         }
         
         androidx.appcompat.widget.Toolbar toolbar = mDrawerLayout.getToolbar();
