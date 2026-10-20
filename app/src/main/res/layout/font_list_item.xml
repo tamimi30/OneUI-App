@@ -63,7 +63,7 @@
         android:layout_height="15dp"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="14.0dip"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="80dp"
         android:src="@drawable/ic_oui_favorite_on"
         android:tint="#ffd700"
         android:visibility="invisible"
