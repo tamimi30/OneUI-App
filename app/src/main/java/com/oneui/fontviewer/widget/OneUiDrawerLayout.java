@@ -244,7 +244,7 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
 
     @Override
     public void showSearchMode() {
-        lockDrawerIfAvailable(false);
+        lockDrawerIfAvailable(true);
         super.showSearchMode();
     }
 
