@@ -18,12 +18,23 @@ import androidx.annotation.NonNull;
 
 public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
 
+    /**
+     * يُستدعى عند انتهاء فترة "تثبيت" حالة الـ CheckBox (أي انتهاء APPEAR_DELAY).
+     */
+    public interface CheckHoldListener {
+        /**
+         * @param completed true إذا انتهى التأخير طبيعياً (ابدأ أنيميشن الدائرة الزرقاء الآن)،
+         *                  false إذا قُطع الأنيميشن قبل نهاية التأخير (طبّق الحالة فوراً دون أنيميشن).
+         */
+        void onCheckHoldEnd(boolean completed);
+    }
+
     public static final long SLIDE_DURATION = 300L;
     public static final long FADE_DURATION  = 200L;
 
-    // تأخير بدء ظهور الـ checkbox عند الدخول إلى وضع التحديد، بينما العناصر تنزلق للجانب.
-    // لا يُطبَّق عند الخروج: الـ checkbox يبدأ بالاختفاء فوراً مع رجوع العناصر.
-    public static final long FADE_IN_DELAY  = 50L;
+    // تأخير ظهور الـ CheckBox عند الدخول لوضع التحديد: العناصر تبدأ بالانزلاق فوراً،
+    // بينما يتأخر التلاشي (fade) وأنيميشن الدائرة الزرقاء بهذه المدة
+    public static final long APPEAR_DELAY   = 50L;
 
     private static final TimeInterpolator SLIDE_INTERPOLATOR = new DecelerateInterpolator();
     private static final TimeInterpolator FADE_INTERPOLATOR  = new AccelerateDecelerateInterpolator();
@@ -46,15 +57,29 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
     private boolean activeEntering;
     private float fadeFrom;
     private float fadeTo;
+    private long activeFadeDelay;
+    private long activeTotalDuration;
 
-    // تأخير الظهور الفعلي للحركة الحالية، والمدة الكلية لها (تعتمد على الاتجاه وعلى شفافية البداية)
-    private float activeFadeDelay;
-    private float activeTotalDuration;
+    // true من بداية الدخول لوضع التحديد وحتى انتهاء APPEAR_DELAY
+    private boolean holdingCheck;
+    private CheckHoldListener checkHoldListener;
 
     public SelectionModeAnimator(@NonNull ViewGroup container, @NonNull View checkBox) {
         this.container = container;
         this.checkBox = checkBox;
         container.addOnAttachStateChangeListener(this);
+    }
+
+    public void setCheckHoldListener(CheckHoldListener listener) {
+        this.checkHoldListener = listener;
+    }
+
+    /**
+     * true أثناء فترة التأخير قبل ظهور الـ CheckBox. خلالها يجب عدم تغيير حالة الـ CheckBox (checked)،
+     * حتى لا تبدأ أنيميشن الدائرة الزرقاء قبل بداية التلاشي.
+     */
+    public boolean isHoldingCheck() {
+        return holdingCheck;
     }
 
     public void start(boolean entering) {
@@ -66,6 +91,8 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
 
         final boolean busy = isBusy();
         final float startFade = busy ? currentFade : (entering ? 0f : 1f);
+        // التأخير يُطبَّق فقط عند الظهور من الصفر، أما عند عكس أنيميشن جارٍ فالـ CheckBox ظاهر جزئياً أصلاً
+        final long fadeDelay = (entering && !busy) ? APPEAR_DELAY : 0L;
 
         final int childCount = container.getChildCount();
         final View[] movers = new View[childCount];
@@ -91,8 +118,9 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
             checkBox.setVisibility(View.GONE);
         }
         currentFade = startFade;
+        holdingCheck = fadeDelay > 0;
 
-        pendingStart = new PendingStart(entering, movers, firstLeft, firstRight, moverCount, startFade);
+        pendingStart = new PendingStart(entering, movers, firstLeft, firstRight, moverCount, startFade, fadeDelay);
         container.getViewTreeObserver().addOnPreDrawListener(pendingStart);
     }
 
@@ -111,6 +139,7 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
             running.cancel();
         }
         resetVisuals();
+        releaseCheckHold(false);
     }
 
     public boolean isBusy() {
@@ -139,14 +168,11 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         activeEntering = p.entering;
         fadeFrom = p.startFade;
         fadeTo = p.entering ? 1f : 0f;
-
-        // التأخير يتناسب مع المتبقي من الظهور: إذا قاطع المستخدم حركة سابقة والـ checkbox شبه ظاهر،
-        // لا معنى لتجميده مدة كاملة قبل أن يكمل ظهوره.
-        activeFadeDelay = p.entering ? FADE_IN_DELAY * (1f - p.startFade) : 0f;
-        activeTotalDuration = Math.max(SLIDE_DURATION, activeFadeDelay + FADE_DURATION);
+        activeFadeDelay = p.fadeDelay;
+        activeTotalDuration = Math.max(SLIDE_DURATION, p.fadeDelay + FADE_DURATION);
 
         final ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
-        a.setDuration(Math.round(activeTotalDuration));
+        a.setDuration(activeTotalDuration);
         a.setInterpolator(new LinearInterpolator());
         animator = a;
 
@@ -161,6 +187,7 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
                 if (animator == an) {
                     animator = null;
                     resetVisuals();
+                    releaseCheckHold(true);
                 }
             }
         });
@@ -170,9 +197,13 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
     private void apply(float fraction) {
         final float elapsed = fraction * activeTotalDuration;
         final float slide = SLIDE_INTERPOLATOR.getInterpolation(Math.min(1f, elapsed / SLIDE_DURATION));
-        // الظهور/الاختفاء يبدأ بعد activeFadeDelay (صفر عند الخروج)
-        final float fadeProgress = Math.max(0f, Math.min(1f, (elapsed - activeFadeDelay) / FADE_DURATION));
-        final float fade = FADE_INTERPOLATOR.getInterpolation(fadeProgress);
+        final float fade = FADE_INTERPOLATOR.getInterpolation(
+                Math.max(0f, Math.min(1f, (elapsed - activeFadeDelay) / FADE_DURATION)));
+
+        // انتهى التأخير: يبدأ التلاشي وأنيميشن الدائرة الزرقاء معاً في نفس اللحظة
+        if (holdingCheck && elapsed >= activeFadeDelay) {
+            releaseCheckHold(true);
+        }
 
         for (int i = 0; i < activeCount; i++) {
             activeMovers[i].setTranslationX(activeDeltas[i] * (1f - slide));
@@ -184,6 +215,12 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         } else if (ghost != null) {
             ghost.setAlpha(Math.round(currentFade * 255f));
         }
+    }
+
+    private void releaseCheckHold(boolean completed) {
+        if (!holdingCheck) return;
+        holdingCheck = false;
+        if (checkHoldListener != null) checkHoldListener.onCheckHoldEnd(completed);
     }
 
     private void addGhost(float fade) {
@@ -234,16 +271,18 @@ public class SelectionModeAnimator implements View.OnAttachStateChangeListener {
         final float[] firstRight;
         final int count;
         final float startFade;
+        final long fadeDelay;
         private int waitedPasses = 0;
 
         PendingStart(boolean entering, View[] movers, float[] firstLeft, float[] firstRight,
-                     int count, float startFade) {
+                     int count, float startFade, long fadeDelay) {
             this.entering = entering;
             this.movers = movers;
             this.firstLeft = firstLeft;
             this.firstRight = firstRight;
             this.count = count;
             this.startFade = startFade;
+            this.fadeDelay = fadeDelay;
         }
 
         @Override
