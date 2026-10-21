@@ -54,7 +54,6 @@ public class FontInfoDialog {
                 "Manufacturer",
                 "Copyright",
                 "VendorURL",
-                "VendorID",
                 "Trademark",
                 "Description",
                 "LicenseDescription",
@@ -83,7 +82,6 @@ public class FontInfoDialog {
                 R.string.font_info_label_manufacturer,
                 R.string.font_info_label_copyright,
                 R.string.font_info_label_vendor_url,
-                R.string.font_info_label_vendor_id,
                 R.string.font_info_label_trademark,
                 R.string.font_info_label_description,
                 R.string.font_info_label_license_description,
@@ -143,6 +141,7 @@ public class FontInfoDialog {
 
             // ننظّف القيمة: نشيل فواصل الأسطر، ونستبدل الرموز النادرة
             // (شرطة طويلة، علامات تنصيص مُقوّسة...) برموز عادية يدعمها أي خط
+            value = localizeMetadataValue(key, value);
             value = sanitizeMetadataValue(value);
 
             if ("Version".equals(key)) {
@@ -182,6 +181,174 @@ public class FontInfoDialog {
                 .setMessage("No metadata available.")
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
+    }
+
+    // تحويل القيم المحدودة (الوزن، العرض، تحسين الوضوح، اللغات المدعومة، المحاور) لسلاسل نصية حسب لغة التطبيق
+    // بدون الاعتماد على خدمة الترجمة، وبقية الحقول تُعرض كما هي
+    private String localizeMetadataValue(String key, String value) {
+        switch (key) {
+            case "Weight":
+                return localizeWeight(value);
+            case "Width":
+                return localizeWidth(value);
+            case "Hinted":
+                return localizeHinted(value);
+            case "SupportedScripts":
+                return localizeScripts(value);
+            case "VariableAxes":
+                return localizeAxes(value);
+            default:
+                return value;
+        }
+    }
+
+    private String localizeWeight(String value) {
+        int weightClass;
+        try {
+            weightClass = Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            return value;
+        }
+
+        switch (weightClass) {
+            case 100: return context.getString(R.string.font_info_weight_thin);
+            case 200: return context.getString(R.string.font_info_weight_extra_light);
+            case 300: return context.getString(R.string.font_info_weight_light);
+            case 400: return context.getString(R.string.font_info_weight_regular);
+            case 500: return context.getString(R.string.font_info_weight_medium);
+            case 600: return context.getString(R.string.font_info_weight_semi_bold);
+            case 700: return context.getString(R.string.font_info_weight_bold);
+            case 800: return context.getString(R.string.font_info_weight_extra_bold);
+            case 900: return context.getString(R.string.font_info_weight_black);
+            default: return context.getString(R.string.font_info_weight_other, weightClass);
+        }
+    }
+
+    private String localizeWidth(String value) {
+        int widthClass;
+        try {
+            widthClass = Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            return value;
+        }
+
+        switch (widthClass) {
+            case 1: return context.getString(R.string.font_info_width_ultra_condensed);
+            case 2: return context.getString(R.string.font_info_width_extra_condensed);
+            case 3: return context.getString(R.string.font_info_width_condensed);
+            case 4: return context.getString(R.string.font_info_width_semi_condensed);
+            case 5: return context.getString(R.string.font_info_width_normal);
+            case 6: return context.getString(R.string.font_info_width_semi_expanded);
+            case 7: return context.getString(R.string.font_info_width_expanded);
+            case 8: return context.getString(R.string.font_info_width_extra_expanded);
+            case 9: return context.getString(R.string.font_info_width_ultra_expanded);
+            default: return context.getString(R.string.font_info_width_other, widthClass);
+        }
+    }
+
+    private String localizeHinted(String value) {
+        if ("Improved".equalsIgnoreCase(value)) {
+            return context.getString(R.string.font_info_hinted_improved);
+        } else if ("Not improved".equalsIgnoreCase(value)) {
+            return context.getString(R.string.font_info_hinted_not_improved);
+        }
+        return value;
+    }
+
+    private String localizeScripts(String value) {
+        String separator = context.getString(R.string.font_info_list_separator);
+        StringBuilder result = new StringBuilder();
+
+        for (String script : value.split(",")) {
+            script = script.trim();
+            if (script.isEmpty()) {
+                continue;
+            }
+
+            int resId = getScriptNameResId(script);
+            if (result.length() > 0) {
+                result.append(separator);
+            }
+            result.append(resId != 0 ? context.getString(resId) : script);
+        }
+        return result.toString();
+    }
+
+    // كل سطر بصيغة "tag<TAB>اسم المحور في الخط": نستخدم السلسلة الثابتة إن وُجدت،
+    // وإلا اسم الخط نفسه (بدون ترجمة)، وإلا الرمز
+    private String localizeAxes(String value) {
+        String separator = context.getString(R.string.font_info_list_separator);
+        StringBuilder result = new StringBuilder();
+
+        for (String line : value.split("\n")) {
+            String[] parts = line.split("\t", -1);
+            String tag = parts[0].trim();
+            if (tag.isEmpty()) {
+                continue;
+            }
+
+            String fontName = parts.length > 1 ? parts[1].trim() : "";
+            int resId = getAxisNameResId(tag);
+
+            String name;
+            if (resId != 0) {
+                name = context.getString(resId);
+            } else if (!fontName.isEmpty()) {
+                name = fontName;
+            } else {
+                name = tag;
+            }
+
+            if (result.length() > 0) {
+                result.append(separator);
+            }
+            result.append(name);
+        }
+        return result.toString();
+    }
+
+    private static int getScriptNameResId(String script) {
+        switch (script) {
+            case "Latin": return R.string.font_info_script_latin;
+            case "Arabic": return R.string.font_info_script_arabic;
+            case "Cyrillic": return R.string.font_info_script_cyrillic;
+            case "Greek": return R.string.font_info_script_greek;
+            case "Hebrew": return R.string.font_info_script_hebrew;
+            case "CJK": return R.string.font_info_script_cjk;
+            case "Devanagari": return R.string.font_info_script_devanagari;
+            case "Thai": return R.string.font_info_script_thai;
+            case "Hangul": return R.string.font_info_script_hangul;
+            case "Hiragana": return R.string.font_info_script_hiragana;
+            case "Katakana": return R.string.font_info_script_katakana;
+            default: return 0;
+        }
+    }
+
+    private static int getAxisNameResId(String tag) {
+        switch (tag) {
+            case "wght": return R.string.font_info_axis_weight;
+            case "wdth": return R.string.font_info_axis_width;
+            case "ital": return R.string.font_info_axis_italic;
+            case "slnt": return R.string.font_info_axis_slant;
+            case "opsz": return R.string.font_info_axis_optical_size;
+            case "GRAD": return R.string.font_info_axis_grade;
+            case "XTRA": return R.string.font_info_axis_counter_width;
+            case "XOPQ": return R.string.font_info_axis_thick_stroke;
+            case "YOPQ": return R.string.font_info_axis_thin_stroke;
+            case "YTLC": return R.string.font_info_axis_lowercase_height;
+            case "YTUC": return R.string.font_info_axis_uppercase_height;
+            case "YTAS": return R.string.font_info_axis_ascender_height;
+            case "YTDE": return R.string.font_info_axis_descender_depth;
+            case "YTFI": return R.string.font_info_axis_figure_height;
+            case "CASL": return R.string.font_info_axis_casual;
+            case "CRSV": return R.string.font_info_axis_cursive;
+            case "MONO": return R.string.font_info_axis_monospace;
+            case "ROND": return R.string.font_info_axis_roundness;
+            case "SOFT": return R.string.font_info_axis_softness;
+            case "WONK": return R.string.font_info_axis_wonky;
+            case "FILL": return R.string.font_info_axis_fill;
+            default: return 0;
+        }
     }
 
     private String cleanVersionString(String version) {
@@ -236,7 +403,6 @@ public class FontInfoDialog {
             case "Version":
             case "ModifiedDate":
             case "CreatedDate":
-            case "VendorID":
             case "FileName":
             case "Path":
                 return true;
