@@ -26,7 +26,7 @@
     <string name="settings_report_issue">الإبلاغ عن الأخطاء أو اقتراح تحسين</string>
     <string name="settings_report_issue_email_subject">إبلاغ عن خطأ / اقتراح تحسين</string>
     <string name="feedback_email" translatable="false">feedback@example.com</string>
-	<string name="settings_preview_text_updated">تم تحديث نص المعاينة</string>
+	<string name="toast_settings_preview_text_updated">تم تحديث نص المعاينة</string>
 	
 	<!-- About -->
 	<string name="about_title">حول Font Viewer Plus</string>
@@ -64,6 +64,36 @@
 	<string name="toast_invalid_font_size">تم إدخال قيمة غير صالحة.</string>
 	<string name="toast_font_name_extraction_warning">تعذّر استخراج اسم الخط.</string>
 	<string name="font_size_dialog_tip">إضغط على الرقم لتعديل حجم النص بدقة.</string>
+
+    <!-- Font info labels -->
+    <string name="font_info_label_full_name">الاسم الكامل</string>
+    <string name="font_info_label_post_script_name">اسم PostScript</string>
+    <string name="font_info_label_family">العائلة</string>
+    <string name="font_info_label_sub_family">العائلة الفرعية</string>
+    <string name="font_info_label_weight">الوزن</string>
+    <string name="font_info_label_width">العرض</string>
+    <string name="font_info_label_hinted">تحسين وضوح النص</string>
+    <string name="font_info_label_supported_scripts">اللغات المدعومة</string>
+    <string name="font_info_label_glyph_count">عدد الرموز (Glyphs)</string>
+    <string name="font_info_label_units_per_em">دقة الخط (Resolution)</string>
+    <string name="font_info_label_variable_instances">المتغيرات (Instances)</string>
+    <string name="font_info_label_version">الإصدار</string>
+    <string name="font_info_label_modified_date">تاريخ التعديل</string>
+    <string name="font_info_label_created_date">تاريخ الإنشاء</string>
+    <string name="font_info_label_designer">المصمم</string>
+    <string name="font_info_label_designer_url">رابط المصمم</string>
+    <string name="font_info_label_manufacturer">الشركة المصنعة</string>
+    <string name="font_info_label_copyright">حقوق النشر</string>
+    <string name="font_info_label_vendor_url">رابط البائع</string>
+    <string name="font_info_label_vendor_id">معرف البائع</string>
+    <string name="font_info_label_trademark">العلامة التجارية</string>
+    <string name="font_info_label_description">الوصف</string>
+    <string name="font_info_label_license_description">وصف الترخيص</string>
+    <string name="font_info_label_license_url">رابط الترخيص</string>
+    <string name="font_info_label_file_name">اسم الملف</string>
+    <string name="font_info_label_path">المسار</string>
+    <string name="font_info_hinted_improved">مُحسّن</string>
+    <string name="font_info_hinted_not_improved">غير مُحسّن</string>
 
 	<!-- TODO: fill in the explanatory text for each axis -->
     <string name="axis_info_weight_description">قم بضبط النمط من الأخف إلى الأثقل في اللون الطباعي، من خلال تغيير أوزان الخطوط والفواصل والمسافات بين الحروف وجوانب أخرى للطباعة. عادةً ما يؤدي هذا إلى تغيير العرض الكلي، وبالتالي يمكن استخدامه بالتزامن مع محاور العرض والدرجة.</string>
