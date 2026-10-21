@@ -282,11 +282,8 @@ public class FontMetaData {
                     int weightClass = raf.readUnsignedShort();
                     int widthClass = raf.readUnsignedShort();
                     
-                    String weight = getWeightClassName(weightClass);
-                    String width = getWidthClassName(widthClass);
-                    
-                    if (weight != null) data.put("Weight", weight);
-                    if (width != null) data.put("Width", width);
+                    data.put("Weight", String.valueOf(weightClass));
+                    data.put("Width", String.valueOf(widthClass));
                 } catch (Exception e) {
                     Log.w(TAG, "Failed to read OS/2 table: " + e.getMessage());
                 }
@@ -382,7 +379,8 @@ public class FontMetaData {
     
     
     
-    // قراءة أسماء المحاور المتغيرة من جدول fvar (مثل: Weight, Width, Italic)
+    // قراءة المحاور المتغيرة من جدول fvar: كل محور في سطر بصيغة "tag<TAB>اسم المحور في الخط"
+    // (الاسم قد يكون فارغاً)، وتحويلها لأسماء مترجمة يتم لاحقاً في FontInfoDialog
     private static String extractVariableAxes(RandomAccessFile raf, long fvarOffset, File fontFile, int ttcIndex) throws Exception {
         raf.seek(fvarOffset);
         raf.skipBytes(4);
@@ -416,37 +414,19 @@ public class FontMetaData {
                 continue;
             }
             
-            String name = getKnownAxisName(tag);
-            if (name == null && nameIds[i] >= 256) {
-                name = getFontNameDirectWithTtc(fontFile, nameIds[i], ttcIndex);
-                if (name != null) {
-                    name = name.replace('\n', ' ').replace('\r', ' ').trim();
+            String name = "";
+            if (nameIds[i] >= 256) {
+                String fontName = getFontNameDirectWithTtc(fontFile, nameIds[i], ttcIndex);
+                if (fontName != null) {
+                    name = fontName.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').trim();
                 }
             }
             
-            if (name == null || name.isEmpty()) {
-                name = tag;
-            }
-            
-            if (axes.length() > 0) axes.append(", ");
-            axes.append(name);
+            if (axes.length() > 0) axes.append('\n');
+            axes.append(tag).append('\t').append(name);
         }
         
         return axes.toString();
-    }
-    
-    private static String getKnownAxisName(String tag) {
-        switch (tag) {
-            case "wght": return "Weight";
-            case "wdth": return "Width";
-            case "ital": return "Italic";
-            case "slnt": return "Slant";
-            case "opsz": return "Optical size";
-            case "GRAD": return "Grade";
-            case "ROND": return "Roundness";
-            case "MONO": return "Monospace";
-            default: return null;
-        }
     }
     
     private static long readUInt32(RandomAccessFile raf) throws Exception {
@@ -677,33 +657,4 @@ public class FontMetaData {
         return validChars > 0 && (validChars * 100 / totalChars) >= 30;
     }
     
-    private static String getWeightClassName(int weightClass) {
-        switch (weightClass) {
-            case 100: return "Thin";
-            case 200: return "Extra Light";
-            case 300: return "Light";
-            case 400: return "Regular";
-            case 500: return "Medium";
-            case 600: return "Semi Bold";
-            case 700: return "Bold";
-            case 800: return "Extra Bold";
-            case 900: return "Black";
-            default: return "Weight " + weightClass;
-        }
-    }
-
-    private static String getWidthClassName(int widthClass) {
-        switch (widthClass) {
-            case 1: return "Ultra Condensed";
-            case 2: return "Extra Condensed";
-            case 3: return "Condensed";
-            case 4: return "Semi Condensed";
-            case 5: return "Normal";
-            case 6: return "Semi Expanded";
-            case 7: return "Expanded";
-            case 8: return "Extra Expanded";
-            case 9: return "Ultra Expanded";
-            default: return "Width " + widthClass;
-        }
-    }
                             }
