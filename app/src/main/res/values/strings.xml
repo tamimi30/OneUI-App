@@ -26,7 +26,7 @@
     <string name="settings_report_issue">Report bug or improvement</string>
     <string name="settings_report_issue_email_subject">Bug report / Improvement suggestion</string>
     <string name="feedback_email" translatable="false">feedback@example.com</string>
-	<string name="settings_preview_text_updated">Preview text updated</string>
+	<string name="toast_settings_preview_text_updated">Preview text updated</string>
 	
 	<!-- About -->
 	<string name="about_title">About Font Viewer Plus</string>
@@ -64,6 +64,36 @@
     <string name="toast_invalid_font_size">Invalid value entered.</string>
 	<string name="toast_font_name_extraction_warning">Font name could not be extracted.</string>
 	<string name="font_size_dialog_tip">Click the number to adjust the text size accurately.</string>
+
+    <!-- Font info labels -->
+    <string name="font_info_label_full_name">Full name</string>
+    <string name="font_info_label_post_script_name">Post script name</string>
+    <string name="font_info_label_family">Family</string>
+    <string name="font_info_label_sub_family">Sub family</string>
+    <string name="font_info_label_weight">Weight</string>
+    <string name="font_info_label_width">Width</string>
+    <string name="font_info_label_hinted">Improved text clarity</string>
+    <string name="font_info_label_supported_scripts">Supported languages</string>
+    <string name="font_info_label_glyph_count">Glyph count</string>
+    <string name="font_info_label_units_per_em">Font resolution</string>
+    <string name="font_info_label_variable_instances">Variable instances</string>
+    <string name="font_info_label_version">Version</string>
+    <string name="font_info_label_modified_date">Modified date</string>
+    <string name="font_info_label_created_date">Created date</string>
+    <string name="font_info_label_designer">Designer</string>
+    <string name="font_info_label_designer_url">Designer URL</string>
+    <string name="font_info_label_manufacturer">Manufacturer</string>
+    <string name="font_info_label_copyright">Copyright</string>
+    <string name="font_info_label_vendor_url">Vendor URL</string>
+    <string name="font_info_label_vendor_id">Vendor ID</string>
+    <string name="font_info_label_trademark">Trademark</string>
+    <string name="font_info_label_description">Description</string>
+    <string name="font_info_label_license_description">License description</string>
+    <string name="font_info_label_license_url">License URL</string>
+    <string name="font_info_label_file_name">File name</string>
+    <string name="font_info_label_path">Path</string>
+    <string name="font_info_hinted_improved">Improved</string>
+    <string name="font_info_hinted_not_improved">Not improved</string>
 	
 	<string name="axis_info_button_description">Axis info</string>
 
