@@ -1,6 +1,7 @@
 package com.oneui.fontviewer.utils.translation;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 
@@ -54,6 +56,13 @@ public class TranslationService {
             try {
                 Map<String, String> translatedData = new HashMap<>(metadata);
                 String translationErrorType = null;
+                
+                // قيمة "تحسين وضوح النص" تبقى بالإنجليزية في البيانات الأصلية،
+                // وتُترجم للغة الهدف هنا فقط، أي فقط عند تفعيل ترجمة معلومات الخط
+                String hintedValue = metadata.get("Hinted");
+                if (hintedValue != null && !hintedValue.isEmpty()) {
+                    translatedData.put("Hinted", translateHintedValue(hintedValue, targetLanguage));
+                }
                 
                 String[] fieldsToTranslate = {
                     "Copyright", 
@@ -121,6 +130,24 @@ public class TranslationService {
                 callback.onTranslationFailed(e.getMessage());
             }
         }).start();
+    }
+
+    // ترجمة قيمة "تحسين وضوح النص" من ملفات الموارد حسب اللغة الهدف (بغض النظر عن لغة سياق التطبيق)
+    private String translateHintedValue(String value, String targetLanguage) {
+        try {
+            Configuration config = new Configuration(context.getResources().getConfiguration());
+            config.setLocale(new Locale(targetLanguage));
+            Context localizedContext = context.createConfigurationContext(config);
+            
+            if ("Improved".equalsIgnoreCase(value)) {
+                return localizedContext.getString(R.string.font_info_hinted_improved);
+            } else if ("Not improved".equalsIgnoreCase(value)) {
+                return localizedContext.getString(R.string.font_info_hinted_not_improved);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error translating hinted value: " + e.getMessage());
+        }
+        return value;
     }
 
     // Translate text using Google Translate API
