@@ -94,6 +94,7 @@
     <string name="font_info_label_path">المسار</string>
     <string name="font_info_hinted_improved">مُحسّن</string>
     <string name="font_info_hinted_not_improved">غير مُحسّن</string>
+	<string name="font_info_label_variable_axes">المحاور المتغيرة (Axes)</string>
 
 	<!-- TODO: fill in the explanatory text for each axis -->
     <string name="axis_info_weight_description">قم بضبط النمط من الأخف إلى الأثقل في اللون الطباعي، من خلال تغيير أوزان الخطوط والفواصل والمسافات بين الحروف وجوانب أخرى للطباعة. عادةً ما يؤدي هذا إلى تغيير العرض الكلي، وبالتالي يمكن استخدامه بالتزامن مع محاور العرض والدرجة.</string>
