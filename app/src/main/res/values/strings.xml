@@ -213,7 +213,7 @@
     <string name="trash_notif_channel_name">Trash</string>
     <string name="trash_notif_channel_desc">Trash operation notifications</string>
     
-     <!-- Search ->
+     <!-- Search -->
     <string name="search_font">Search</string>
     <string name="no_results_found">No results found</string>
     
