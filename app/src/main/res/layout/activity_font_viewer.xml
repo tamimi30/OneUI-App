@@ -76,7 +76,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:tint="?attr/colorPrimaryDark"
+                    android:tint="@color/sesl_primary_dark_color_dark"
                     android:src="@drawable/ic_oui_text_italic" />
 
             </FrameLayout>
