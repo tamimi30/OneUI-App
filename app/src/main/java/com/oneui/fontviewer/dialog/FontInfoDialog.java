@@ -185,7 +185,7 @@ public class FontInfoDialog {
                 }
             }
 
-            View itemView = inflater.inflate(R.layout.font_info_dialog_item, itemsContainer, false);
+            View itemView = inflater.inflate(R.layout.dialog_font_info_item, itemsContainer, false);
             TextView labelView = itemView.findViewById(R.id.font_info_label);
             TextView valueView = itemView.findViewById(R.id.font_info_value);
 
