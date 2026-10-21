@@ -301,7 +301,7 @@ public class SettingsViewModel extends AndroidViewModel {
                         Log.d(TAG, "Preview text updated");
                         settingsEvent.setValue(new SettingsEvent(
                             SettingsEventType.SHOW_TOAST,
-                            R.string.settings_preview_text_updated
+                            R.string.toast_settings_preview_text_updated
                         ));
                     },
                     error -> Log.e(TAG, "Error setting preview text", error)
