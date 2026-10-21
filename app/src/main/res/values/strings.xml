@@ -94,6 +94,7 @@
     <string name="font_info_label_path">Path</string>
     <string name="font_info_hinted_improved">Improved</string>
     <string name="font_info_hinted_not_improved">Not improved</string>
+	<string name="font_info_label_variable_axes">Variable axes</string>
 	
 	<string name="axis_info_button_description">Axis info</string>
 
