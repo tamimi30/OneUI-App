@@ -45,7 +45,7 @@ public class FontInfoDialog {
                 "SupportedScripts",
                 "GlyphCount",
                 "UnitsPerEm",
-                "VariableInstances",
+                "VariableAxes",
                 "Version",
                 "ModifiedDate",
                 "CreatedDate",
@@ -74,7 +74,7 @@ public class FontInfoDialog {
                 R.string.font_info_label_supported_scripts,
                 R.string.font_info_label_glyph_count,
                 R.string.font_info_label_units_per_em,
-                R.string.font_info_label_variable_instances,
+                R.string.font_info_label_variable_axes,
                 R.string.font_info_label_version,
                 R.string.font_info_label_modified_date,
                 R.string.font_info_label_created_date,
@@ -232,7 +232,7 @@ public class FontInfoDialog {
             case "SupportedScripts":
             case "GlyphCount":
             case "UnitsPerEm":
-            case "VariableInstances":
+            case "VariableAxes":
             case "Version":
             case "ModifiedDate":
             case "CreatedDate":
