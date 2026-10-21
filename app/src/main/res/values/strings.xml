@@ -76,7 +76,7 @@
     <string name="font_info_label_supported_scripts">Supported languages</string>
     <string name="font_info_label_glyph_count">Glyph count</string>
     <string name="font_info_label_units_per_em">Font resolution</string>
-    <string name="font_info_label_variable_instances">Variable instances</string>
+    <string name="font_info_label_variable_axes">Variable axes</string>
     <string name="font_info_label_version">Version</string>
     <string name="font_info_label_modified_date">Modified date</string>
     <string name="font_info_label_created_date">Created date</string>
@@ -85,16 +85,69 @@
     <string name="font_info_label_manufacturer">Manufacturer</string>
     <string name="font_info_label_copyright">Copyright</string>
     <string name="font_info_label_vendor_url">Vendor URL</string>
-    <string name="font_info_label_vendor_id">Vendor ID</string>
     <string name="font_info_label_trademark">Trademark</string>
     <string name="font_info_label_description">Description</string>
     <string name="font_info_label_license_description">License description</string>
     <string name="font_info_label_license_url">License URL</string>
     <string name="font_info_label_file_name">File name</string>
     <string name="font_info_label_path">Path</string>
-    <string name="font_info_hinted_improved">Improved</string>
+
+    <!-- Font info values -->
+    <string name="font_info_weight_thin">Thin</string>
+    <string name="font_info_weight_extra_light">Extra Light</string>
+    <string name="font_info_weight_light">Light</string>
+    <string name="font_info_weight_regular">Regular</string>
+    <string name="font_info_weight_medium">Medium</string>
+    <string name="font_info_weight_semi_bold">Semi Bold</string>
+    <string name="font_info_weight_bold">Bold</string>
+    <string name="font_info_weight_extra_bold">Extra Bold</string>
+    <string name="font_info_weight_black">Black</string>
+    <string name="font_info_weight_other">Weight %1$d</string>
+    <string name="font_info_width_ultra_condensed">Ultra Condensed</string>
+    <string name="font_info_width_extra_condensed">Extra Condensed</string>
+    <string name="font_info_width_condensed">Condensed</string>
+    <string name="font_info_width_semi_condensed">Semi Condensed</string>
+    <string name="font_info_width_normal">Normal</string>
+    <string name="font_info_width_semi_expanded">Semi Expanded</string>
+    <string name="font_info_width_expanded">Expanded</string>
+    <string name="font_info_width_extra_expanded">Extra Expanded</string>
+    <string name="font_info_width_ultra_expanded">Ultra Expanded</string>
+    <string name="font_info_width_other">Width %1$d</string>
+    <string name="font_info_script_latin">Latin</string>
+    <string name="font_info_script_arabic">Arabic</string>
+    <string name="font_info_script_cyrillic">Cyrillic</string>
+    <string name="font_info_script_greek">Greek</string>
+    <string name="font_info_script_hebrew">Hebrew</string>
+    <string name="font_info_script_cjk">CJK</string>
+    <string name="font_info_script_devanagari">Devanagari</string>
+    <string name="font_info_script_thai">Thai</string>
+    <string name="font_info_script_hangul">Hangul</string>
+    <string name="font_info_script_hiragana">Hiragana</string>
+    <string name="font_info_script_katakana">Katakana</string>
+    <string name="font_info_axis_weight">Weight</string>
+    <string name="font_info_axis_width">Width</string>
+    <string name="font_info_axis_italic">Italic</string>
+    <string name="font_info_axis_slant">Slant</string>
+    <string name="font_info_axis_optical_size">Optical size</string>
+    <string name="font_info_axis_grade">Grade</string>
+    <string name="font_info_axis_counter_width">Parametric Counter Width</string>
+    <string name="font_info_axis_thick_stroke">Parametric Thick Stroke</string>
+    <string name="font_info_axis_thin_stroke">Parametric Thin Stroke</string>
+    <string name="font_info_axis_lowercase_height">Parametric Lowercase Height</string>
+    <string name="font_info_axis_uppercase_height">Parametric Uppercase Height</string>
+    <string name="font_info_axis_ascender_height">Parametric Ascender Height</string>
+    <string name="font_info_axis_descender_depth">Parametric Descender Depth</string>
+    <string name="font_info_axis_figure_height">Parametric Figure Height</string>
+    <string name="font_info_axis_casual">Casual</string>
+    <string name="font_info_axis_cursive">Cursive</string>
+    <string name="font_info_axis_monospace">Monospace</string>
+    <string name="font_info_axis_roundness">Roundness</string>
+    <string name="font_info_axis_softness">Softness</string>
+    <string name="font_info_axis_wonky">Wonky</string>
+    <string name="font_info_axis_fill">Fill</string>
+    <string name="font_info_list_separator">", "</string>
+	<string name="font_info_hinted_improved">Improved</string>
     <string name="font_info_hinted_not_improved">Not improved</string>
-	<string name="font_info_label_variable_axes">Variable axes</string>
 	
 	<string name="axis_info_button_description">Axis info</string>
 
@@ -160,7 +213,7 @@
     <string name="trash_notif_channel_name">Trash</string>
     <string name="trash_notif_channel_desc">Trash operation notifications</string>
     
-     <!-- Search -->
+     <!-- Search ->
     <string name="search_font">Search</string>
     <string name="no_results_found">No results found</string>
     
