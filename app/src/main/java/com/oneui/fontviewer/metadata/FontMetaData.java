@@ -274,12 +274,6 @@ public class FontMetaData {
                 data.put("Hinted", "Not improved");
             }
             
-            if (fvarTableOffset != -1) {
-                data.put("FontType", "Variable Font");
-            } else {
-                data.put("FontType", "Static Font");
-            }
-            
             if (os2TableOffset != -1) {
                 try {
                     raf.seek(os2TableOffset);
@@ -361,6 +355,17 @@ public class FontMetaData {
                 }
             }
             
+            if (fvarTableOffset != -1) {
+                try {
+                    String axes = extractVariableAxes(raf, fvarTableOffset, fontFile, ttcIndex);
+                    if (axes != null && !axes.isEmpty()) {
+                        data.put("VariableAxes", axes);
+                    }
+                } catch (Exception e) {
+                    Log.w(TAG, "Failed to read fvar table: " + e.getMessage());
+                }
+            }
+            
         } catch (Exception e) {
             Log.w(TAG, "extractTechnicalDataDirectWithTtc failed: " + e.getMessage());
         } finally {
@@ -376,6 +381,73 @@ public class FontMetaData {
     }
     
     
+    
+    // قراءة أسماء المحاور المتغيرة من جدول fvar (مثل: Weight, Width, Italic)
+    private static String extractVariableAxes(RandomAccessFile raf, long fvarOffset, File fontFile, int ttcIndex) throws Exception {
+        raf.seek(fvarOffset);
+        raf.skipBytes(4);
+        int axesArrayOffset = raf.readUnsignedShort();
+        raf.skipBytes(2);
+        int axisCount = raf.readUnsignedShort();
+        int axisSize = raf.readUnsignedShort();
+        
+        if (axisCount <= 0 || axisCount > 64 || axisSize < 20) {
+            return null;
+        }
+        
+        String[] tags = new String[axisCount];
+        int[] nameIds = new int[axisCount];
+        
+        for (int i = 0; i < axisCount; i++) {
+            raf.seek(fvarOffset + axesArrayOffset + (long) i * axisSize);
+            
+            byte[] tagBytes = new byte[4];
+            raf.readFully(tagBytes);
+            tags[i] = new String(tagBytes, "ISO-8859-1").trim();
+            
+            raf.skipBytes(14);
+            nameIds[i] = raf.readUnsignedShort();
+        }
+        
+        StringBuilder axes = new StringBuilder();
+        for (int i = 0; i < axisCount; i++) {
+            String tag = tags[i];
+            if (tag.isEmpty()) {
+                continue;
+            }
+            
+            String name = getKnownAxisName(tag);
+            if (name == null && nameIds[i] >= 256) {
+                name = getFontNameDirectWithTtc(fontFile, nameIds[i], ttcIndex);
+                if (name != null) {
+                    name = name.replace('\n', ' ').replace('\r', ' ').trim();
+                }
+            }
+            
+            if (name == null || name.isEmpty()) {
+                name = tag;
+            }
+            
+            if (axes.length() > 0) axes.append(", ");
+            axes.append(name);
+        }
+        
+        return axes.toString();
+    }
+    
+    private static String getKnownAxisName(String tag) {
+        switch (tag) {
+            case "wght": return "Weight";
+            case "wdth": return "Width";
+            case "ital": return "Italic";
+            case "slnt": return "Slant";
+            case "opsz": return "Optical size";
+            case "GRAD": return "Grade";
+            case "ROND": return "Roundness";
+            case "MONO": return "Monospace";
+            default: return null;
+        }
+    }
     
     private static long readUInt32(RandomAccessFile raf) throws Exception {
         byte[] bytes = new byte[4];
