@@ -63,61 +63,33 @@ public class FontInfoDialog {
                 "Path"
         };
 
-        boolean isArabic = java.util.Locale.getDefault().getLanguage().equals("ar");
-        String[] displayNames = isArabic ? new String[]{
-                "الاسم الكامل",
-                "اسم PostScript",
-                "العائلة",
-                "العائلة الفرعية",
-                "الوزن",
-                "العرض",
-                "تحسين وضوح النص",
-                "اللغات المدعومة",
-                "عدد الرموز (Glyphs)",
-                "دقة الخط (Resolution)",
-                "المتغيرات (Instances)",
-                "الإصدار",
-                "تاريخ التعديل",
-                "تاريخ الإنشاء",
-                "المصمم",
-                "رابط المصمم",
-                "الشركة المصنعة",
-                "حقوق النشر",
-                "رابط البائع",
-                "معرف البائع",
-                "العلامة التجارية",
-                "الوصف",
-                "وصف الترخيص",
-                "رابط الترخيص",
-                "اسم الملف",
-                "المسار"
-        } : new String[]{
-                "Full name",
-                "Post script name",
-                "Family",
-                "Sub family",
-                "Weight",
-                "Width",
-                "Improved text clarity",
-                "Supported languages",
-                "Glyph count",
-                "Font resolution",
-                "Variable instances",
-                "Version",
-                "Modified date",
-                "Created date",
-                "Designer",
-                "Designer URL",
-                "Manufacturer",
-                "Copyright",
-                "Vendor URL",
-                "Vendor ID",
-                "Trademark",
-                "Description",
-                "License description",
-                "License URL",
-                "File name",
-                "Path"
+        int[] displayNameResIds = {
+                R.string.font_info_label_full_name,
+                R.string.font_info_label_post_script_name,
+                R.string.font_info_label_family,
+                R.string.font_info_label_sub_family,
+                R.string.font_info_label_weight,
+                R.string.font_info_label_width,
+                R.string.font_info_label_hinted,
+                R.string.font_info_label_supported_scripts,
+                R.string.font_info_label_glyph_count,
+                R.string.font_info_label_units_per_em,
+                R.string.font_info_label_variable_instances,
+                R.string.font_info_label_version,
+                R.string.font_info_label_modified_date,
+                R.string.font_info_label_created_date,
+                R.string.font_info_label_designer,
+                R.string.font_info_label_designer_url,
+                R.string.font_info_label_manufacturer,
+                R.string.font_info_label_copyright,
+                R.string.font_info_label_vendor_url,
+                R.string.font_info_label_vendor_id,
+                R.string.font_info_label_trademark,
+                R.string.font_info_label_description,
+                R.string.font_info_label_license_description,
+                R.string.font_info_label_license_url,
+                R.string.font_info_label_file_name,
+                R.string.font_info_label_path
         };
 
         String dialogTitle = metadata.containsKey("FullName") && metadata.get("FullName") != null
@@ -156,7 +128,7 @@ public class FontInfoDialog {
 
         for (int i = 0; i < orderedKeys.length; i++) {
             String key = orderedKeys[i];
-            String displayName = displayNames[i];
+            String displayName = context.getString(displayNameResIds[i]);
             String value = metadata.get(key);
 
             if ("FileName".equals(key) && originalFileName != null) {
@@ -175,14 +147,6 @@ public class FontInfoDialog {
 
             if ("Version".equals(key)) {
                 value = cleanVersionString(value);
-            }
-
-            if ("Hinted".equals(key)) {
-                if ("Improved".equalsIgnoreCase(value)) {
-                    value = isArabic ? "مُحسّن" : "Improved";
-                } else {
-                    value = isArabic ? "غير مُحسّن" : "Not Improved";
-                }
             }
 
             View itemView = inflater.inflate(R.layout.dialog_font_info_item, itemsContainer, false);
