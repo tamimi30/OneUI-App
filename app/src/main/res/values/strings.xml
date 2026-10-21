@@ -105,7 +105,7 @@
     <string name="axis_info_roundness_description">Adjust shapes from angular defaults (0%) to become increasingly rounded (up to 100%).</string>
     <string name="axis_info_monospace_description">Adjust the style from Proportional (natural widths, default) to Monospace (fixed width). With proportional spacing, each glyph takes up a unique amount of space on a line, while monospace is when all glyphs have the same total character width.</string>
 	
-    <!-- الخطوط المحلية -->
+    <!-- Local fonts -->
     <string name="drawer_local_fonts">Local fonts</string>
     <string name="local_fonts_empty_title">No fonts in this folder</string>
     <string name="local_fonts_empty_message">Copy the fonts to this folder to display them here, or click on the three-dot icon at the top and choose another folder.</string>
@@ -118,18 +118,18 @@
 	<string name="toast_error_with_message">Error: %1$s</string>
 	<string name="error_folder_path_conversion_failed">Could not convert selected folder to direct path. Please select a folder in internal or external storage.</string>
     
-    <!-- خطوط النظام -->
+    <!-- System fonts -->
     <string name="drawer_system_fonts">System fonts</string>
     <string name="system_fonts_empty">No system fonts found</string>
     <string name="system_fonts_api_unavailable">System Fonts API is not available</string>
     <string name="system_fonts_requires_api_29">This feature requires Android 10 (API 29) or higher</string>
     
-    <!-- المفضلة -->
+    <!-- Favorites -->
     <string name="drawer_favorites">Favorites</string>
     <string name="favorites_empty_title">No fonts in Favorites yet</string>
     <string name="favorites_empty_message">Long-press on any font in the Local fonts to add it here.</string>
     
-    <!-- سلة المحذوفات -->
+    <!-- Trash -->
     <string name="drawer_trash">Trash</string>
     <string name="toast_prepare_file_to_open">Prepare this file to open</string>
     <string name="trash_items_expiry_info">The items are displayed with the remaining days to be permanently deleted.</string>
@@ -137,7 +137,7 @@
     <string name="trash_empty_description">Any files you delete will stay in the Trash for 30 days before being permanently deleted.</string>
     <string name="action_empty_trash">Empty</string>
     
-    <!-- شريط الاجراءات -->
+    <!-- Action bar -->
     <string name="action_favorite">Add to favorites</string>
     <string name="action_unfavorite">Remove from favorites</string>
     <string name="action_rename">Rename</string>
@@ -155,15 +155,15 @@
     <string name="error_file_exists">The file name already in use</string>
     <string name="error_invalid_name">Invalid name</string>
     
-    <!-- الإشعارات -->
+    <!-- Notification -->
     <string name="trash_notif_channel_name">Trash</string>
     <string name="trash_notif_channel_desc">Trash operation notifications</string>
     
-     <!-- البحث -->
+     <!-- Search -->
     <string name="search_font">Search</string>
     <string name="no_results_found">No results found</string>
     
-    <!-- شريط الفرز -->
+    <!-- Sort bar -->
     <string name="sort_size">Size</string>
     <string name="sort_date">Date</string>
     <string name="sort_name">Name</string>
