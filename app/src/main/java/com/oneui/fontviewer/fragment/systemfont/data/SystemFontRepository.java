@@ -250,6 +250,7 @@ public class SystemFontRepository {
     private void extractSystemFontsWeightWidthInBackground() {
         executorService.execute(() -> {
             try {
+                fontDao.resetLegacyWeightWidthLabels();
                 List<FontEntity> fontsWithoutLabel = fontDao.getFontsWithoutWeightWidth(500);
 
                 fontsWithoutLabel.sort((f1, f2) -> Long.compare(f1.getSize(), f2.getSize()));
