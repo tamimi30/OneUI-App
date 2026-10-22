@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:gravity="center_vertical"
     android:layout_gravity="center_vertical"
-    android:background="@color/oui_round_and_bgcolor"
+    android:background="?roundedCornerColor"
     android:paddingStart="18dp"
     android:paddingEnd="18dp"
     android:paddingTop="22dp"
