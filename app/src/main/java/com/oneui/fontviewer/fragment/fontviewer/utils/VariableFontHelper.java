@@ -266,7 +266,7 @@ public class VariableFontHelper {
 
     /**
      * محور التباعد الأحادي (MONO). Proportional = الحد الأدنى (القيمة الأصغر)،
-     * Monospace = الحد الأقصى (القيمة الأكبر) — مرتبة تصاعدياً حسب القيمة كما هو مطلوب.
+     * Monospaced = الحد الأقصى (القيمة الأكبر) — مرتبة تصاعدياً حسب القيمة كما هو مطلوب.
      */
     public static List<VariableInstance> extractMonoInstances(Context context, File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
@@ -281,7 +281,7 @@ public class VariableFontHelper {
 
         if (maxMono > minMono) {
             instances.add(new VariableInstance(context.getString(R.string.font_info_mono_proportional), AXIS_MONO, minMono));
-            instances.add(new VariableInstance(context.getString(R.string.font_info_axis_monospace), AXIS_MONO, maxMono));
+            instances.add(new VariableInstance(context.getString(R.string.font_info_mono_monospaced), AXIS_MONO, maxMono));
         }
 
         return instances;
