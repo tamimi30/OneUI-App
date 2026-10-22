@@ -118,6 +118,7 @@
     <string name="font_info_grade_high">مرتفع</string>
     <string name="font_info_roundness_sharp">حاد</string>
     <string name="font_info_roundness_rounded">مستدير</string>
+    <string name="font_info_mono_monospaced">أحادي المسافة</string>
     <string name="font_info_mono_proportional">متناسب المسافة</string>
     <string name="font_info_script_latin">لاتيني</string>
     <string name="font_info_script_arabic">عربي</string>
@@ -158,15 +159,15 @@
     <string name="font_info_list_separator">"، "</string>
     <string name="font_info_hinted_improved">مُحسّن</string>
     <string name="font_info_hinted_not_improved">غير مُحسّن</string>
-
-	<!-- Axis info Dialog title -->
+    
+    <!-- Axis info -->
+    <string name="axis_info_weight_dialog_title">الوزن (wght)</string>
+    <string name="axis_info_width_dialog_title">العرض (wdth)</string>
+    <string name="axis_info_italic_dialog_title">مائل (ital)</string>
+    <string name="axis_info_grade_dialog_title">الدرجة (GRAD)</string>
+    <string name="axis_info_roundness_dialog_title">الاستدارة (ROND)</string>
+    <string name="axis_info_monospace_dialog_title">أحادي المسافة (MONO)</string>
     <string name="axis_info_button_description">معلومات المحور</string>
-    <string name="axis_info_weight_title">الوزن (wght)</string>
-    <string name="axis_info_width_title">العرض (wdth)</string>
-    <string name="axis_info_italic_title">مائل (ital)</string>
-    <string name="axis_info_grade_title">الدرجة (GRAD)</string>
-    <string name="axis_info_roundness_title">الاستدارة (ROND)</string>
-    <string name="axis_info_monospace_title">أحادي المسافة (MONO)</string>
 
 	<!-- TODO: fill in the explanatory text for each axis -->
     <string name="axis_info_weight_description">قم بضبط النمط من الأخف إلى الأثقل في اللون الطباعي، من خلال تغيير أوزان الخطوط والفواصل والمسافات بين الحروف وجوانب أخرى للطباعة. عادةً ما يؤدي هذا إلى تغيير العرض الكلي، وبالتالي يمكن استخدامه بالتزامن مع محاور العرض والدرجة.</string>
