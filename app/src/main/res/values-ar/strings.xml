@@ -159,8 +159,10 @@
     <string name="font_info_list_separator">"، "</string>
     <string name="font_info_hinted_improved">مُحسّن</string>
     <string name="font_info_hinted_not_improved">غير مُحسّن</string>
+
+	<string name="axis_info_button_description">معلومات المحور</string>
     
-    <!-- VF Axes info -->
+    <!-- VF Axes info dialog title -->
 	<string name="vf_axes_title">المحاور المتغيرة</string>
     <string name="axis_info_weight_dialog_title">الوزن (wght)</string>
     <string name="axis_info_width_dialog_title">العرض (wdth)</string>
@@ -168,7 +170,6 @@
     <string name="axis_info_grade_dialog_title">الدرجة (GRAD)</string>
     <string name="axis_info_roundness_dialog_title">الاستدارة (ROND)</string>
     <string name="axis_info_monospace_dialog_title">أحادي المسافة (MONO)</string>
-    <string name="axis_info_button_description">معلومات المحور</string>
 
 	<!-- VF Axes info description -->
     <string name="axis_info_weight_description">قم بضبط النمط من الأخف إلى الأثقل في اللون الطباعي، من خلال تغيير أوزان الخطوط والفواصل والمسافات بين الحروف وجوانب أخرى للطباعة. عادةً ما يؤدي هذا إلى تغيير العرض الكلي، وبالتالي يمكن استخدامه بالتزامن مع محاور العرض والدرجة.</string>
