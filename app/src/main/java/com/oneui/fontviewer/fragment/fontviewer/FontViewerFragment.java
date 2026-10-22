@@ -421,17 +421,17 @@ public class FontViewerFragment extends Fragment {
         ViewGroup axesRow = view.findViewById(R.id.variable_axes_row);
 
         weightAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_WGHT,
-                R.string.font_info_axis_weight, R.string.axis_info_weight_title, R.drawable.axis_weight_info_img, R.string.axis_info_weight_description);
+                R.string.font_info_axis_weight, R.string.axis_info_weight_dialog_title, R.drawable.axis_weight_info_img, R.string.axis_info_weight_description);
         widthAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_WDTH,
-                R.string.font_info_axis_width, R.string.axis_info_width_title, R.drawable.axis_width_info_img, R.string.axis_info_width_description);
+                R.string.font_info_axis_width, R.string.axis_info_width_dialog_title, R.drawable.axis_width_info_img, R.string.axis_info_width_description);
         italicAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_ITAL,
-                R.string.font_info_axis_italic, R.string.axis_info_italic_title, R.drawable.axis_italic_info_img, R.string.axis_info_italic_description);
+                R.string.font_info_axis_italic, R.string.axis_info_italic_dialog_title, R.drawable.axis_italic_info_img, R.string.axis_info_italic_description);
         gradeAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_GRAD,
-                R.string.font_info_axis_grade, R.string.axis_info_grade_title, R.drawable.axis_grade_info_img, R.string.axis_info_grade_description);
+                R.string.font_info_axis_grade, R.string.axis_info_grade_dialog_title, R.drawable.axis_grade_info_img, R.string.axis_info_grade_description);
         roundnessAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_ROND,
-                R.string.font_info_axis_roundness, R.string.axis_info_roundness_title, R.drawable.axis_roundness_info_img, R.string.axis_info_roundness_description);
+                R.string.font_info_axis_roundness, R.string.axis_info_roundness_dialog_title, R.drawable.axis_roundness_info_img, R.string.axis_info_roundness_description);
         monoAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_MONO,
-                R.string.font_info_axis_monospace, R.string.axis_info_monospace_title, R.drawable.axis_monospace_info_img, R.string.axis_info_monospace_description);
+                R.string.font_info_axis_monospace, R.string.axis_info_monospace_dialog_title, R.drawable.axis_monospace_info_img, R.string.axis_info_monospace_description);
 
         allAxisUis = new ArrayList<>();
         allAxisUis.add(weightAxisUi);
