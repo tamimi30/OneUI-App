@@ -347,6 +347,10 @@ public class FontInfoDialog {
             case "SOFT": return R.string.font_info_axis_softness;
             case "WONK": return R.string.font_info_axis_wonky;
             case "FILL": return R.string.font_info_axis_fill;
+            case "ELSH": return R.string.font_info_axis_element_shape;
+            case "ELXP": return R.string.font_info_axis_element_expansion;
+            case "MORF": return R.string.font_info_axis_morph;
+            case "SHLN": return R.string.font_info_axis_shadow_length;
             default: return 0;
         }
     }
