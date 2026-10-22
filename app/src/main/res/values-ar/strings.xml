@@ -159,6 +159,8 @@
     <string name="font_info_hinted_improved">مُحسّن</string>
     <string name="font_info_hinted_not_improved">غير مُحسّن</string>
 
+	<!-- Axis info Dialog title -->
+    <string name="axis_info_button_description">معلومات المحور</string>
     <string name="axis_info_weight_title">الوزن (wght)</string>
     <string name="axis_info_width_title">العرض (wdth)</string>
     <string name="axis_info_italic_title">مائل (ital)</string>
