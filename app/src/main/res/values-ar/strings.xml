@@ -93,23 +93,23 @@
     <string name="font_info_label_path">المسار</string>
 
     <!-- Font info values -->
-    <string name="font_info_weight_thin">Thin</string>
-    <string name="font_info_weight_extra_light">Extra Light</string>
-    <string name="font_info_weight_light">Light</string>
-    <string name="font_info_weight_regular">Regular</string>
-    <string name="font_info_weight_medium">Medium</string>
-    <string name="font_info_weight_semi_bold">Semi Bold</string>
-    <string name="font_info_weight_bold">Bold</string>
-    <string name="font_info_weight_extra_bold">Extra Bold</string>
-    <string name="font_info_weight_black">Black</string>
+    <string name="font_info_weight_thin">نحيف</string>
+    <string name="font_info_weight_extra_light">خفيف إضافي</string>
+    <string name="font_info_weight_light">خفيف</string>
+    <string name="font_info_weight_regular">عادي</string>
+    <string name="font_info_weight_medium">متوسط</string>
+    <string name="font_info_weight_semi_bold">شبه عريض</string>
+    <string name="font_info_weight_bold">عريض</string>
+    <string name="font_info_weight_extra_bold">عريض إضافي</string>
+    <string name="font_info_weight_black">غامق</string>
     <string name="font_info_weight_other">Weight %1$d</string>
     <string name="font_info_width_ultra_condensed">Ultra Condensed</string>
     <string name="font_info_width_extra_condensed">Extra Condensed</string>
-    <string name="font_info_width_condensed">Condensed</string>
-    <string name="font_info_width_semi_condensed">Semi Condensed</string>
-    <string name="font_info_width_normal">Normal</string>
-    <string name="font_info_width_semi_expanded">Semi Expanded</string>
-    <string name="font_info_width_expanded">Expanded</string>
+    <string name="font_info_width_condensed">كثيف</string>
+    <string name="font_info_width_semi_condensed">شبه كثيف</string>
+    <string name="font_info_width_normal">عادي</string>
+    <string name="font_info_width_semi_expanded">شبه موسع</string>
+    <string name="font_info_width_expanded">موسع</string>
     <string name="font_info_width_extra_expanded">Extra Expanded</string>
     <string name="font_info_width_ultra_expanded">Ultra Expanded</string>
     <string name="font_info_width_other">Width %1$d</string>
@@ -173,11 +173,11 @@
 
 	<!-- VF Axes info description -->
     <string name="axis_info_weight_description">قم بضبط النمط من الأخف إلى الأثقل في اللون الطباعي، من خلال تغيير أوزان الخطوط والفواصل والمسافات بين الحروف وجوانب أخرى للطباعة. عادةً ما يؤدي هذا إلى تغيير العرض الكلي، وبالتالي يمكن استخدامه بالتزامن مع محاور العرض والدرجة.</string>
-    <string name="axis_info_width_description">Adjust the style from narrower to wider, by varying the proportions of counters, strokes, spacing and kerning, and other aspects of the type. This typically changes the typographic color in a subtle way, and so may be used in conjunction with Weight and Grade axes.</string>
-    <string name="axis_info_italic_description">Adjust the style from roman to italic. This can be provided as a continuous range within a single font file, like most axes, or as a toggle between two roman and italic files that form a family as a pair.</string>
-    <string name="axis_info_grade_description">Finesse the style from lighter to bolder in typographic color, without any changes overall width, line breaks or page layout. Negative grade makes the style lighter, while positive grade makes it bolder. The units are the same as in the Weight axis.</string>
-    <string name="axis_info_roundness_description">Adjust shapes from angular defaults (0%) to become increasingly rounded (up to 100%).</string>
-    <string name="axis_info_monospace_description">Adjust the style from Proportional (natural widths, default) to Monospace (fixed width). With proportional spacing, each glyph takes up a unique amount of space on a line, while monospace is when all glyphs have the same total character width.</string>
+    <string name="axis_info_width_description">قم بضبط النمط من ضيق إلى واسع، عن طريق تغيير نسب الحروف، والخطوط، والتباعد والتقارب بين الحروف، وجوانب أخرى من الطباعة. عادةً ما يؤدي ذلك إلى تغيير اللون الطباعي بطريقة دقيقة، وبالتالي يمكن استخدامه جنبًا إلى جنب مع محاور الوزن والدرجة.</string>
+    <string name="axis_info_italic_description">قم بتغيير النمط من روماني إلى مائل. يمكن تقديم ذلك كنطاق مستمر داخل ملف خط واحد، مثل معظم المحاور، أو كخيار للتبديل بين ملفين روماني ومائل يشكلان مجموعة كثنائي.</string>
+    <string name="axis_info_grade_description">قم بضبط الأسلوب من الأخف إلى الأثقل في لون الطباعة، دون أي تغييرات في العرض الكلي، أو فواصل الأسطر، أو تخطيط الصفحة. تجعل الدرجة السالبة الأسلوب أخف، بينما تجعل الدرجة الموجبة الأسلوب أثقل. الوحدات هي نفسها المستخدمة في محور الوزن.</string>
+    <string name="axis_info_roundness_description">اضبط الأشكال من الإعدادات الافتراضية الزاويّة (0٪) لتصبح أكثر استدارة تدريجياً (حتى 100٪).</string>
+    <string name="axis_info_monospace_description">غيّر النمط من متناسب (عرض طبيعي، افتراضي) إلى أحادي المسافة (عرض ثابت). في التباعد المتناسب، يشغل كل حرف مساحة فريدة على السطر، بينما في أحادي المسافة، يكون لجميع الأحرف نفس العرض الإجمالي.</string>
     
     <!-- Local fonts -->
     <string name="drawer_local_fonts">الخطوط المحلية</string>
