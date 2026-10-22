@@ -130,6 +130,11 @@ public interface FontDao {
     @Query("SELECT * FROM fonts WHERE weight_width_label IS NULL LIMIT :limit")
     List<FontEntity> getFontsWithoutWeightWidth(int limit);
 
+    // ترحيل: أي نص مخزّن بالصيغة القديمة (اسم جاهز مثل "Bold • Condensed") يصبح NULL
+    // ليُعاد استخراجه بالصيغة الجديدة "وزن|عرض|متغير"
+    @Query("UPDATE fonts SET weight_width_label = NULL WHERE weight_width_label IS NOT NULL AND weight_width_label NOT LIKE '%|%|%'")
+    int resetLegacyWeightWidthLabels();
+
     @Query("UPDATE fonts SET is_favorite = :isFavorite, updated_at = :timestamp WHERE path = :path")
     int updateFavoriteStatus(String path, boolean isFavorite, long timestamp);
 
