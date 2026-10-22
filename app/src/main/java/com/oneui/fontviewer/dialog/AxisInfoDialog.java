@@ -15,9 +15,9 @@ import com.oneui.fontviewer.R;
 
 public class AxisInfoDialog {
 
-    public static void show(Context context, String axisTitle, @DrawableRes int imageRes, @StringRes int descriptionRes) {
+    public static void show(Context context, @StringRes int titleRes, @DrawableRes int imageRes, @StringRes int descriptionRes) {
         AlertDialog dialog = new AlertDialog.Builder(context)
-                .setTitle(axisTitle)
+                .setTitle(titleRes)
                 .setMessage(" ")
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
