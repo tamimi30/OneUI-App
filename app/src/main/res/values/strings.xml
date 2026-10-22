@@ -113,6 +113,12 @@
     <string name="font_info_width_extra_expanded">Extra Expanded</string>
     <string name="font_info_width_ultra_expanded">Ultra Expanded</string>
     <string name="font_info_width_other">Width %1$d</string>
+    <string name="font_info_italic_upright">Upright</string>
+    <string name="font_info_grade_low">Low</string>
+    <string name="font_info_grade_high">High</string>
+    <string name="font_info_roundness_sharp">Sharp</string>
+    <string name="font_info_roundness_rounded">Rounded</string>
+    <string name="font_info_mono_proportional">Proportional</string>
     <string name="font_info_script_latin">Latin</string>
     <string name="font_info_script_arabic">Arabic</string>
     <string name="font_info_script_cyrillic">Cyrillic</string>
@@ -154,6 +160,12 @@
     <string name="font_info_hinted_not_improved">Not improved</string>
 	
 	<string name="axis_info_button_description">Axis info</string>
+    <string name="axis_info_weight_title">Weight (wght)</string>
+    <string name="axis_info_width_title">Width (wdth)</string>
+    <string name="axis_info_italic_title">Italic (ital)</string>
+    <string name="axis_info_grade_title">Grade (GRAD)</string>
+    <string name="axis_info_roundness_title">Roundness (ROND)</string>
+    <string name="axis_info_monospace_title">Monospace (MONO)</string>
 
     <!-- TODO: fill in the explanatory text for each axis -->
     <string name="axis_info_weight_description">Adjust the style from lighter to bolder in typographic color, by varying stroke weights, spacing and kerning, and other aspects of the type. This typically changes overall width, and so may be used in conjunction with Width and Grade axes.</string>
