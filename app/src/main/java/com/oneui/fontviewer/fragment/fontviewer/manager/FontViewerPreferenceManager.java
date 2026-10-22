@@ -185,8 +185,8 @@ public class FontViewerPreferenceManager {
         dataStore.setViewerFontMono(monoValue)
                 .subscribeOn(Schedulers.io())
                 .subscribe(
-                    prefs -> Log.d(TAG, "Saved font mono: " + monoValue),
-                    error -> Log.e(TAG, "Error saving font mono: " + error.getMessage())
+                    prefs -> Log.d(TAG, "Saved font monospace: " + monoValue),
+                    error -> Log.e(TAG, "Error saving font monospace: " + error.getMessage())
                 );
     }
 
@@ -195,7 +195,7 @@ public class FontViewerPreferenceManager {
             Float value = dataStore.getViewerFontMono().blockingFirst();
             return value != null ? value : defaultMono;
         } catch (Exception e) {
-            Log.e(TAG, "Error getting font mono: " + e.getMessage());
+            Log.e(TAG, "Error getting font monospace: " + e.getMessage());
             return defaultMono;
         }
     }
