@@ -762,8 +762,10 @@ public class FontViewerFragment extends Fragment {
 
         variableAxesContainer.setVisibility(View.GONE);
 
-        if (label != null && !label.isEmpty()) {
-            weightLabelText.setText(label);
+        String displayLabel = FontWeightWidthExtractor.formatLabel(weightLabelText.getContext(), label);
+
+        if (displayLabel != null && !displayLabel.isEmpty()) {
+            weightLabelText.setText(displayLabel);
             weightLabelText.setVisibility(View.VISIBLE);
         } else {
             weightLabelText.setVisibility(View.GONE);
