@@ -158,7 +158,8 @@
     <string name="font_info_list_separator">", "</string>
 	<string name="font_info_hinted_improved">Improved</string>
     <string name="font_info_hinted_not_improved">Not improved</string>
-	
+
+	<!-- Axis info dialog title -->
 	<string name="axis_info_button_description">Axis info</string>
     <string name="axis_info_weight_title">Weight (wght)</string>
     <string name="axis_info_width_title">Width (wdth)</string>
