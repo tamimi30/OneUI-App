@@ -145,6 +145,10 @@
     <string name="font_info_axis_softness">Softness</string>
     <string name="font_info_axis_wonky">Wonky</string>
     <string name="font_info_axis_fill">Fill</string>
+    <string name="font_info_axis_element_shape">Element Shape</string>
+    <string name="font_info_axis_element_expansion">Element Expansion</string>
+    <string name="font_info_axis_morph">Morph</string>
+    <string name="font_info_axis_shadow_length">Shadow Length</string>
     <string name="font_info_list_separator">", "</string>
 	<string name="font_info_hinted_improved">Improved</string>
     <string name="font_info_hinted_not_improved">Not improved</string>
