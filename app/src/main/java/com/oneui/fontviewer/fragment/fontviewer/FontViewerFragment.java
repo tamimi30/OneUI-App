@@ -20,8 +20,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -419,17 +421,17 @@ public class FontViewerFragment extends Fragment {
         ViewGroup axesRow = view.findViewById(R.id.variable_axes_row);
 
         weightAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_WGHT,
-                "Weight", "Weight (wght)", R.drawable.weight_info_img, R.string.axis_info_weight_description);
+                R.string.font_info_axis_weight, R.string.axis_info_weight_title, R.drawable.axis_weight_info_img, R.string.axis_info_weight_description);
         widthAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_WDTH,
-                "Width", "Width (wdth)", R.drawable.width_info_img, R.string.axis_info_width_description);
+                R.string.font_info_axis_width, R.string.axis_info_width_title, R.drawable.axis_width_info_img, R.string.axis_info_width_description);
         italicAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_ITAL,
-                "Italic", "Italic (ital)", R.drawable.italic_info_img, R.string.axis_info_italic_description);
+                R.string.font_info_axis_italic, R.string.axis_info_italic_title, R.drawable.axis_italic_info_img, R.string.axis_info_italic_description);
         gradeAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_GRAD,
-                "Grade", "Grade (GRAD)", R.drawable.grade_info_img, R.string.axis_info_grade_description);
+                R.string.font_info_axis_grade, R.string.axis_info_grade_title, R.drawable.axis_grade_info_img, R.string.axis_info_grade_description);
         roundnessAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_ROND,
-                "Roundness", "Roundness (ROND)", R.drawable.roundness_info_img, R.string.axis_info_roundness_description);
+                R.string.font_info_axis_roundness, R.string.axis_info_roundness_title, R.drawable.axis_roundness_info_img, R.string.axis_info_roundness_description);
         monoAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_MONO,
-                "Mono", "Monospace (MONO)", R.drawable.monospace_info_img, R.string.axis_info_monospace_description);
+                R.string.font_info_axis_monospace, R.string.axis_info_monospace_title, R.drawable.axis_monospace_info_img, R.string.axis_info_monospace_description);
 
         allAxisUis = new ArrayList<>();
         allAxisUis.add(weightAxisUi);
@@ -446,14 +448,15 @@ public class FontViewerFragment extends Fragment {
      *   عند إنشاء الـ Fragment (initViews)، وليس عند كل فتح خط، فلا توجد أي كلفة أداء إضافية
      *   عند فتح الخطوط لاحقاً — نفس عدد الـ Views ونفس منطق الإظهار/الإخفاء كما كان سابقاً ★
      */
-    private AxisSpinnerUi inflateAxisItem(ViewGroup parent, String axisTag, String labelText,
-                                           String infoTitle, int infoImageRes, int infoDescriptionRes) {
+    private AxisSpinnerUi inflateAxisItem(ViewGroup parent, String axisTag, @StringRes int labelRes,
+                                           @StringRes int infoTitleRes, @DrawableRes int infoImageRes,
+                                           @StringRes int infoDescriptionRes) {
         View item = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.vf_axis_item, parent, false);
 
         TextView nameText = item.findViewById(R.id.axis_name_text);
         if (nameText != null) {
-            nameText.setText(labelText);
+            nameText.setText(labelRes);
         }
 
         AppCompatSpinner spinner = item.findViewById(R.id.axis_spinner);
@@ -461,7 +464,7 @@ public class FontViewerFragment extends Fragment {
         View infoContainer = item.findViewById(R.id.axis_info_icon_container);
         if (infoContainer != null) {
             infoContainer.setOnClickListener(v ->
-                    AxisInfoDialog.show(requireContext(), infoTitle, infoImageRes, infoDescriptionRes));
+                    AxisInfoDialog.show(requireContext(), infoTitleRes, infoImageRes, infoDescriptionRes));
         }
 
         parent.addView(item);
@@ -556,6 +559,8 @@ public class FontViewerFragment extends Fragment {
                 }
 
                 boolean isVar = VariableFontHelper.isVariableFont(fontFile, currentTtcIndex);
+                // Context يُستخدم لقراءة أسماء قيم المحاور من strings.xml حسب لغة التطبيق
+                Context axisValuesContext = requireContext();
 
                 // خريطة وسم المحور الى قائمة القيم المسمّاة المتاحة له
                 Map<String, List<VariableFontHelper.VariableInstance>> axisInstancesMap = new LinkedHashMap<>();
@@ -563,12 +568,12 @@ public class FontViewerFragment extends Fragment {
                 Map<String, Float> resolvedAxisValues = new LinkedHashMap<>();
 
                 if (isVar) {
-                    axisInstancesMap.put(VariableFontHelper.AXIS_WGHT, VariableFontHelper.extractVariableInstances(fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_WDTH, VariableFontHelper.extractWidthInstances(fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_ITAL, VariableFontHelper.extractItalicInstances(fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_GRAD, VariableFontHelper.extractGradeInstances(fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_ROND, VariableFontHelper.extractRoundnessInstances(fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_MONO, VariableFontHelper.extractMonoInstances(fontFile, currentTtcIndex));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_WGHT, VariableFontHelper.extractVariableInstances(axisValuesContext, fontFile, currentTtcIndex));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_WDTH, VariableFontHelper.extractWidthInstances(axisValuesContext, fontFile, currentTtcIndex));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_ITAL, VariableFontHelper.extractItalicInstances(axisValuesContext, fontFile, currentTtcIndex));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_GRAD, VariableFontHelper.extractGradeInstances(axisValuesContext, fontFile, currentTtcIndex));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_ROND, VariableFontHelper.extractRoundnessInstances(axisValuesContext, fontFile, currentTtcIndex));
+                    axisInstancesMap.put(VariableFontHelper.AXIS_MONO, VariableFontHelper.extractMonoInstances(axisValuesContext, fontFile, currentTtcIndex));
 
                     for (Map.Entry<String, List<VariableFontHelper.VariableInstance>> entry : axisInstancesMap.entrySet()) {
                         String axisTag = entry.getKey();
