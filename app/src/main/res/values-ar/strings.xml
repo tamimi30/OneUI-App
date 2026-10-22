@@ -145,6 +145,10 @@
     <string name="font_info_axis_softness">النعومة</string>
     <string name="font_info_axis_wonky">غير منتظم</string>
     <string name="font_info_axis_fill">التعبئة</string>
+    <string name="font_info_axis_element_shape">شكل العنصر</string>
+    <string name="font_info_axis_element_expansion">تمدد العنصر</string>
+    <string name="font_info_axis_morph">التحوّل</string>
+    <string name="font_info_axis_shadow_length">طول الظل</string>
     <string name="font_info_list_separator">"، "</string>
     <string name="font_info_hinted_improved">مُحسّن</string>
     <string name="font_info_hinted_not_improved">غير مُحسّن</string>
