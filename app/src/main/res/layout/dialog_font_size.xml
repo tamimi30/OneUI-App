@@ -49,8 +49,6 @@
         android:minWidth="80dp"
         android:text="34"
         android:textSize="30sp"
-        app:fontFamily="sec-roboto-light"
-        android:textStyle="bold"
         android:textColor="?android:attr/textColorPrimary"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
