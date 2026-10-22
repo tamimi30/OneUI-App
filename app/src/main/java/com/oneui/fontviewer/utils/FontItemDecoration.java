@@ -27,7 +27,7 @@ import com.oneui.fontviewer.R;
  *     وآخر خط على زوايا سفلية مدورة (الـ Bottom space تحته)،
  *     والخط الوحيد على الأربع، وعناصر المنتصف بلا زوايا، دون أي كود داخل المحوّل.
  *
- * كما تملأ المنطقة التي تحت الـ Bottom space بلون الخلفية الخارجية (oui_round_and_bgcolor) في كل إطار،
+ * كما تملأ المنطقة التي تحت الـ Bottom space بلون الخلفية الخارجية (roundedCornerColor) في كل إطار،
  * متتبعةً موضعه الفعلي أثناء الأنيميشن، حتى لا تظهر خلفية القائمة الرمادية تحته (انظر seslOnDispatchDraw).
  *
  * الاستخدام: القائمة تحتاج android:background بلون oui_background_color على الـ RecyclerView،
@@ -62,13 +62,19 @@ public class FontItemDecoration extends RecyclerView.ItemDecoration {
         // mutate حتى لا يؤثر تغيير الشفافية أثناء الأنيميشن على بقية الأماكن التي تستخدم نفس الـ Drawable
         divider = dividerDrawable != null ? dividerDrawable.mutate() : null;
 
+        // لون ?roundedCornerColor من الثيم الحالي
+        TypedValue roundedCornerColorValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.roundedCornerColor, roundedCornerColorValue, true);
+        int roundedCornerColor = roundedCornerColorValue.resourceId != 0
+            ? ContextCompat.getColor(context, roundedCornerColorValue.resourceId)
+            : roundedCornerColorValue.data;
+
         roundedCorner = new SeslSubheaderRoundedCorner(context);
         roundedCorner.setRoundedCorners(SeslRoundedCorner.ROUNDED_CORNER_ALL);
         // نفس لون خلفية شريط الفرز والـ Bottom space، ليبدو القص سلساً
-        roundedCorner.setRoundedCornerColor(SeslRoundedCorner.ROUNDED_CORNER_ALL,
-            ContextCompat.getColor(context, R.color.oui_round_and_bgcolor));
+        roundedCorner.setRoundedCornerColor(SeslRoundedCorner.ROUNDED_CORNER_ALL, roundedCornerColor);
 
-        bottomFillPaint.setColor(ContextCompat.getColor(context, R.color.oui_round_and_bgcolor));
+        bottomFillPaint.setColor(roundedCornerColor);
         bottomFillPaint.setStyle(Paint.Style.FILL);
     }
     
