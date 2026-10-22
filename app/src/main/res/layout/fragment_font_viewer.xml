@@ -24,7 +24,6 @@
             <dev.oneuiproject.oneui.widget.Separator
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textDirection="ltr"
                 android:text="@string/vf_axes_title" />
 
             <LinearLayout
@@ -37,7 +36,6 @@
                 <com.oneui.fontviewer.widget.OneUiHorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layoutDirection="ltr"
                     android:scrollbars="none"
                     android:overScrollMode="always">
                     	
@@ -46,7 +44,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layoutDirection="ltr"
                         android:layout_gravity="center_vertical" />
                 
                 </com.oneui.fontviewer.widget.OneUiHorizontalScrollView>
