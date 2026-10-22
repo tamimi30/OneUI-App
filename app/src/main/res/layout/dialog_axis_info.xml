@@ -21,7 +21,7 @@
         app:fontFamily="sec-roboto-light"
         android:textStyle="normal"
         android:lineSpacingExtra="4sp"
-        android:textColor="@color/sesl_description_text_color"
+        android:textColor="@color/description_text_color"
         android:textSize="13sp" />
 
 </LinearLayout>
