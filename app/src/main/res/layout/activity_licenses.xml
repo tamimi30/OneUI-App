@@ -26,7 +26,7 @@
                 android:id="@+id/license_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/sesl_description_text_color"
+                android:textColor="@color/description_text_color"
                 android:textSize="16dp"
                 android:lineSpacingExtra="4dp"
                 android:textAlignment="viewStart"
