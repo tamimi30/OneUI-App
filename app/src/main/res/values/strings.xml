@@ -161,6 +161,7 @@
     <string name="font_info_hinted_not_improved">Not improved</string>
 	
 	<!-- Axis info -->
+	<string name="vf_axes_title">Variable Axes</string>
     <string name="axis_info_weight_dialog_title">Weight (wght)</string>
     <string name="axis_info_width_dialog_title">Width (wdth)</string>
     <string name="axis_info_italic_dialog_title">Italic (ital)</string>
