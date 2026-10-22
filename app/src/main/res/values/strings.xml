@@ -118,6 +118,7 @@
     <string name="font_info_grade_high">High</string>
     <string name="font_info_roundness_sharp">Sharp</string>
     <string name="font_info_roundness_rounded">Rounded</string>
+    <string name="font_info_mono_monospaced">Monospaced</string>
     <string name="font_info_mono_proportional">Proportional</string>
     <string name="font_info_script_latin">Latin</string>
     <string name="font_info_script_arabic">Arabic</string>
@@ -158,16 +159,16 @@
     <string name="font_info_list_separator">", "</string>
 	<string name="font_info_hinted_improved">Improved</string>
     <string name="font_info_hinted_not_improved">Not improved</string>
-
-	<!-- Axis info dialog title -->
-	<string name="axis_info_button_description">Axis info</string>
-    <string name="axis_info_weight_title">Weight (wght)</string>
-    <string name="axis_info_width_title">Width (wdth)</string>
-    <string name="axis_info_italic_title">Italic (ital)</string>
-    <string name="axis_info_grade_title">Grade (GRAD)</string>
-    <string name="axis_info_roundness_title">Roundness (ROND)</string>
-    <string name="axis_info_monospace_title">Monospace (MONO)</string>
-
+	
+	<!-- Axis info -->
+    <string name="axis_info_weight_dialog_title">Weight (wght)</string>
+    <string name="axis_info_width_dialog_title">Width (wdth)</string>
+    <string name="axis_info_italic_dialog_title">Italic (ital)</string>
+    <string name="axis_info_grade_dialog_title">Grade (GRAD)</string>
+    <string name="axis_info_roundness_dialog_title">Roundness (ROND)</string>
+    <string name="axis_info_monospace_dialog_title">Monospace (MONO)</string>
+    <string name="axis_info_button_description">Axis info</string>
+    
     <!-- TODO: fill in the explanatory text for each axis -->
     <string name="axis_info_weight_description">Adjust the style from lighter to bolder in typographic color, by varying stroke weights, spacing and kerning, and other aspects of the type. This typically changes overall width, and so may be used in conjunction with Width and Grade axes.</string>
     <string name="axis_info_width_description">Adjust the style from narrower to wider, by varying the proportions of counters, strokes, spacing and kerning, and other aspects of the type. This typically changes the typographic color in a subtle way, and so may be used in conjunction with Weight and Grade axes.</string>
