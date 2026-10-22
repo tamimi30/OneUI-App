@@ -1,6 +1,9 @@
 package com.oneui.fontviewer.metadata;
 
+import android.content.Context;
 import android.util.Log;
+
+import com.oneui.fontviewer.R;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -12,6 +15,9 @@ public class FontWeightWidthExtractor {
 
     private static final String VF_PREFIX = "VF";
 
+    // الصيغة المخزّنة: "وزن|عرض|متغير" (مثل 400|5|1)، ولا تتغير بتغير لغة التطبيق
+    private static final String RAW_SEPARATOR = "|";
+
 
     public static String extract(File fontFile, int ttcIndex) {
         if (fontFile == null || !fontFile.exists() || !fontFile.canRead()) {
@@ -21,19 +27,41 @@ public class FontWeightWidthExtractor {
             int[] ww = readWeightWidth(fontFile, ttcIndex);
             if (ww == null) return null;
 
-            boolean isVF  = isVariableFont(fontFile, ttcIndex);
-            String weight = getWeightName(ww[0]);
-            String width  = getWidthName(ww[1]);
-            String label  = buildLabel(weight, width);
-            
-            if (label == null) return null;
+            boolean hasWeight = ww[0] > 0;
+            boolean hasWidth  = hasWidthName(ww[1]);
+            if (!hasWeight && !hasWidth) return null;
 
-            return isVF ? VF_PREFIX + " • " + label : label;
+            boolean isVF = isVariableFont(fontFile, ttcIndex);
+
+            return ww[0] + RAW_SEPARATOR + ww[1] + RAW_SEPARATOR + (isVF ? "1" : "0");
 
         } catch (Exception e) {
             Log.w(TAG, "extract() failed for " + fontFile.getName() + ": " + e.getMessage());
             return null;
         }
+    }
+
+    // تحويل الصيغة المخزّنة لنص يُعرض حسب لغة التطبيق. أي نص لا يطابق الصيغة
+    // (مثل النصوص القديمة المخزّنة سابقاً) يُعاد كما هو
+    public static String formatLabel(Context context, String raw) {
+        if (raw == null || raw.isEmpty()) return raw;
+
+        String[] parts = raw.split("\\|", -1);
+        if (parts.length != 3) return raw;
+
+        int weightClass;
+        int widthClass;
+        try {
+            weightClass = Integer.parseInt(parts[0]);
+            widthClass  = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            return raw;
+        }
+
+        String label = buildLabel(getWeightName(context, weightClass), getWidthName(context, widthClass));
+        if (label == null) return null;
+
+        return "1".equals(parts[2]) ? VF_PREFIX + " • " + label : label;
     }
 
     private static int[] readWeightWidth(File fontFile, int ttcIndex) {
@@ -141,31 +169,39 @@ public class FontWeightWidthExtractor {
     }
 
 
-    public static String getWeightName(int w) {
-        if (w <= 0)   return null;
-        if (w <= 150) return "Thin";
-        if (w <= 250) return "Extra Light";
-        if (w <= 350) return "Light";
-        if (w <= 450) return "Regular";
-        if (w <= 550) return "Medium";
-        if (w <= 650) return "Semi Bold";
-        if (w <= 750) return "Bold";
-        if (w <= 850) return "Extra Bold";
-        return "Black";
+    public static String getWeightName(Context context, int w) {
+        if (w <= 0) return null;
+
+        switch (w) {
+            case 100: return context.getString(R.string.font_info_weight_thin);
+            case 200: return context.getString(R.string.font_info_weight_extra_light);
+            case 300: return context.getString(R.string.font_info_weight_light);
+            case 400: return context.getString(R.string.font_info_weight_regular);
+            case 500: return context.getString(R.string.font_info_weight_medium);
+            case 600: return context.getString(R.string.font_info_weight_semi_bold);
+            case 700: return context.getString(R.string.font_info_weight_bold);
+            case 800: return context.getString(R.string.font_info_weight_extra_bold);
+            case 900: return context.getString(R.string.font_info_weight_black);
+            default: return context.getString(R.string.font_info_weight_other, w);
+        }
     }
 
-    public static String getWidthName(int d) {
+    public static String getWidthName(Context context, int d) {
         switch (d) {
-            case 1: return "Ultra Condensed";
-            case 2: return "Extra Condensed";
-            case 3: return "Condensed";
-            case 4: return "Semi Condensed";
+            case 1: return context.getString(R.string.font_info_width_ultra_condensed);
+            case 2: return context.getString(R.string.font_info_width_extra_condensed);
+            case 3: return context.getString(R.string.font_info_width_condensed);
+            case 4: return context.getString(R.string.font_info_width_semi_condensed);
             case 5: return null; 
-            case 6: return "Semi Expanded";
-            case 7: return "Expanded";
-            case 8: return "Extra Expanded";
-            case 9: return "Ultra Expanded";
+            case 6: return context.getString(R.string.font_info_width_semi_expanded);
+            case 7: return context.getString(R.string.font_info_width_expanded);
+            case 8: return context.getString(R.string.font_info_width_extra_expanded);
+            case 9: return context.getString(R.string.font_info_width_ultra_expanded);
             default: return null;
         }
+    }
+
+    private static boolean hasWidthName(int d) {
+        return d >= 1 && d <= 9 && d != 5;
     }
 }
