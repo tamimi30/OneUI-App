@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
 import com.oneui.fontviewer.widget.search.FontTextHighlighter;
 import com.oneui.fontviewer.widget.SelectableLinearLayout;
 
@@ -67,8 +68,9 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
         }
 
         if (weightWidthTextView != null) {
-            String label = (weightWidthLabel != null && !weightWidthLabel.isEmpty())
-                    ? weightWidthLabel
+            String formattedLabel = FontWeightWidthExtractor.formatLabel(itemView.getContext(), weightWidthLabel);
+            String label = (formattedLabel != null && !formattedLabel.isEmpty())
+                    ? formattedLabel
                     : itemView.getContext().getString(R.string.unknown_font);
             weightWidthTextView.setText(label);
         }
