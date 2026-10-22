@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="12sp"
-        android:textColor="@color/sesl_description_text_color"
+        android:textColor="@color/description_text_color"
         android:lineSpacingExtra="4sp"
         tools:text="تظهر العناصر الأيام المتبقية حتى يتم حذفها نهائياً" />
 
