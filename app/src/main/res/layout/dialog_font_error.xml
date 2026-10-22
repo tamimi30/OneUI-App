@@ -33,6 +33,8 @@
         android:text="@string/font_metadata_error_message"
         android:textSize="13sp"
         app:fontFamily="sec-roboto-light"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
         android:textStyle="normal"
         android:textColor="@color/description_text_color"
         android:lineSpacingExtra="4sp" />
