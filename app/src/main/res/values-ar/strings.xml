@@ -161,6 +161,7 @@
     <string name="font_info_hinted_not_improved">غير مُحسّن</string>
     
     <!-- Axis info -->
+	<string name="vf_axes_title">المحاور المتغيرة</string>
     <string name="axis_info_weight_dialog_title">الوزن (wght)</string>
     <string name="axis_info_width_dialog_title">العرض (wdth)</string>
     <string name="axis_info_italic_dialog_title">مائل (ital)</string>
