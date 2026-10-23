@@ -8,7 +8,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?attr/listPreferredItemHeightSmall"
-    android:orientation="horizontal"
     android:clipToPadding="false"
     android:clipChildren="false"
     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
