@@ -79,7 +79,7 @@ public class FontViewerFragment extends Fragment {
     private static final long AXIS_ANIM_DURATION_MS = 600L;
     // منحنى Sine In-Out بأسلوب حركات سامسونج: تبدأ الحركة بنعومة ثم تتباطأ تدريجياً من قبل منتصفها
     // القيمة تتحكم بقوة التباطؤ: 0.30 = In-Out 70، 0.20 = In-Out 80، 0.10 = In-Out 90 (كلما قلّت زاد التباطؤ)
-    private static final float AXIS_ANIM_EASE_END = 0.20f;
+    private static final float AXIS_ANIM_EASE_END = 0.10f;
 
     // القيم الافتراضية الاحتياطية لكل محور، تُستخدم فقط اذا تعذّرت قراءة القيمة الافتراضية الفعلية
     // من جدول fvar الخاص بالخط نفسه
