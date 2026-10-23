@@ -57,7 +57,7 @@
     <string name="btn_italic">Italic</string>
     <string name="translating">Translating...</string>
     <string name="font_metadata_error_message">The font may be corrupted or lack metadata or unsupported format.</string>
-	<string name="font_metadata_error_title">Unable to extract font metadata</string>
+	<string name="font_metadata_error_title">Unable to extract metadata</string>
 	<string name="font_viewer_error_loading_font">Error loading font file</string>
 	<string name="toast_no_internet_connection">The metadata has not been translated, no internet connection.</string>
 	<string name="toast_translation_api_error">Metadata translation failed, translation service unavailable.</string>
