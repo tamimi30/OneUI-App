@@ -27,7 +27,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -69,7 +71,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private ExecutorService mExecutor;
     private AppBarLayout mAppBarLayout;
     private OneUiDrawerLayout mDrawerLayout;
-    private SortByItemLayout mSortBar;
 
     private LocalFontPermissionManager mLocalFontPermissionManager;
     private LocalFontDirectoryPicker mLocalFontDirectoryPicker;
@@ -83,6 +84,9 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private SearchViewModel mSearchViewModel;
     private SettingsViewModel mSettingsViewModel;
     private List<LocalFontListViewModel.FontFileInfoWithMetadata> mCurrentFontsList = new ArrayList<>();
+
+    // مسارات الخطوط المفضلة، لمعرفة حالة المفضلة بسرعة دون المرور على القائمة كاملة مع كل bind
+    private final Set<String> mFavoritePaths = new HashSet<>();
 
     private boolean mIsFirstLoad = true;
     private boolean mHasNotifiedReady = false;
@@ -252,6 +256,18 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         mSettingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
     }
 
+    // يحدّث القائمة الحالية وقائمة المسارات المفضلة معاً، ليبقيا متطابقين دائماً
+    private void updateCurrentFontsList(@NonNull List<LocalFontListViewModel.FontFileInfoWithMetadata> fonts) {
+        mCurrentFontsList = new ArrayList<>(fonts);
+
+        mFavoritePaths.clear();
+        for (LocalFontListViewModel.FontFileInfoWithMetadata font : mCurrentFontsList) {
+            if (font.isFavorite()) {
+                mFavoritePaths.add(font.getPath());
+            }
+        }
+    }
+
     private void setupViewModelObservers() {
         mViewModel.getFontsLiveData().observe(this, fonts -> {
             if (fonts != null) {
@@ -263,7 +279,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                     return;
                 }
 
-                mCurrentFontsList = new ArrayList<>(fonts);
+                updateCurrentFontsList(fonts);
 
                 if (mAdapter != null) {
                     mAdapter.setAllFontsMetadata(fonts);
@@ -337,7 +353,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             }
 
             if (!isProcessing && mPendingFontsUpdate != null) {
-                mCurrentFontsList = new ArrayList<>(mPendingFontsUpdate);
+                updateCurrentFontsList(mPendingFontsUpdate);
                 if (mAdapter != null) {
                     mAdapter.setAllFontsMetadata(mPendingFontsUpdate);
                     mAdapter.notifyAllFavoritesChanged();
@@ -423,7 +439,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private void initializeViews(@NonNull View view) {
         mRecyclerView = view.findViewById(R.id.font_recycler_view);
-        mSortBar = null;
 
         mUIManager.setViews(
             view.findViewById(R.id.select_folder_container),
@@ -498,14 +513,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             mSortManager.setSortOptions(type, asc);
         });
 
-        mAdapter.setFavoriteStatusProvider(fontPath -> {
-            for (LocalFontListViewModel.FontFileInfoWithMetadata font : mCurrentFontsList) {
-                if (font.getPath().equals(fontPath)) {
-                    return font.isFavorite();
-                }
-            }
-            return false;
-        });
+        mAdapter.setFavoriteStatusProvider(fontPath -> mFavoritePaths.contains(fontPath));
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -546,20 +554,10 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
             requireActivity(),
             mDrawerLayout,
             mAdapter,
-            mRecyclerView,
-            mSortBar
+            mRecyclerView
         );
 
-        mSelectionManager.setFavoriteStatusChecker(position -> {
-            String path = mAdapter.getFilePath(position);
-            if (path == null) return false;
-            for (LocalFontListViewModel.FontFileInfoWithMetadata font : mCurrentFontsList) {
-                if (font.getPath().equals(path)) {
-                    return font.isFavorite();
-                }
-            }
-            return false;
-        });
+        mSelectionManager.setFavoriteStatusChecker(path -> mFavoritePaths.contains(path));
 
         mAdapter.setSelectionListener(new LocalFontListAdapter.OnSelectionListener() {
             @Override
@@ -576,18 +574,18 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         mSelectionManager.setActionListener(new LocalFontSelectionManager.SelectionActionListener() {
             @Override
-            public void onRenameRequested(int position) {
-                handleRename(position);
+            public void onRenameRequested(String path) {
+                handleRename(path);
             }
 
             @Override
-            public void onDeleteRequested(List<Integer> positions) {
-                handleDelete(positions);
+            public void onDeleteRequested(List<String> paths) {
+                handleDelete(paths);
             }
 
             @Override
-            public void onFavoriteRequested(List<Integer> positions, boolean addToFavorites) {
-                handleFavoriteAction(positions, addToFavorites);
+            public void onFavoriteRequested(List<String> paths, boolean addToFavorites) {
+                handleFavoriteAction(paths, addToFavorites);
             }
         });
 
@@ -597,8 +595,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         );
     }
 
-    private void handleRename(int position) {
-        String path = mAdapter.getFilePath(position);
+    private void handleRename(String path) {
         if (path == null) return;
 
         RenameFontDialog.show(mContext, path, (oldPath, newFileName) -> {
@@ -622,16 +619,10 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         });
     }
 
-    private void handleDelete(List<Integer> positions) {
-        if (positions == null || positions.isEmpty()) return;
+    private void handleDelete(List<String> paths) {
+        if (paths == null || paths.isEmpty()) return;
 
-        List<String> pathsToMove = new ArrayList<>();
-        for (int position : positions) {
-            String path = mAdapter.getFilePath(position);
-            if (path != null) pathsToMove.add(path);
-        }
-
-        if (pathsToMove.isEmpty()) return;
+        List<String> pathsToMove = new ArrayList<>(paths);
 
         int count = pathsToMove.size();
 
@@ -774,16 +765,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         Log.d(TAG, "reconnectToProgressDialog: progress dialog reopened successfully");
     }
 
-    private void handleFavoriteAction(List<Integer> positions, boolean addToFavorites) {
-        if (positions == null || positions.isEmpty()) return;
-
-        List<String> paths = new ArrayList<>();
-        for (int position : positions) {
-            String path = mAdapter.getFilePath(position);
-            if (path != null) paths.add(path);
-        }
-
-        if (paths.isEmpty()) return;
+    private void handleFavoriteAction(List<String> paths, boolean addToFavorites) {
+        if (paths == null || paths.isEmpty()) return;
 
         mSelectionManager.setSelecting(false);
 
@@ -1039,7 +1022,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         mDrawerLayout = null;
         mRecyclerView = null;
         mAdapter      = null;
-        mSortBar      = null;
     }
 
     @Override
