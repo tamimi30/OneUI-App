@@ -32,9 +32,9 @@ public class SortHeaderViewHolder extends RecyclerView.ViewHolder {
     
     public void setSortEnabled(boolean enabled) {
         if (sortLayout != null) {
+            // SortByItemLayout.setEnabled تتولى تعطيل الأزرار الداخلية وضبط الشفافية (0.4 / 1.0)،
+            // فلا حاجة لتكرار setAlpha أو setClickable هنا
             sortLayout.setEnabled(enabled);
-            sortLayout.setClickable(enabled);
-            sortLayout.setAlpha(enabled ? 1.0f : 0.4f);
         }
     }
 }
