@@ -1,26 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/trash_header_message"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center_vertical"
-    android:layout_gravity="center_vertical"
     android:background="?roundedCornerColor"
     android:paddingStart="18dp"
     android:paddingEnd="18dp"
     android:paddingTop="22dp"
-    android:paddingBottom="22dp">
-    
-    <TextView
-        android:id="@+id/trash_header_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="@color/description_text_color"
-        android:lineSpacingExtra="4sp"
-        tools:text="تظهر العناصر الأيام المتبقية حتى يتم حذفها نهائياً" />
-
-</LinearLayout>
+    android:paddingBottom="22dp"
+    android:textSize="12sp"
+    android:textColor="@color/description_text_color"
+    android:lineSpacingExtra="4sp"
+    tools:text="تظهر العناصر الأيام المتبقية حتى يتم حذفها نهائياً" />
