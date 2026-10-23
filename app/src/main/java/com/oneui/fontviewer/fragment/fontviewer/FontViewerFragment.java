@@ -31,7 +31,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.PathInterpolator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,6 +77,9 @@ public class FontViewerFragment extends Fragment {
 
     // مدة أنيميشن تغيير قيمة أي محور (ثابتة لكل المحاور والانتقالات)
     private static final long AXIS_ANIM_DURATION_MS = 600L;
+    // منحنى Sine In-Out بأسلوب حركات سامسونج: تبدأ الحركة بنعومة ثم تتباطأ تدريجياً من قبل منتصفها
+    // القيمة تتحكم بقوة التباطؤ: 0.30 = In-Out 70، 0.20 = In-Out 80، 0.10 = In-Out 90 (كلما قلّت زاد التباطؤ)
+    private static final float AXIS_ANIM_EASE_END = 0.20f;
 
     // القيم الافتراضية الاحتياطية لكل محور، تُستخدم فقط اذا تعذّرت قراءة القيمة الافتراضية الفعلية
     // من جدول fvar الخاص بالخط نفسه
@@ -362,8 +365,7 @@ public class FontViewerFragment extends Fragment {
 
         ValueAnimator animator = ValueAnimator.ofFloat(oldValue, newValue);
         animator.setDuration(AXIS_ANIM_DURATION_MS);
-        // تباطؤ تدريجي (Ease-out): تبدأ الحركة فوراً ثم تهدأ عند الوصول، بدل البداية البطيئة في AccelerateDecelerate
-        animator.setInterpolator(new DecelerateInterpolator(1.5f));
+        animator.setInterpolator(new PathInterpolator(0.33f, 0f, AXIS_ANIM_EASE_END, 1f));
 
         animator.addUpdateListener(animation -> {
             float animatedValue = (float) animation.getAnimatedValue();
