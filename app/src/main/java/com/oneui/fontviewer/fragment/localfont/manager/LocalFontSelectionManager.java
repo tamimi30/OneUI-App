@@ -2,7 +2,6 @@ package com.oneui.fontviewer.fragment.localfont.manager;
 
 import android.content.res.Configuration;
 import android.os.Build;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,9 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.localfont.adapter.LocalFontListAdapter;
-import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.oneui.fontviewer.widget.OneUiDrawerLayout;
@@ -28,10 +25,8 @@ public class LocalFontSelectionManager {
     private final OneUiDrawerLayout drawerLayout;
     private final LocalFontListAdapter adapter;
     private final RecyclerView recyclerView;
-    private final SortByItemLayout sortBar;
     
     private boolean isSelecting = false;
-    private SparseBooleanArray selectedItems = new SparseBooleanArray();
     private boolean checkAllListening = true;
     
     private SelectionActionListener actionListener;
@@ -41,29 +36,31 @@ public class LocalFontSelectionManager {
     private FavoriteStatusChecker favoriteStatusChecker;
 
     public interface FavoriteStatusChecker {
-        boolean isFavorited(int position);
+        boolean isFavorited(String path);
     }
 
+    // الإجراءات تُمرَّر بمسارات الملفات وليس بمواضعها، لأن المواضع قد تتغير أثناء التحديد أو أثناء ظهور الحوارات
     public interface SelectionActionListener {
-        void onRenameRequested(int position);
-        void onDeleteRequested(List<Integer> positions);
+        void onRenameRequested(String path);
+        void onDeleteRequested(List<String> paths);
 
-        void onFavoriteRequested(List<Integer> positions, boolean addToFavorites);
+        void onFavoriteRequested(List<String> paths, boolean addToFavorites);
     }
 
     public LocalFontSelectionManager(FragmentActivity activity,
         OneUiDrawerLayout drawerLayout,
         LocalFontListAdapter adapter,
-        RecyclerView recyclerView,
-        SortByItemLayout sortBar) {
+        RecyclerView recyclerView) {
         this.activity = activity;
         this.drawerLayout = drawerLayout;
         this.adapter = adapter;
         this.recyclerView = recyclerView;
-        this.sortBar = sortBar;
 
         setupRecyclerViewListener();
         setupBackHandling();
+
+        // إذا اختفى عنصر محدد من القائمة (تحديث من قاعدة البيانات مثلاً) نحدّث العدّاد وأزرار القائمة
+        adapter.setOnSelectionPrunedListener(this::refreshActionMode);
     }
 
     public void setActionListener(SelectionActionListener listener) {
@@ -116,7 +113,6 @@ public class LocalFontSelectionManager {
     }
 
     private void activateSelectionMode() {
-        disableSortBar();
         adapter.setSelectionMode(true);
 
         drawerLayout.getActionModeBottomMenu().clear();
@@ -153,14 +149,11 @@ public class LocalFontSelectionManager {
     }
 
     private void deactivateSelectionMode() {
-        selectedItems.clear();
         adapter.clearSelection();
         adapter.setSelectionMode(false);
 
         
         drawerLayout.dismissActionMode();
-
-        enableSortBar();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             activity.getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(
@@ -173,18 +166,14 @@ public class LocalFontSelectionManager {
     public void toggleSelection(int position) {
         if (!isSelecting) setSelecting(true);
 
-        if (selectedItems.get(position, false)) selectedItems.delete(position);
-        else selectedItems.put(position, true);
-
-        adapter.setItemSelected(position, selectedItems.get(position, false));
+        // حالة التحديد محفوظة في الـ Adapter بمسار الملف
+        adapter.setItemSelected(position, !adapter.isItemSelected(position));
         updateActionModeUI();
     }
 
     private void toggleSelectAll(boolean selectAll) {
-        selectedItems.clear();
         int itemCount = adapter.getItemCount();
         for (int i = 1; i < itemCount - 1; i++) {
-            if (selectAll) selectedItems.put(i, true);
             adapter.setItemSelected(i, selectAll);
         }
     }
@@ -192,7 +181,7 @@ public class LocalFontSelectionManager {
     private void updateActionModeUI() {
         checkAllListening = false;
 
-        int selectedCount = selectedItems.size();
+        int selectedCount = adapter.getSelectedCount();
 
         int totalCount = adapter.getItemCount() - 2;
 
@@ -246,9 +235,9 @@ public class LocalFontSelectionManager {
     }
 
     private boolean resolveFavoriteAction() {
-        if (favoriteStatusChecker == null || selectedItems.size() == 0) return false;
-        for (int i = 0; i < selectedItems.size(); i++) {
-            if (!favoriteStatusChecker.isFavorited(selectedItems.keyAt(i))) {
+        if (favoriteStatusChecker == null || adapter.getSelectedCount() == 0) return false;
+        for (String path : adapter.getSelectedPaths()) {
+            if (!favoriteStatusChecker.isFavorited(path)) {
                 return false;
             }
         }
@@ -262,42 +251,24 @@ public class LocalFontSelectionManager {
     }
 
     private void handleRenameAction() {
-        if (selectedItems.size() != 1 || actionListener == null) return;
-        actionListener.onRenameRequested(selectedItems.keyAt(0));
+        if (adapter.getSelectedCount() != 1 || actionListener == null) return;
+        List<String> paths = adapter.getSelectedPaths();
+        if (paths.size() != 1) return;
+        actionListener.onRenameRequested(paths.get(0));
     }
 
     private void handleDeleteAction() {
-        if (selectedItems.size() == 0 || actionListener == null) return;
-        List<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
-        actionListener.onDeleteRequested(positions);
+        if (adapter.getSelectedCount() == 0 || actionListener == null) return;
+        actionListener.onDeleteRequested(adapter.getSelectedPaths());
     }
 
     private void handleFavoriteAction() {
-        if (selectedItems.size() == 0 || actionListener == null) return;
+        if (adapter.getSelectedCount() == 0 || actionListener == null) return;
 
         boolean allFavorited = resolveFavoriteAction();
         boolean addToFavorites = !allFavorited;
 
-        List<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) positions.add(selectedItems.keyAt(i));
-        actionListener.onFavoriteRequested(positions, addToFavorites);
-    }
-
-    private void disableSortBar() {
-        if (sortBar != null) {
-            sortBar.setEnabled(false);
-            sortBar.setClickable(false);
-            sortBar.setAlpha(0.4f);
-        }
-    }
-
-    private void enableSortBar() {
-        if (sortBar != null) {
-            sortBar.setEnabled(true);
-            sortBar.setClickable(true);
-            sortBar.setAlpha(1.0f);
-        }
+        actionListener.onFavoriteRequested(adapter.getSelectedPaths(), addToFavorites);
     }
  
     public boolean isSelecting()   { return isSelecting; }
@@ -314,6 +285,7 @@ public class LocalFontSelectionManager {
 
     public void cleanup() {
         if (isSelecting) setSelecting(false);
+        adapter.setOnSelectionPrunedListener(null);
         onBackPressedCallback = null;
         onBackInvokedCallback = null;
         actionListener = null;
