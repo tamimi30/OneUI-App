@@ -40,6 +40,7 @@ import com.oneui.fontviewer.fragment.trash.data.TrashRepository;
 import com.oneui.fontviewer.dialog.RenameFontDialog;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.widget.sort.FontSortManager;
+import com.oneui.fontviewer.widget.sort.SortByItemLayout;
 import com.oneui.fontviewer.utils.FontUIStateManager;
 import com.oneui.fontviewer.utils.FontItemDecoration;
 import com.oneui.fontviewer.fragment.localfont.adapter.LocalFontListAdapter;
@@ -74,6 +75,10 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     private SettingsViewModel mSettingsViewModel;
 
     private List<LocalFontListViewModel.FontFileInfoWithMetadata> mCurrentFavoritesList = new ArrayList<>();
+
+    // استعادة موضع التمرير تتم مرة واحدة فقط بعد إعادة إنشاء الـ Fragment، وليس مع كل تحديث للقائمة،
+    // حتى لا تعود القائمة إلى موضع قديم عند إزالة عنصر من المفضلة
+    private boolean mNeedsScrollRestore = false;
 
     private boolean mIsBatchOperationRunning = false;
 
@@ -135,6 +140,30 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         initializeViewModels();
         setupViewModelObservers();
+
+        if (state != null) {
+            restoreInstanceState(state);
+        }
+    }
+
+    private void restoreInstanceState(@NonNull Bundle state) {
+        mUIManager.setRecyclerViewState(state.getParcelable("recycler_state"));
+
+        if (mUIManager.getRecyclerViewState() != null) {
+            mNeedsScrollRestore = true;
+        }
+
+        String sortType = state.getString("sort_type");
+        if (sortType != null) {
+            try {
+                mUIManager.saveSortState(
+                    SortByItemLayout.SortType.valueOf(sortType),
+                    state.getBoolean("sort_asc", true)
+                );
+            } catch (Exception e) {
+                Log.e(TAG, "Error restoring sort state", e);
+            }
+        }
     }
 
     @Override
@@ -348,11 +377,10 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
             requireActivity(),
             mDrawerLayout,
             mAdapter,
-            mRecyclerView,
-            null 
+            mRecyclerView
         );
 
-        mSelectionManager.setFavoriteStatusChecker(position -> true);
+        mSelectionManager.setFavoriteStatusChecker(path -> true);
 
         mAdapter.setSelectionListener(new LocalFontListAdapter.OnSelectionListener() {
             @Override
@@ -369,18 +397,18 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         mSelectionManager.setActionListener(new LocalFontSelectionManager.SelectionActionListener() {
             @Override
-            public void onRenameRequested(int position) {
-                handleRename(position);
+            public void onRenameRequested(String path) {
+                handleRename(path);
             }
 
             @Override
-            public void onDeleteRequested(List<Integer> positions) {
-                handleDelete(positions);
+            public void onDeleteRequested(List<String> paths) {
+                handleDelete(paths);
             }
 
             @Override
-            public void onFavoriteRequested(List<Integer> positions, boolean addToFavorites) {
-                handleFavoriteAction(positions, addToFavorites);
+            public void onFavoriteRequested(List<String> paths, boolean addToFavorites) {
+                handleFavoriteAction(paths, addToFavorites);
             }
         });
 
@@ -391,8 +419,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     }
 
 
-    private void handleRename(int position) {
-        String path = mAdapter.getFilePath(position);
+    private void handleRename(String path) {
         if (path == null) return;
 
         RenameFontDialog.show(mContext, path, (oldPath, newFileName) -> {
@@ -416,16 +443,10 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         });
     }
 
-    private void handleDelete(List<Integer> positions) {
-        if (positions == null || positions.isEmpty()) return;
+    private void handleDelete(List<String> paths) {
+        if (paths == null || paths.isEmpty()) return;
 
-        List<String> pathsToMove = new ArrayList<>();
-        for (int position : positions) {
-            String path = mAdapter.getFilePath(position);
-            if (path != null) pathsToMove.add(path);
-        }
-
-        if (pathsToMove.isEmpty()) return;
+        List<String> pathsToMove = new ArrayList<>(paths);
 
         int count = pathsToMove.size();
 
@@ -541,16 +562,8 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
         mCurrentProgressDialog.show();
     }
 
-    private void handleFavoriteAction(List<Integer> positions, boolean addToFavorites) {
-        if (positions == null || positions.isEmpty()) return;
-
-        List<String> paths = new ArrayList<>();
-        for (int position : positions) {
-            String path = mAdapter.getFilePath(position);
-            if (path != null) paths.add(path);
-        }
-
-        if (paths.isEmpty()) return;
+    private void handleFavoriteAction(List<String> paths, boolean addToFavorites) {
+        if (paths == null || paths.isEmpty()) return;
 
         mSelectionManager.setSelecting(false);
 
@@ -626,7 +639,14 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
             );
         }
 
-        mMainHandler.post(() -> mUIManager.restoreRecyclerViewState());
+        if (mNeedsScrollRestore) {
+            mNeedsScrollRestore = false;
+            mMainHandler.post(() -> {
+                if (isAdded() && getView() != null) {
+                    mUIManager.restoreRecyclerViewState();
+                }
+            });
+        }
     }
 
 
