@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,8 +7,7 @@
         android:id="@+id/main_content_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:orientation="vertical">
 
         <com.oneui.fontviewer.widget.OneUiRecyclerView
             android:id="@+id/system_font_recycler_view"
@@ -24,8 +22,8 @@
             android:id="@+id/empty_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:fillViewport="true"
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/empty_container"
@@ -33,7 +31,6 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:layout_gravity="center"
                 android:paddingStart="33dp"
                 android:paddingEnd="33dp">
 
@@ -41,11 +38,9 @@
                     android:id="@+id/empty_icon"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:layout_gravity="center"
                     android:layout_marginBottom="3dp"
                     android:tint="#ff34a853"
-                    android:src="@drawable/ic_android_3"
-                    android:visibility="gone" />
+                    android:src="@drawable/ic_android_3" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/no_results_text"
@@ -54,15 +49,13 @@
                     android:gravity="center"
                     android:text="@string/no_results_found"
                     android:fontFamily="sec-roboto-light"
-                    android:textStyle="normal"
                     android:textSize="17sp"
-                    android:textColor="@color/drawer_icon_color"
-                    android:visibility="gone" />
+                    android:textColor="@color/drawer_icon_color" />
 
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
-        
+
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -77,14 +70,12 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_gravity="center"
             android:paddingStart="33dp"
             android:paddingEnd="33dp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_gravity="center"
                 android:src="@drawable/ic_oui_android"
                 android:alpha="0.4"
                 android:layout_marginBottom="24dp"/>
@@ -92,7 +83,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="System Fonts API is not available"
+                android:text="@string/system_fonts_api_unavailable"
                 android:textSize="17sp"
                 android:textColor="?android:attr/textColorPrimary"
                 android:gravity="center"
@@ -101,7 +92,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="This feature requires Android 10 (API 29) or higher"
+                android:text="@string/system_fonts_requires_api_29"
                 android:textSize="14sp"
                 android:textColor="?android:attr/textColorSecondary"
                 android:gravity="center"/>
