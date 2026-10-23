@@ -26,7 +26,9 @@ import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SectionIndexer {
@@ -52,7 +54,8 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private final SortedList<FontFileInfo> mSortedList;
 
-    private List<SystemFontInfo> allFontsInfo;
+    // خريطة بالمسار بدل القائمة، حتى لا يدور البحث على كل الخطوط مع كل bind
+    private Map<String, SystemFontInfo> fontsInfoMap;
     private String currentSearchQuery;
 
     private List<String> sections;
@@ -128,7 +131,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         this.mCurrentLastOpenedPath = preferenceManager.getLastOpenedFont();
 
-        this.allFontsInfo       = new ArrayList<>();
+        this.fontsInfoMap       = new HashMap<>();
         this.currentSearchQuery = "";
 
         this.sections         = new ArrayList<>();
@@ -203,7 +206,14 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public void setAllFontsInfo(List<SystemFontInfo> fontsInfo) {
-        this.allFontsInfo = fontsInfo != null ? new ArrayList<>(fontsInfo) : new ArrayList<>();
+        Map<String, SystemFontInfo> map = new HashMap<>();
+        if (fontsInfo != null) {
+            for (SystemFontInfo info : fontsInfo) {
+                // نحتفظ بأول عنصر لكل مسار، كما كان يفعل البحث الخطي القديم
+                if (!map.containsKey(info.getPath())) map.put(info.getPath(), info);
+            }
+        }
+        this.fontsInfoMap = map;
     }
 
     public void updateFilteredFonts(List<FontFileInfo> fonts, String searchQuery) {
@@ -341,9 +351,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private SystemFontInfo getFontInfoForPath(String path) {
-        for (SystemFontInfo font : allFontsInfo)
-            if (font.getPath().equals(path)) return font;
-        return null;
+        return fontsInfoMap.get(path);
     }
 
     @Override public int getItemCount() { return mSortedList.size() + 2; }
@@ -392,7 +400,8 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                                  @NonNull List<Object> payloads) {
         if (!payloads.isEmpty()) {
             boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
-            if ((payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) || !isSearchActive) && holder instanceof SystemFontViewHolder) {
+            // التمييز يُعاد فقط عند طلبه صراحةً عبر PAYLOAD_UPDATE_HIGHLIGHT
+            if (payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) && holder instanceof SystemFontViewHolder) {
                 applyHighlight((SystemFontViewHolder) holder, mSortedList.get(position - 1));
             }
 
