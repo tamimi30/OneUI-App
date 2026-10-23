@@ -1,7 +1,6 @@
 package com.oneui.fontviewer.fragment.trash.adapter;
 
 import android.content.Context;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,9 @@ import com.oneui.fontviewer.widget.SelectableLinearLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -35,7 +36,11 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private boolean isSelectionMode = false;
 
-    private final SparseBooleanArray selectedItems = new SparseBooleanArray();
+    // التحديد مرتبط بمعرّف العنصر (id) وليس بموضعه، حتى لا يتحدد عنصر آخر إذا تغيرت القائمة أثناء التحديد
+    private final Set<Long> selectedIds = new HashSet<>();
+
+    // يُستدعى عندما يُحذف من التحديد عنصر لم يعد موجوداً في القائمة، ليُحدّث مدير التحديد العدّاد
+    private Runnable onSelectionPrunedListener;
 
     private OnSelectionListener selectionListener;
     private RecyclerView recyclerView;
@@ -57,6 +62,10 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.selectionListener = listener;
     }
 
+    public void setOnSelectionPrunedListener(@Nullable Runnable listener) {
+        this.onSelectionPrunedListener = listener;
+    }
+
 
     public void submitList(@Nullable List<FontEntity> newList) {
         List<FontEntity> safeNew = (newList != null) ? newList : Collections.emptyList();
@@ -64,6 +73,8 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(
                 new TrashDiffCallback(mItems, safeNew));
         mItems = new ArrayList<>(safeNew);
+
+        pruneSelection();
 
         result.dispatchUpdatesTo(new ListUpdateCallback() {
             @Override
@@ -83,6 +94,21 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 notifyItemRangeChanged(position + 1, count, payload);
             }
         });
+    }
+
+    // يزيل من التحديد أي عنصر لم يعد موجوداً في القائمة بعد تحديثها
+    private void pruneSelection() {
+        if (selectedIds.isEmpty()) return;
+
+        Set<Long> present = new HashSet<>();
+        for (FontEntity font : mItems) {
+            long id = font.getId();
+            present.add(id);
+        }
+
+        if (selectedIds.retainAll(present) && onSelectionPrunedListener != null) {
+            onSelectionPrunedListener.run();
+        }
     }
 
 
@@ -130,7 +156,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-           @Override
+    @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position,
                                  @NonNull List<Object> payloads) {
         if (!payloads.isEmpty()) {
@@ -218,25 +244,51 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void setSelectionMode(boolean enabled) {
         this.isSelectionMode = enabled;
-        if (!enabled) selectedItems.clear();
+        if (!enabled) selectedIds.clear();
         notifyItemRangeChanged(1, mItems.size(), PAYLOAD_UPDATE_SELECTION);
     }
 
     public void setItemSelected(int adapterPosition, boolean selected) {
-        if (selected) selectedItems.put(adapterPosition, true);
-        else selectedItems.delete(adapterPosition);
+        FontEntity font = getItemAtAdapterPosition(adapterPosition);
+        if (font == null) return;
+
+        long id = font.getId();
+        if (selected) selectedIds.add(id);
+        else selectedIds.remove(id);
+
         notifyItemChanged(adapterPosition, PAYLOAD_UPDATE_SELECTION);
     }
 
     
 
     public void clearSelection() {
-        selectedItems.clear();
+        selectedIds.clear();
         notifyItemRangeChanged(1, mItems.size(), PAYLOAD_UPDATE_SELECTION);
     }
 
     public boolean isItemSelected(int adapterPosition) {
-        return selectedItems.get(adapterPosition, false);
+        FontEntity font = getItemAtAdapterPosition(adapterPosition);
+        if (font == null) return false;
+
+        long id = font.getId();
+        return selectedIds.contains(id);
+    }
+
+    public int getSelectedCount() {
+        return selectedIds.size();
+    }
+
+    // العناصر المحددة بترتيب ظهورها في القائمة
+    @NonNull
+    public List<FontEntity> getSelectedFonts() {
+        List<FontEntity> result = new ArrayList<>(selectedIds.size());
+        if (selectedIds.isEmpty()) return result;
+
+        for (FontEntity font : mItems) {
+            long id = font.getId();
+            if (selectedIds.contains(id)) result.add(font);
+        }
+        return result;
     }
 
     public boolean isSelectionMode() {
