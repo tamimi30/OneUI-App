@@ -31,7 +31,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,6 +74,9 @@ public class FontViewerFragment extends Fragment {
     private static final float MIN_FONT_SIZE       = 12f;
     private static final float MAX_FONT_SIZE       = 520f;
     private static final float DEFAULT_FONT_WEIGHT = 400f;
+
+    // مدة أنيميشن تغيير قيمة أي محور (ثابتة لكل المحاور والانتقالات)
+    private static final long AXIS_ANIM_DURATION_MS = 600L;
 
     // القيم الافتراضية الاحتياطية لكل محور، تُستخدم فقط اذا تعذّرت قراءة القيمة الافتراضية الفعلية
     // من جدول fvar الخاص بالخط نفسه
@@ -358,8 +361,9 @@ public class FontViewerFragment extends Fragment {
         }
 
         ValueAnimator animator = ValueAnimator.ofFloat(oldValue, newValue);
-        animator.setDuration(600);
-        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(AXIS_ANIM_DURATION_MS);
+        // تباطؤ تدريجي (Ease-out): تبدأ الحركة فوراً ثم تهدأ عند الوصول، بدل البداية البطيئة في AccelerateDecelerate
+        animator.setInterpolator(new DecelerateInterpolator(1.5f));
 
         animator.addUpdateListener(animation -> {
             float animatedValue = (float) animation.getAnimatedValue();
@@ -851,7 +855,6 @@ public class FontViewerFragment extends Fragment {
 
     public void showFontSizeDialogPublic() {
         final float originalSize      = currentFontSize;
-        final Typeface originalTypeface = currentTypeface;
 
         FontSizeDialog fontSizeDialog = new FontSizeDialog(
             requireContext(),
@@ -863,8 +866,8 @@ public class FontViewerFragment extends Fragment {
         fontSizeDialog.setOnFontSizeChangedListener(this::onFontSizeChanged);
 
         fontSizeDialog.setOnDialogCancelledListener(() -> {
+            // الحوار يغيّر الحجم فقط، فلا نستعيد Typeface محفوظاً قبل فتحه: قد يكون قديماً إن فُتح الحوار أثناء حركة المحور
             currentFontSize   = originalSize;
-            currentTypeface   = originalTypeface;
             applyFontToPreviewTexts();
             applyFontSize();
             
