@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,9 @@ import com.oneui.fontviewer.fragment.localfont.viewmodel.LocalFontListViewModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SectionIndexer {
@@ -67,7 +68,13 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private boolean currentSortAscending;
 
     private boolean isSelectionMode = false;
-    private SparseBooleanArray selectedItems = new SparseBooleanArray();
+
+    // التحديد مرتبط بمسار الملف وليس بموضعه في القائمة، حتى لا يتحدد عنصر آخر
+    // إذا تغير ترتيب القائمة أثناء وضع التحديد (مثلاً بعد استخراج الأسماء الحقيقية وإعادة الفرز)
+    private final Set<String> selectedPaths = new HashSet<>();
+
+    // يُستدعى عندما يُحذف من التحديد عنصر لم يعد موجوداً في القائمة، ليُحدّث مدير التحديد العدّاد
+    private Runnable onSelectionPrunedListener;
 
     private OnFontClickListener fontClickListener;
     private SortByItemLayout.OnSortChangeListener sortChangeListener;
@@ -212,6 +219,10 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.favoriteStatusProvider = provider;
     }
 
+    public void setOnSelectionPrunedListener(Runnable listener) {
+        this.onSelectionPrunedListener = listener;
+    }
+
     
 
     public void setFontPreviewEnabled(boolean enabled) {
@@ -233,18 +244,52 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public void setSelectionMode(boolean enabled) {
         this.isSelectionMode = enabled;
-        if (!enabled) selectedItems.clear();
+        if (!enabled) selectedPaths.clear();
         notifyItemRangeChanged(0, getItemCount(), PAYLOAD_UPDATE_SELECTION);
     }
 
     public void setItemSelected(int position, boolean selected) {
-        if (selected) selectedItems.put(position, true);
-        else selectedItems.delete(position);
+        String path = getFilePath(position);
+        if (path == null) return;
+        if (selected) selectedPaths.add(path);
+        else selectedPaths.remove(path);
         notifyItemChanged(position, PAYLOAD_UPDATE_SELECTION);
     }
 
-    public void clearSelection()                         { selectedItems.clear(); }
-    public boolean isItemSelected(int position)          { return selectedItems.get(position, false); }
+    public void clearSelection()                         { selectedPaths.clear(); }
+
+    public boolean isItemSelected(int position) {
+        String path = getFilePath(position);
+        return path != null && selectedPaths.contains(path);
+    }
+
+    public int getSelectedCount() { return selectedPaths.size(); }
+
+    // مسارات العناصر المحددة بترتيب ظهورها في القائمة
+    @NonNull
+    public List<String> getSelectedPaths() {
+        List<String> result = new ArrayList<>(selectedPaths.size());
+        if (selectedPaths.isEmpty()) return result;
+        for (int i = 0; i < mSortedList.size(); i++) {
+            String path = mSortedList.get(i).getPath();
+            if (selectedPaths.contains(path)) result.add(path);
+        }
+        return result;
+    }
+
+    // يزيل من التحديد أي مسار لم يعد موجوداً في القائمة بعد تحديثها
+    private void pruneSelection() {
+        if (selectedPaths.isEmpty()) return;
+
+        Set<String> present = new HashSet<>();
+        for (int i = 0; i < mSortedList.size(); i++) {
+            present.add(mSortedList.get(i).getPath());
+        }
+
+        if (selectedPaths.retainAll(present) && onSelectionPrunedListener != null) {
+            onSelectionPrunedListener.run();
+        }
+    }
     
     public String getFilePath(int position) {
         if (position > 0 && position <= mSortedList.size())
@@ -272,6 +317,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         List<FontFileInfo> newList = fonts != null ? fonts : new ArrayList<>();
 
         mSortedList.replaceAll(newList);
+        pruneSelection();
         buildSections();
 
         if (!this.currentSearchQuery.equals(oldQuery)) {
@@ -461,8 +507,9 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
                                  @NonNull List<Object> payloads) {
         if (!payloads.isEmpty()) {
             boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
-            if ((payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) || !isSearchActive)
-                    && holder instanceof LocalFontViewHolder) {
+            // التمييز يُعاد فقط عند طلبه صراحةً عبر PAYLOAD_UPDATE_HIGHLIGHT،
+            // حتى لا يُعاد ضبط النص مع كل تحديث للتحديد أو المفضلة
+            if (payloads.contains(PAYLOAD_UPDATE_HIGHLIGHT) && holder instanceof LocalFontViewHolder) {
                 applyHighlight((LocalFontViewHolder) holder, mSortedList.get(position - 1));
             }
 
