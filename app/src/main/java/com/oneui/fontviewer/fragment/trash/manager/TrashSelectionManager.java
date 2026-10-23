@@ -1,7 +1,6 @@
 package com.oneui.fontviewer.fragment.trash.manager;
 
 import android.os.Build;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +15,6 @@ import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.fragment.trash.adapter.TrashListAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.oneui.fontviewer.widget.OneUiDrawerLayout;
@@ -31,7 +29,6 @@ public class TrashSelectionManager {
 
     private boolean             isSelecting      = false;
     private boolean             checkAllListening = true;
-    private SparseBooleanArray  selectedItems    = new SparseBooleanArray();
 
     private SelectionActionListener actionListener;
     private OnBackPressedCallback   onBackPressedCallback;
@@ -58,6 +55,9 @@ public class TrashSelectionManager {
 
         setupRecyclerViewListener();
         setupBackHandling();
+
+        // إذا اختفى عنصر محدد من القائمة نحدّث العدّاد وأزرار القائمة
+        adapter.setOnSelectionPrunedListener(this::refreshActionMode);
     }
 
 
@@ -141,7 +141,6 @@ public class TrashSelectionManager {
     }
 
     private void deactivateSelectionMode() {
-        selectedItems.clear();
         adapter.clearSelection();
         adapter.setSelectionMode(false);
 
@@ -160,18 +159,14 @@ public class TrashSelectionManager {
     public void toggleSelection(int position) {
         if (!isSelecting) setSelecting(true);
 
-        if (selectedItems.get(position, false)) selectedItems.delete(position);
-        else selectedItems.put(position, true);
-
-        adapter.setItemSelected(position, selectedItems.get(position, false));
+        // حالة التحديد محفوظة في الـ Adapter بمعرّف العنصر
+        adapter.setItemSelected(position, !adapter.isItemSelected(position));
         updateActionModeUI();
     }
 
     private void toggleSelectAll(boolean selectAll) {
-        selectedItems.clear();
         int itemCount = adapter.getItemCount();
         for (int i = 1; i < itemCount - 1; i++) {
-            if (selectAll) selectedItems.put(i, true);
             adapter.setItemSelected(i, selectAll);
         }
     }
@@ -180,7 +175,7 @@ public class TrashSelectionManager {
     private void updateActionModeUI() {
         checkAllListening = false;
 
-        int selectedCount = selectedItems.size();
+        int selectedCount = adapter.getSelectedCount();
         int totalCount = adapter.getItemCount() - 2;
 
         drawerLayout.setActionModeAllSelector(selectedCount, true, selectedCount == totalCount);
@@ -221,23 +216,13 @@ public class TrashSelectionManager {
 
 
     private void handleRestoreAction() {
-        if (selectedItems.size() == 0 || actionListener == null) return;
-        actionListener.onRestoreRequested(getSelectedFonts());
+        if (adapter.getSelectedCount() == 0 || actionListener == null) return;
+        actionListener.onRestoreRequested(adapter.getSelectedFonts());
     }
 
     private void handleDeleteAction() {
-        if (selectedItems.size() == 0 || actionListener == null) return;
-        actionListener.onDeletePermanentlyRequested(getSelectedFonts());
-    }
-
-    private List<FontEntity> getSelectedFonts() {
-        List<FontEntity> fonts = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) {
-            int adapterPos = selectedItems.keyAt(i);
-            FontEntity font = adapter.getItemAtAdapterPosition(adapterPos);
-            if (font != null) fonts.add(font);
-        }
-        return fonts;
+        if (adapter.getSelectedCount() == 0 || actionListener == null) return;
+        actionListener.onDeletePermanentlyRequested(adapter.getSelectedFonts());
     }
     
     public boolean isSelecting()   { return isSelecting; }
@@ -254,6 +239,7 @@ public class TrashSelectionManager {
 
     public void cleanup() {
         if (isSelecting) setSelecting(false);
+        adapter.setOnSelectionPrunedListener(null);
         onBackPressedCallback = null;
         onBackInvokedCallback = null;
         actionListener        = null;
