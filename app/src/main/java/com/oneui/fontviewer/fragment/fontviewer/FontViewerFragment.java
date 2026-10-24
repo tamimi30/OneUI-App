@@ -76,10 +76,11 @@ public class FontViewerFragment extends Fragment {
     private static final float DEFAULT_FONT_WEIGHT = 400f;
 
     // مدة أنيميشن تغيير قيمة أي محور (ثابتة لكل المحاور والانتقالات)
-    private static final long AXIS_ANIM_DURATION_MS = 1000L;
-    // منحنى Sine In-Out بأسلوب حركات سامسونج: تبدأ الحركة بنعومة ثم تتباطأ تدريجياً من قبل منتصفها
-    // القيمة تتحكم بقوة التباطؤ: 0.30 = In-Out 70، 0.20 = In-Out 80، 0.10 = In-Out 90 (كلما قلّت زاد التباطؤ)
-    private static final float AXIS_ANIM_EASE_END = 0.5f;
+    private static final long AXIS_ANIM_DURATION_MS = 800L;
+    // منحنى Sine In-Out بأسلوب حركات سامسونج: تبدأ الحركة بنعومة ثم تتباطأ تدريجياً بعد ثلثها الأول تقريباً
+    // القيمة تتحكم بموضع التباطؤ: كلما قلّت تركّزت أغلب المسافة في أول الحركة (0.67 = متناظر كالقديم، 0.30 = In-Out 70، 0.20 = In-Out 80)
+    // الجزء الأخير من المسافة صغير لا يُلاحَظ، فكلما زاد التباطؤ صار الجزء الظاهر من الحركة أقصر من المدة المضبوطة
+    private static final float AXIS_ANIM_EASE_END = 0.50f;
 
     // القيم الافتراضية الاحتياطية لكل محور، تُستخدم فقط اذا تعذّرت قراءة القيمة الافتراضية الفعلية
     // من جدول fvar الخاص بالخط نفسه
