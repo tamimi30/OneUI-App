@@ -358,7 +358,7 @@ public class FontViewerFragment extends Fragment {
         }
 
         ValueAnimator animator = ValueAnimator.ofFloat(oldValue, newValue);
-        animator.setDuration(1000);
+        animator.setDuration(3000);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
 
         animator.addUpdateListener(animation -> {
