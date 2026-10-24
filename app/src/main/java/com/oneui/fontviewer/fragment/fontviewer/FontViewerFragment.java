@@ -76,7 +76,7 @@ public class FontViewerFragment extends Fragment {
     private static final float DEFAULT_FONT_WEIGHT = 400f;
 
     // مدة أنيميشن تغيير قيمة أي محور (ثابتة لكل المحاور والانتقالات)
-    private static final long AXIS_ANIM_DURATION_MS = 600L;
+    private static final long AXIS_ANIM_DURATION_MS = 800L;
     // الجزء من المدة الذي تُقطع فيه أول 50% من المسافة بسرعة ثابتة (من 0.1 إلى 0.5)
     // كلما قلّ صارت النصف الأول أسرع وصار التباطؤ أطول، و0.5 = سرعة ثابتة طوال الحركة
     private static final float AXIS_ANIM_LINEAR_TIME = 0.40f;
