@@ -79,7 +79,7 @@ public class FontViewerFragment extends Fragment {
     private static final long AXIS_ANIM_DURATION_MS = 600L;
     // الجزء من المدة الذي تُقطع فيه أول 50% من المسافة بسرعة ثابتة (من 0.1 إلى 0.5)
     // كلما قلّ صارت النصف الأول أسرع وصار التباطؤ أطول، و0.5 = سرعة ثابتة طوال الحركة
-    private static final float AXIS_ANIM_LINEAR_TIME = 0.30f;
+    private static final float AXIS_ANIM_LINEAR_TIME = 0.40f;
     // أول 50% من المسافة بسرعة ثابتة وبلا بداية بطيئة، ثم تتباطأ السرعة تدريجياً حتى تصل إلى الصفر عند النهاية
     // سرعة بداية التباطؤ تساوي سرعة المرحلة الأولى، فلا يظهر أي تغيّر مفاجئ عند منتصف المسافة
     private static final TimeInterpolator AXIS_ANIM_INTERPOLATOR = t -> {
