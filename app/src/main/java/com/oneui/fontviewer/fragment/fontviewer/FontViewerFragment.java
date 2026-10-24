@@ -30,8 +30,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
-import android.view.animation.PathInterpolator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,10 +77,20 @@ public class FontViewerFragment extends Fragment {
 
     // مدة أنيميشن تغيير قيمة أي محور (ثابتة لكل المحاور والانتقالات)
     private static final long AXIS_ANIM_DURATION_MS = 800L;
-    // منحنى Sine In-Out بأسلوب حركات سامسونج: تبدأ الحركة بنعومة ثم تتباطأ تدريجياً بعد ثلثها الأول تقريباً
-    // القيمة تتحكم بموضع التباطؤ: كلما قلّت تركّزت أغلب المسافة في أول الحركة (0.67 = متناظر كالقديم، 0.30 = In-Out 70، 0.20 = In-Out 80)
-    // الجزء الأخير من المسافة صغير لا يُلاحَظ، فكلما زاد التباطؤ صار الجزء الظاهر من الحركة أقصر من المدة المضبوطة
-    private static final float AXIS_ANIM_EASE_END = 0.50f;
+    // الجزء من المدة الذي تُقطع فيه أول 50% من المسافة بسرعة ثابتة (من 0.1 إلى 0.5)
+    // كلما قلّ صارت النصف الأول أسرع وصار التباطؤ أطول، و0.5 = سرعة ثابتة طوال الحركة
+    private static final float AXIS_ANIM_LINEAR_TIME = 0.40f;
+    // أول 50% من المسافة بسرعة ثابتة وبلا بداية بطيئة، ثم تتباطأ السرعة تدريجياً حتى تصل إلى الصفر عند النهاية
+    // سرعة بداية التباطؤ تساوي سرعة المرحلة الأولى، فلا يظهر أي تغيّر مفاجئ عند منتصف المسافة
+    private static final TimeInterpolator AXIS_ANIM_INTERPOLATOR = t -> {
+        float linearTime = AXIS_ANIM_LINEAR_TIME;
+        if (t <= linearTime) {
+            return 0.5f * (t / linearTime);
+        }
+        float u = (t - linearTime) / (1f - linearTime);
+        float power = (1f - linearTime) / linearTime;
+        return 0.5f + 0.5f * (1f - (float) Math.pow(1f - u, power));
+    };
 
     // القيم الافتراضية الاحتياطية لكل محور، تُستخدم فقط اذا تعذّرت قراءة القيمة الافتراضية الفعلية
     // من جدول fvar الخاص بالخط نفسه
@@ -366,7 +376,7 @@ public class FontViewerFragment extends Fragment {
 
         ValueAnimator animator = ValueAnimator.ofFloat(oldValue, newValue);
         animator.setDuration(AXIS_ANIM_DURATION_MS);
-        animator.setInterpolator(new PathInterpolator(0.33f, 0f, AXIS_ANIM_EASE_END, 1f));
+        animator.setInterpolator(AXIS_ANIM_INTERPOLATOR);
 
         animator.addUpdateListener(animation -> {
             float animatedValue = (float) animation.getAnimatedValue();
