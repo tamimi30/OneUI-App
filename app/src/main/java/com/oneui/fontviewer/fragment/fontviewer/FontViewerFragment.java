@@ -30,8 +30,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,23 +74,6 @@ public class FontViewerFragment extends Fragment {
     private static final float MIN_FONT_SIZE       = 12f;
     private static final float MAX_FONT_SIZE       = 520f;
     private static final float DEFAULT_FONT_WEIGHT = 400f;
-
-    // مدة أنيميشن تغيير قيمة أي محور (ثابتة لكل المحاور والانتقالات)
-    private static final long AXIS_ANIM_DURATION_MS = 1000L;
-    // الجزء من المدة الذي تُقطع فيه أول 50% من المسافة بسرعة ثابتة (من 0.1 إلى 0.5)
-    // كلما قلّ صارت النصف الأول أسرع وصار التباطؤ أطول، و0.5 = سرعة ثابتة طوال الحركة
-    private static final float AXIS_ANIM_LINEAR_TIME = 0.30f;
-    // أول 50% من المسافة بسرعة ثابتة وبلا بداية بطيئة، ثم تتباطأ السرعة تدريجياً حتى تصل إلى الصفر عند النهاية
-    // سرعة بداية التباطؤ تساوي سرعة المرحلة الأولى، فلا يظهر أي تغيّر مفاجئ عند منتصف المسافة
-    private static final TimeInterpolator AXIS_ANIM_INTERPOLATOR = t -> {
-        float linearTime = AXIS_ANIM_LINEAR_TIME;
-        if (t <= linearTime) {
-            return 0.5f * (t / linearTime);
-        }
-        float u = (t - linearTime) / (1f - linearTime);
-        float power = (1f - linearTime) / linearTime;
-        return 0.5f + 0.5f * (1f - (float) Math.pow(1f - u, power));
-    };
 
     // القيم الافتراضية الاحتياطية لكل محور، تُستخدم فقط اذا تعذّرت قراءة القيمة الافتراضية الفعلية
     // من جدول fvar الخاص بالخط نفسه
@@ -375,8 +358,8 @@ public class FontViewerFragment extends Fragment {
         }
 
         ValueAnimator animator = ValueAnimator.ofFloat(oldValue, newValue);
-        animator.setDuration(AXIS_ANIM_DURATION_MS);
-        animator.setInterpolator(AXIS_ANIM_INTERPOLATOR);
+        animator.setDuration(1000);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
 
         animator.addUpdateListener(animation -> {
             float animatedValue = (float) animation.getAnimatedValue();
@@ -868,6 +851,7 @@ public class FontViewerFragment extends Fragment {
 
     public void showFontSizeDialogPublic() {
         final float originalSize      = currentFontSize;
+        final Typeface originalTypeface = currentTypeface;
 
         FontSizeDialog fontSizeDialog = new FontSizeDialog(
             requireContext(),
@@ -879,8 +863,8 @@ public class FontViewerFragment extends Fragment {
         fontSizeDialog.setOnFontSizeChangedListener(this::onFontSizeChanged);
 
         fontSizeDialog.setOnDialogCancelledListener(() -> {
-            // الحوار يغيّر الحجم فقط، فلا نستعيد Typeface محفوظاً قبل فتحه: قد يكون قديماً إن فُتح الحوار أثناء حركة المحور
             currentFontSize   = originalSize;
+            currentTypeface   = originalTypeface;
             applyFontToPreviewTexts();
             applyFontSize();
             
@@ -1026,4 +1010,4 @@ public class FontViewerFragment extends Fragment {
     public boolean hasFontSelected() {
         return currentFontPath != null && !currentFontPath.isEmpty();
     }
-            }
+}
