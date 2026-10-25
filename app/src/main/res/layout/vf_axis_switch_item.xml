@@ -26,7 +26,7 @@
             android:layout_weight="1"
             android:textSize="13sp"
             android:textColor="?android:attr/textColorSecondary"
-            android:layout_marginBottom="14dp"/>
+            android:layout_marginBottom="20dp"/>
 
         <LinearLayout
             android:id="@+id/axis_info_icon_container"
