@@ -58,6 +58,7 @@
         android:id="@+id/axis_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layoutDirection="locale"
         android:layout_marginStart="11dp"
         android:layout_marginEnd="17dp"
         android:layout_marginBottom="10dp" />
