@@ -851,7 +851,6 @@ public class FontViewerFragment extends Fragment {
 
     public void showFontSizeDialogPublic() {
         final float originalSize      = currentFontSize;
-        final Typeface originalTypeface = currentTypeface;
 
         FontSizeDialog fontSizeDialog = new FontSizeDialog(
             requireContext(),
@@ -863,8 +862,8 @@ public class FontViewerFragment extends Fragment {
         fontSizeDialog.setOnFontSizeChangedListener(this::onFontSizeChanged);
 
         fontSizeDialog.setOnDialogCancelledListener(() -> {
+            // الحوار يغيّر الحجم فقط، فلا نستعيد Typeface محفوظاً قبل فتحه: قد يكون قديماً إن فُتح الحوار أثناء حركة المحور
             currentFontSize   = originalSize;
-            currentTypeface   = originalTypeface;
             applyFontToPreviewTexts();
             applyFontSize();
             
