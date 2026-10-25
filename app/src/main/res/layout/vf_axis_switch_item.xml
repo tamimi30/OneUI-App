@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:minWidth="150dp"
-    android:paddingTop="17dp"
+    android:paddingTop="10dp"
     android:paddingBottom="16dp"
     android:paddingStart="24dp"
     android:paddingEnd="17dp"
