@@ -13,6 +13,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layoutDirection="locale"
         android:orientation="horizontal">
         
         <TextView
@@ -37,6 +38,7 @@
             android:background="@drawable/sort_btn_ripple_oval"
             android:clickable="true"
             android:focusable="true"
+            android:layoutDirection="locale"
             android:contentDescription="@string/axis_info_button_description"
             android:tooltipText="@string/axis_info_button_description">
 
