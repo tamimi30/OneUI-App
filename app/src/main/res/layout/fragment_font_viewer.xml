@@ -45,7 +45,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_gravity="start|center_vertical" />
+                        android:layoutDirection="locale" />
                 
                 </com.oneui.fontviewer.widget.OneUiHorizontalScrollView>
 
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:clipChildren="false"
-                android:textAlignment="center"
+                android:textAlignment="start"
                 android:textSize="34dp"
                 android:textColor="@color/font_preview_text_color" />
                 
