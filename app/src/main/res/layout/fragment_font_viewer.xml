@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:clipChildren="false"
-                android:textAlignment="start"
+                android:textAlignment="textStart"
                 android:textSize="34dp"
                 android:textColor="@color/font_preview_text_color" />
                 
