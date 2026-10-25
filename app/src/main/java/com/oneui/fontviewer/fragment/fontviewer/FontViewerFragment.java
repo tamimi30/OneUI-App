@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -95,10 +96,12 @@ public class FontViewerFragment extends Fragment {
     private View variableAxesContainer;
     private AxisSpinnerUi weightAxisUi;
     private AxisSpinnerUi widthAxisUi;
-    private AxisSpinnerUi italicAxisUi;
+    // محور الميل (ital) ثنائي القيمة، لذلك يُعرض بمفتاح SwitchCompat بدل Spinner (ضغطة واحدة بدل ضغطتين)
+    private AxisSwitchUi italicAxisUi;
     private AxisSpinnerUi gradeAxisUi;
     private AxisSpinnerUi roundnessAxisUi;
     private AxisSpinnerUi monoAxisUi;
+    // قائمة المحاور التي تُعرض بـ Spinner فقط (محور الميل مستثنى لأنه يُعرض بمفتاح)
     private List<AxisSpinnerUi> allAxisUis;
 
     private String currentFontPath;
@@ -142,6 +145,22 @@ public class FontViewerFragment extends Fragment {
             this.tag = tag;
             this.container = container;
             this.spinner = spinner;
+        }
+    }
+
+    /**
+     * تمثل ربط عنصر واجهة واحد بمحور ثنائي القيمة (الحاوية + SwitchCompat).
+     * الحاوية نفسها هي جذر vf_axis_switch_item.xml المنفوخ لهذا المحور.
+     */
+    private static class AxisSwitchUi {
+        final String tag;
+        final View container;
+        final SwitchCompat switchView;
+
+        AxisSwitchUi(String tag, View container, SwitchCompat switchView) {
+            this.tag = tag;
+            this.container = container;
+            this.switchView = switchView;
         }
     }
 
@@ -272,17 +291,17 @@ public class FontViewerFragment extends Fragment {
         if (getActivity() instanceof FontViewerActivity) {
             FontViewerActivity main = (FontViewerActivity) getActivity();
             formattingHelper.setup(main.getBtnBold(), main.getBtnItalic(), (isFakeBold, isFakeItalic) -> {
-        if (previewSentence != null) {
-            previewSentence.getPaint().setFakeBoldText(isFakeBold);
-            previewSentence.getPaint().setTextSkewX(isFakeItalic ? -0.25f : 0f);
-            previewSentence.invalidate(); 
+                if (previewSentence != null) {
+                    previewSentence.getPaint().setFakeBoldText(isFakeBold);
+                    previewSentence.getPaint().setTextSkewX(isFakeItalic ? -0.25f : 0f);
+                    previewSentence.invalidate(); 
+                }
+            });
+            formattingHelper.restoreState(savedInstanceState);
+            formattingHelper.syncViewState();
         }
-    });
-    formattingHelper.restoreState(savedInstanceState);
-    formattingHelper.syncViewState();
-    }
 
-        }
+    }
 
 
     @Override
@@ -324,7 +343,8 @@ public class FontViewerFragment extends Fragment {
     }
 
     /**
-     * يتم استدعاؤها عند تغيير قيمة أي محور من محاور الخط المتغير عبر Spinner الخاص به.
+     * يتم استدعاؤها عند تغيير قيمة أي محور من محاور الخط المتغير عبر Spinner الخاص به
+     * (أو عبر المفتاح في حالة محور الميل).
      * تحرّك المعاينة مباشرة (لأداء سلس)، ثم تعيد بناء الـ Typeface في الخلفية بعد انتهاء الحركة
      * لضمان استقرار خصائص الخط عند أي تعديل لاحق (نفس فلسفة التعامل مع الوزن سابقاً).
      */
@@ -350,6 +370,8 @@ public class FontViewerFragment extends Fragment {
 
         ValueAnimator runningAnimator = axisAnimators.get(axisTag);
         if (runningAnimator != null && runningAnimator.isRunning()) {
+            // إزالة المستمعين قبل الإلغاء: cancel() يستدعي onAnimationEnd القديم الذي يقفز بالقيمة الى هدفها السابق
+            runningAnimator.removeAllListeners();
             runningAnimator.cancel();
             Float refreshedOld = currentAxisValues.get(axisTag);
             if (refreshedOld != null) {
@@ -424,7 +446,7 @@ public class FontViewerFragment extends Fragment {
                 R.string.font_info_axis_weight, R.string.axis_info_weight_dialog_title, R.drawable.axis_weight_info_img, R.string.axis_info_weight_description);
         widthAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_WDTH,
                 R.string.font_info_axis_width, R.string.axis_info_width_dialog_title, R.drawable.axis_width_info_img, R.string.axis_info_width_description);
-        italicAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_ITAL,
+        italicAxisUi = inflateAxisSwitchItem(axesRow, VariableFontHelper.AXIS_ITAL,
                 R.string.font_info_axis_italic, R.string.axis_info_italic_dialog_title, R.drawable.axis_italic_info_img, R.string.axis_info_italic_description);
         gradeAxisUi = inflateAxisItem(axesRow, VariableFontHelper.AXIS_GRAD,
                 R.string.font_info_axis_grade, R.string.axis_info_grade_dialog_title, R.drawable.axis_grade_info_img, R.string.axis_info_grade_description);
@@ -436,7 +458,6 @@ public class FontViewerFragment extends Fragment {
         allAxisUis = new ArrayList<>();
         allAxisUis.add(weightAxisUi);
         allAxisUis.add(widthAxisUi);
-        allAxisUis.add(italicAxisUi);
         allAxisUis.add(gradeAxisUi);
         allAxisUis.add(roundnessAxisUi);
         allAxisUis.add(monoAxisUi);
@@ -470,6 +491,34 @@ public class FontViewerFragment extends Fragment {
         parent.addView(item);
 
         return new AxisSpinnerUi(axisTag, item, spinner);
+    }
+
+    /**
+     * نفس فكرة inflateAxisItem تماماً، لكن للمحاور الثنائية القيمة: ينفخ بطاقة vf_axis_switch_item
+     * (الاسم وزر المعلومات في الأعلى والمفتاح تحتهما) ويضيفها الى صف المحاور مرة واحدة فقط عند الإنشاء.
+     */
+    private AxisSwitchUi inflateAxisSwitchItem(ViewGroup parent, String axisTag, @StringRes int labelRes,
+                                                @StringRes int infoTitleRes, @DrawableRes int infoImageRes,
+                                                @StringRes int infoDescriptionRes) {
+        View item = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.vf_axis_switch_item, parent, false);
+
+        TextView nameText = item.findViewById(R.id.axis_name_text);
+        if (nameText != null) {
+            nameText.setText(labelRes);
+        }
+
+        SwitchCompat switchView = item.findViewById(R.id.axis_switch);
+
+        View infoContainer = item.findViewById(R.id.axis_info_icon_container);
+        if (infoContainer != null) {
+            infoContainer.setOnClickListener(v ->
+                    AxisInfoDialog.show(requireContext(), infoTitleRes, infoImageRes, infoDescriptionRes));
+        }
+
+        parent.addView(item);
+
+        return new AxisSwitchUi(axisTag, item, switchView);
     }
 
 
@@ -703,6 +752,9 @@ public class FontViewerFragment extends Fragment {
             List<VariableFontHelper.VariableInstance> instances = axisInstancesMap.get(ui.tag);
             setupSingleAxisSpinner(ui, instances);
         }
+
+        // محور الميل له بطاقة مفتاح مستقلة، ويُخفى تلقائياً اذا لم يدعمه الخط
+        setupItalicSwitch(italicAxisUi, axisInstancesMap.get(VariableFontHelper.AXIS_ITAL));
     }
 
     private void setupSingleAxisSpinner(AxisSpinnerUi ui, List<VariableFontHelper.VariableInstance> instances) {
@@ -759,6 +811,41 @@ public class FontViewerFragment extends Fragment {
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}
             });
+        });
+    }
+
+    /**
+     * يضبط بطاقة مفتاح محور الميل: تُخفى اذا لم يدعم الخط المحور،
+     * وإلا يُضبط المفتاح على أقرب قيمة للقيمة الحالية دون إطلاق المستمع، ثم يُربط المستمع الذي يحرّك المحور.
+     * نص المفتاح يعرض اسم القيمة الحالية (Upright / Italic) من نفس أسماء القيم المستخرجة.
+     */
+    private void setupItalicSwitch(AxisSwitchUi ui, List<VariableFontHelper.VariableInstance> instances) {
+        if (ui == null || ui.container == null || ui.switchView == null) return;
+
+        if (instances == null || instances.isEmpty()) {
+            ui.switchView.setOnCheckedChangeListener(null);
+            ui.container.setVisibility(View.GONE);
+            return;
+        }
+
+        final VariableFontHelper.VariableInstance offInstance = instances.get(0);
+        final VariableFontHelper.VariableInstance onInstance  = instances.get(instances.size() - 1);
+        ui.container.setVisibility(View.VISIBLE);
+
+        Float currentValue = currentAxisValues.get(ui.tag);
+        boolean checked = currentValue != null
+                && Math.abs(onInstance.value - currentValue) < Math.abs(offInstance.value - currentValue);
+
+        // نزيل المستمع أولاً حتى لا يطلق ضبط الحالة الابتدائية حركة المحور
+        ui.switchView.setOnCheckedChangeListener(null);
+        ui.switchView.setChecked(checked);
+        ui.switchView.jumpDrawablesToCurrentState();
+        ui.switchView.setText(checked ? onInstance.name : offInstance.name);
+
+        ui.switchView.setOnCheckedChangeListener((button, isChecked) -> {
+            VariableFontHelper.VariableInstance target = isChecked ? onInstance : offInstance;
+            button.setText(target.name);
+            onAxisValueChanged(ui.tag, target);
         });
     }
 
@@ -834,10 +921,10 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void applyFontToPreviewTexts() {
-    if (currentTypeface != null && previewSentence != null) {
-        previewSentence.setTypeface(currentTypeface);
-        previewSentence.getPaint().setFakeBoldText(formattingHelper.isBoldActive());
-        previewSentence.getPaint().setTextSkewX(formattingHelper.isItalicActive() ? -0.25f : 0f);
+        if (currentTypeface != null && previewSentence != null) {
+            previewSentence.setTypeface(currentTypeface);
+            previewSentence.getPaint().setFakeBoldText(formattingHelper.isBoldActive());
+            previewSentence.getPaint().setTextSkewX(formattingHelper.isItalicActive() ? -0.25f : 0f);
         }
         applyFontSize();
     }
@@ -925,10 +1012,10 @@ public class FontViewerFragment extends Fragment {
                     String lastOriginalPath = preferenceManager.getLastViewedFontOriginalPath();
                     if (lastOriginalPath != null && !lastOriginalPath.isEmpty()) {
                         originalFontPath = lastOriginalPath;
-            } else {
+                    } else {
                         originalFontPath = extractRealPathFromUri(lastPath);
-            }
-        }
+                    }
+                }
 
                 notifyFontChangedImmediate();
                 // اعادة فتح آخر خط تم عرضه: نستخدم آخر قيمة محفوظة لكل محور من محاوره
@@ -1009,4 +1096,4 @@ public class FontViewerFragment extends Fragment {
     public boolean hasFontSelected() {
         return currentFontPath != null && !currentFontPath.isEmpty();
     }
-                }
+}
