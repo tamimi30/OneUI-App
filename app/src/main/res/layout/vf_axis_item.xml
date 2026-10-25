@@ -23,7 +23,7 @@
             android:textColor="?android:attr/textColorSecondary"
             android:layout_marginTop="14dp"
             android:layout_marginStart="24dp"
-            android:layout_marginBottom="14dp" />
+            android:layout_marginBottom="0dp" />
         
         <LinearLayout
             android:id="@+id/axis_info_icon_container"
