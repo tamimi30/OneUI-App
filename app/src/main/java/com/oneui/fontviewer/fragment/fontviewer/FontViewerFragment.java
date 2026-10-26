@@ -840,11 +840,11 @@ public class FontViewerFragment extends Fragment {
         ui.switchView.setOnCheckedChangeListener(null);
         ui.switchView.setChecked(checked);
         ui.switchView.jumpDrawablesToCurrentState();
-        //ui.switchView.setText(checked ? onInstance.name : offInstance.name);
+        ui.switchView.setText(checked ? onInstance.name : offInstance.name);
 
         ui.switchView.setOnCheckedChangeListener((button, isChecked) -> {
             VariableFontHelper.VariableInstance target = isChecked ? onInstance : offInstance;
-           // button.setText(target.name);
+            button.setText(target.name);
             onAxisValueChanged(ui.tag, target);
         });
     }
