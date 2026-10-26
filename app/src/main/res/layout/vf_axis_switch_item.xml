@@ -4,35 +4,35 @@
     android:id="@+id/axis_item_container"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:minWidth="150dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="21dp"
     android:layout_marginEnd="13dp"
     android:orientation="vertical"
     android:background="@drawable/vf_axis_item_bg"
     android:visibility="gone">
 
-    <!-- نفس صف الاسم + زر المعلومات الموجود في vf_axis_item.xml، لكن بدون minWidth لتصغير عرض البطاقة -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/axis_name_text"
-            android:layout_width="100sp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="100dp"
             android:textSize="13sp"
-            android:textColor="?android:attr/textColorSecondary"
-            android:layout_marginTop="14dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="14dp" />
+            android:layout_marginEnd="35dp"
+            android:textColor="?android:attr/textColorSecondary" />
 
         <LinearLayout
             android:id="@+id/axis_info_icon_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="7dp"
-            android:layout_marginEnd="17dp"
             android:orientation="vertical"
             android:layout_gravity="center_vertical"
             android:background="@drawable/sort_btn_ripple_oval"
@@ -53,17 +53,11 @@
 
     </LinearLayout>
 
-    <!-- layout_height="0dp" مع layout_weight="1" يجعل المفتاح يتوسط المساحة المتبقية من البطاقة،
-         فتبقى البطاقة بنفس ارتفاع بطاقات المحاور الأخرى (match_parent في الجذر) بغض النظر عن ارتفاع الـ Spinner -->
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/axis_switch"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:textSize="17sp"
-        android:gravity="center_vertical"
-        android:layout_marginVertical="6dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="17dp" />
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.AppCompat.Light.Widget.TextView.SpinnerItem"
+        android:gravity="center_vertical" />
 
 </LinearLayout>
