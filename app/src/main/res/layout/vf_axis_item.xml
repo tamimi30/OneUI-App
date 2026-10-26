@@ -28,7 +28,7 @@
             android:textColor="?android:attr/textColorSecondary"
             android:layout_marginTop="4dp"
             android:layout_marginStart="13dp"
-            android:layout_marginEnd="1dp"  />
+            android:layout_marginEnd="0dp"  />
         
         <LinearLayout
             android:id="@+id/axis_info_icon_container"
