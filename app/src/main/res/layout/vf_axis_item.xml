@@ -8,7 +8,7 @@
     android:paddingBottom="10dp"
     android:paddingStart="11dp"
     android:paddingEnd="17dp"
-    android:layout_marginEnd="10dp"
+    android:layout_marginEnd="13dp"
     android:orientation="vertical"
     android:background="@drawable/vf_axis_item_bg"
     android:visibility="gone">
@@ -28,7 +28,7 @@
             android:textColor="?android:attr/textColorSecondary"
             android:layout_marginTop="4dp"
             android:layout_marginStart="13dp"
-            android:layout_marginEnd="0dp"  />
+            android:layout_marginEnd="-1dp"  />
         
         <LinearLayout
             android:id="@+id/axis_info_icon_container"
@@ -45,8 +45,8 @@
 
             <ImageView
                 android:id="@+id/axis_info_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:src="@drawable/ic_oui_info_outline"
                 android:tint="?android:attr/textColorSecondary"
                 android:layout_gravity="center" />
