@@ -8,7 +8,7 @@
     android:paddingBottom="14dp"
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
-    android:layout_marginEnd="0dp"
+    android:layout_marginEnd="24dp"
     android:clipToPadding="false"
     android:clipChildren="false"
     android:orientation="vertical"
@@ -28,7 +28,7 @@
             android:minWidth="100sp"
             android:textSize="13sp"
             android:textColor="?android:attr/textColorSecondary"
-            android:layout_marginEnd="14dp" />
+            android:layout_marginEnd="0dp" />
         
         <LinearLayout
             android:id="@+id/axis_info_icon_container"
