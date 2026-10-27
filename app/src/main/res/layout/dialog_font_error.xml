@@ -14,7 +14,6 @@
         android:text="@string/font_metadata_error_message"
         android:textSize="13sp"
         app:fontFamily="sec-roboto-light"
-        android:textStyle="normal"
         android:lineSpacingExtra="4sp"
         android:textColor="@color/description_text_color" />
 
