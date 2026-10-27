@@ -9,6 +9,8 @@
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
     android:layout_marginEnd="13dp"
+    android:clipToPadding="false"
+    android:clipChildren="false"
     android:orientation="vertical"
     android:background="@drawable/vf_axis_item_bg"
     android:visibility="gone">
@@ -16,7 +18,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="18dp"
         android:orientation="horizontal">
 
         <TextView
