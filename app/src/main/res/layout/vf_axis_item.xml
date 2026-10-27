@@ -4,11 +4,13 @@
     android:id="@+id/axis_item_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:paddingStart="11dp"
-    android:paddingEnd="17dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
     android:layout_marginEnd="13dp"
+    android:clipToPadding="false"
+    android:clipChildren="false"
     android:orientation="vertical"
     android:background="@drawable/vf_axis_item_bg"
     android:visibility="gone">
@@ -16,7 +18,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="18dp"
         android:orientation="horizontal">
         
         <TextView
@@ -26,15 +28,14 @@
             android:minWidth="100sp"
             android:textSize="13sp"
             android:textColor="?android:attr/textColorSecondary"
-            android:layout_marginTop="4dp"
-            android:layout_marginStart="13dp"
-            android:layout_marginEnd="1dp"  />
+            android:layout_marginEnd="14dp" />
         
         <LinearLayout
             android:id="@+id/axis_info_icon_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="7dp"
+            android:layout_marginEnd="-7dp"
             android:orientation="vertical"
             android:layout_gravity="center_vertical"
             android:background="@drawable/sort_btn_ripple_oval"
@@ -58,6 +59,9 @@
     <com.oneui.fontviewer.widget.AxisSpinner
         android:id="@+id/axis_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-4dp"
+        android:layout_marginBottom="-4dp"
+        android:layout_marginStart="-13dp" />
 
 </LinearLayout>
