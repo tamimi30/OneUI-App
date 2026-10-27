@@ -21,6 +21,6 @@
         android:textStyle="normal"
         android:lineSpacingExtra="4sp"
         android:textColor="@color/description_text_color"
-        android:textSize="13sp" />
+        android:textSize="14sp" />
 
 </LinearLayout>
