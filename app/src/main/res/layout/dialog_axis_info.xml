@@ -17,9 +17,11 @@
         android:id="@+id/axis_info_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:attr/textAppearance"
+        app:fontFamily="sec-roboto-light"
         android:lineSpacingExtra="4sp"
         android:paddingStart="4dp"
-        android:paddingEnd="4dp" />
+        android:paddingEnd="4dp"
+        android:textColor="@color/description_text_color"
+        android:textSize="13sp" />
 
 </LinearLayout>
