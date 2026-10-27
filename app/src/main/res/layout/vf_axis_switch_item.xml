@@ -7,7 +7,7 @@
     android:paddingTop="14dp"
     android:paddingBottom="14dp"
     android:paddingStart="24dp"
-    android:paddingEnd="21dp"
+    android:paddingEnd="24dp"
     android:layout_marginEnd="13dp"
     android:orientation="vertical"
     android:background="@drawable/vf_axis_item_bg"
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:minWidth="100dp"
             android:textSize="13sp"
-            android:layout_marginEnd="35dp"
+            android:layout_marginEnd="14dp"
             android:textColor="?android:attr/textColorSecondary" />
 
         <LinearLayout
@@ -33,6 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="7dp"
+            android:layout_marginTop="-7dp"
+            android:layout_marginEnd="-7dp"
             android:orientation="vertical"
             android:layout_gravity="center_vertical"
             android:background="@drawable/sort_btn_ripple_oval"
@@ -57,7 +59,7 @@
         android:id="@+id/axis_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/TextAppearance.AppCompat.Light.Widget.TextView.SpinnerItem"
+        android:textSize="17sp"
         android:gravity="center_vertical" />
 
 </LinearLayout>
