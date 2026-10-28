@@ -54,7 +54,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:tint="@color/sesl_primary_color_dark"
+                    android:tint="@color/drawer_icon_color"
                     android:src="@drawable/ic_oui_text_bold" />
 
             </FrameLayout>
@@ -76,7 +76,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:tint="@color/sesl_primary_dark_color_dark"
+                    android:tint="@color/drawer_icon_color"
                     android:src="@drawable/ic_oui_text_italic" />
 
             </FrameLayout>
