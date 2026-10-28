@@ -133,7 +133,7 @@ public class FontViewerFragment extends Fragment {
 
     /**
      * تمثل ربط عنصر واجهة واحد بمحور من محاور الخط المتغير (الحاوية + Spinner).
-     * الحاوية نفسها هي جذر vf_axis_item.xml المنفوخ لهذا المحور.
+     * الحاوية نفسها هي جذر vf_axis_spinner_item.xml المنفوخ لهذا المحور.
      */
     private static class AxisSpinnerUi {
         final String tag;
@@ -464,7 +464,7 @@ public class FontViewerFragment extends Fragment {
     }
 
     /**
-     * ★ ينفخ (Inflate) نسخة واحدة من قالب البطاقة الموحّد vf_axis_item لهذا المحور، ويربط
+     * ★ ينفخ (Inflate) نسخة واحدة من قالب البطاقة الموحّد vf_axis_spinner_item لهذا المحور، ويربط
      *   اسم المحور وزر المعلومات الخاص به، ثم يضيفها الى صف المحاور. هذا يحدث مرة واحدة فقط
      *   عند إنشاء الـ Fragment (initViews)، وليس عند كل فتح خط، فلا توجد أي كلفة أداء إضافية
      *   عند فتح الخطوط لاحقاً — نفس عدد الـ Views ونفس منطق الإظهار/الإخفاء كما كان سابقاً ★
@@ -473,7 +473,7 @@ public class FontViewerFragment extends Fragment {
                                            @StringRes int infoTitleRes, @DrawableRes int infoImageRes,
                                            @StringRes int infoDescriptionRes) {
         View item = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.vf_axis_item, parent, false);
+                .inflate(R.layout.vf_axis_spinner_item, parent, false);
 
         TextView nameText = item.findViewById(R.id.axis_name_text);
         if (nameText != null) {
