@@ -33,14 +33,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="5dp"
-            android:layout_gravity="center">
+            android:padding="6dp"
+            android:gravity="center_vertical">
 
             <FrameLayout
                 android:id="@+id/btn_bold_container"
                 android:layout_width="56dp"
-                android:layout_height="46dp"
-                android:layout_gravity="center_vertical"
+                android:layout_height="44dp"
+                android:gravity="center"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/bold_italic_btn_ripple"
                 android:layout_marginEnd="5dp"
@@ -52,8 +52,6 @@
                     android:id="@+id/btn_bold"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
                     android:tint="@color/drawer_icon_color"
                     android:src="@drawable/ic_oui_text_bold" />
 
@@ -63,7 +61,7 @@
                 android:id="@+id/btn_italic_container"
                 android:layout_width="56dp"
                 android:layout_height="46dp"
-                android:layout_gravity="center_vertical"
+                android:gravity="center"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/bold_italic_btn_ripple"
                 android:clickable="true"
@@ -74,8 +72,6 @@
                     android:id="@+id/btn_italic"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
                     android:tint="@color/drawer_icon_color"
                     android:src="@drawable/ic_oui_text_italic" />
 
