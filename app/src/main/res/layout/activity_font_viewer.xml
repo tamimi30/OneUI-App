@@ -60,7 +60,7 @@
             <FrameLayout
                 android:id="@+id/btn_italic_container"
                 android:layout_width="56dp"
-                android:layout_height="46dp"
+                android:layout_height="44dp"
                 android:gravity="center"
                 android:background="@drawable/bg_format_toggle"
                 android:foreground="@drawable/bold_italic_btn_ripple"
