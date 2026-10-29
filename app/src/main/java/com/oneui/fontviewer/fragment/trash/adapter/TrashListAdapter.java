@@ -208,9 +208,9 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
     private void updateCheckBoxState(@NonNull TrashItemViewHolder holder, int position) {
-        if (holder.selectableLayout != null) {
-            holder.selectableLayout.setSelectionMode(isSelectionMode);
-            holder.selectableLayout.setSelectedAnimate(isItemSelected(position));
+        if (holder.Layout != null) {
+            holder.Layout.setSelectionMode(isSelectionMode);
+            holder.Layout.setSelectedAnimate(isItemSelected(position));
         }
     }
 
@@ -328,13 +328,13 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     static class TrashItemViewHolder extends RecyclerView.ViewHolder {
 
-        final LinearLayout selectableLayout;
+        final LinearLayout Layout;
         final TextView fontNameTextView;
         final TextView daysRemainingTextView;
 
         TrashItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            selectableLayout      = itemView.findViewById(R.id.selectable_layout);
+            Layout      = itemView.findViewById(R.id.selectable_layout);
             fontNameTextView      = itemView.findViewById(R.id.trash_item_font_name);
             daysRemainingTextView = itemView.findViewById(R.id.trash_item_days_remaining);
         }
