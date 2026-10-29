@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
-import com.oneui.fontviewer.widget.SelectableLinearLayout;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -328,7 +328,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     static class TrashItemViewHolder extends RecyclerView.ViewHolder {
 
-        final SelectableLinearLayout selectableLayout;
+        final LinearLayout selectableLayout;
         final TextView fontNameTextView;
         final TextView daysRemainingTextView;
 
