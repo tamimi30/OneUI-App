@@ -15,6 +15,7 @@
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
     android:clipToPadding="false"
     android:clipChildren="false"
+    app:checkableButtonSpacing="24dp"
     android:gravity="center_vertical"
     android:foreground="?listChoiceBackgroundIndicator"
     app:checkMode="checkBox">
