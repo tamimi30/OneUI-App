@@ -18,6 +18,11 @@ public class VariableFontHelper {
     
     private static final String TAG = "VariableFontHelper";
 
+    // ذاكرة مؤقتة لمحاور fvar: كان جدول fvar يُفتح ويُقرأ نحو 12 مرة لكل خط متغير، فصار يُقرأ مرة واحدة ثم تُخدم بقية الطلبات منها.
+    // المفتاح يتضمن المسار وفهرس TTC وتاريخ التعديل والحجم، فاذا تغيّر الملف تُقرأ بياناته من جديد
+    private static final Map<String, Map<String, float[]>> FVAR_CACHE =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
     // وسوم محاور الخط المتغير المدعومة.
     // ملاحظة تقنية مهمة: wght, wdth, ital محاور مسجّلة رسمياً في OpenType لذلك وسومها بأحرف صغيرة،
     // بينما GRAD, ROND, MONO محاور غير رسمية (foundry-defined) ويجب أن تكون وسومها بأحرف كبيرة بالكامل،
@@ -313,73 +318,70 @@ public class VariableFontHelper {
      * يعيد null اذا كان هذا المحور غير موجود في الخط (اي أن الخط لا يدعمه).
      */
     private static float[] readAxisRangeFromFvar(File fontFile, int ttcIndex, String targetTag) {
+        String key = fontFile.getAbsolutePath() + '|' + ttcIndex + '|'
+                + fontFile.lastModified() + '|' + fontFile.length();
+        Map<String, float[]> axes = FVAR_CACHE.get(key);
+        if (axes == null) {
+            axes = parseAllAxesFromFvar(fontFile, ttcIndex);
+            if (axes == null) return null;          // فشلت القراءة: لا نخزّن
+            if (FVAR_CACHE.size() >= 64) FVAR_CACHE.clear();
+            FVAR_CACHE.put(key, axes);
+        }
+        float[] range = axes.get(targetTag);
+        return range != null ? range.clone() : null;
+    }
+
+    /**
+     * يقرأ جدول fvar مرة واحدة ويعيد كل محاور الخط (وسم المحور -> {min, default, max}).
+     * يعيد خريطة فارغة اذا لم يكن في الخط جدول fvar، و null اذا فشلت القراءة.
+     */
+    private static Map<String, float[]> parseAllAxesFromFvar(File fontFile, int ttcIndex) {
+        Map<String, float[]> result = new java.util.HashMap<>();
         try (RandomAccessFile raf = new RandomAccessFile(fontFile, "r")) {
             byte[] header = new byte[4];
             raf.read(header);
-            String tag = new String(header, "US-ASCII");
-            
             long fontOffset = 0;
-            
-            if ("ttcf".equals(tag)) {
+            if ("ttcf".equals(new String(header, "US-ASCII"))) {
                 raf.seek(8);
                 long numFonts = readUInt32(raf);
-                if (ttcIndex >= numFonts) {
-                    return null;
-                }
-                
+                if (ttcIndex >= numFonts) return null;
                 raf.seek(12 + (ttcIndex * 4));
                 fontOffset = readUInt32(raf);
             }
-            
             raf.seek(fontOffset + 4);
             int numTables = readUInt16(raf);
-            
+
             long fvarOffset = -1;
             for (int i = 0; i < numTables; i++) {
                 raf.seek(fontOffset + 12 + i * 16);
-                byte[] tableTag = new byte[4];
-                raf.read(tableTag);
-                String tagStr = new String(tableTag, "US-ASCII");
-                
-                if ("fvar".equals(tagStr)) {
+                byte[] t = new byte[4];
+                raf.read(t);
+                if ("fvar".equals(new String(t, "US-ASCII"))) {
                     raf.seek(fontOffset + 12 + i * 16 + 8);
                     fvarOffset = readUInt32(raf);
                     break;
                 }
             }
-            
-            if (fvarOffset == -1) {
-                return null;
-            }
-            
+            if (fvarOffset == -1) return result;    // لا fvar: خريطة فارغة
+
             raf.seek(fvarOffset + 4);
             int axesArrayOffset = readUInt16(raf);
             raf.seek(fvarOffset + 8);
             int axisCount = readUInt16(raf);
             int axisSize = readUInt16(raf);
-            
+
             for (int i = 0; i < axisCount; i++) {
-                long axisPos = fvarOffset + axesArrayOffset + (i * axisSize);
-                raf.seek(axisPos);
-                
-                byte[] axisTag = new byte[4];
-                raf.read(axisTag);
-                String axisTagStr = new String(axisTag, "US-ASCII");
-                
-                if (targetTag.equals(axisTagStr)) {
-                    float minValue     = readFixed(raf);
-                    float defaultValue = readFixed(raf);
-                    float maxValue     = readFixed(raf);
-                    
-                    return new float[]{minValue, defaultValue, maxValue};
-                }
+                raf.seek(fvarOffset + axesArrayOffset + (i * axisSize));
+                byte[] tag = new byte[4];
+                raf.read(tag);
+                float min = readFixed(raf), def = readFixed(raf), max = readFixed(raf);
+                result.putIfAbsent(new String(tag, "US-ASCII"), new float[]{min, def, max});
             }
-            
+            return result;
         } catch (Exception e) {
-            android.util.Log.e(TAG, "Failed to read axis range from fvar for tag: " + targetTag, e);
+            android.util.Log.e(TAG, "Failed to parse fvar", e);
+            return null;
         }
-        
-        return null;
     }
 
     /**
@@ -535,4 +537,4 @@ public class VariableFontHelper {
             }
         }
     }
-                        }
+}
