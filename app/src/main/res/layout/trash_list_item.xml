@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.oneui.fontviewer.widget.SelectableLinearLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -16,7 +16,6 @@
     android:paddingBottom="14.0dip"
     android:gravity="center_vertical"
     android:animateLayoutChanges="true"
-    app:checkMode="checkBox"
     android:foreground="?listChoiceBackgroundIndicator">
 
     <LinearLayout
@@ -47,4 +46,4 @@
                  	
     </LinearLayout>
 
-</com.oneui.fontviewer.widget.SelectableLinearLayout>
+</LinearLayout>
