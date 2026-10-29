@@ -47,6 +47,7 @@ import com.oneui.fontviewer.dialog.FontSizeDialog;
 import com.oneui.fontviewer.dialog.AxisInfoDialog;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.fragment.fontviewer.utils.VariableFontHelper;
+import com.oneui.fontviewer.fragment.fontviewer.utils.FontPrefetcher;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerStorageManager;
 import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerPreferenceManager;
@@ -92,6 +93,10 @@ public class FontViewerFragment extends Fragment {
 
     private TextView previewSentence;
     private TextView weightLabelText;
+
+    // ★ بيانات خط جاهزة مسبقاً (FontPrefetcher) طُبِّقت قبل إنشاء الواجهة، وتنتظر إنشاءها لتُعرض (انظر applyLoadedFontUi) ★
+    private boolean prefetchedUiPending = false;
+    private Map<String, List<VariableFontHelper.VariableInstance>> prefetchedAxisInstancesMap;
 
     private View variableAxesContainer;
     private AxisSpinnerUi weightAxisUi;
@@ -238,6 +243,11 @@ public class FontViewerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
+
+        // ★ اذا وصلت بيانات الخط الجاهزة مسبقاً قبل إنشاء الواجهة، نعرضها الآن قبل رسم الإطار الأول ★
+        if (prefetchedUiPending) {
+            applyLoadedFontUi();
+        }
 
         settingsViewModel.getPreviewText().observe(getViewLifecycleOwner(), previewText -> {
             if (previewSentence != null && previewText != null) {
@@ -550,8 +560,77 @@ public class FontViewerFragment extends Fragment {
             formattingHelper.reset();
         }
 
+        // ★ البيانات المجهّزة مسبقاً (FontPrefetcher): اذا جُهّز الخط وتحليل محاوره أثناء فتح الشاشة، نطبّق كل شيء فوراً
+        //   (الخط + بطاقات المحاور أو تسمية الوزن) قبل رسم الإطار الأول، ولا نحتاج الى التحميل الخلفي إطلاقاً ★
+        if (applyPrefetchedFont(path, ttcIndex, isSystemFont)) {
+            return;
+        }
+
+        // ★ لم تكن البيانات جاهزة: نطبّق الخط فوراً من الذاكرة المؤقتة (Instant Cache Hit) إن وُجد، فلا يظهر الخط الافتراضي،
+        //   ثم نتابع التحميل الكامل في الخلفية كالمعتاد. اذا لم تُنشأ الواجهة بعد يُطبَّق في onViewCreated عبر updatePreviewTexts ★
+        Typeface cachedTypeface = FontPrefetcher.getCachedTypeface(path, ttcIndex, isSystemFont);
+        if (cachedTypeface != null) {
+            currentTypeface = cachedTypeface;
+            if (previewSentence != null) {
+                applyFontToPreviewTexts();
+            }
+        }
+
         // خط جديد تم اختياره: نعيد كل محاوره الى قيمها الافتراضية بدل حمل قيم الخط السابق
         loadFontFromPathWithAxes(path, null, true);
+    }
+
+    /**
+     * يطبّق نتيجة التجهيز المسبق (إن وُجدت وصالحة) بنفس ما كان سيفعله التحميل الخلفي عند النجاح، لكن فوراً وعلى الخيط الرئيسي
+     * ودون أي قراءة ملفات (كل ما فيها محسوب مسبقاً). يعيد false اذا لم تكن جاهزة، فيستمر المسار القديم كما هو.
+     */
+    private boolean applyPrefetchedFont(String path, int ttcIndex, boolean systemFont) {
+        Context context = getContext();
+        if (context == null) {
+            return false;
+        }
+
+        FontPrefetcher.PrefetchedFont data = FontPrefetcher.take(context, path, ttcIndex, systemFont);
+        if (data == null) {
+            Log.d(TAG, "Prefetch miss - falling back to background load: " + path);
+            return false;
+        }
+        Log.d(TAG, "Prefetch hit - applying font synchronously: " + path);
+
+        // خط جديد: كل محاوره تعود الى قيمها الافتراضية ونحفظها (نفس ما يفعله التحميل الخلفي عند resetToDefaults)
+        for (Map.Entry<String, Float> entry : data.axisDefaults.entrySet()) {
+            preferenceManager.saveFontAxisValue(entry.getKey(), entry.getValue());
+        }
+
+        currentTypeface = data.typeface;
+        isVariableFont  = data.isVariable;
+        currentAxisValues.clear();
+        currentAxisValues.putAll(data.axisDefaults);
+        prefetchedAxisInstancesMap = data.axisInstancesMap;
+        prefetchedUiPending = true;
+
+        // اذا لم تُنشأ الواجهة بعد، تُطبَّق الحالة في onViewCreated قبل رسم الإطار الأول
+        applyLoadedFontUi();
+        return true;
+    }
+
+    /**
+     * يعرض حالة الخط المحمّل (بطاقات المحاور للخط المتغير أو تسمية الوزن للثابت + الخط على المعاينة) على الواجهة،
+     * بنفس منطق النجاح في loadFontFromPathWithAxes. لا تفعل شيئاً اذا لم تُنشأ الواجهة بعد (يبقى prefetchedUiPending).
+     */
+    private void applyLoadedFontUi() {
+        if (variableAxesContainer == null || previewSentence == null) {
+            return;
+        }
+
+        if (isVariableFont && !currentAxisValues.isEmpty() && prefetchedAxisInstancesMap != null) {
+            setupAxisSpinners(prefetchedAxisInstancesMap);
+        } else {
+            showWeightLabel(currentWeightWidthLabel);
+        }
+
+        applyFontToPreviewTexts();
+        prefetchedUiPending = false;
     }
 
     public void loadFontFromPath(String path, String fileName, String realName,
