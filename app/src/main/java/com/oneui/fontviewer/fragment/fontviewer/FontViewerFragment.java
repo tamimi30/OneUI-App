@@ -126,15 +126,6 @@ public class FontViewerFragment extends Fragment {
     private final ExecutorService bgExecutor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    // ★ إخفاء المعاينة وبطاقات المحاور (شفافية 0) أثناء أول تحميل للخط فقط، ثم إظهارها بتلاشي قصير عند جاهزية الخط.
-    //   لا نعلّق رسم الإطار الأول ولا ننتظر شيئاً: الإطار يُرسم فوراً كالمعتاد، لكن المعاينة غير مرئية فلا يظهر الخط الافتراضي،
-    //   وتظهر البطاقات والمعاينة معاً (وهما في نفس الـ post) فلا تقفز المعاينة عند ظهور البطاقات.
-    private static final long REVEAL_DURATION_MS = 150;
-    // شبكة أمان: لو لم يصل أي رد من التحميل لأي سبب نظهر المحتوى بعد هذه المهلة حتى لا تبقى المعاينة مخفية
-    private static final long REVEAL_SAFETY_TIMEOUT_MS = 1500;
-    private boolean initialContentHidden = false;
-    private final Runnable revealInitialContentRunnable = this::revealInitialContent;
-
     private FontViewerStorageManager storageManager;
     private FontViewerPreferenceManager preferenceManager;
     private SettingsViewModel settingsViewModel;
@@ -315,10 +306,6 @@ public class FontViewerFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        // إلغاء إظهار المحتوى المؤجل: الواجهة القديمة ستُدمَّر، والواجهة الجديدة (بعد التدوير) تبدأ ظاهرة أصلاً
-        mainHandler.removeCallbacks(revealInitialContentRunnable);
-        initialContentHidden = false;
-
         // إيقاف كل أنيميشن محاور الخط المتغير الجارية لمنع تسريب الذاكرة (Memory Leak)
         for (ValueAnimator animator : axisAnimators.values()) {
             if (animator != null && animator.isRunning()) {
@@ -612,12 +599,6 @@ public class FontViewerFragment extends Fragment {
      * 3) غير ذلك (فتح آخر خط تم عرضه عند فتح التطبيق): نستخدم آخر قيمة محفوظة لهذا المحور.
      */
     private void loadFontFromPathWithAxes(String path, Map<String, Float> restoreAxisValues, boolean resetToDefaults) {
-        // أول فتح للخط فقط: restoreAxisValues == null يعني أنها ليست استعادة بعد التدوير (التدوير يمرّر القيم)،
-        // و currentTypeface == null يعني أنه لا يوجد خط معروض الآن يجب إبقاؤه ظاهراً أثناء التحميل
-        if (restoreAxisValues == null && currentTypeface == null) {
-            hideContentUntilFontReady();
-        }
-
         bgExecutor.execute(() -> {
             try {
                 File fontFile = new File(path);
@@ -681,7 +662,6 @@ public class FontViewerFragment extends Fragment {
                 } catch (Exception e) {
                     Log.e(TAG, "★ Typeface creation failed - font might be corrupted", e);
                     mainHandler.post(() -> {
-                        revealInitialContent();
                         currentFontRealName = null;
                         currentTypeface     = null;
 
@@ -725,7 +705,6 @@ public class FontViewerFragment extends Fragment {
                         }
 
                         applyFontToPreviewTexts();
-                        revealInitialContent();
                         Log.d(TAG, "Font typeface loaded and applied successfully");
                     });
                 } else {
@@ -734,7 +713,6 @@ public class FontViewerFragment extends Fragment {
 
             } catch (Exception e) {
                 mainHandler.post(() -> {
-                    revealInitialContent();
                    
                     currentFontRealName = null;
 
@@ -763,42 +741,6 @@ public class FontViewerFragment extends Fragment {
         });
     }
 
-
-    /**
-     * يخفي المعاينة وبطاقات المحاور/وصف الوزن (شفافية 0 فقط، دون تغيير الـ visibility ولا القياس)
-     * الى أن يجهز الخط، حتى لا يظهر الخط الافتراضي ولا تظهر البطاقات فجأة بعد الإطار الأول.
-     */
-    private void hideContentUntilFontReady() {
-        if (previewSentence == null) return;
-
-        initialContentHidden = true;
-        previewSentence.setAlpha(0f);
-        if (variableAxesContainer != null) variableAxesContainer.setAlpha(0f);
-        if (weightLabelText != null) weightLabelText.setAlpha(0f);
-
-        mainHandler.removeCallbacks(revealInitialContentRunnable);
-        mainHandler.postDelayed(revealInitialContentRunnable, REVEAL_SAFETY_TIMEOUT_MS);
-    }
-
-    /**
-     * يُظهر ما أُخفي بتلاشي قصير. آمنة للاستدعاء أكثر من مرة: لا تفعل شيئاً اذا لم يكن هناك محتوى مخفي
-     * (فتبقى كل عمليات تحميل الخط الأخرى، كاستعادة التدوير، كما كانت تماماً).
-     */
-    private void revealInitialContent() {
-        if (!initialContentHidden) return;
-
-        initialContentHidden = false;
-        mainHandler.removeCallbacks(revealInitialContentRunnable);
-
-        fadeIn(previewSentence);
-        fadeIn(variableAxesContainer);
-        fadeIn(weightLabelText);
-    }
-
-    private void fadeIn(View target) {
-        if (target == null) return;
-        target.animate().alpha(1f).setDuration(REVEAL_DURATION_MS).start();
-    }
 
     private void setupAxisSpinners(Map<String, List<VariableFontHelper.VariableInstance>> axisInstancesMap) {
         if (!isAdded() || variableAxesContainer == null || weightLabelText == null || allAxisUis == null) return;
@@ -1021,7 +963,6 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void resetFontDisplay() {
-        revealInitialContent();
         currentTypeface         = null;
         currentFontPath         = null;
         currentFontFileName     = null;
