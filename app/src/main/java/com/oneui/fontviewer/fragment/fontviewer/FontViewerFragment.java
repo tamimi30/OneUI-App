@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -52,7 +51,6 @@ import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerStorageManager;
 import com.oneui.fontviewer.fragment.fontviewer.manager.FontViewerPreferenceManager;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
-import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.metadata.FontMetadataExtractor;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
@@ -94,27 +92,6 @@ public class FontViewerFragment extends Fragment {
 
     private TextView previewSentence;
     private TextView weightLabelText;
-
-    // ★ مؤشر التحميل عند فتح خط من تطبيق خارجي (Uri): نسخ الملف قد يستغرق وقتاً، وهو بنفس شكل مؤشر قائمة الخطوط المحلية.
-    //   يظهر فقط اذا تجاوز التحميل LOADING_INDICATOR_DELAY_MS حتى لا يومض في الحالات السريعة، ولا يضيف أي تأخير للتحميل نفسه ★
-    private static final long LOADING_INDICATOR_DELAY_MS = 250;
-    // الحد الأدنى لبقاء المؤشر ظاهراً بعد ظهوره، حتى لا يبدو كوميض سريع
-    private static final long LOADING_INDICATOR_MIN_VISIBLE_MS = 500;
-    private View fontViewerScroll;
-    private View loadingContainer;
-    private boolean uriLoadInProgress = false;
-    private boolean loadingIndicatorDue = false;
-    private boolean uriLoadFinishScheduled = false;
-    private long loadingIndicatorShownAt = 0L;
-    private final Runnable showLoadingIndicatorRunnable = () -> {
-        loadingIndicatorDue = true;
-        updateUriLoadingUi();
-    };
-    private final Runnable completeUriLoadingRunnable = this::completeUriLoading;
-
-    // ★ بيانات خط جاهزة مسبقاً (Prefetch) طُبِّقت قبل إنشاء الواجهة، وتنتظر إنشاءها لتُعرض (انظر applyLoadedFontUi) ★
-    private boolean prefetchedUiPending = false;
-    private Map<String, List<VariableFontHelper.VariableInstance>> prefetchedAxisInstancesMap;
 
     private View variableAxesContainer;
     private AxisSpinnerUi weightAxisUi;
@@ -262,11 +239,6 @@ public class FontViewerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
 
-        // ★ اذا وصلت بيانات الخط الجاهزة مسبقاً قبل إنشاء الواجهة، نعرضها الآن قبل رسم الإطار الأول ★
-        if (prefetchedUiPending) {
-            applyLoadedFontUi();
-        }
-
         settingsViewModel.getPreviewText().observe(getViewLifecycleOwner(), previewText -> {
             if (previewSentence != null && previewText != null) {
                 previewSentence.setText(previewText);
@@ -346,8 +318,6 @@ public class FontViewerFragment extends Fragment {
         super.onDestroyView();
         previewSentence        = null;
         weightLabelText        = null;
-        fontViewerScroll       = null;
-        loadingContainer       = null;
         variableAxesContainer  = null;
         weightAxisUi           = null;
         widthAxisUi             = null;
@@ -361,8 +331,6 @@ public class FontViewerFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mainHandler.removeCallbacks(showLoadingIndicatorRunnable);
-        mainHandler.removeCallbacks(completeUriLoadingRunnable);
         bgExecutor.shutdownNow();
     }
     private void onFontSizeChanged(float newSize) {
@@ -470,10 +438,6 @@ public class FontViewerFragment extends Fragment {
     private void initViews(View view) {
         previewSentence = view.findViewById(R.id.preview_sentence);
         weightLabelText = view.findViewById(R.id.weight_label_text);
-        fontViewerScroll = view.findViewById(R.id.font_viewer_scroll);
-        loadingContainer = view.findViewById(R.id.loading_container);
-        // قد يبدأ تحميل الـ Uri من الـ Activity قبل إنشاء الواجهة، فنطبّق الحالة الحالية فور توفر العناصر
-        updateUriLoadingUi();
 
         variableAxesContainer = view.findViewById(R.id.variable_axes_container);
         ViewGroup axesRow = view.findViewById(R.id.variable_axes_row);
@@ -586,220 +550,8 @@ public class FontViewerFragment extends Fragment {
             formattingHelper.reset();
         }
 
-        // ★ البيانات المجهّزة مسبقاً (Prefetch): اذا جُهّز الخط وتحليل محاوره أثناء فتح الشاشة، نطبّق كل شيء فوراً
-        //   (الخط + بطاقات المحاور أو تسمية الوزن) قبل رسم الإطار الأول، ولا نحتاج الى التحميل الخلفي إطلاقاً ★
-        if (applyPrefetchedFont(path, ttcIndex, isSystemFont)) {
-            return;
-        }
-
-        // ★ لم تكن البيانات جاهزة: نطبّق الخط فوراً من الذاكرة المؤقتة (Instant Cache Hit) إن وُجد، فلا يظهر الخط الافتراضي،
-        //   ثم نتابع التحميل الكامل في الخلفية كالمعتاد ★
-        applyCachedTypefaceInstantly(path, ttcIndex, isSystemFont);
-
         // خط جديد تم اختياره: نعيد كل محاوره الى قيمها الافتراضية بدل حمل قيم الخط السابق
         loadFontFromPathWithAxes(path, null, true);
-    }
-
-    /**
-     * يطبّق Typeface الخط فوراً إن كان موجوداً في الذاكرة المؤقتة، دون أي قراءة ملفات أو تحميل على الخيط الرئيسي.
-     * الكاشان يخزّنان الخط بقيم محاوره الافتراضية وبفهرس TTC = 0 فقط، وهذا مطابق لما يبنيه التحميل الخلفي
-     * عند اختيار خط جديد (لأن كل محاوره تُعاد الى قيمها الافتراضية)، لذلك لا تحدث قفزة بصرية عند وصول النتيجة النهائية.
-     * لا نستخدم الكاش مع ttcIndex > 0 لأنه لا يميّز بين خطوط الملف الواحد، ولا نخمّن قيم المحاور هنا.
-     * اذا لم تكن واجهة المعاينة قد أُنشئت بعد، يُحفظ Typeface في currentTypeface ويُطبَّق في onViewCreated عبر updatePreviewTexts.
-     */
-    private void applyCachedTypefaceInstantly(String path, int ttcIndex, boolean systemFont) {
-        if (ttcIndex > 0) {
-            return;
-        }
-
-        Typeface cachedTypeface = systemFont
-                ? SystemFontCache.getInstance().getIfCached(path)
-                : LocalFontCache.getInstance().getIfCached(path);
-
-        if (cachedTypeface == null) {
-            return;
-        }
-
-        currentTypeface = cachedTypeface;
-        if (previewSentence != null) {
-            applyFontToPreviewTexts();
-        }
-    }
-
-    // ════════════════════════════════════════════════════════════
-    // التجهيز المسبق (Prefetch): يُستدعى من MainActivity لحظة اختيار الخط من القائمة، قبل بدء فتح الشاشة.
-    // يحلّل الخط (هل هو متغير، المحاور، القيم الافتراضية) ويبني Typeface في خيط خلفي، أثناء تشغيل أنيميشن فتح الشاشة،
-    // فتكون النتيجة جاهزة في ذاكرة مؤقتة صغيرة عند إنشاء FontViewerFragment. اذا لم تكن جاهزة في الوقت المناسب
-    // (أو فشل التجهيز لأي سبب) يعمل مسار التحميل الخلفي القديم كما هو دون أي تغيير.
-    // ════════════════════════════════════════════════════════════
-
-    private static final int PREFETCH_CACHE_MAX_ENTRIES = 3;
-    private static final Map<String, PrefetchedFontData> sPrefetchCache = new LinkedHashMap<>();
-    private static final ExecutorService sPrefetchExecutor = Executors.newSingleThreadExecutor(runnable -> {
-        Thread thread = new Thread(runnable, "FontViewer-Prefetch");
-        thread.setDaemon(true);
-        return thread;
-    });
-
-    /** نتيجة تجهيز مسبق لخط واحد: كل ما يحتاجه الـ Fragment لعرضه فوراً. */
-    private static final class PrefetchedFontData {
-        final boolean isVariable;
-        final Map<String, List<VariableFontHelper.VariableInstance>> axisInstancesMap;
-        final Map<String, Float> axisDefaults;
-        final Typeface typeface;
-
-        PrefetchedFontData(boolean isVariable,
-                           Map<String, List<VariableFontHelper.VariableInstance>> axisInstancesMap,
-                           Map<String, Float> axisDefaults, Typeface typeface) {
-            this.isVariable = isVariable;
-            this.axisInstancesMap = axisInstancesMap;
-            this.axisDefaults = axisDefaults;
-            this.typeface = typeface;
-        }
-    }
-
-    /**
-     * مفتاح التجهيز المسبق: المسار + فهرس TTC + نوع الخط + تاريخ تعديل الملف وحجمه (حتى لا نستخدم نتيجة قديمة اذا تغيّر الملف)
-     * + لغة التطبيق (لأن أسماء قيم المحاور تُقرأ من strings.xml حسب اللغة).
-     */
-    private static String buildPrefetchKey(String path, int ttcIndex, boolean systemFont, String localeTags) {
-        File file = new File(path);
-        return path + "|" + ttcIndex + "|" + systemFont + "|" + file.lastModified() + "|" + file.length() + "|" + localeTags;
-    }
-
-    /**
-     * تُستدعى من MainActivity قبل startActivity. لا تحجب الخيط الرئيسي: كل العمل في خيط خلفي مستقل.
-     * تتجاهل الخطوط القادمة من Uri (تُنسخ أولاً ولها مسارها الخاص).
-     */
-    public static void prefetchFontInfo(Context context, String path, int ttcIndex, boolean systemFont) {
-        if (context == null || path == null || path.isEmpty() || path.startsWith("content://")) {
-            return;
-        }
-
-        final Context taskContext = context;
-        final String localeTags = context.getResources().getConfiguration().getLocales().toLanguageTags();
-
-        sPrefetchExecutor.execute(() -> {
-            try {
-                File fontFile = new File(path);
-                if (!fontFile.exists()) {
-                    return;
-                }
-
-                // هذا المنطق يطابق loadFontFromPathWithAxes عند resetToDefaults = true (فتح خط جديد من القائمة)
-                boolean isVar = VariableFontHelper.isVariableFont(fontFile, ttcIndex);
-
-                Map<String, List<VariableFontHelper.VariableInstance>> axisInstancesMap = new LinkedHashMap<>();
-                Map<String, Float> axisDefaults = new LinkedHashMap<>();
-
-                if (isVar) {
-                    axisInstancesMap.put(VariableFontHelper.AXIS_WGHT, VariableFontHelper.extractVariableInstances(taskContext, fontFile, ttcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_WDTH, VariableFontHelper.extractWidthInstances(taskContext, fontFile, ttcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_ITAL, VariableFontHelper.extractItalicInstances(taskContext, fontFile, ttcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_GRAD, VariableFontHelper.extractGradeInstances(taskContext, fontFile, ttcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_ROND, VariableFontHelper.extractRoundnessInstances(taskContext, fontFile, ttcIndex));
-                    axisInstancesMap.put(VariableFontHelper.AXIS_MONO, VariableFontHelper.extractMonoInstances(taskContext, fontFile, ttcIndex));
-
-                    for (Map.Entry<String, List<VariableFontHelper.VariableInstance>> entry : axisInstancesMap.entrySet()) {
-                        String axisTag = entry.getKey();
-                        List<VariableFontHelper.VariableInstance> instances = entry.getValue();
-
-                        if (instances == null || instances.isEmpty()) {
-                            continue;
-                        }
-
-                        Float fallbackBoxed = AXIS_FALLBACK_DEFAULTS.get(axisTag);
-                        float fallback = fallbackBoxed != null ? fallbackBoxed : 0f;
-                        axisDefaults.put(axisTag, VariableFontHelper.readAxisDefaultValue(fontFile, ttcIndex, axisTag, fallback));
-                    }
-                }
-
-                Typeface typeface;
-                if (systemFont) {
-                    typeface = SystemFontCache.getInstance().getTypefaceWithAxes(path, axisDefaults, ttcIndex);
-                } else {
-                    typeface = VariableFontHelper.createTypefaceWithAxes(fontFile, axisDefaults, ttcIndex);
-                }
-
-                // أي فشل: لا نخزّن شيئاً، فيتولى مسار التحميل الخلفي القديم معالجة الخطأ وعرض رسالته كما كان
-                if (typeface == null) {
-                    return;
-                }
-
-                String key = buildPrefetchKey(path, ttcIndex, systemFont, localeTags);
-                synchronized (sPrefetchCache) {
-                    while (sPrefetchCache.size() >= PREFETCH_CACHE_MAX_ENTRIES) {
-                        String eldestKey = sPrefetchCache.keySet().iterator().next();
-                        sPrefetchCache.remove(eldestKey);
-                    }
-                    sPrefetchCache.put(key, new PrefetchedFontData(isVar, axisInstancesMap, axisDefaults, typeface));
-                }
-                Log.d(TAG, "Prefetch ready for: " + path);
-            } catch (Exception e) {
-                Log.w(TAG, "Prefetch failed for: " + path, e);
-            }
-        });
-    }
-
-    private static PrefetchedFontData takePrefetchedFontData(Context context, String path, int ttcIndex, boolean systemFont) {
-        String localeTags = context.getResources().getConfiguration().getLocales().toLanguageTags();
-        String key = buildPrefetchKey(path, ttcIndex, systemFont, localeTags);
-        synchronized (sPrefetchCache) {
-            return sPrefetchCache.remove(key);
-        }
-    }
-
-    /**
-     * يطبّق نتيجة التجهيز المسبق (إن وُجدت وصالحة) بنفس ما كان سيفعله التحميل الخلفي عند النجاح، لكن فوراً وعلى الخيط الرئيسي
-     * ودون أي قراءة ملفات (كل ما فيها محسوب مسبقاً). يعيد false اذا لم تكن جاهزة، فيستمر المسار القديم كما هو.
-     */
-    private boolean applyPrefetchedFont(String path, int ttcIndex, boolean systemFont) {
-        Context context = getContext();
-        if (context == null) {
-            return false;
-        }
-
-        PrefetchedFontData data = takePrefetchedFontData(context, path, ttcIndex, systemFont);
-        if (data == null) {
-            Log.d(TAG, "Prefetch miss - falling back to background load: " + path);
-            return false;
-        }
-        Log.d(TAG, "Prefetch hit - applying font synchronously: " + path);
-
-        // خط جديد: كل محاوره تعود الى قيمها الافتراضية ونحفظها (نفس ما يفعله التحميل الخلفي عند resetToDefaults)
-        for (Map.Entry<String, Float> entry : data.axisDefaults.entrySet()) {
-            preferenceManager.saveFontAxisValue(entry.getKey(), entry.getValue());
-        }
-
-        currentTypeface = data.typeface;
-        isVariableFont  = data.isVariable;
-        currentAxisValues.clear();
-        currentAxisValues.putAll(data.axisDefaults);
-        prefetchedAxisInstancesMap = data.axisInstancesMap;
-        prefetchedUiPending = true;
-
-        // اذا لم تُنشأ الواجهة بعد، تُطبَّق الحالة في onViewCreated قبل رسم الإطار الأول
-        applyLoadedFontUi();
-        return true;
-    }
-
-    /**
-     * يعرض حالة الخط المحمّل (بطاقات المحاور للخط المتغير أو تسمية الوزن للثابت + الخط على المعاينة) على الواجهة،
-     * بنفس منطق النجاح في loadFontFromPathWithAxes. لا تفعل شيئاً اذا لم تُنشأ الواجهة بعد (يبقى prefetchedUiPending).
-     */
-    private void applyLoadedFontUi() {
-        if (variableAxesContainer == null || previewSentence == null) {
-            return;
-        }
-
-        if (isVariableFont && !currentAxisValues.isEmpty() && prefetchedAxisInstancesMap != null) {
-            setupAxisSpinners(prefetchedAxisInstancesMap);
-        } else {
-            showWeightLabel(currentWeightWidthLabel);
-        }
-
-        applyFontToPreviewTexts();
-        prefetchedUiPending = false;
     }
 
     public void loadFontFromPath(String path, String fileName, String realName,
@@ -851,10 +603,7 @@ public class FontViewerFragment extends Fragment {
             try {
                 File fontFile = new File(path);
                 if (!fontFile.exists()) {
-                    mainHandler.post(() -> {
-                        resetFontDisplay();
-                        finishUriLoading();
-                    });
+                    mainHandler.post(this::resetFontDisplay);
                     return;
                 }
 
@@ -932,8 +681,6 @@ public class FontViewerFragment extends Fragment {
                             getString(R.string.font_viewer_error_loading_font) +
                             " (" + getString(R.string.unknown_font) + ")",
                             Toast.LENGTH_LONG).show();
-
-                        finishUriLoading();
                     });
                     return;
                 }
@@ -959,9 +706,6 @@ public class FontViewerFragment extends Fragment {
 
                         applyFontToPreviewTexts();
                         Log.d(TAG, "Font typeface loaded and applied successfully");
-
-                        // الخط والبطاقات جاهزان: يظهر المحتوى كاملاً دفعة واحدة ويختفي مؤشر التحميل (إن كان التحميل من Uri)
-                        finishUriLoading();
                     });
                 } else {
                     throw new Exception("Failed to create Typeface - returned null");
@@ -992,8 +736,6 @@ public class FontViewerFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
 
                     Log.e(TAG, "Error creating typeface from path: " + path, e);
-
-                    finishUriLoading();
                 });
             }
         });
@@ -1127,69 +869,6 @@ public class FontViewerFragment extends Fragment {
         if (variableAxesContainer != null) variableAxesContainer.setVisibility(View.GONE);
     }
 
-    /**
-     * يبدأ حالة تحميل خط من Uri: يُخفى المحتوى فوراً (فلا يظهر الخط الافتراضي)، ويظهر مؤشر التحميل بعد
-     * LOADING_INDICATOR_DELAY_MS اذا لم ينتهِ التحميل قبلها.
-     */
-    private void startUriLoading() {
-        uriLoadInProgress       = true;
-        loadingIndicatorDue     = false;
-        uriLoadFinishScheduled  = false;
-        loadingIndicatorShownAt = 0L;
-        mainHandler.removeCallbacks(showLoadingIndicatorRunnable);
-        mainHandler.removeCallbacks(completeUriLoadingRunnable);
-        mainHandler.postDelayed(showLoadingIndicatorRunnable, LOADING_INDICATOR_DELAY_MS);
-        updateUriLoadingUi();
-    }
-
-    /**
-     * ينهي حالة التحميل (نجاحاً أو فشلاً) فيظهر المحتوى كاملاً ويختفي المؤشر.
-     * اذا كان المؤشر ظاهراً فعلاً، يبقى حتى يكمل LOADING_INDICATOR_MIN_VISIBLE_MS منذ ظهوره (لئلا يبدو كوميض)،
-     * أما اذا انتهى التحميل قبل ظهوره فيظهر المحتوى فوراً دون أي انتظار.
-     * آمنة الاستدعاء دائماً: لا تفعل شيئاً اذا لم يكن هناك تحميل Uri جارٍ (مثل فتح خط من القائمة).
-     */
-    private void finishUriLoading() {
-        if (!uriLoadInProgress || uriLoadFinishScheduled) {
-            return;
-        }
-
-        if (loadingIndicatorDue && loadingIndicatorShownAt > 0L) {
-            long remaining = LOADING_INDICATOR_MIN_VISIBLE_MS
-                    - (SystemClock.uptimeMillis() - loadingIndicatorShownAt);
-            if (remaining > 0) {
-                uriLoadFinishScheduled = true;
-                mainHandler.postDelayed(completeUriLoadingRunnable, remaining);
-                return;
-            }
-        }
-
-        completeUriLoading();
-    }
-
-    private void completeUriLoading() {
-        uriLoadInProgress       = false;
-        loadingIndicatorDue     = false;
-        uriLoadFinishScheduled  = false;
-        loadingIndicatorShownAt = 0L;
-        mainHandler.removeCallbacks(showLoadingIndicatorRunnable);
-        mainHandler.removeCallbacks(completeUriLoadingRunnable);
-        updateUriLoadingUi();
-    }
-
-    private void updateUriLoadingUi() {
-        if (fontViewerScroll == null || loadingContainer == null) {
-            return;
-        }
-        fontViewerScroll.setVisibility(uriLoadInProgress ? View.INVISIBLE : View.VISIBLE);
-
-        boolean showIndicator = uriLoadInProgress && loadingIndicatorDue;
-        if (showIndicator && loadingContainer.getVisibility() != View.VISIBLE) {
-            // نسجّل لحظة ظهور المؤشر فعلياً لحساب الحد الأدنى لبقائه
-            loadingIndicatorShownAt = SystemClock.uptimeMillis();
-        }
-        loadingContainer.setVisibility(showIndicator ? View.VISIBLE : View.GONE);
-    }
-
     public void loadFontFromUri(Uri uri, String fileName) {
         originalFontPath = storageManager.getRealPathFromUri(uri);
         if (originalFontPath == null || originalFontPath.isEmpty()) {
@@ -1197,63 +876,45 @@ public class FontViewerFragment extends Fragment {
         }
         isSystemFont     = false;
 
-        // ★ نخفي المحتوى فوراً ونُظهر مؤشر التحميل إن طال النسخ (انظر startUriLoading) ★
-        startUriLoading();
-
         bgExecutor.execute(() -> {
-            try {
-                File copiedFont = storageManager.copyFontForViewing(uri, fileName);
+            File copiedFont = storageManager.copyFontForViewing(uri, fileName);
 
-                if (copiedFont != null && copiedFont.exists()) {
-                    String realName = null;
+            if (copiedFont != null && copiedFont.exists()) {
+                String realName = null;
 
-                    try {
-                        realName = FontMetadataExtractor.extractFontName(copiedFont, 0);
-                        currentWeightWidthLabel = FontWeightWidthExtractor.extract(copiedFont, 0);
-                    } catch (Exception e) {
-                        Log.e(TAG, "Failed to extract font metadata from URI", e);
-                    }
+                try {
+                    realName = FontMetadataExtractor.extractFontName(copiedFont, 0);
+                    currentWeightWidthLabel = FontWeightWidthExtractor.extract(copiedFont, 0);
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to extract font metadata from URI", e);
+                }
 
-                    if (realName == null || realName.isEmpty() || "Unknown Font".equals(realName) || getString(R.string.unknown_font).equals(realName)) {
-                        String finalFileName = fileName != null ? fileName : copiedFont.getName();
-                        realName = null;
+                if (realName == null || realName.isEmpty() || "Unknown Font".equals(realName) || getString(R.string.unknown_font).equals(realName)) {
+                    String finalFileName = fileName != null ? fileName : copiedFont.getName();
+                    realName = null;
 
-                        final String finalRealName = realName;
-                        mainHandler.post(() -> {
-                            loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
-
-                            Toast.makeText(requireContext(),
-                                R.string.toast_font_name_extraction_warning,
-                                Toast.LENGTH_SHORT).show();
-                        });
-                    } else {
-                        final String finalFileName = fileName != null ? fileName : copiedFont.getName();
-                        final String finalRealName = realName;
-
-
-                        mainHandler.post(() -> {
-                            loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
-                        });
-                    }
-                } else {
+                    final String finalRealName = realName;
                     mainHandler.post(() -> {
-                        Toast.makeText(requireContext(),
-                                getString(R.string.font_viewer_error_loading_font),
-                                Toast.LENGTH_SHORT).show();
+                        loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
 
-                        finishUriLoading();
+                        Toast.makeText(requireContext(),
+                            R.string.toast_font_name_extraction_warning,
+                            Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    final String finalFileName = fileName != null ? fileName : copiedFont.getName();
+                    final String finalRealName = realName;
+
+
+                    mainHandler.post(() -> {
+                        loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
                     });
                 }
-            } catch (Exception e) {
-                // أي خطأ غير متوقع: نُنهي حالة التحميل حتى لا تبقى الشاشة فارغة
-                Log.e(TAG, "Unexpected error while loading font from URI", e);
+            } else {
                 mainHandler.post(() -> {
-                    finishUriLoading();
-                    if (isAdded()) {
-                        Toast.makeText(requireContext(),
-                                getString(R.string.font_viewer_error_loading_font),
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(requireContext(),
+                            getString(R.string.font_viewer_error_loading_font),
+                            Toast.LENGTH_SHORT).show();
                 });
             }
         });
