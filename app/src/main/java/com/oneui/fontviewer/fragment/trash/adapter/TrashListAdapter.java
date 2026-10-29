@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
-import android.widget.LinearLayout;
+import com.oneui.fontviewer.widget.SelectableLinearLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -208,9 +208,9 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
     private void updateCheckBoxState(@NonNull TrashItemViewHolder holder, int position) {
-        if (holder.Layout != null) {
-            holder.Layout.setSelectionMode(isSelectionMode);
-            holder.Layout.setSelectedAnimate(isItemSelected(position));
+        if (holder.selectableLayout != null) {
+            holder.selectableLayout.setSelectionMode(isSelectionMode);
+            holder.selectableLayout.setSelectedAnimate(isItemSelected(position));
         }
     }
 
@@ -328,13 +328,13 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     static class TrashItemViewHolder extends RecyclerView.ViewHolder {
 
-        final LinearLayout Layout;
+        final SelectableLinearLayout selectableLayout;
         final TextView fontNameTextView;
         final TextView daysRemainingTextView;
 
         TrashItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            Layout      = itemView.findViewById(R.id.selectable_layout);
+            selectableLayout      = itemView.findViewById(R.id.selectable_layout);
             fontNameTextView      = itemView.findViewById(R.id.trash_item_font_name);
             daysRemainingTextView = itemView.findViewById(R.id.trash_item_days_remaining);
         }
@@ -377,4 +377,4 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     && o.isTrashed() == n.isTrashed();
         }
     }
-    }
+                }
