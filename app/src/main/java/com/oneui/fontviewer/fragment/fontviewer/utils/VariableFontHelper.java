@@ -23,6 +23,12 @@ public class VariableFontHelper {
     private static final Map<String, Map<String, float[]>> FVAR_CACHE =
             new java.util.concurrent.ConcurrentHashMap<>();
 
+    // ذاكرة مؤقتة لنتيجة isVariableFont: كانت تبني Font.Builder وتقرأ الملف مرتين لكل خط متغير (مرة مباشرة ومرة داخل
+    // extractVariableInstances). نخزّن النتيجة الموجبة (الخط متغير) فقط، حتى لا يعلق false ناتج عن خطأ قراءة عابر.
+    // المفتاح يتضمن تاريخ التعديل والحجم، فاذا تغيّر الملف يُفحص من جديد
+    private static final Map<String, Boolean> VARIABLE_FONT_CACHE =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
     // وسوم محاور الخط المتغير المدعومة.
     // ملاحظة تقنية مهمة: wght, wdth, ital محاور مسجّلة رسمياً في OpenType لذلك وسومها بأحرف صغيرة،
     // بينما GRAD, ROND, MONO محاور غير رسمية (foundry-defined) ويجب أن تكون وسومها بأحرف كبيرة بالكامل،
@@ -57,7 +63,22 @@ public class VariableFontHelper {
         if (fontFile == null || !fontFile.exists()) {
             return false;
         }
-        
+
+        String cacheKey = fontFile.getAbsolutePath() + '|' + ttcIndex + '|'
+                + fontFile.lastModified() + '|' + fontFile.length();
+        if (VARIABLE_FONT_CACHE.containsKey(cacheKey)) {
+            return true;
+        }
+
+        boolean result = detectVariableFont(fontFile, ttcIndex);
+        if (result) {
+            if (VARIABLE_FONT_CACHE.size() >= 64) VARIABLE_FONT_CACHE.clear();
+            VARIABLE_FONT_CACHE.put(cacheKey, Boolean.TRUE);
+        }
+        return result;
+    }
+
+    private static boolean detectVariableFont(File fontFile, int ttcIndex) {
         try {
             FontVariationAxis[] axes = getVariationAxes(fontFile, ttcIndex);
             if (axes != null && axes.length > 0) {
