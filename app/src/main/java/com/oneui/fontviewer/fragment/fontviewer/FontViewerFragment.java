@@ -448,9 +448,10 @@ public class FontViewerFragment extends Fragment {
     private void initViews(View view) {
         previewSentence = view.findViewById(R.id.preview_sentence);
         // shadow شفاف: يوسّع مستطيل قص الـTextView فلا يُقصّ ذيل الحرف المائل (مثل j)،
-        // والمساحة المتاحة هي padding الأب (24dp) بعد تعطيل القص عنده في الـlayout.
+        // يُسمح للذيل بالخروج حتى 12dp فقط داخل padding الأب (24dp) بعد تعطيل القص عنده في الـlayout،
+        // فيبقى هامش لا يقل عن 12dp قبل حافة الشاشة ولا يلامسها.
         previewSentence.setShadowLayer(
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24f, getResources().getDisplayMetrics()),
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, getResources().getDisplayMetrics()),
                 0f, 0f, android.graphics.Color.TRANSPARENT);
         weightLabelText = view.findViewById(R.id.weight_label_text);
 
