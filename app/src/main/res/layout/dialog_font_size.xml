@@ -14,6 +14,7 @@
         android:paddingBottom="16dp"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <com.oneui.fontviewer.widget.OneUiTextView
