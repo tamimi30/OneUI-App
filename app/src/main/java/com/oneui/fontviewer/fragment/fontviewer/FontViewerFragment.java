@@ -56,6 +56,7 @@ import com.oneui.fontviewer.metadata.FontMetadataExtractor;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
 import com.oneui.fontviewer.fragment.fontviewer.utils.BoldItalicFormatting;
+import com.oneui.fontviewer.widget.OverhangTextView;
 
 public class FontViewerFragment extends Fragment {
 
@@ -91,7 +92,7 @@ public class FontViewerFragment extends Fragment {
 
     private static float sSessionFontSize = -1f;
 
-    private TextView previewSentence;
+    private OverhangTextView previewSentence;
     private TextView weightLabelText;
 
     // ★ بيانات خط جاهزة مسبقاً (FontPrefetcher) طُبِّقت قبل إنشاء الواجهة، وتنتظر إنشاءها لتُعرض (انظر applyLoadedFontUi) ★
@@ -303,7 +304,7 @@ public class FontViewerFragment extends Fragment {
             formattingHelper.setup(main.getBtnBold(), main.getBtnItalic(), (isFakeBold, isFakeItalic) -> {
                 if (previewSentence != null) {
                     previewSentence.getPaint().setFakeBoldText(isFakeBold);
-                    previewSentence.getPaint().setTextSkewX(isFakeItalic ? -0.25f : 0f);
+                    previewSentence.setFakeItalic(isFakeItalic);
                     previewSentence.invalidate(); 
                 }
             });
@@ -1003,7 +1004,7 @@ public class FontViewerFragment extends Fragment {
         if (currentTypeface != null && previewSentence != null) {
             previewSentence.setTypeface(currentTypeface);
             previewSentence.getPaint().setFakeBoldText(formattingHelper.isBoldActive());
-            previewSentence.getPaint().setTextSkewX(formattingHelper.isItalicActive() ? -0.25f : 0f);
+            previewSentence.setFakeItalic(formattingHelper.isItalicActive());
         }
         applyFontSize();
     }
