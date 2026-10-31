@@ -11,10 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="24dp"
-        android:paddingBottom="16dp"
+        android:layout_marginBottom="16dp"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <com.oneui.fontviewer.widget.OneUiTextView
@@ -49,7 +48,7 @@
         android:layout_height="wrap_content"
         android:minWidth="80dp"
         android:text="34"
-        android:textSize="36dp"
+        android:textSize="30sp"
         android:textColor="?android:attr/textColorPrimary"
         android:layout_gravity="center_horizontal"
         android:gravity="center"

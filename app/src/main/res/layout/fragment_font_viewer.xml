@@ -63,8 +63,6 @@
             android:paddingTop="27dp"
             android:paddingBottom="100dp"
             android:paddingHorizontal="24dp"
-            android:clipChildren="false"
-            android:clipToPadding="false"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
