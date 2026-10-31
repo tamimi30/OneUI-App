@@ -31,6 +31,7 @@ import com.oneui.fontviewer.App;
 import com.oneui.fontviewer.fragment.settings.about.AboutActivity;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
+import com.oneui.fontviewer.utils.ThemeTransition;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -175,13 +176,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 String value = (String) newValue;
                 int mode = Integer.parseInt(value);
 
-                if (mode == SettingsHelper.THEME_DARK) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                }
+                final int nightMode = (mode == SettingsHelper.THEME_DARK)
+                        ? AppCompatDelegate.MODE_NIGHT_YES
+                        : AppCompatDelegate.MODE_NIGHT_NO;
 
-                viewModel.setThemeMode(mode);
+                // Crossfade بين الثيمين بدل القفزة المفاجئة
+                ThemeTransition.apply(requireActivity(), nightMode, () -> {
+                    AppCompatDelegate.setDefaultNightMode(nightMode);
+                    viewModel.setThemeMode(mode);
+                });
 
                 return true;
             });
@@ -195,18 +198,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     themePreference.setEnabled(!enabled);
                 }
 
+                final int nightMode;
                 if (enabled) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                    nightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
                 } else {
                     int savedMode = SettingsHelper.getThemeMode(mContext);
-                    if (savedMode == SettingsHelper.THEME_DARK) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    } else {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    }
+                    nightMode = (savedMode == SettingsHelper.THEME_DARK)
+                            ? AppCompatDelegate.MODE_NIGHT_YES
+                            : AppCompatDelegate.MODE_NIGHT_NO;
                 }
 
-                viewModel.setThemeAuto(enabled);
+                // Crossfade بين الثيمين بدل القفزة المفاجئة
+                ThemeTransition.apply(requireActivity(), nightMode, () -> {
+                    AppCompatDelegate.setDefaultNightMode(nightMode);
+                    viewModel.setThemeAuto(enabled);
+                });
 
                 return true;
             });
