@@ -16,6 +16,7 @@ import com.oneui.fontviewer.fragment.systemfont.data.SystemFontRepository;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
 import com.oneui.fontviewer.utils.CrashHandler;
+import com.oneui.fontviewer.utils.ThemeTransition;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -68,6 +69,9 @@ public class App extends Application {
         }).start();
         
         setupActivityTracking();
+
+        // أنيميشن Crossfade عند تغيير الثيم
+        ThemeTransition.init(this);
     }
     
     /**
