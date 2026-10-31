@@ -35,6 +35,10 @@ import com.oneui.fontviewer.utils.ThemeTransitionAnimator;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
+    // مدة التأخير (بالمللي ثانية) قبل تطبيق الثيم عند الضغط على switch "ثيم النظام"،
+    // حتى ينهي الـ switch حركته أولاً. غيّر القيمة لزيادة أو تقليل التأخير.
+    private static final long THEME_AUTO_SWITCH_DELAY_MS = 250L;
+
     private Context mContext;
     private SettingsViewModel viewModel;
 
@@ -195,25 +199,30 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             themeAutoPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 boolean enabled = (Boolean) newValue;
 
-                // التقاط صورة للثيم الحالي قبل تغييره (لأنيميشن تغيير الثيم)
-                ThemeTransitionAnimator.prepare(requireActivity());
-
                 if (themePreference != null) {
                     themePreference.setEnabled(!enabled);
                 }
 
-                if (enabled) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                } else {
-                    int savedMode = SettingsHelper.getThemeMode(mContext);
-                    if (savedMode == SettingsHelper.THEME_DARK) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    } else {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    }
-                }
+                // تأخير تطبيق الثيم حتى ينهي الـ switch حركته.
+                // ملاحظة: viewModel.setThemeAuto() يستدعي applyTheme() بنفسه، لذلك يجب أن يكون
+                // داخل التأخير أيضاً وإلا سيُطبَّق الثيم فوراً.
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    // التقاط صورة للثيم الحالي قبل تغييره (لأنيميشن تغيير الثيم)
+                    ThemeTransitionAnimator.prepare(getActivity());
 
-                viewModel.setThemeAuto(enabled);
+                    if (enabled) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                    } else {
+                        int savedMode = SettingsHelper.getThemeMode(mContext);
+                        if (savedMode == SettingsHelper.THEME_DARK) {
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                        } else {
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                        }
+                    }
+
+                    viewModel.setThemeAuto(enabled);
+                }, THEME_AUTO_SWITCH_DELAY_MS);
 
                 return true;
             });
