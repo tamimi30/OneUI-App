@@ -451,7 +451,7 @@ public class FontViewerFragment extends Fragment {
         // يُسمح للطرف بالخروج حتى 12dp فقط داخل padding الأب (24dp) بعد تعطيل القص عنده في الـlayout،
         // فيبقى هامش لا يقل عن 12dp قبل حافة الشاشة. لا قياس ولا إعادة layout، فلا اهتزاز أثناء الأنيميشن.
         previewSentence.setShadowLayer(
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, getResources().getDisplayMetrics()),
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24f, getResources().getDisplayMetrics()),
                 0f, 0f, android.graphics.Color.TRANSPARENT);
         weightLabelText = view.findViewById(R.id.weight_label_text);
 
