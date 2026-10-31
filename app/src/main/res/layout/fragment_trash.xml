@@ -33,7 +33,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingBottom="22dp"
+            
             android:paddingStart="45dp"
             android:paddingEnd="45dp">
 
@@ -54,6 +54,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sec-roboto-light"
                 android:gravity="center"
+                android:layout_marginBottom="22dp"
                 android:lineSpacingExtra="4sp"
                 android:text="@string/trash_empty_description"
                 android:textSize="13sp"
