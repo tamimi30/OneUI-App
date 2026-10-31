@@ -78,7 +78,7 @@
                 android:layout_marginBottom="14dp"
                 android:visibility="gone" />
                     
-            <com.oneui.fontviewer.widget.OverhangTextView
+            <TextView
                 android:id="@+id/preview_sentence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
