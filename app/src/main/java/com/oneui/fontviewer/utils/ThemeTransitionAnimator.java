@@ -85,7 +85,7 @@ public final class ThemeTransitionAnimator {
     // ═══════════════════════════════════════════════════════════════════
     // ★★★ غيّر هذا السطر فقط لاختيار الأنيميشن ★★★
     // ═══════════════════════════════════════════════════════════════════
-    public static final AnimationType SELECTED_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
+    public static final AnimationType SELECTED_ANIMATION = AnimationType.FADE;
 
     /** أقصى وقت ننتظره بين التقاط الصورة وإعادة بناء الشاشة، بعده نتجاهل الصورة */
     private static final long PENDING_TIMEOUT_MS = 3000L;
@@ -160,7 +160,7 @@ public final class ThemeTransitionAnimator {
         AnimationType type = SELECTED_ANIMATION;
         boolean themeChanged = getNightFlag(activity) != oldNightFlag;
 
-        if (expired || !themeChanged || type == AnimationType.NONE) {
+        if (expired || !themeChanged || type == AnimationType.NONE || activity.isFinishing()) {
             snapshot.recycle();
             return;
         }
@@ -234,13 +234,18 @@ public final class ThemeTransitionAnimator {
                 }
             });
 
-            // إذا أُغلقت الشاشة أثناء الأنيميشن نوقفه
+            // إذا أُغلقت الشاشة أو أُعيد بناؤها أثناء الأنيميشن نوقفه
             addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
                 @Override
                 public void onViewAttachedToWindow(View v) {}
 
                 @Override
                 public void onViewDetachedFromWindow(View v) {
+                    // ★ النظام نفسه يزيل الطبقة الآن (إغلاق / إعادة بناء الشاشة)، لذلك لا يجوز
+                    // أن نزيلها يدوياً هنا. الإزالة المتداخلة تسبب IndexOutOfBoundsException.
+                    // نعلّم الطبقة كمُحرَّرة أولاً حتى يتجاهل release() عملية الإزالة.
+                    mReleased = true;
+                    mSnapshot = null;
                     animator.cancel();
                 }
             });
@@ -251,7 +256,9 @@ public final class ThemeTransitionAnimator {
                 @Override
                 public boolean onPreDraw() {
                     getViewTreeObserver().removeOnPreDrawListener(this);
-                    animator.start();
+                    if (!mReleased) {
+                        animator.start();
+                    }
                     return true;
                 }
             });
