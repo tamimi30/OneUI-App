@@ -125,6 +125,17 @@ public final class ThemeTransitionAnimator {
         capture(activity, ChangeKind.LANGUAGE);
     }
 
+    /**
+     * نفس prepareForLanguageChange لكن بدون استبدال صورة منتظرة موجودة أصلاً
+     * (الصورة التي التُقطت قبل تغيير اللغة أنظف من صورة تُلتقط بعد وصول التغيير للواجهة).
+     */
+    public static void prepareForLanguageChangeIfNeeded(Activity activity) {
+        if (sSnapshot != null && sChangeKind == ChangeKind.LANGUAGE) {
+            return;
+        }
+        capture(activity, ChangeKind.LANGUAGE);
+    }
+
     private static AnimationType animationFor(ChangeKind kind) {
         return kind == ChangeKind.LANGUAGE ? LANGUAGE_ANIMATION : SELECTED_ANIMATION;
     }
