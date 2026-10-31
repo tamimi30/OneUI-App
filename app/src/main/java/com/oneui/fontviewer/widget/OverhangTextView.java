@@ -3,10 +3,14 @@ package com.oneui.fontviewer.widget;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatTextView;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * TextView لا يقصّ الأجزاء البارزة من الحروف (مثل ذيل حرف j).
@@ -14,7 +18,7 @@ import androidx.appcompat.widget.AppCompatTextView;
  * السبب: TextView يقصّ الرسم داخل مستطيل المحتوى (بعد الـ padding)، والحرف قد يبرز
  * يسار نقطة بدايته (تصميم الحرف نفسه + الميل الاصطناعي setTextSkewX).
  *
- * الحل: نقدّر البروز من حجم الخط والميل (دون قياس الحروف، فلا يتغير أثناء أنيميشن المحاور)،
+ * الحل: نقدّر البروز من حجم الخط وحالة الميل (دون قياس الحروف، فلا يتغير أثناء أنيميشن المحاور)،
  * ونوسّع مستطيل القص بـ shadow شفاف (TextView يوسّع القص تلقائيًا عند وجود shadow).
  *
  * "سماحية الخروج" (setOverflowAllowance): مقدار البروز الذي يُسمح له بالخروج خارج حدود
@@ -28,12 +32,20 @@ public class OverhangTextView extends AppCompatTextView {
     public static final float FAKE_ITALIC_SKEW = -0.25f;
 
     /**
-     * أدنى بروز يُفترض (كنسبة من حجم الخط) ويغطي ذيل الـ j في الأوزان الخفيفة أيضًا.
-     * ارفعه إذا بقي قص بسيط مع خطوط أخف أو أكثر بروزًا، وخفّضه لتقليل الإزاحة عند الأحجام الكبيرة.
+     * أدنى بروز يُفترض (كنسبة من حجم الخط) للخط القائم، ويغطي ذيل الـ j في الأوزان الخفيفة أيضًا.
+     * ارفعه إذا بقي قص بسيط مع خطوط قائمة أخف أو أكثر بروزًا، وخفّضه لتقليل الإزاحة عند الأحجام الكبيرة.
      */
-    private static final float DEFAULT_OVERHANG_EM = 0.16f;
+    private static final float DEFAULT_UPRIGHT_OVERHANG_EM = 0.09f;
 
-    private float overhangEm = DEFAULT_OVERHANG_EM;
+    /** أدنى بروز يُفترض (كنسبة من حجم الخط) للخط المائل (محور ital أو خط مائل حقيقي). */
+    private static final float DEFAULT_ITALIC_OVERHANG_EM = 0.16f;
+
+    // قراءة قيمة محور الميل من نص إعدادات المحاور، مثل: 'wght' 400, 'ital' 1
+    private static final Pattern ITAL_AXIS = Pattern.compile("'ital'\\s+(-?[0-9.]+)");
+    private static final Pattern SLNT_AXIS = Pattern.compile("'slnt'\\s+(-?[0-9.]+)");
+
+    private float uprightEm = DEFAULT_UPRIGHT_OVERHANG_EM;
+    private float italicEm = DEFAULT_ITALIC_OVERHANG_EM;
     private float allowancePx = 0f;
     private int insetLeft;
     private int insetRight;
@@ -60,9 +72,10 @@ public class OverhangTextView extends AppCompatTextView {
         invalidate();
     }
 
-    /** يغيّر أدنى بروز مفترض (كنسبة من حجم الخط). */
-    public void setOverhangEm(float em) {
-        overhangEm = Math.max(0f, em);
+    /** يغيّر أدنى بروز مفترض (كنسبة من حجم الخط) للخط القائم والمائل. */
+    public void setOverhangEm(float upright, float italic) {
+        uprightEm = Math.max(0f, upright);
+        italicEm = Math.max(0f, italic);
         if (refreshOverhang()) {
             requestLayout();
         }
@@ -81,7 +94,7 @@ public class OverhangTextView extends AppCompatTextView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // نحسب المسافة قبل القياس حتى تدخل في عرض الـ layout (يشمل تغيّر حجم الخط).
+        // نحسب المسافة قبل القياس حتى تدخل في عرض الـ layout (يشمل تغيّر حجم الخط ومحور الميل).
         refreshOverhang();
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
@@ -108,10 +121,10 @@ public class OverhangTextView extends AppCompatTextView {
         float leftBySkew = -Math.min(0f, Math.min(shiftAtTop, shiftAtBottom));
         float rightBySkew = Math.max(0f, Math.max(shiftAtTop, shiftAtBottom));
 
-        // البروز الكلي المتوقع: أدنى بروز للحرف + أثر الميل
-        float base = overhangEm * paint.getTextSize();
-        float totalLeft = Math.max(base, leftBySkew);
-        float totalRight = Math.max(base, rightBySkew);
+        // البروز الكلي المتوقع: بروز الحرف نفسه (قائم/مائل) + أثر الميل الاصطناعي إن وُجد
+        float base = (isItalicFont(paint) ? italicEm : uprightEm) * paint.getTextSize();
+        float totalLeft = base + leftBySkew;
+        float totalRight = base + rightBySkew;
 
         // نحجز في الـ layout فقط ما يزيد على السماحية
         int left = (int) Math.ceil(Math.max(0f, totalLeft - allowancePx));
@@ -128,5 +141,34 @@ public class OverhangTextView extends AppCompatTextView {
             setShadowLayer(radius, 0f, 0f, Color.TRANSPARENT);
         }
         return changed;
+    }
+
+    /** هل الخط الحالي مائل فعلًا (محور ital أو slnt، أو خط مائل حقيقي)؟ */
+    private boolean isItalicFont(TextPaint paint) {
+        String variation = paint.getFontVariationSettings();
+        if (variation != null) {
+            Float ital = readAxis(ITAL_AXIS, variation);
+            if (ital != null) {
+                return ital > 0.5f;
+            }
+            Float slnt = readAxis(SLNT_AXIS, variation);
+            if (slnt != null) {
+                return Math.abs(slnt) > 0.5f;
+            }
+        }
+        Typeface typeface = paint.getTypeface();
+        return typeface != null && typeface.isItalic();
+    }
+
+    private static Float readAxis(Pattern pattern, String variation) {
+        Matcher matcher = pattern.matcher(variation);
+        if (!matcher.find()) {
+            return null;
+        }
+        try {
+            return Float.parseFloat(matcher.group(1));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
