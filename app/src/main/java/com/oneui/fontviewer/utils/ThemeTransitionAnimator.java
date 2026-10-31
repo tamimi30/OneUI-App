@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.os.LocaleList;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
@@ -21,13 +22,14 @@ import android.view.animation.PathInterpolator;
 import android.widget.FrameLayout;
 
 /**
- * ThemeTransitionAnimator - أنيميشن تغيير الثيم (فاتح ⇄ داكن)
+ * ThemeTransitionAnimator - أنيميشن تغيير الثيم (فاتح ⇄ داكن) وتغيير اللغة
  *
  * ═══════════════════════════════════════════════════════════════════
  * ★ كيف تغيّر الأنيميشن؟ ★
  * ═══════════════════════════════════════════════════════════════════
  *
- * غيّر قيمة SELECTED_ANIMATION أدناه فقط (سطر واحد):
+ * غيّر قيمة SELECTED_ANIMATION أدناه فقط (سطر واحد) لاختيار أنيميشن تغيير الثيم،
+ * وغيّر قيمة LANGUAGE_ANIMATION بنفس الطريقة لاختيار أنيميشن تغيير اللغة:
  *
  *   AnimationType.FADE               ← تلاشي متقاطع (الفيديو 1003358501.mp4)
  *   AnimationType.WIPE_TOP_TO_BOTTOM ← كشف الثيم الجديد من الأعلى للأسفل (الفيديو 1003358526.mp4)
@@ -39,10 +41,11 @@ import android.widget.FrameLayout;
  * ★ فكرة العمل ★
  * ═══════════════════════════════════════════════════════════════════
  *
- * تغيير الثيم يعيد بناء الـ Activity (recreate)، لذلك:
- *   1) prepare()        : نلتقط صورة للشاشة بالثيم القديم قبل تغيير الثيم.
- *   2) playIfPending()  : بعد إعادة البناء نضع الصورة فوق الواجهة الجديدة ونحرّكها
- *                         (تلاشي / كشف) حتى تختفي وتظهر الواجهة الجديدة تحتها.
+ * تغيير الثيم أو اللغة يعيد بناء الـ Activity (recreate)، لذلك:
+ *   1) prepare()                  : نلتقط صورة للشاشة بالثيم القديم قبل تغيير الثيم.
+ *      prepareForLanguageChange() : نلتقط صورة للشاشة باللغة القديمة قبل تغيير اللغة.
+ *   2) playIfPending()            : بعد إعادة البناء نضع الصورة فوق الواجهة الجديدة ونحرّكها
+ *                                   (تلاشي / كشف) حتى تختفي وتظهر الواجهة الجديدة تحتها.
  */
 public final class ThemeTransitionAnimator {
 
@@ -85,15 +88,23 @@ public final class ThemeTransitionAnimator {
     // ═══════════════════════════════════════════════════════════════════
     // ★★★ غيّر هذا السطر فقط لاختيار الأنيميشن ★★★
     // ═══════════════════════════════════════════════════════════════════
-    public static final AnimationType SELECTED_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
+    public static final AnimationType SELECTED_ANIMATION = AnimationType.FADE;
+
+    // ★ أنيميشن تغيير اللغة (نفس القيم الممكنة: FADE / WIPE_TOP_TO_BOTTOM / NONE) ★
+    public static final AnimationType LANGUAGE_ANIMATION = AnimationType.FADE;
 
     /** أقصى وقت ننتظره بين التقاط الصورة وإعادة بناء الشاشة، بعده نتجاهل الصورة */
     private static final long PENDING_TIMEOUT_MS = 3000L;
 
+    /** سبب إعادة بناء الشاشة */
+    private enum ChangeKind { THEME, LANGUAGE }
+
     // حالة الصورة المنتظرة (تُستهلك مرة واحدة فقط)
     private static Bitmap sSnapshot;
     private static String sOwnerActivityName;
+    private static ChangeKind sChangeKind;
     private static int sOldNightFlag;
+    private static String sOldLanguage;
     private static long sCaptureTime;
 
     private ThemeTransitionAnimator() {}
@@ -103,9 +114,25 @@ public final class ThemeTransitionAnimator {
      * يلتقط صورة للشاشة الحالية بالثيم القديم.
      */
     public static void prepare(Activity activity) {
+        capture(activity, ChangeKind.THEME);
+    }
+
+    /**
+     * يُستدعى قبل تغيير اللغة مباشرة (قبل LocaleManager.setApplicationLocales أو recreate).
+     * يلتقط صورة للشاشة الحالية باللغة القديمة.
+     */
+    public static void prepareForLanguageChange(Activity activity) {
+        capture(activity, ChangeKind.LANGUAGE);
+    }
+
+    private static AnimationType animationFor(ChangeKind kind) {
+        return kind == ChangeKind.LANGUAGE ? LANGUAGE_ANIMATION : SELECTED_ANIMATION;
+    }
+
+    private static void capture(Activity activity, ChangeKind kind) {
         discardPending();
 
-        if (activity == null || SELECTED_ANIMATION == AnimationType.NONE) {
+        if (activity == null || animationFor(kind) == AnimationType.NONE) {
             return;
         }
 
@@ -122,24 +149,26 @@ public final class ThemeTransitionAnimator {
 
             sSnapshot = snapshot;
             sOwnerActivityName = activity.getClass().getName();
+            sChangeKind = kind;
             sOldNightFlag = getNightFlag(activity);
+            sOldLanguage = getLanguage(activity);
             sCaptureTime = SystemClock.elapsedRealtime();
 
-            // تنظيف الصورة إذا لم تُستخدم (مثلاً: الثيم لم يتغير فعلياً فلم تُعاد الشاشة)
+            // تنظيف الصورة إذا لم تُستخدم (مثلاً: الثيم أو اللغة لم يتغير فعلياً فلم تُعاد الشاشة)
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (sSnapshot == snapshot) {
                     discardPending();
                 }
             }, PENDING_TIMEOUT_MS);
         } catch (RuntimeException | OutOfMemoryError e) {
-            Log.e(TAG, "Failed to capture theme snapshot", e);
+            Log.e(TAG, "Failed to capture snapshot", e);
             discardPending();
         }
     }
 
     /**
      * يُستدعى من BaseActivity.onPostCreate().
-     * إذا كانت هناك صورة منتظرة لهذه الشاشة وتغيّر الثيم فعلاً، يشغّل الأنيميشن.
+     * إذا كانت هناك صورة منتظرة لهذه الشاشة وتغيّر الثيم (أو اللغة) فعلاً، يشغّل الأنيميشن.
      */
     public static void playIfPending(Activity activity) {
         if (sSnapshot == null || activity == null) {
@@ -153,14 +182,19 @@ public final class ThemeTransitionAnimator {
         }
 
         Bitmap snapshot = sSnapshot;
+        ChangeKind kind = sChangeKind;
         int oldNightFlag = sOldNightFlag;
+        String oldLanguage = sOldLanguage;
         boolean expired = SystemClock.elapsedRealtime() - sCaptureTime > PENDING_TIMEOUT_MS;
         clearPending();
 
-        AnimationType type = SELECTED_ANIMATION;
-        boolean themeChanged = getNightFlag(activity) != oldNightFlag;
+        AnimationType type = animationFor(kind);
+        // نتأكد أن التغيير حدث فعلاً (حتى لا نعرض صورة قديمة بلا سبب)
+        boolean changed = kind == ChangeKind.LANGUAGE
+                ? !getLanguage(activity).equals(oldLanguage)
+                : getNightFlag(activity) != oldNightFlag;
 
-        if (expired || !themeChanged || type == AnimationType.NONE || activity.isFinishing()) {
+        if (expired || !changed || type == AnimationType.NONE || activity.isFinishing()) {
             snapshot.recycle();
             return;
         }
@@ -178,10 +212,16 @@ public final class ThemeTransitionAnimator {
                 & Configuration.UI_MODE_NIGHT_MASK;
     }
 
+    private static String getLanguage(Context context) {
+        LocaleList locales = context.getResources().getConfiguration().getLocales();
+        return locales.isEmpty() ? "" : locales.get(0).getLanguage();
+    }
+
     /** مسح الحالة المنتظرة (بدون recycle، تُستخدم عندما انتقلت الصورة لمرحلة أخرى) */
     private static void clearPending() {
         sSnapshot = null;
         sOwnerActivityName = null;
+        sChangeKind = null;
     }
 
     /** مسح الحالة المنتظرة وتحرير الصورة التي لم تُعرض أبداً */
