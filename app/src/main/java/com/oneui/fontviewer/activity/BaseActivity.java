@@ -27,6 +27,13 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+
+        // ★ عند إعادة بناء الشاشة بعد تغيير اللغة يحتفظ النظام بنافذة الشاشة القديمة، فيبقى
+        // اتجاه الواجهة (RTL/LTR) على اللغة السابقة بينما النصوص تتغير. لذلك نحدّثه يدوياً
+        // ليطابق لغة هذه الشاشة.
+        getWindow().getDecorView().setLayoutDirection(
+                getResources().getConfiguration().getLayoutDirection());
+
         // تشغيل أنيميشن تغيير الثيم أو اللغة (إن كان هناك تغيير قيد التنفيذ)
         ThemeTransitionAnimator.playIfPending(this);
     }
