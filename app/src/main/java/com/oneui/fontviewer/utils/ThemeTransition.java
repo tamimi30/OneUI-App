@@ -56,7 +56,7 @@ public final class ThemeTransition {
     public static final long APPLY_DELAY_MS = 250L;
 
     /** مدة التلاشي (مقاسة من الفيديو). */
-    public static final long FADE_DURATION_MS = 600L;
+    public static final long FADE_DURATION_MS = 900L;
 
     /** إذا لم يحدث إعادة إنشاء للـ Activity خلال هذه المدة نتخلص من الصورة المحفوظة. */
     private static final long PENDING_TIMEOUT_MS = 3000L;
