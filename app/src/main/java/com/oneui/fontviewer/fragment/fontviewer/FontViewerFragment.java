@@ -56,6 +56,7 @@ import com.oneui.fontviewer.metadata.FontMetadataExtractor;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.metadata.FontWeightWidthExtractor;
 import com.oneui.fontviewer.fragment.fontviewer.utils.BoldItalicFormatting;
+import com.oneui.fontviewer.widget.OverhangTextView;
 
 public class FontViewerFragment extends Fragment {
 
@@ -91,7 +92,7 @@ public class FontViewerFragment extends Fragment {
 
     private static float sSessionFontSize = -1f;
 
-    private TextView previewSentence;
+    private OverhangTextView previewSentence;
     private TextView weightLabelText;
 
     // ★ بيانات خط جاهزة مسبقاً (FontPrefetcher) طُبِّقت قبل إنشاء الواجهة، وتنتظر إنشاءها لتُعرض (انظر applyLoadedFontUi) ★
@@ -303,7 +304,7 @@ public class FontViewerFragment extends Fragment {
             formattingHelper.setup(main.getBtnBold(), main.getBtnItalic(), (isFakeBold, isFakeItalic) -> {
                 if (previewSentence != null) {
                     previewSentence.getPaint().setFakeBoldText(isFakeBold);
-                    previewSentence.getPaint().setTextSkewX(isFakeItalic ? -0.25f : 0f);
+                    previewSentence.setFakeItalic(isFakeItalic);
                     previewSentence.invalidate(); 
                 }
             });
@@ -447,12 +448,10 @@ public class FontViewerFragment extends Fragment {
 
     private void initViews(View view) {
         previewSentence = view.findViewById(R.id.preview_sentence);
-        // shadow شفاف: يوسّع مستطيل قص الـTextView فلا يُقصّ ذيل الحرف المائل (مثل j)،
-        // يُسمح للذيل بالخروج حتى 12dp فقط داخل padding الأب (24dp) بعد تعطيل القص عنده في الـlayout،
-        // فيبقى هامش لا يقل عن 12dp قبل حافة الشاشة ولا يلامسها.
-        previewSentence.setShadowLayer(
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, getResources().getDisplayMetrics()),
-                0f, 0f, android.graphics.Color.TRANSPARENT);
+        // يُسمح لبروز الحرف (مثل ذيل j) بالخروج حتى 12dp فقط داخل padding الأب (24dp)،
+        // فيبقى هامش لا يقل عن 12dp قبل حافة الشاشة. والبروز الأكبر منها تُحجز له مسافة داخل النص.
+        previewSentence.setOverflowAllowance(
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, getResources().getDisplayMetrics()));
         weightLabelText = view.findViewById(R.id.weight_label_text);
 
         variableAxesContainer = view.findViewById(R.id.variable_axes_container);
@@ -1009,7 +1008,7 @@ public class FontViewerFragment extends Fragment {
         if (currentTypeface != null && previewSentence != null) {
             previewSentence.setTypeface(currentTypeface);
             previewSentence.getPaint().setFakeBoldText(formattingHelper.isBoldActive());
-            previewSentence.getPaint().setTextSkewX(formattingHelper.isItalicActive() ? -0.25f : 0f);
+            previewSentence.setFakeItalic(formattingHelper.isItalicActive());
         }
         applyFontSize();
     }
