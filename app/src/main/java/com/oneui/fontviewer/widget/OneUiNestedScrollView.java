@@ -1,4 +1,4 @@
-package com.oneui.fontviewer.widget; // ⚠️ استخدم نفس الـ package الموجود في CustomHorizontalScrollView.java بالضبط
+package com.oneui.fontviewer.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
