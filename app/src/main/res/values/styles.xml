@@ -46,23 +46,5 @@
         <item name="android:maxLines">2</item>
         <item name="android:ellipsize">end</item>
     </style>
-
-    <style name="Base.Widget.AppCompat.TextView.ListSeparator" parent="android:Widget.TextView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingStart">?attr/listPreferredItemPaddingStart</item>
-        <item name="android:paddingTop">@dimen/sesl_list_subheader_padding_top</item>
-        <item name="android:paddingEnd">?android:attr/listPreferredItemPaddingEnd</item>
-        <item name="android:paddingBottom">@dimen/sesl_list_subheader_padding_bottom</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:background">?attr/roundedCornerColor</item>
-        <item name="android:maxLines">1</item>
-     <!-- <item name="android:textDirection">locale</item>-->
-        <item name="android:textSize">@dimen/sesl_list_subheader_text_size</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/sesl_list_subheader_text_color_dark</item>
-        <item name="android:ellipsize">end</item>
-        <item name="fontFamily">sec-roboto-light</item>
-    </style>
         
 </resources>
