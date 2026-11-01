@@ -102,7 +102,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             languagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 int mode = Integer.parseInt((String) newValue);
                 new android.os.Handler(android.os.Looper.getMainLooper())
-                        .postDelayed(() -> viewModel.setLanguageMode(mode), 250);
+                        .postDelayed(() -> {
+                            // التقاط صورة للشاشة باللغة الحالية قبل تغييرها (لأنيميشن التغيير)
+                            ThemeTransition.prepare(getActivity());
+                            viewModel.setLanguageMode(mode);
+                        }, 250);
                 return true;
             });
         }
