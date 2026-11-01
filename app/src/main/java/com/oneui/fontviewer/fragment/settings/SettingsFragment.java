@@ -102,11 +102,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             languagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 int mode = Integer.parseInt((String) newValue);
                 new android.os.Handler(android.os.Looper.getMainLooper())
-                        .postDelayed(() -> {
-                            // التقاط صورة للشاشة باللغة الحالية قبل تغييرها (لأنيميشن تغيير اللغة)
-                            ThemeTransitionAnimator.prepareForLanguageChange(getActivity());
-                            viewModel.setLanguageMode(mode);
-                        }, 250);
+                        .postDelayed(() -> viewModel.setLanguageMode(mode), 250);
                 return true;
             });
         }
@@ -391,4 +387,4 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     : dev.oneuiproject.oneui.design.R.color.sesl_secondary_text_dark);
         }
     }
-    }
+                }
