@@ -88,7 +88,7 @@ public final class ThemeTransitionAnimator {
     // ═══════════════════════════════════════════════════════════════════
     // ★★★ غيّر هذا السطر فقط لاختيار الأنيميشن ★★★
     // ═══════════════════════════════════════════════════════════════════
-    public static final AnimationType SELECTED_ANIMATION = AnimationType.FADE;
+    public static final AnimationType SELECTED_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
 
     // ★ أنيميشن تغيير اللغة (نفس القيم الممكنة: FADE / WIPE_TOP_TO_BOTTOM / NONE) ★
     public static final AnimationType LANGUAGE_ANIMATION = AnimationType.FADE;
