@@ -21,7 +21,7 @@ import android.view.animation.PathInterpolator;
 import android.widget.FrameLayout;
 
 /**
- * ThemeTransitionAnimator - أنيميشن تغيير الثيم (فاتح ⇄ داكن)
+ * ThemeTransition - أنيميشن تغيير الثيم (فاتح ⇄ داكن)
  *
  * ═══════════════════════════════════════════════════════════════════
  * ★ كيف تغيّر الأنيميشن؟ ★
@@ -44,7 +44,7 @@ import android.widget.FrameLayout;
  *   2) playIfPending()  : بعد إعادة البناء نضع الصورة فوق الواجهة الجديدة ونحرّكها
  *                         (تلاشي / كشف) حتى تختفي وتظهر الواجهة الجديدة تحتها.
  */
-public final class ThemeTransitionAnimator {
+public final class ThemeTransition {
 
     private static final String TAG = "ThemeTransition";
 
@@ -96,7 +96,7 @@ public final class ThemeTransitionAnimator {
     private static int sOldNightFlag;
     private static long sCaptureTime;
 
-    private ThemeTransitionAnimator() {}
+    private ThemeTransition() {}
 
     /**
      * يُستدعى قبل تغيير الثيم مباشرة (قبل AppCompatDelegate.setDefaultNightMode).
