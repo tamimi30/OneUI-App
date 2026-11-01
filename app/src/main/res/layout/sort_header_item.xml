@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?roundedCornerColor"
-    android:paddingTop="22dp"
+    android:paddingTop="13dp"
     android:paddingBottom="9dp">
 
     <com.oneui.fontviewer.widget.sort.SortByItemLayout
