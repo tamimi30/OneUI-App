@@ -91,7 +91,7 @@ public final class ThemeTransitionAnimator {
     public static final AnimationType SELECTED_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
 
     // ★ أنيميشن تغيير اللغة (نفس القيم الممكنة: FADE / WIPE_TOP_TO_BOTTOM / NONE) ★
-    public static final AnimationType LANGUAGE_ANIMATION = AnimationType.FADE;
+    public static final AnimationType LANGUAGE_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
 
     /** أقصى وقت ننتظره بين التقاط الصورة وإعادة بناء الشاشة، بعده نتجاهل الصورة */
     private static final long PENDING_TIMEOUT_MS = 3000L;
