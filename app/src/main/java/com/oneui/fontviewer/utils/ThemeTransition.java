@@ -133,6 +133,25 @@ public final class ThemeTransition {
         overlay.start();
     }
 
+    /**
+     * يعرض صورة اللقطة المنتظرة ثابتة (بدون أنيميشن) فوق الشاشة الحالية، ولا يستهلكها: تبقى
+     * منتظرة لتُعرض بالأنيميشن في الشاشة الجديدة بعد إعادة البناء (playIfPending).
+     * الطبقة تُزال تلقائياً عندما يعيد النظام بناء الشاشة.
+     */
+    public static void freezeScreen(Activity activity) {
+        if (sSnapshot == null || activity == null
+                || !activity.getClass().getName().equals(sOwnerActivityName)
+                || SystemClock.elapsedRealtime() - sCaptureTime > PENDING_TIMEOUT_MS) {
+            return;
+        }
+
+        ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+        decor.addView(new SnapshotOverlayView(activity, sSnapshot, SELECTED_ANIMATION),
+                new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
     private static void finishTouchEffects(View view) {
         view.jumpDrawablesToCurrentState();
 
