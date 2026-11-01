@@ -21,7 +21,6 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // تشغيل أنيميشن تغيير الثيم (إن كان هناك تغيير ثيم قيد التنفيذ)
         ThemeTransition.playIfPending(this);
     }
 
