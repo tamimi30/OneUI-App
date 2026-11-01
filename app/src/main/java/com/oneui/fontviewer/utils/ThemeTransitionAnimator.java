@@ -117,6 +117,11 @@ public final class ThemeTransitionAnimator {
         }
 
         try {
+            // ★ إنهاء تأثيرات اللمس (الربل) قبل التقاط الصورة ★
+            // وإلا يُلتقط الربل وهو في منتصف تلاشيه فيتجمّد داخل الصورة، ثم يظهر مرة أخرى
+            // أثناء الأنيميشن بعد أن كان قد اختفى فعلاً (يحدث عند الضغط على حقل الصف)
+            finishTouchEffects(decor);
+
             Bitmap snapshot = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             decor.draw(new Canvas(snapshot));
 
@@ -171,6 +176,21 @@ public final class ThemeTransitionAnimator {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
         overlay.start();
+    }
+
+    /**
+     * ينهي فوراً أنيميشن الـ drawables (الربل، تأثير الضغط...) في كل عناصر الشاشة.
+     * بدون هذا يرسم canvas البرمجي الذي نلتقط به الصورة الربل في حالة عالقة.
+     */
+    private static void finishTouchEffects(View view) {
+        view.jumpDrawablesToCurrentState();
+
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                finishTouchEffects(group.getChildAt(i));
+            }
+        }
     }
 
     private static int getNightFlag(Context context) {
