@@ -134,7 +134,7 @@
 
         <activity
             android:name=".fragment.settings.SettingsActivity"
-            android:configChanges="orientation|screenSize|screenLayout" />
+            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection" />
 
         <service
             android:name=".utils.notification.OperationForegroundService"
