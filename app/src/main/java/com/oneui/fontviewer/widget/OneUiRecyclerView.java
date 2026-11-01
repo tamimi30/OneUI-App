@@ -14,16 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
 
-/**
- * RecyclerView يرسم هامشيه الجانبيين (منطقة الـ padding الأفقي) وزوايا البطاقة
- * بلون ?roundedCornerColor من الثيم الحالي، في dispatchDraw، أي قبل رسم شريط التمرير.
- * لذلك يظهر شريط التمرير فوق الزوايا ولا يُقص عند بداية القائمة أو نهايتها.
- *
- * الاستخدام: android:paddingHorizontal="10dp" و android:scrollbarStyle="outsideOverlay"
- */
 public class OneUiRecyclerView extends RecyclerView {
 
-    // يطابق الثابت RADIUS في SeslRoundedCorner، وهو نصف قطر زوايا عناصر القائمة
     private static final float CORNER_RADIUS_DP = 26f;
 
     private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -34,7 +26,6 @@ public class OneUiRecyclerView extends RecyclerView {
     public OneUiRecyclerView(@NonNull Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        // لون ?roundedCornerColor من الثيم الحالي
         TypedValue roundedCornerColorValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.roundedCornerColor, roundedCornerColorValue, true);
         int roundedCornerColor = roundedCornerColorValue.resourceId != 0
