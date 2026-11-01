@@ -31,8 +31,8 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:paddingStart="33dp"
-                android:paddingEnd="33dp">
+                android:paddingStart="45dp"
+                android:paddingEnd="45dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/empty_icon"
@@ -48,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sec-roboto-light"
                     android:gravity="center"
-                    android:layout_marginBottom="9dp"
+                    android:layout_marginBottom="11dp"
                     android:text="@string/local_fonts_empty_title"
                     android:textSize="17sp"
                     android:textColor="@color/drawer_icon_color" />
