@@ -1,4 +1,4 @@
-package com.oneui.fontviewer.widget; // ⚠️ استبدل هذا باسم الـ package الفعلي في مشروعك
+package com.oneui.fontviewer.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
