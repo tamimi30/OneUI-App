@@ -20,47 +20,16 @@ import android.view.ViewTreeObserver;
 import android.view.animation.PathInterpolator;
 import android.widget.FrameLayout;
 
-/**
- * ThemeTransition - أنيميشن تغيير الثيم (فاتح ⇄ داكن)
- *
- * ═══════════════════════════════════════════════════════════════════
- * ★ كيف تغيّر الأنيميشن؟ ★
- * ═══════════════════════════════════════════════════════════════════
- *
- * غيّر قيمة SELECTED_ANIMATION أدناه فقط (سطر واحد):
- *
- *   AnimationType.FADE               ← تلاشي متقاطع (الفيديو 1003358501.mp4)
- *   AnimationType.WIPE_TOP_TO_BOTTOM ← كشف الثيم الجديد من الأعلى للأسفل (الفيديو 1003358526.mp4)
- *   AnimationType.NONE               ← بدون أنيميشن (تبديل مباشر)
- *
- * ولتعديل مدة أي أنيميشن أو منحنى الحركة (Interpolator) عدّل قيمه داخل enum AnimationType.
- *
- * ═══════════════════════════════════════════════════════════════════
- * ★ فكرة العمل ★
- * ═══════════════════════════════════════════════════════════════════
- *
- * تغيير الثيم يعيد بناء الـ Activity (recreate)، لذلك:
- *   1) prepare()        : نلتقط صورة للشاشة بالثيم القديم قبل تغيير الثيم.
- *   2) playIfPending()  : بعد إعادة البناء نضع الصورة فوق الواجهة الجديدة ونحرّكها
- *                         (تلاشي / كشف) حتى تختفي وتظهر الواجهة الجديدة تحتها.
- */
 public final class ThemeTransition {
 
     private static final String TAG = "ThemeTransition";
 
-    /**
-     * أنواع الأنيميشن المتاحة.
-     * كل نوع له: المدة بالمللي ثانية + منحنى الحركة (PathInterpolator: x1, y1, x2, y2).
-     */
     public enum AnimationType {
 
-        /** بدون أنيميشن */
         NONE(0L, 0f, 0f, 1f, 1f),
 
-        /** تلاشي متقاطع بين الثيم القديم والجديد (منحنى One UI 0.22, 0.25, 0, 1) */
         FADE(900L, 0.22f, 0.25f, 0f, 1f),
 
-        /** الثيم الجديد ينكشف من أعلى الشاشة إلى أسفلها بحافة حادة (منحنى Sine In-Out 70) */
         WIPE_TOP_TO_BOTTOM(600L, 0.33f, 0f, 0.3f, 1f);
 
         final long durationMs;
@@ -82,15 +51,10 @@ public final class ThemeTransition {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    // ★★★ غيّر هذا السطر فقط لاختيار الأنيميشن ★★★
-    // ═══════════════════════════════════════════════════════════════════
     public static final AnimationType SELECTED_ANIMATION = AnimationType.FADE;
 
-    /** أقصى وقت ننتظره بين التقاط الصورة وإعادة بناء الشاشة، بعده نتجاهل الصورة */
     private static final long PENDING_TIMEOUT_MS = 3000L;
 
-    // حالة الصورة المنتظرة (تُستهلك مرة واحدة فقط)
     private static Bitmap sSnapshot;
     private static String sOwnerActivityName;
     private static int sOldNightFlag;
@@ -98,10 +62,6 @@ public final class ThemeTransition {
 
     private ThemeTransition() {}
 
-    /**
-     * يُستدعى قبل تغيير الثيم مباشرة (قبل AppCompatDelegate.setDefaultNightMode).
-     * يلتقط صورة للشاشة الحالية بالثيم القديم.
-     */
     public static void prepare(Activity activity) {
         discardPending();
 
@@ -117,9 +77,6 @@ public final class ThemeTransition {
         }
 
         try {
-            // ★ إنهاء تأثيرات اللمس (الربل) قبل التقاط الصورة ★
-            // وإلا يُلتقط الربل وهو في منتصف تلاشيه فيتجمّد داخل الصورة، ثم يظهر مرة أخرى
-            // أثناء الأنيميشن بعد أن كان قد اختفى فعلاً (يحدث عند الضغط على حقل الصف)
             finishTouchEffects(decor);
 
             Bitmap snapshot = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -130,7 +87,6 @@ public final class ThemeTransition {
             sOldNightFlag = getNightFlag(activity);
             sCaptureTime = SystemClock.elapsedRealtime();
 
-            // تنظيف الصورة إذا لم تُستخدم (مثلاً: الثيم لم يتغير فعلياً فلم تُعاد الشاشة)
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (sSnapshot == snapshot) {
                     discardPending();
@@ -142,17 +98,11 @@ public final class ThemeTransition {
         }
     }
 
-    /**
-     * يُستدعى من BaseActivity.onPostCreate().
-     * إذا كانت هناك صورة منتظرة لهذه الشاشة وتغيّر الثيم فعلاً، يشغّل الأنيميشن.
-     */
     public static void playIfPending(Activity activity) {
         if (sSnapshot == null || activity == null) {
             return;
         }
 
-        // الشاشات الأخرى في الخلفية (مثل MainActivity) تُعاد بناؤها أيضاً، نتجاهلها
-        // ونترك الصورة للشاشة التي التُقطت منها (SettingsActivity)
         if (!activity.getClass().getName().equals(sOwnerActivityName)) {
             return;
         }
@@ -178,10 +128,6 @@ public final class ThemeTransition {
         overlay.start();
     }
 
-    /**
-     * ينهي فوراً أنيميشن الـ drawables (الربل، تأثير الضغط...) في كل عناصر الشاشة.
-     * بدون هذا يرسم canvas البرمجي الذي نلتقط به الصورة الربل في حالة عالقة.
-     */
     private static void finishTouchEffects(View view) {
         view.jumpDrawablesToCurrentState();
 
@@ -198,13 +144,11 @@ public final class ThemeTransition {
                 & Configuration.UI_MODE_NIGHT_MASK;
     }
 
-    /** مسح الحالة المنتظرة (بدون recycle، تُستخدم عندما انتقلت الصورة لمرحلة أخرى) */
     private static void clearPending() {
         sSnapshot = null;
         sOwnerActivityName = null;
     }
 
-    /** مسح الحالة المنتظرة وتحرير الصورة التي لم تُعرض أبداً */
     private static void discardPending() {
         Bitmap snapshot = sSnapshot;
         clearPending();
@@ -213,11 +157,6 @@ public final class ThemeTransition {
         }
     }
 
-    /**
-     * طبقة تعرض صورة الثيم القديم فوق الواجهة الجديدة، وتحرّكها حسب نوع الأنيميشن.
-     *
-     * progress: 0 → 1  (0 = الثيم القديم ظاهر بالكامل، 1 = الثيم الجديد ظاهر بالكامل)
-     */
     private static final class SnapshotOverlayView extends View {
 
         private final Rect mDst = new Rect();
@@ -235,7 +174,6 @@ public final class ThemeTransition {
 
             setWillNotDraw(false);
             setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-            // نضمن أن الطبقة فوق كل شيء (حتى فوق خلفيات الـ Status Bar / Navigation Bar)
             setZ(1000f);
         }
 
@@ -254,24 +192,18 @@ public final class ThemeTransition {
                 }
             });
 
-            // إذا أُغلقت الشاشة أو أُعيد بناؤها أثناء الأنيميشن نوقفه
             addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
                 @Override
                 public void onViewAttachedToWindow(View v) {}
 
                 @Override
                 public void onViewDetachedFromWindow(View v) {
-                    // ★ النظام نفسه يزيل الطبقة الآن (إغلاق / إعادة بناء الشاشة)، لذلك لا يجوز
-                    // أن نزيلها يدوياً هنا. الإزالة المتداخلة تسبب IndexOutOfBoundsException.
-                    // نعلّم الطبقة كمُحرَّرة أولاً حتى يتجاهل release() عملية الإزالة.
                     mReleased = true;
                     mSnapshot = null;
                     animator.cancel();
                 }
             });
 
-            // نبدأ الأنيميشن بعد رسم أول إطار (الصورة القديمة كاملة) حتى لا نفقد جزءاً من
-            // المدة أثناء إعادة بناء الشاشة
             getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
@@ -294,7 +226,6 @@ public final class ThemeTransition {
             if (parent != null) {
                 parent.removeView(this);
             }
-            // لا نستدعي recycle() هنا لأن آخر إطار قد يكون ما زال قيد الرسم
             mSnapshot = null;
         }
 
@@ -310,13 +241,11 @@ public final class ThemeTransition {
 
             switch (mType) {
                 case FADE:
-                    // الصورة القديمة تتلاشى تدريجياً فتظهر الواجهة الجديدة تحتها
                     mPaint.setAlpha(Math.round(255f * (1f - mProgress)));
                     canvas.drawBitmap(mSnapshot, null, mDst, mPaint);
                     break;
 
                 case WIPE_TOP_TO_BOTTOM:
-                    // حافة الكشف تنزل من الأعلى للأسفل، ويبقى من الصورة القديمة ما تحت الحافة فقط
                     mPaint.setAlpha(255);
                     canvas.save();
                     canvas.clipRect(0f, height * mProgress, width, height);
