@@ -57,7 +57,7 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:background">?attr/roundedCornerColor</item>
         <item name="android:maxLines">1</item>
-      //  <item name="android:textDirection">locale</item>
+     <!-- <item name="android:textDirection">locale</item>-->
         <item name="android:textSize">@dimen/sesl_list_subheader_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/sesl_list_subheader_text_color_dark</item>
