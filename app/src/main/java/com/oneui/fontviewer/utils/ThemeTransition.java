@@ -59,6 +59,7 @@ public final class ThemeTransition {
     private static Bitmap sSnapshot;
     private static String sOwnerActivityName;
     private static int sOldNightFlag;
+    private static String sOldLanguage;
     private static long sCaptureTime;
 
     private ThemeTransition() {}
@@ -86,6 +87,7 @@ public final class ThemeTransition {
             sSnapshot = snapshot;
             sOwnerActivityName = activity.getClass().getName();
             sOldNightFlag = getNightFlag(activity);
+            sOldLanguage = getLanguage(activity);
             sCaptureTime = SystemClock.elapsedRealtime();
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
@@ -110,13 +112,15 @@ public final class ThemeTransition {
 
         Bitmap snapshot = sSnapshot;
         int oldNightFlag = sOldNightFlag;
+        String oldLanguage = sOldLanguage;
         boolean expired = SystemClock.elapsedRealtime() - sCaptureTime > PENDING_TIMEOUT_MS;
         clearPending();
 
         AnimationType type = SELECTED_ANIMATION;
-        boolean themeChanged = getNightFlag(activity) != oldNightFlag;
+        boolean changed = getNightFlag(activity) != oldNightFlag
+                || !getLanguage(activity).equals(oldLanguage);
 
-        if (expired || !themeChanged || type == AnimationType.NONE || activity.isFinishing()) {
+        if (expired || !changed || type == AnimationType.NONE || activity.isFinishing()) {
             snapshot.recycle();
             return;
         }
@@ -138,6 +142,10 @@ public final class ThemeTransition {
                 finishTouchEffects(group.getChildAt(i));
             }
         }
+    }
+
+    private static String getLanguage(Context context) {
+        return context.getResources().getConfiguration().getLocales().get(0).getLanguage();
     }
 
     private static int getNightFlag(Context context) {
