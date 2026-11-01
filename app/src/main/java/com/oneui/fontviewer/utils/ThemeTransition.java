@@ -28,9 +28,9 @@ public final class ThemeTransition {
 
         NONE(0L, 0f, 0f, 1f, 1f),
 
-        FADE(900L, 0.22f, 0.25f, 0f, 1f),
+        FADE(800L, 0.22f, 0.25f, 0f, 1f),
 
-        WIPE_TOP_TO_BOTTOM(600L, 0.33f, 0f, 0.3f, 1f);
+        WIPE_TOP_TO_BOTTOM(800L, 0.33f, 0f, 0.3f, 1f);
 
         final long durationMs;
         final float x1;
