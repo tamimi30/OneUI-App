@@ -31,7 +31,7 @@ import com.oneui.fontviewer.App;
 import com.oneui.fontviewer.fragment.settings.about.AboutActivity;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
-import com.oneui.fontviewer.utils.ThemeTransitionAnimator;
+import com.oneui.fontviewer.utils.ThemeTransition;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -181,7 +181,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 int mode = Integer.parseInt(value);
 
                 // التقاط صورة للثيم الحالي قبل تغييره (لأنيميشن تغيير الثيم)
-                ThemeTransitionAnimator.prepare(requireActivity());
+                ThemeTransition.prepare(requireActivity());
 
                 if (mode == SettingsHelper.THEME_DARK) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -208,7 +208,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 // داخل التأخير أيضاً وإلا سيُطبَّق الثيم فوراً.
                 new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                     // التقاط صورة للثيم الحالي قبل تغييره (لأنيميشن تغيير الثيم)
-                    ThemeTransitionAnimator.prepare(getActivity());
+                    ThemeTransition.prepare(getActivity());
 
                     if (enabled) {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
