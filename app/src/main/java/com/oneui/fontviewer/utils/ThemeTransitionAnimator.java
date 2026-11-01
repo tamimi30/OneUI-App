@@ -58,7 +58,7 @@ public final class ThemeTransitionAnimator {
         NONE(0L, 0f, 0f, 1f, 1f),
 
         /** تلاشي متقاطع بين الثيم القديم والجديد (منحنى One UI 0.22, 0.25, 0, 1) */
-        FADE(600L, 0.22f, 0.25f, 0f, 1f),
+        FADE(900L, 0.22f, 0.25f, 0f, 1f),
 
         /** الثيم الجديد ينكشف من أعلى الشاشة إلى أسفلها بحافة حادة (منحنى Sine In-Out 70) */
         WIPE_TOP_TO_BOTTOM(600L, 0.33f, 0f, 0.3f, 1f);
