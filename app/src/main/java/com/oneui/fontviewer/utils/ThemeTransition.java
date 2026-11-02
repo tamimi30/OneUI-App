@@ -52,7 +52,7 @@ public final class ThemeTransition {
     }
 
     // تغيير الأنيميشن
-    public static final AnimationType SELECTED_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
+    public static final AnimationType SELECTED_ANIMATION = AnimationType.FADE;
 
     private static final long PENDING_TIMEOUT_MS = 3000L;
 
