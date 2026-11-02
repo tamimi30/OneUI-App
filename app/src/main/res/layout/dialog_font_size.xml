@@ -15,6 +15,7 @@
         android:layout_marginBottom="16dp"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
+        android:layoutDirection="locale"
         android:orientation="horizontal">
 
         <com.oneui.fontviewer.widget.OneUiTextView
