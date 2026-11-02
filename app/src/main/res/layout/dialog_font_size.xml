@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
     	
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="24dp"
@@ -18,14 +18,13 @@
 
         <com.oneui.fontviewer.widget.OneUiTextView
             android:id="@+id/font_size_title"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textSize="16sp"
             app:maxFontLevel="large"
             android:textStyle="bold"
             android:textColor="?android:attr/textColorPrimary"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="start|center_vertical"
             android:text="@string/font_size_dialog_title" />
 
         <ImageView
@@ -37,10 +36,10 @@
             android:contentDescription="@string/font_size_dialog_tip"
             android:clickable="true"
             android:focusable="true"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="end|center_vertical"
             android:background="?attr/selectableItemBackgroundBorderless" />
 
-    </LinearLayout>
+    </FrameLayout>
 
     <EditText
         android:id="@+id/font_size_value"
