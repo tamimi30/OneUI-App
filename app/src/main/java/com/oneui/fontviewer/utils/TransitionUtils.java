@@ -270,8 +270,10 @@ public final class TransitionUtils {
         }
     }
 
+    // الوسم الكامل (مثل ar أو ar-MA) وليس رمز اللغة فقط، حتى يُعدّ التبديل بين ar و ar-MA تغييراً
+    // فيُشغَّل الأنيميشن
     private static String getLanguage(Context context) {
-        return context.getResources().getConfiguration().getLocales().get(0).getLanguage();
+        return context.getResources().getConfiguration().getLocales().get(0).toLanguageTag();
     }
 
     private static int getNightFlag(Context context) {
