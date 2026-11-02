@@ -19,12 +19,14 @@ public class SettingsActivity extends BaseActivity {
     private ToolbarLayout mToolbarLayout;
 
     // اللغة التي تعرضها هذه الشاشة حالياً
+    // نخزّن الوسم الكامل (مثل ar أو ar-MA) وليس رمز اللغة فقط، لأن مقارنة رمز اللغة وحده تعتبر
+    // ar و ar-MA لغة واحدة فلا تُعاد بناء الشاشة عند التبديل بينهما
     private String mDisplayedLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDisplayedLanguage = getResources().getConfiguration().getLocales().get(0).getLanguage();
+        mDisplayedLanguage = getResources().getConfiguration().getLocales().get(0).toLanguageTag();
         setContentView(R.layout.activity_settings);
 
         initToolbar();
@@ -60,7 +62,7 @@ public class SettingsActivity extends BaseActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if (!SettingsHelper.getLocale(this).getLanguage().equals(mDisplayedLanguage)) {
+        if (!SettingsHelper.getLocale(this).toLanguageTag().equals(mDisplayedLanguage)) {
             // بين وصول التغيير وإعادة بناء الشاشة (~150ms) تتفاعل عناصر الشاشة الحيّة القديمة معه
             // (عناوين الأقسام تقفز، الـ App bar ينطوي ويتوسع...)، فنغطيها بصورة اللقطة حتى تبدأ
             // الشاشة الجديدة.
