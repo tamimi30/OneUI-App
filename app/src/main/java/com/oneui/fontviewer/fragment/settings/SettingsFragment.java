@@ -31,7 +31,7 @@ import com.oneui.fontviewer.App;
 import com.oneui.fontviewer.fragment.settings.about.AboutActivity;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
-import com.oneui.fontviewer.utils.ThemeTransition;
+import com.oneui.fontviewer.utils.TransitionUtils;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -104,7 +104,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 new android.os.Handler(android.os.Looper.getMainLooper())
                         .postDelayed(() -> {
                             // التقاط صورة للشاشة باللغة الحالية قبل تغييرها (لأنيميشن التغيير)
-                            ThemeTransition.prepare(getActivity());
+                            TransitionUtils.prepareForLanguageChange(getActivity());
                             viewModel.setLanguageMode(mode);
                         }, 250);
                 return true;
@@ -185,7 +185,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 int mode = Integer.parseInt(value);
 
                 // التقاط صورة للثيم الحالي قبل تغييره (لأنيميشن تغيير الثيم)
-                ThemeTransition.prepare(requireActivity());
+                TransitionUtils.prepareForThemeChange(requireActivity());
 
                 if (mode == SettingsHelper.THEME_DARK) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -212,7 +212,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 // داخل التأخير أيضاً وإلا سيُطبَّق الثيم فوراً.
                 new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                     // التقاط صورة للثيم الحالي قبل تغييره (لأنيميشن تغيير الثيم)
-                    ThemeTransition.prepare(getActivity());
+                    TransitionUtils.prepareForThemeChange(getActivity());
 
                     if (enabled) {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
