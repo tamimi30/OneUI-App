@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.BaseActivity;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
-import com.oneui.fontviewer.utils.ThemeTransition;
+import com.oneui.fontviewer.utils.TransitionUtils;
 
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
 
@@ -64,7 +64,7 @@ public class SettingsActivity extends BaseActivity {
             // بين وصول التغيير وإعادة بناء الشاشة (~150ms) تتفاعل عناصر الشاشة الحيّة القديمة معه
             // (عناوين الأقسام تقفز، الـ App bar ينطوي ويتوسع...)، فنغطيها بصورة اللقطة حتى تبدأ
             // الشاشة الجديدة.
-            ThemeTransition.freezeScreen(this);
+            TransitionUtils.freezeScreen(this);
             recreate();
         }
     }
