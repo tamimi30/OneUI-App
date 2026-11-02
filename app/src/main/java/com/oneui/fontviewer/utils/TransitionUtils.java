@@ -3,6 +3,7 @@ package com.oneui.fontviewer.utils;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -14,21 +15,22 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.PathInterpolator;
 import android.widget.FrameLayout;
 
-public final class ThemeTransition {
+public final class TransitionUtils {
 
-    private static final String TAG = "ThemeTransition";
+    private static final String TAG = "TransitionUtils";
 
     public enum AnimationType {
 
         NONE(0L, 0f, 0f, 1f, 1f),
 
-        FADE(600L, 0.22f, 0.25f, 0f, 1f),
+        FADE(800L, 0.22f, 0.25f, 0f, 1f),
 
         WIPE_TOP_TO_BOTTOM(800L, 0.33f, 0f, 0.3f, 1f);
 
@@ -51,23 +53,35 @@ public final class ThemeTransition {
         }
     }
 
-    // تغيير الأنيميشن
-    public static final AnimationType SELECTED_ANIMATION = AnimationType.FADE;
+    // تغيير أنيميشن الثيم
+    public static final AnimationType THEME_ANIMATION = AnimationType.FADE;
+
+    // تغيير أنيميشن اللغة
+    public static final AnimationType LANGUAGE_ANIMATION = AnimationType.FADE;
 
     private static final long PENDING_TIMEOUT_MS = 3000L;
 
     private static Bitmap sSnapshot;
+    private static AnimationType sAnimation;
     private static String sOwnerActivityName;
     private static int sOldNightFlag;
     private static String sOldLanguage;
     private static long sCaptureTime;
 
-    private ThemeTransition() {}
+    private TransitionUtils() {}
 
-    public static void prepare(Activity activity) {
+    public static void prepareForThemeChange(Activity activity) {
+        capture(activity, THEME_ANIMATION);
+    }
+
+    public static void prepareForLanguageChange(Activity activity) {
+        capture(activity, LANGUAGE_ANIMATION);
+    }
+
+    private static void capture(Activity activity, AnimationType animation) {
         discardPending();
 
-        if (activity == null || SELECTED_ANIMATION == AnimationType.NONE) {
+        if (activity == null || animation == AnimationType.NONE) {
             return;
         }
 
@@ -85,6 +99,7 @@ public final class ThemeTransition {
             decor.draw(new Canvas(snapshot));
 
             sSnapshot = snapshot;
+            sAnimation = animation;
             sOwnerActivityName = activity.getClass().getName();
             sOldNightFlag = getNightFlag(activity);
             sOldLanguage = getLanguage(activity);
@@ -96,7 +111,7 @@ public final class ThemeTransition {
                 }
             }, PENDING_TIMEOUT_MS);
         } catch (RuntimeException | OutOfMemoryError e) {
-            Log.e(TAG, "Failed to capture theme snapshot", e);
+            Log.e(TAG, "Failed to capture snapshot", e);
             discardPending();
         }
     }
@@ -111,12 +126,12 @@ public final class ThemeTransition {
         }
 
         Bitmap snapshot = sSnapshot;
+        AnimationType type = sAnimation;
         int oldNightFlag = sOldNightFlag;
         String oldLanguage = sOldLanguage;
         boolean expired = SystemClock.elapsedRealtime() - sCaptureTime > PENDING_TIMEOUT_MS;
         clearPending();
 
-        AnimationType type = SELECTED_ANIMATION;
         boolean changed = getNightFlag(activity) != oldNightFlag
                 || !getLanguage(activity).equals(oldLanguage);
 
@@ -146,10 +161,102 @@ public final class ThemeTransition {
         }
 
         ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
-        decor.addView(new SnapshotOverlayView(activity, sSnapshot, SELECTED_ANIMATION),
+        decor.addView(new SnapshotOverlayView(activity, sSnapshot, sAnimation),
                 new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+    /**
+     * ★ تغيير جزء من الواجهة بأنيميشن، داخل نفس الشاشة (بدون إعادة بناء) ★
+     *
+     * للتغيير المتزامن (يحدث فوراً داخل Runnable):
+     *
+     *     TransitionUtils.run(recyclerView, TransitionUtils.AnimationType.FADE, () -> {
+     *         adapter.submitList(newList);
+     *     });
+     *
+     * @param target    الجزء الذي سيتغير (قائمة، حاوية، أو decorView للشاشة كاملة)
+     * @param animation نوع الأنيميشن
+     * @param change    الكود الذي يغيّر الواجهة
+     */
+    public static void run(View target, AnimationType animation, Runnable change) {
+        Handle handle = begin(target, animation);
+        change.run();
+        handle.play();
+    }
+
+    /**
+     * ★ نفس الفكرة للتغيير غير المتزامن (مثل تحميل بيانات) على مرحلتين ★
+     *
+     *     // 1) قبل بدء التغيير: نلتقط صورة للشكل القديم (الشاشة تبقى حيّة ومتفاعلة)
+     *     mTransition = TransitionUtils.begin(container, TransitionUtils.AnimationType.FADE);
+     *
+     *     // 2) عندما تصبح الواجهة الجديدة جاهزة (بعد تحديث الواجهة مباشرة): نشغّل الأنيميشن
+     *     mTransition.play();
+     *
+     * إذا فشلت العملية أو أُلغيت نستدعي cancel() (أو نترك الكائن، فلا يتسرب شيء).
+     */
+    public static Handle begin(View target, AnimationType animation) {
+        return new Handle(target, animation);
+    }
+
+    public static final class Handle {
+
+        private final View mTarget;
+        private final AnimationType mAnimation;
+        private final int[] mLocation = new int[2];
+        private Bitmap mSnapshot;
+
+        private Handle(View target, AnimationType animation) {
+            mTarget = target;
+            mAnimation = animation;
+
+            if (target == null || animation == AnimationType.NONE
+                    || target.getWidth() <= 0 || target.getHeight() <= 0) {
+                return;
+            }
+
+            try {
+                finishTouchEffects(target);
+                target.getLocationInWindow(mLocation);
+
+                Bitmap snapshot = Bitmap.createBitmap(
+                        target.getWidth(), target.getHeight(), Bitmap.Config.ARGB_8888);
+                target.draw(new Canvas(snapshot));
+                mSnapshot = snapshot;
+            } catch (RuntimeException | OutOfMemoryError e) {
+                Log.e(TAG, "Failed to capture snapshot", e);
+            }
+        }
+
+        /** يعرض صورة الشكل القديم فوق مكانها ويحرّكها لتظهر الواجهة الجديدة (مرة واحدة فقط). */
+        @SuppressLint("RtlHardcoded")
+        public void play() {
+            Bitmap snapshot = mSnapshot;
+            mSnapshot = null;
+
+            if (snapshot == null || mTarget == null || !mTarget.isAttachedToWindow()
+                    || !(mTarget.getRootView() instanceof FrameLayout)) {
+                return;
+            }
+
+            // Gravity.LEFT (مطلق) وليس START: حتى يكون المكان صحيحاً في الواجهات RTL أيضاً
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    snapshot.getWidth(), snapshot.getHeight(), Gravity.TOP | Gravity.LEFT);
+            params.leftMargin = mLocation[0];
+            params.topMargin = mLocation[1];
+
+            SnapshotOverlayView overlay =
+                    new SnapshotOverlayView(mTarget.getContext(), snapshot, mAnimation);
+            ((FrameLayout) mTarget.getRootView()).addView(overlay, params);
+            overlay.start();
+        }
+
+        /** يتخلى عن اللقطة دون تشغيل أي أنيميشن. */
+        public void cancel() {
+            mSnapshot = null;
+        }
     }
 
     private static void finishTouchEffects(View view) {
@@ -174,6 +281,7 @@ public final class ThemeTransition {
 
     private static void clearPending() {
         sSnapshot = null;
+        sAnimation = null;
         sOwnerActivityName = null;
     }
 
