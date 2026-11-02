@@ -4,7 +4,6 @@
     android:id="@+id/toolbar_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="10dp"
     app:expanded="false"
     app:navigationIcon="@drawable/ic_oui_back"
     app:title="@string/drawer_font_viewer"
@@ -12,6 +11,7 @@
 
     <FrameLayout
         android:id="@+id/font_viewer_container"
+        android:paddingHorizontal="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
