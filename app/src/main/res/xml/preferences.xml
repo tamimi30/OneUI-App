@@ -36,14 +36,12 @@
             android:key="font_preview_enabled"
             android:title="@string/settings_font_preview"
             android:summary="@string/settings_font_preview_description"
-            android:persistent="false"
             android:defaultValue="true" />
 
         <SwitchPreferenceCompat
             android:key="enable_translation"
             android:title="@string/settings_translation"
             android:summary="@string/settings_translation_description"
-            android:persistent="false"
             android:defaultValue="false" />
 
         <EditTextPreference
@@ -51,7 +49,6 @@
             android:title="@string/settings_preview_text"
             android:dialogTitle="@string/settings_preview_text_dialog_title"
             android:dialogMessage="@string/settings_preview_text_dialog_message"
-            android:persistent="false"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
@@ -60,12 +57,10 @@
 
         <Preference
             android:key="about_app"
-            android:persistent="false"
             android:title="@string/about_title" />
 
         <Preference
             android:key="report_issue"
-            android:persistent="false"
             android:title="@string/settings_report_issue" />
 
     </PreferenceCategory>
