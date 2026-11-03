@@ -172,17 +172,6 @@ public class SettingsHelper {
 
     @SuppressWarnings("deprecation")
     public static Context wrapContext(Context context) {
-        // من أندرويد 13 فما فوق، النظام (LocaleManager) هو من يضع لغة التطبيق في إعدادات كل شاشة.
-        // فرض اللغة هنا من وراء النظام يجعل ما تعرضه الشاشة يختلف عمّا سجّله النظام لها، فإذا طابقت
-        // اللغة الجديدة لاحقاً ما سجّله النظام (القديم) ظنّ أنه لا تغيير ولم يعد بناء الشاشة.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // لا نغيّر إعدادات الشاشة، لكن نُبقي لغة JVM الافتراضية مطابقة للغة المختارة.
-            // android:layoutDirection="locale" (في activity_settings.xml وغيره) يحدد الاتجاه من
-            // Locale.getDefault() مباشرة، وكان هذا السطر هو ما يضمن صحته قبل هذا التعديل.
-            Locale.setDefault(getLocale(context));
-            return context;
-        }
-
         Locale locale = getLocale(context);
         Locale.setDefault(locale);
         
