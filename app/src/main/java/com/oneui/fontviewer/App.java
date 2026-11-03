@@ -16,6 +16,8 @@ import com.oneui.fontviewer.fragment.systemfont.data.SystemFontRepository;
 import com.oneui.fontviewer.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.fragment.systemfont.data.SystemFontCache;
 import com.oneui.fontviewer.utils.CrashHandler;
+import com.oneui.fontviewer.utils.DiagLog;
+import android.content.res.Configuration;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -41,7 +43,10 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sInstance = this;
-        
+
+        // تشخيص مؤقت: يجب أن يبدأ أولاً ليسجّل كل شيء بعده
+        DiagLog.init(this);
+
         // Initialize crash handler first
         CrashHandler.init(this);
         
@@ -167,10 +172,17 @@ public class App extends Application {
             @Override
             public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
                 activities.add(new WeakReference<>(activity));
+                DiagLog.log("LIFECYCLE", "CREATED   " + DiagLog.idOf(activity)
+                        + " | restoredFromState=" + (savedInstanceState != null)
+                        + " | " + DiagLog.describe(activity)
+                        + " | appLocales=" + DiagLog.appLocales(activity));
             }
 
             @Override
             public void onActivityDestroyed(@NonNull Activity activity) {
+                DiagLog.log("LIFECYCLE", "DESTROYED " + DiagLog.idOf(activity)
+                        + " | finishing=" + activity.isFinishing()
+                        + " | changingConfig=" + activity.isChangingConfigurations());
                 for (int i = activities.size() - 1; i >= 0; i--) {
                     Activity a = activities.get(i).get();
                     if (a == null || a == activity) {
@@ -179,10 +191,20 @@ public class App extends Application {
                 }
             }
 
-            @Override public void onActivityStarted(@NonNull Activity activity) {}
-            @Override public void onActivityResumed(@NonNull Activity activity) {}
-            @Override public void onActivityPaused(@NonNull Activity activity) {}
-            @Override public void onActivityStopped(@NonNull Activity activity) {}
+            @Override public void onActivityStarted(@NonNull Activity activity) {
+                DiagLog.log("LIFECYCLE", "STARTED   " + DiagLog.idOf(activity));
+            }
+            @Override public void onActivityResumed(@NonNull Activity activity) {
+                DiagLog.log("LIFECYCLE", "RESUMED   " + DiagLog.idOf(activity)
+                        + " | " + DiagLog.describe(activity)
+                        + " | appLocales=" + DiagLog.appLocales(activity));
+            }
+            @Override public void onActivityPaused(@NonNull Activity activity) {
+                DiagLog.log("LIFECYCLE", "PAUSED    " + DiagLog.idOf(activity));
+            }
+            @Override public void onActivityStopped(@NonNull Activity activity) {
+                DiagLog.log("LIFECYCLE", "STOPPED   " + DiagLog.idOf(activity));
+            }
             @Override public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
         });
     }
@@ -197,12 +219,40 @@ public class App extends Application {
      * إعادة رسم كامل للواجهة
      */
     public void recreateAllActivities() {
+        DiagLog.log("RECREATE_ALL", "App.recreateAllActivities called by: " + DiagLog.callers(8));
         for (WeakReference<Activity> ref : new ArrayList<>(activities)) {
             Activity act = ref.get();
             if (act != null && !act.isFinishing()) {
                 act.recreate();
             }
         }
+    }
+
+    /**
+     * تشخيص مؤقت: وصف الأنشطة الحية الآن واللغة التي يعرضها كل منها فعلاً.
+     */
+    public String describeLiveActivities() {
+        StringBuilder sb = new StringBuilder();
+        for (WeakReference<Activity> ref : new ArrayList<>(activities)) {
+            Activity act = ref.get();
+            if (act != null) {
+                sb.append("\n    - ").append(DiagLog.idOf(act))
+                        .append(" finishing=").append(act.isFinishing())
+                        .append(" | ").append(DiagLog.describe(act));
+            }
+        }
+        return sb.length() == 0 ? "(none)" : sb.toString();
+    }
+
+    /**
+     * تشخيص مؤقت: يسجّل كل مرة يدفع فيها النظام إعدادات جديدة إلى العملية (اللغة، الثيم...).
+     * هذا يبيّن متى وصل تغيير اللغة فعلاً إلى التطبيق.
+     */
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        DiagLog.log("PROCESS_CONFIG", "system pushed new config to process: " + DiagLog.describe(newConfig)
+                + " | appLocales=" + DiagLog.appLocales(this));
     }
 
     @Override

@@ -15,6 +15,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.utils.DiagLog;
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 
@@ -150,7 +151,11 @@ public class SettingsViewModel extends AndroidViewModel {
 
 
     public void setLanguageMode(int mode) {
+        DiagLog.log("VM_LANG", "setLanguageMode(" + mode + ") | LiveData(DataStore)=" + languageMode.getValue()
+                + " | appLocales(LocaleManager)=" + DiagLog.appLocales(getApplication()));
+
         if (languageMode.getValue() != null && languageMode.getValue() == mode) {
+            DiagLog.log("VM_LANG", "IGNORED: LiveData already equals requested mode (early return)");
             return;
         }
 
@@ -161,6 +166,7 @@ public class SettingsViewModel extends AndroidViewModel {
                 .subscribe(
                     preferences -> {
                         Log.d(TAG, "Language mode saved to DataStore: " + mode);
+                        DiagLog.log("VM_LANG", "DataStore saved mode=" + mode + " -> now applying to system");
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             android.app.LocaleManager localeManager = getApplication().getSystemService(android.app.LocaleManager.class);
@@ -172,6 +178,8 @@ public class SettingsViewModel extends AndroidViewModel {
                                 } else {
                                     localeManager.setApplicationLocales(android.os.LocaleList.getEmptyLocaleList());
                                 }
+                                DiagLog.log("VM_LANG", "LocaleManager.setApplicationLocales done; read back="
+                                        + DiagLog.appLocales(getApplication()));
                             }
                             // ★ من أندرويد 13 فما فوق، النظام نفسه يعيد إنشاء كل الأنشطة
                             // تلقائياً بمجرد استدعاء setApplicationLocales، لذلك لا نستدعي
@@ -199,6 +207,7 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     public void syncLanguageModeFromSystem(int mode) {
+        DiagLog.log("VM_LANG", "syncLanguageModeFromSystem(" + mode + ") -> writing DataStore only");
         disposables.add(
             dataStore.setLanguageMode(mode)
                 .subscribeOn(Schedulers.io())
@@ -218,6 +227,7 @@ public class SettingsViewModel extends AndroidViewModel {
         }
         
         Log.d(TAG, "Setting theme mode to: " + mode);
+        DiagLog.log("VM_THEME", "setThemeMode(" + mode + ")");
         
         disposables.add(
             dataStore.setThemeAuto(false)
@@ -240,6 +250,7 @@ public class SettingsViewModel extends AndroidViewModel {
         }
         
         Log.d(TAG, "Setting theme auto to: " + enabled);
+        DiagLog.log("VM_THEME", "setThemeAuto(" + enabled + ")");
         
         disposables.add(
             dataStore.setThemeAuto(enabled)
