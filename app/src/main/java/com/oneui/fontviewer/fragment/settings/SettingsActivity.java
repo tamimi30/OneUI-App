@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.activity.BaseActivity;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
-import com.oneui.fontviewer.utils.DiagLog;
 import com.oneui.fontviewer.utils.TransitionUtils;
 
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
@@ -62,10 +61,6 @@ public class SettingsActivity extends BaseActivity {
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
-        DiagLog.log("SETTINGS_ACT", "onConfigurationChanged: displayedLanguage=" + mDisplayedLanguage
-                + " | getLocale()=" + SettingsHelper.getLocale(this).toLanguageTag()
-                + " | will recreate=" + (!SettingsHelper.getLocale(this).toLanguageTag().equals(mDisplayedLanguage)));
 
         if (!SettingsHelper.getLocale(this).toLanguageTag().equals(mDisplayedLanguage)) {
             // بين وصول التغيير وإعادة بناء الشاشة (~150ms) تتفاعل عناصر الشاشة الحيّة القديمة معه

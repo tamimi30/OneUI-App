@@ -22,7 +22,3 @@
 
 # 7. طباعة قائمة الكود المحذوف للتأكد مما يفعله المحرك
 -printusage usage.txt
-
-# 8. تشخيص مؤقت (مع DiagLog): حماية AppCompatDelegateImpl من الدمج (inlining)
-# حتى يظهر في التقرير من استدعى recreate() بسبب الثيم. يُحذف مع DiagLog.
--keep class androidx.appcompat.app.AppCompatDelegateImpl { *; }

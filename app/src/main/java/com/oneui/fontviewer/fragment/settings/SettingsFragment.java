@@ -31,7 +31,6 @@ import com.oneui.fontviewer.App;
 import com.oneui.fontviewer.fragment.settings.about.AboutActivity;
 import com.oneui.fontviewer.fragment.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.fragment.settings.viewmodel.SettingsViewModel;
-import com.oneui.fontviewer.utils.DiagLog;
 import com.oneui.fontviewer.utils.TransitionUtils;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
@@ -82,7 +81,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onResume() {
         super.onResume();
-        DiagLog.log("UI_LANG", "SettingsFragment.onResume");
         syncLanguageFromSystem();
         setupRelatedCard();
     }
@@ -106,8 +104,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
 
         int actualLang = SettingsHelper.getSystemAssignedLanguage(requireContext());
-        DiagLog.log("UI_LANG", "syncLanguageFromSystem: dataStore=" + dataStoreLang + " actual(LocaleManager)=" + actualLang
-                + " -> " + (dataStoreLang != actualLang ? "MISMATCH, overwriting pref+DataStore with actual" : "match"));
         if (dataStoreLang != actualLang) {
             languagePreference.setValue(String.valueOf(actualLang));
             viewModel.syncLanguageModeFromSystem(actualLang);
@@ -122,11 +118,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             languagePreference.seslSetSummaryColor(getColoredSummaryColor(true));
             languagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 int mode = Integer.parseInt((String) newValue);
-                DiagLog.log("UI_LANG", ">>> USER selected language value=" + mode
-                        + " (0=system,1=arabic,2=english) | pref shows=" + languagePreference.getValue());
                 new android.os.Handler(android.os.Looper.getMainLooper())
                         .postDelayed(() -> {
-                            DiagLog.log("UI_LANG", "250ms delay elapsed -> calling viewModel.setLanguageMode(" + mode + ")");
                             // التقاط صورة للشاشة باللغة الحالية قبل تغييرها (لأنيميشن التغيير)
                             TransitionUtils.prepareForLanguageChange(getActivity());
                             viewModel.setLanguageMode(mode);
@@ -175,23 +168,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             });
         }
 
-        // ── تشخيص مؤقت: مشاركة التقرير أو مسحه ──
-        Preference diagSharePreference = findPreference("diag_share");
-        if (diagSharePreference != null) {
-            diagSharePreference.setOnPreferenceClickListener(preference -> {
-                shareDiagnosticsReport();
-                return true;
-            });
-        }
-        Preference diagClearPreference = findPreference("diag_clear");
-        if (diagClearPreference != null) {
-            diagClearPreference.setOnPreferenceClickListener(preference -> {
-                DiagLog.clear();
-                Toast.makeText(mContext, "تم مسح التقرير. نفّذ السيناريو الآن.", Toast.LENGTH_SHORT).show();
-                return true;
-            });
-        }
-
         Preference aboutPreference = findPreference("about_app");
         if (aboutPreference != null) {
             aboutPreference.setOnPreferenceClickListener(preference -> {
@@ -219,52 +195,20 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
     }
 
-    /**
-     * تشخيص مؤقت: ينسخ التقرير إلى الحافظة ويفتح قائمة المشاركة (واتساب/تيليجرام/ملاحظات...).
-     */
-    private void shareDiagnosticsReport() {
-        App app = App.getInstance();
-        DiagLog.log("REPORT", "share requested. Live activities now: "
-                + (app != null ? app.describeLiveActivities() : "(no app)")
-                + "\n    appLocales(LocaleManager)=" + DiagLog.appLocales(mContext));
-
-        String report = DiagLog.read();
-
-        try {
-            android.content.ClipboardManager clipboard =
-                    (android.content.ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-            if (clipboard != null) {
-                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("language-diagnostics", report));
-            }
-        } catch (RuntimeException e) {
-            // حجم الحافظة محدود؛ نكتفي بالمشاركة
-        }
-
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Language diagnostics report");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, report);
-        startActivity(Intent.createChooser(shareIntent, null));
-    }
-
     private void setupPreferenceListeners() {
         if (themePreference != null) {
             themePreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 String value = (String) newValue;
                 int mode = Integer.parseInt(value);
 
-                DiagLog.log("UI_THEME", ">>> USER selected theme mode=" + mode + " (0=light,1=dark)");
-
                 // التقاط صورة للثيم الحالي قبل تغييره (لأنيميشن تغيير الثيم)
                 TransitionUtils.prepareForThemeChange(requireActivity());
 
-                DiagLog.log("UI_THEME", "calling AppCompatDelegate.setDefaultNightMode (AppCompat will recreate ALL live activities that differ)");
                 if (mode == SettingsHelper.THEME_DARK) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }
-                DiagLog.log("UI_THEME", "setDefaultNightMode returned");
 
                 viewModel.setThemeMode(mode);
 
@@ -275,7 +219,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (themeAutoPreference != null) {
             themeAutoPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 boolean enabled = (Boolean) newValue;
-                DiagLog.log("UI_THEME", ">>> USER toggled 'system theme' switch enabled=" + enabled);
 
                 if (themePreference != null) {
                     themePreference.setEnabled(!enabled);
@@ -309,9 +252,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private void observeViewModel() {
         viewModel.getLanguageMode().observe(this, mode -> {
-            DiagLog.log("UI_LANG", "LiveData(DataStore) language emitted=" + mode
-                    + " | pref shows=" + (languagePreference != null ? languagePreference.getValue() : "n/a")
-                    + " | syncedAfterLoad=" + mLanguageSyncedAfterLoad);
             if (languagePreference != null && mode != null) {
                 languagePreference.setValue(String.valueOf(mode));
 
@@ -368,7 +308,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private void handleSettingsEvent(SettingsViewModel.SettingsEvent event) {
-        DiagLog.log("UI_EVENT", "settings event: " + event.getType());
         switch (event.getType()) {
             case SHOW_TOAST:
                 if (event.getMessageResId() != 0) {

@@ -13,7 +13,6 @@ import java.util.Locale;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.oneui.fontviewer.fragment.settings.datastore.SettingsDataStore;
-import com.oneui.fontviewer.utils.DiagLog;
 
 public class SettingsHelper {
 
@@ -134,10 +133,8 @@ public class SettingsHelper {
 
     public static void applyTheme(Context context) {
         boolean isAuto = isThemeAuto(context);
-
+        
         Log.d(TAG, "Applying theme - Auto mode: " + isAuto);
-        DiagLog.log("THEME", "SettingsHelper.applyTheme: auto=" + isAuto + " savedMode=" + getThemeMode(context)
-                + " (0=light,1=dark) | called by: " + DiagLog.callers(5));
         
         if (isAuto) {
             Log.d(TAG, "Applying FOLLOW_SYSTEM mode");

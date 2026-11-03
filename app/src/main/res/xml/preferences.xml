@@ -73,20 +73,4 @@
 
     </PreferenceCategory>
 
-    <!-- تشخيص مؤقت: يُحذف هذا القسم بعد حل مشكلة اللغة (مع DiagLog.java) -->
-    <PreferenceCategory
-        android:title="تشخيص مؤقت (Temporary diagnostics)">
-
-        <Preference
-            android:key="diag_clear"
-            android:persistent="false"
-            android:title="1) مسح التقرير قبل بدء السيناريو" />
-
-        <Preference
-            android:key="diag_share"
-            android:persistent="false"
-            android:title="2) مشاركة التقرير بعد انتهاء السيناريو" />
-
-    </PreferenceCategory>
-
 </PreferenceScreen>
