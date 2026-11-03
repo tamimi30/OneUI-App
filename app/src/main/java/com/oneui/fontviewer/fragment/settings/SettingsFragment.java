@@ -43,6 +43,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private SettingsViewModel viewModel;
 
     private DropDownPreference languagePreference;
+
+    // لمزامنة أول قيمة تصل من DataStore مع لغة النظام الفعلية (مرة واحدة فقط)
+    private boolean mLanguageSyncedAfterLoad = false;
     private HorizontalRadioPreference themePreference;
     private SwitchPreferenceCompat themeAutoPreference;
     
@@ -78,19 +81,33 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onResume() {
         super.onResume();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && languagePreference != null) {
-            int actualLang = SettingsHelper.getSystemAssignedLanguage(requireContext());
-            String actualLangStr = String.valueOf(actualLang);
-
-            if (!actualLangStr.equals(languagePreference.getValue())) {
-                languagePreference.setValue(actualLangStr);
-                Integer currentDataStoreLang = viewModel.getLanguageMode().getValue();
-                if (currentDataStoreLang == null || currentDataStoreLang != actualLang) {
-                    viewModel.syncLanguageModeFromSystem(actualLang);
-                }
-            }
-        }
+        syncLanguageFromSystem();
         setupRelatedCard();
+    }
+
+    /**
+     * يزامن DataStore وقائمة اللغة مع لغة التطبيق الفعلية في النظام (من أندرويد 13).
+     *
+     * لغة التطبيق قد تتغير من إعدادات النظام دون علم DataStore، فنقارن قيمة DataStore نفسها
+     * (وليس قيمة الـ preference، لأنها تبدأ بالقيمة الافتراضية "0" وهي نفس System default،
+     * فتبدو متطابقة مع النظام قبل أن تصل قيمة DataStore القديمة وتُعرض خطأً).
+     */
+    private void syncLanguageFromSystem() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || languagePreference == null) {
+            return;
+        }
+
+        Integer dataStoreLang = viewModel.getLanguageMode().getValue();
+        if (dataStoreLang == null) {
+            // لم تصل القيمة من DataStore بعد، سيستدعي المراقب هذه الدالة عند وصولها
+            return;
+        }
+
+        int actualLang = SettingsHelper.getSystemAssignedLanguage(requireContext());
+        if (dataStoreLang != actualLang) {
+            languagePreference.setValue(String.valueOf(actualLang));
+            viewModel.syncLanguageModeFromSystem(actualLang);
+        }
     }
 
 
@@ -237,6 +254,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         viewModel.getLanguageMode().observe(this, mode -> {
             if (languagePreference != null && mode != null) {
                 languagePreference.setValue(String.valueOf(mode));
+
+                // أول قيمة تصل قد تكون قديمة (اللغة تغيّرت من إعدادات النظام)، نصححها مرة واحدة.
+                // لا نكررها بعد ذلك حتى لا نتعارض مع تغيير اللغة من هذه الشاشة.
+                if (!mLanguageSyncedAfterLoad) {
+                    mLanguageSyncedAfterLoad = true;
+                    syncLanguageFromSystem();
+                }
             }
         });
 
