@@ -9,7 +9,7 @@
   <path
       android:fillColor="@android:color/transparent"
       android:strokeColor="@color/oui_primary_icon_color"
-      android:strokeWidth="60"
+      android:strokeWidth="50"
       android:strokeLineJoin="round"
       android:strokeLineCap="round"
       android:pathData="M72.6,690 Q78.3,622.8 130.9,539 Q183.4,455.4 270.6,406.2 L313,383.1 Q392,350 480,350 Q568,350 647,383.1 L689.4,406.2 Q776.6,455.4 829.1,539 Q881.7,622.8 887.4,690 Z"/>
