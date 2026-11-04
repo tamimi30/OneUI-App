@@ -69,13 +69,15 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder
         AppScreen screen = mScreenList.get(position);
         if (screen == null) return;
 
-        int iconRes = getIconForScreen(screen);
+        boolean isSelected = (screen == mSelectedScreen);
+
+        int iconRes = getIconForScreen(screen, isSelected);
         String title = getTitleForScreen(screen);
 
         if (iconRes != 0)     holder.setIcon(iconRes);
         if (!title.isEmpty()) holder.setTitle(title);
 
-        holder.setSelected(screen == mSelectedScreen);
+        holder.setSelected(isSelected);
 
         holder.itemView.setOnClickListener(v -> {
             final int adapterPos = holder.getBindingAdapterPosition();
@@ -96,20 +98,28 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder
     }
 
 
-    private int getIconForScreen(AppScreen screen) {
+    private int getIconForScreen(AppScreen screen, boolean selected) {
         switch (screen) {
             case HOME:
                 return dev.oneuiproject.oneui.R.drawable.ic_oui_home_outline;
             case FONT_VIEWER:
                 return R.drawable.ic_oui_text_style_default;
             case LOCAL_FONTS:
-                return dev.oneuiproject.oneui.R.drawable.ic_oui_device_outline;
+                return selected
+                        ? dev.oneuiproject.oneui.R.drawable.ic_oui_device
+                        : dev.oneuiproject.oneui.R.drawable.ic_oui_device_outline;
             case SYSTEM_FONTS:
-                return R.drawable.ic_android_outline;
+                return selected
+                        ? R.drawable.ic_android
+                        : R.drawable.ic_android_outline;
             case FAVORITES:
-                return dev.oneuiproject.oneui.R.drawable.ic_oui_favorite_off;
+                return selected
+                        ? dev.oneuiproject.oneui.R.drawable.ic_oui_favorite_on
+                        : dev.oneuiproject.oneui.R.drawable.ic_oui_favorite_off;
             case TRASH:
-                return dev.oneuiproject.oneui.R.drawable.ic_oui_delete_outline;
+                return selected
+                        ? dev.oneuiproject.oneui.R.drawable.ic_oui_delete
+                        : dev.oneuiproject.oneui.R.drawable.ic_oui_delete_outline;
             default:
                 return 0;
         }
