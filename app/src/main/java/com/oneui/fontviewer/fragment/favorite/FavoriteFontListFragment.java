@@ -56,6 +56,9 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
     private static final String TAG = "FavoriteFontListFragment";
 
+    // المدة التي ننتظرها بعد الخروج من وضع التحديد قبل تنفيذ إزالة المفضلة (نفس المدة المستخدمة في LocalFontListFragment)
+    private static final long SELECTION_EXIT_DELAY_MS = 400;
+
     private Context mContext;
     private RecyclerView mRecyclerView;
     private LocalFontListAdapter mAdapter;
@@ -567,12 +570,20 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         mSelectionManager.setSelecting(false);
 
-        mViewModel.toggleFavoritesBatch(paths, addToFavorites, () -> {
-            String message = addToFavorites
-                ? getString(R.string.action_favorite)    
-                : getString(R.string.action_unfavorite);
-            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-        });
+        // الخروج من وضع التحديد يُشغّل في نفس اللحظة أنيميشن خاص به (إخفاء مربعات الاختيار، وإغلاق الـ ActionMode،
+        // وإشعار تغيير لكل عناصر القائمة). لو حُذف العنصر من قاعدة البيانات مباشرة، يصل تحديث القائمة
+        // أثناء هذه التغييرات فلا يظهر أنيميشن الحذف. لذلك ننتظر انتهاء الخروج من وضع التحديد أولاً،
+        // كما يفعل LocalFontListFragment في نفس الحالة.
+        mMainHandler.postDelayed(() -> {
+            if (!isAdded() || mViewModel == null) return;
+
+            mViewModel.toggleFavoritesBatch(paths, addToFavorites, () -> {
+                String message = addToFavorites
+                    ? getString(R.string.action_favorite)
+                    : getString(R.string.action_unfavorite);
+                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+            });
+        }, SELECTION_EXIT_DELAY_MS);
     }
 
 
