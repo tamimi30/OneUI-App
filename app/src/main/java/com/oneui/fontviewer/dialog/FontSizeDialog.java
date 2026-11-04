@@ -91,6 +91,9 @@ public class FontSizeDialog {
             fontSizeTipPopup.setExpanded(true);
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
+            // مع setExpanded(true) تعرض المكتبة البالون مباشرة بدون أي أنيميشن،
+            // لأن أنيميشن التوسّع يُشغَّل فقط عند لمس فقاعة التلميح. نشغّله يدوياً هنا.
+            fontSizeTipPopup.animateScaleUp();
         });
 
         // يرصد ظهور/اختفاء الكيبورد مباشرة، بغض النظر عن السبب (رجوع، Done، إلخ)
