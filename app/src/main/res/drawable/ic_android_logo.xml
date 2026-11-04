@@ -5,35 +5,9 @@
     android:viewportHeight="960"
     android:tint="@color/oui_primary_icon_color">
 
-  <!-- Head: filled solid, rounded corners. The eyes are cut out of the fill (evenOdd) so they stay visible -->
+  <!-- Same path as ic_android_2 (Google), with only the two bottom corners of the head rounded -->
   <path
       android:fillColor="@color/oui_primary_icon_color"
-      android:fillType="evenOdd"
-      android:pathData="M72.6,690 Q78.3,622.8 130.9,539 Q183.4,455.4 270.6,406.2 L313,383.1 Q392,350 480,350 Q568,350 647,383.1 L689.4,406.2 Q776.6,455.4 829.1,539 Q881.7,622.8 887.4,690 Z M315.5,595.5 Q330,581 330,560 Q330,539 315.5,524.5 Q301,510 280,510 Q259,510 244.5,524.5 Q230,539 230,560 Q230,581 244.5,595.5 Q259,610 280,610 Q301,610 315.5,595.5 Z M715.5,595.5 Q730,581 730,560 Q730,539 715.5,524.5 Q701,510 680,510 Q659,510 644.5,524.5 Q630,539 630,560 Q630,581 644.5,595.5 Q659,610 680,610 Q701,610 715.5,595.5 Z"/>
-
-  <!-- Head outline: same stroke as before, drawn separately so it does not shrink the eye cutouts (path inset by half the stroke width, so the outer edge matches ic_android_2) -->
-  <path
-      android:fillColor="@android:color/transparent"
-      android:strokeColor="@color/oui_primary_icon_color"
-      android:strokeWidth="60"
-      android:strokeLineJoin="round"
-      android:strokeLineCap="round"
-      android:pathData="M72.6,690 Q78.3,622.8 130.9,539 Q183.4,455.4 270.6,406.2 L313,383.1 Q392,350 480,350 Q568,350 647,383.1 L689.4,406.2 Q776.6,455.4 829.1,539 Q881.7,622.8 887.4,690 Z"/>
-
-  <!-- Left antenna: 1.5dp thick line, rounded cap (shortened so the cap tip matches ic_android_2) -->
-  <path
-      android:fillColor="@android:color/transparent"
-      android:strokeColor="@color/oui_primary_icon_color"
-      android:strokeWidth="60"
-      android:strokeLineCap="round"
-      android:pathData="M278,368 L206.5,244.4"/>
-
-  <!-- Right antenna: 1.5dp thick line, rounded cap (shortened so the cap tip matches ic_android_2) -->
-  <path
-      android:fillColor="@android:color/transparent"
-      android:strokeColor="@color/oui_primary_icon_color"
-      android:strokeWidth="60"
-      android:strokeLineCap="round"
-      android:pathData="M682,368 L753.5,244.4"/>
+      android:pathData="M70,720Q40,720 43.5,690.2Q57,600.3 105.5,523Q162,433 256,380L182,252Q176,243 179,233Q182,223 192,218Q200,213 210,216Q220,219 226,228L300,356Q386,320 480,320Q574,320 660,356L734,228Q740,219 750,216Q760,213 768,218Q778,223 781,233Q784,243 778,252L704,380Q798,433 854.5,523Q903,600.3 916.5,690.2Q920,720 890,720ZM315.5,595.5Q330,581 330,560Q330,539 315.5,524.5Q301,510 280,510Q259,510 244.5,524.5Q230,539 230,560Q230,581 244.5,595.5Q259,610 280,610Q301,610 315.5,595.5ZM715.5,595.5Q730,581 730,560Q730,539 715.5,524.5Q701,510 680,510Q659,510 644.5,524.5Q630,539 630,560Q630,581 644.5,595.5Q659,610 680,610Q701,610 715.5,595.5Z"/>
 
 </vector>
