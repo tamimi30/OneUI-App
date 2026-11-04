@@ -5,14 +5,12 @@ import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.PopupWindow;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.ViewTreeObserver;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
@@ -91,15 +89,8 @@ public class FontSizeDialog {
             // set custom background color with alpha using project color
             fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
             fontSizeTipPopup.setExpanded(true);
-            // setExpanded(true) يصفّر هامش التكبير (scale margin) فتصبح النافذة بنفس حجم البالون تماماً،
-            // فيُقصّ الأنيميشن المرن من كل الأطراف عند تجاوزه الحجم النهائي. الاستدعاء التالي يعيد الهامش
-            // الافتراضي فقط (لا يغيّر حالة التوسّع) ليبقى للأنيميشن مساحة داخل النافذة.
-            fontSizeTipPopup.setExpanded(false);
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
-            // البالون يُعرض مباشرة (بدون فقاعة "؟")، لكن في هذه النسخة من المكتبة لا يعمل
-            // أنيميشن التوسّع مع setExpanded(true)، فنشغّله يدوياً بعد جاهزية النافذة.
-            playExpandAnimation(fontSizeTipPopup);
         });
 
         // يرصد ظهور/اختفاء الكيبورد مباشرة، بغض النظر عن السبب (رجوع، Done، إلخ)
@@ -318,34 +309,6 @@ public class FontSizeDialog {
         
         dialog.show();
         
-    }
-
-    // مع setExpanded(true) تعرض المكتبة البالون مباشرة وتتجاوز animateScaleUp().
-    // نخفي اللوحة قبل أول رسم، وبعد اكتمال أول قياس/رسم (وهو الأثقل) نُظهرها ونشغّل
-    // الأنيميشن، كي لا يُستهلك جزء من الأنيميشن أثناء إنشاء النافذة فيظهر البالون جاهزاً.
-    private void playExpandAnimation(TipPopup tipPopup) {
-        PopupWindow balloonWindow = tipPopup.semGetBalloonPopupWindow();
-        if (balloonWindow == null) return;
-        View balloonView = balloonWindow.getContentView();
-        if (balloonView == null) return;
-        View panel = balloonView.findViewById(dev.oneuiproject.oneui.design.R.id.sem_tip_popup_balloon_panel);
-        if (panel == null) return;
-
-        panel.setVisibility(View.INVISIBLE);
-        balloonView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                if (balloonView.getViewTreeObserver().isAlive()) {
-                    balloonView.getViewTreeObserver().removeOnPreDrawListener(this);
-                }
-                balloonView.post(() -> {
-                    if (!tipPopup.isShowing()) return;
-                    panel.setVisibility(View.VISIBLE);
-                    tipPopup.animateScaleUp();
-                });
-                return true;
-            }
-        });
     }
 
     private void setupSeekBar() {
