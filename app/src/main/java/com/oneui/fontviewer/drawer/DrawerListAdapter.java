@@ -105,7 +105,7 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListViewHolder
             case LOCAL_FONTS:
                 return dev.oneuiproject.oneui.R.drawable.ic_oui_device_outline;
             case SYSTEM_FONTS:
-                return R.drawable.ic_android_logo_outline;
+                return R.drawable.ic_android_outline;
             case FAVORITES:
                 return dev.oneuiproject.oneui.R.drawable.ic_oui_favorite_off;
             case TRASH:
