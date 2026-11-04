@@ -9,31 +9,31 @@
   <path
       android:fillColor="@color/oui_primary_icon_color"
       android:fillType="evenOdd"
-      android:pathData="M40,720 Q49,613 105.5,523 Q162,433 256,380 L300,356 Q386,320 480,320 Q574,320 660,356 L704,380 Q798,433 854.5,523 Q911,613 920,720 Z M315.5,595.5 Q330,581 330,560 Q330,539 315.5,524.5 Q301,510 280,510 Q259,510 244.5,524.5 Q230,539 230,560 Q230,581 244.5,595.5 Q259,610 280,610 Q301,610 315.5,595.5 Z M715.5,595.5 Q730,581 730,560 Q730,539 715.5,524.5 Q701,510 680,510 Q659,510 644.5,524.5 Q630,539 630,560 Q630,581 644.5,595.5 Q659,610 680,610 Q701,610 715.5,595.5 Z"/>
+      android:pathData="M72.6,690 Q78.3,622.8 130.9,539 Q183.4,455.4 270.6,406.2 L313,383.1 Q392,350 480,350 Q568,350 647,383.1 L689.4,406.2 Q776.6,455.4 829.1,539 Q881.7,622.8 887.4,690 Z M315.5,595.5 Q330,581 330,560 Q330,539 315.5,524.5 Q301,510 280,510 Q259,510 244.5,524.5 Q230,539 230,560 Q230,581 244.5,595.5 Q259,610 280,610 Q301,610 315.5,595.5 Z M715.5,595.5 Q730,581 730,560 Q730,539 715.5,524.5 Q701,510 680,510 Q659,510 644.5,524.5 Q630,539 630,560 Q630,581 644.5,595.5 Q659,610 680,610 Q701,610 715.5,595.5 Z"/>
 
-  <!-- Head outline: same stroke as before, drawn separately so it does not shrink the eye cutouts -->
+  <!-- Head outline: same stroke as before, drawn separately so it does not shrink the eye cutouts (path inset by half the stroke width, so the outer edge matches ic_android_2) -->
   <path
       android:fillColor="@android:color/transparent"
       android:strokeColor="@color/oui_primary_icon_color"
       android:strokeWidth="60"
       android:strokeLineJoin="round"
       android:strokeLineCap="round"
-      android:pathData="M40,720 Q49,613 105.5,523 Q162,433 256,380 L300,356 Q386,320 480,320 Q574,320 660,356 L704,380 Q798,433 854.5,523 Q911,613 920,720 Z"/>
+      android:pathData="M72.6,690 Q78.3,622.8 130.9,539 Q183.4,455.4 270.6,406.2 L313,383.1 Q392,350 480,350 Q568,350 647,383.1 L689.4,406.2 Q776.6,455.4 829.1,539 Q881.7,622.8 887.4,690 Z"/>
 
-  <!-- Left antenna: 1.5dp thick line, rounded cap -->
+  <!-- Left antenna: 1.5dp thick line, rounded cap (shortened so the cap tip matches ic_android_2) -->
   <path
       android:fillColor="@android:color/transparent"
       android:strokeColor="@color/oui_primary_icon_color"
       android:strokeWidth="60"
       android:strokeLineCap="round"
-      android:pathData="M278,368 L204,220"/>
+      android:pathData="M278,368 L206.5,244.4"/>
 
-  <!-- Right antenna: 1.5dp thick line, rounded cap -->
+  <!-- Right antenna: 1.5dp thick line, rounded cap (shortened so the cap tip matches ic_android_2) -->
   <path
       android:fillColor="@android:color/transparent"
       android:strokeColor="@color/oui_primary_icon_color"
       android:strokeWidth="60"
       android:strokeLineCap="round"
-      android:pathData="M682,368 L756,220"/>
+      android:pathData="M682,368 L753.5,244.4"/>
 
 </vector>
