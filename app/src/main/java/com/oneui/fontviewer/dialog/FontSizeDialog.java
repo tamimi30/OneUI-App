@@ -91,6 +91,10 @@ public class FontSizeDialog {
             // set custom background color with alpha using project color
             fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
             fontSizeTipPopup.setExpanded(true);
+            // setExpanded(true) يصفّر هامش التكبير (scale margin) فتصبح النافذة بنفس حجم البالون تماماً،
+            // فيُقصّ الأنيميشن المرن من كل الأطراف عند تجاوزه الحجم النهائي. الاستدعاء التالي يعيد الهامش
+            // الافتراضي فقط (لا يغيّر حالة التوسّع) ليبقى للأنيميشن مساحة داخل النافذة.
+            fontSizeTipPopup.setExpanded(false);
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
             // البالون يُعرض مباشرة (بدون فقاعة "؟")، لكن في هذه النسخة من المكتبة لا يعمل
