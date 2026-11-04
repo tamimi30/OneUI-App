@@ -5,30 +5,30 @@
     android:viewportHeight="960"
     android:tint="@color/oui_primary_icon_color">
 
-  <!-- Head: outline only, rounded corners (path inset by half the stroke width, so the outer edge matches ic_android_2) -->
+  <!-- Head: outline only, rounded corners -->
   <path
       android:fillColor="@android:color/transparent"
       android:strokeColor="@color/oui_primary_icon_color"
-      android:strokeWidth="50"
+      android:strokeWidth="60"
       android:strokeLineJoin="round"
       android:strokeLineCap="round"
-      android:pathData="M72.6,690 Q78.3,622.8 130.9,539 Q183.4,455.4 270.6,406.2 L313,383.1 Q392,350 480,350 Q568,350 647,383.1 L689.4,406.2 Q776.6,455.4 829.1,539 Q881.7,622.8 887.4,690 Z"/>
+      android:pathData="M40,720 Q49,613 105.5,523 Q162,433 256,380 L300,356 Q386,320 480,320 Q574,320 660,356 L704,380 Q798,433 854.5,523 Q911,613 920,720 Z"/>
 
-  <!-- Left antenna: 1.5dp thick line, rounded cap (shortened so the cap tip matches ic_android_2) -->
+  <!-- Left antenna: 1.5dp thick line, rounded cap -->
   <path
       android:fillColor="@android:color/transparent"
       android:strokeColor="@color/oui_primary_icon_color"
-      android:strokeWidth="50"
+      android:strokeWidth="60"
       android:strokeLineCap="round"
-      android:pathData="M278,368 L206.5,244.4"/>
+      android:pathData="M278,368 L204,220"/>
 
-  <!-- Right antenna: 1.5dp thick line, rounded cap (shortened so the cap tip matches ic_android_2) -->
+  <!-- Right antenna: 1.5dp thick line, rounded cap -->
   <path
       android:fillColor="@android:color/transparent"
       android:strokeColor="@color/oui_primary_icon_color"
-      android:strokeWidth="50"
+      android:strokeWidth="60"
       android:strokeLineCap="round"
-      android:pathData="M682,368 L753.5,244.4"/>
+      android:pathData="M682,368 L756,220"/>
 
   <!-- Left eye: filled solid (same color as strokes via tint) -->
   <path
