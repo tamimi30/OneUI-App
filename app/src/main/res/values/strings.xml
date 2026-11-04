@@ -51,8 +51,8 @@
     <string name="font_viewer_select_font">Select font file</string>
     <string name="font_viewer_no_font_selected">No font selected</string>
     <string name="font_info">Font metadata</string>
-    <string name="font_size_dialog_title">Font size</string>
-    <string name="unknown_font">Unknown font</string>
+    <string name="font_size_dialog_title">Text size</string>
+    <string name="unknown_font">Unknown Font</string>
     <string name="btn_bold">Bold</string>
     <string name="btn_italic">Italic</string>
     <string name="translating">Translating...</string>
