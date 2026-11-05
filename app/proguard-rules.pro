@@ -22,3 +22,6 @@
 
 # 7. طباعة قائمة الكود المحذوف للتأكد مما يفعله المحرك
 -printusage usage.txt
+
+# 8. حماية SeslElasticInterpolator (يُنشأ بالـ reflection داخل OneUiTipPopup)
+-keep class androidx.appcompat.animation.SeslElasticInterpolator { <init>(float, float); }
