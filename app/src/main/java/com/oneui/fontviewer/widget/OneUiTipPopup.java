@@ -44,6 +44,11 @@ import androidx.reflect.widget.SeslTextViewReflector;
 
 import dev.oneuiproject.oneui.design.R;
 
+/**
+ * نسخة من TipPopup الخاصة بمكتبة OneUI Design (dev.oneuiproject.oneui.widget.TipPopup) بعد تغيير اسمها
+ * لتجنب تعارض الأسماء عند البناء. السلوك الأصلي كما هو بالكامل، والإضافة الوحيدة هي {@link #setDirectExpand(boolean)}
+ * التي تعرض نافذة الرسالة مباشرة بأنيميشن التوسّع الأصلي للمكتبة بدون إظهار علامة الاستفهام (?).
+ */
 public class OneUiTipPopup {
     private static final int ANIMATION_DURATION_BOUNCE_SCALE1 = 167;
     private static final int ANIMATION_DURATION_BOUNCE_SCALE2 = 250;
@@ -55,10 +60,6 @@ public class OneUiTipPopup {
     private static final int ANIMATION_DURATION_SHOW_SCALE = 500;
     private static final int ANIMATION_OFFSET_BOUNCE_SCALE = 3000;
     private static final int ANIMATION_OFFSET_EXPAND_TEXT = 100;
-    // نقطة بداية أنيميشن التوسع كما في animateScaleUp: العرض 0.27، والارتفاع 0
-    // (المكتبة تحسبه بقسمة أعداد صحيحة questionHeight / mBalloonHeight فتكون النتيجة 0).
-    private static final float EXPAND_START_SCALE_X = 0.27f;
-    private static final float EXPAND_START_SCALE_Y = 0.0f;
     public static final int DIRECTION_BOTTOM_LEFT = 2;
     public static final int DIRECTION_BOTTOM_RIGHT = 3;
     public static final int DIRECTION_DEFAULT = -1;
@@ -123,6 +124,7 @@ public class OneUiTipPopup {
     private final int mHorizontalTextMargin;
     private int mInitialmMessageViewWidth;
     private boolean mIsDefaultPosition;
+    private boolean mDirectExpand = false;
     private boolean mIsMessageViewMeasured;
     private CharSequence mMessageText;
     private Integer mMessageTextColor;
@@ -410,11 +412,20 @@ public class OneUiTipPopup {
 
     public void setExpanded(boolean expanded) {
         if (expanded) {
-            // لا نصفّر mScaleMargin هنا (كما تفعل المكتبة) ليبقى في الإطار مساحة لتجاوز الأنيميشن المرن.
             this.mState = STATE_EXPANDED;
+            this.mScaleMargin = 0;
             return;
         }
         this.mScaleMargin = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_scale_margin);
+    }
+
+    /**
+     * عند التفعيل تظهر نافذة الرسالة مباشرة بنفس أنيميشن التوسّع الأصلي للمكتبة (ينمو من مكان السهم)،
+     * بدون إظهار علامة الاستفهام (?) إطلاقاً، ليكون المرتكز هو الأيقونة التي ضغط عليها المستخدم.
+     * لا تستخدم setExpanded(true) معها، لأنها تُصفّر هامش التكبير فيُقص الأنيميشن عند حافة النافذة.
+     */
+    public void setDirectExpand(boolean directExpand) {
+        this.mDirectExpand = directExpand;
     }
 
     public void setTargetPosition(int x, int y) {
@@ -583,7 +594,7 @@ public class OneUiTipPopup {
     }
 
     private void showInternal() {
-        if (this.mState != STATE_EXPANDED) {
+        if (this.mState != STATE_EXPANDED && !this.mDirectExpand) {
             this.mState = STATE_HINT;
             OnStateChangeListener onStateChangeListener = this.mOnStateChangeListener;
             if (onStateChangeListener != null) {
@@ -614,6 +625,7 @@ public class OneUiTipPopup {
                 }
             });
         } else {
+            this.mState = STATE_EXPANDED;
             this.mBalloonBubble.setVisibility(View.GONE);
             this.mBalloonPanel.setVisibility(View.VISIBLE);
             this.mMessageView.setVisibility(View.VISIBLE);
@@ -624,7 +636,9 @@ public class OneUiTipPopup {
             TipWindow tipWindow2 = this.mBalloonPopup;
             if (tipWindow2 != null) {
                 tipWindow2.showAtLocation(this.mParentView, 0, this.mBalloonPopupX, this.mBalloonPopupY);
-                animateExpandedIn();
+            }
+            if (this.mDirectExpand) {
+                animatePanelIn();
             }
         }
         this.mBalloonView.setOnTouchListener(new View.OnTouchListener() {
@@ -1211,52 +1225,6 @@ public class OneUiTipPopup {
         this.mBubbleView.startAnimation(animationSet);
     }
 
-    /**
-     * نفس أنيميشن التوسع في animateScaleUp لكن للبالون الذي يُعرض موسَّعاً مباشرة بدون علامة الاستفهام:
-     * scale مرن 500ms من نقطة السهم + alpha + ظهور النص. لا يستدعي dismissBubble لأنه لا توجد فقاعة.
-     */
-    private void animateExpandedIn() {
-        float pivotPanelX = 0.0f;
-        float pivotPanelY = 0.0f;
-        switch (this.mArrowDirection) {
-            case DIRECTION_TOP_LEFT:
-            case DIRECTION_TOP_RIGHT:
-                pivotPanelX = this.mArrowPositionX - this.mBalloonX;
-                pivotPanelY = this.mBalloonHeight;
-                break;
-            case DIRECTION_BOTTOM_LEFT:
-                pivotPanelX = this.mArrowPositionX - this.mBalloonX;
-                pivotPanelY = 0.0f;
-                break;
-            case DIRECTION_BOTTOM_RIGHT:
-                pivotPanelX = this.mBubbleX - this.mBalloonX;
-                pivotPanelY = 0.0f;
-                break;
-        }
-        AnimationSet animationPanel = new AnimationSet(false);
-        Animation animationPanelScale = new ScaleAnimation(EXPAND_START_SCALE_X, 1.0f, EXPAND_START_SCALE_Y, 1.0f, 0, pivotPanelX, 0, pivotPanelY);
-        animationPanelScale.setInterpolator(INTERPOLATOR_ELASTIC_CUSTOM);
-        animationPanelScale.setDuration(ANIMATION_DURATION_SHOW_SCALE);
-        Animation animationPanelAlpha = new AlphaAnimation(0.0f, 1.0f);
-        animationPanelAlpha.setInterpolator(INTERPOLATOR_SINE_IN_OUT_33);
-        animationPanelAlpha.setDuration(ANIMATION_DURATION_EXPAND_ALPHA);
-        animationPanel.addAnimation(animationPanelScale);
-        animationPanel.addAnimation(animationPanelAlpha);
-        this.mBalloonPanel.startAnimation(animationPanel);
-        this.mMessageView.startAnimation(createExpandTextAnimation());
-        if (this.mActionView.getVisibility() == View.VISIBLE) {
-            this.mActionView.startAnimation(createExpandTextAnimation());
-        }
-    }
-
-    private Animation createExpandTextAnimation() {
-        Animation animationText = new AlphaAnimation(0.0f, 1.0f);
-        animationText.setInterpolator(INTERPOLATOR_SINE_IN_OUT_33);
-        animationText.setStartOffset(ANIMATION_OFFSET_EXPAND_TEXT);
-        animationText.setDuration(ANIMATION_DURATION_EXPAND_TEXT);
-        return animationText;
-    }
-
     public void animateScaleUp() {
         float deltaHintY = 0.0f;
         float pivotHintX = 0.0f;
@@ -1353,6 +1321,52 @@ public class OneUiTipPopup {
             public void onAnimationRepeat(Animation animation) {
             }
         });
+        this.mMessageView.startAnimation(animationText);
+        this.mActionView.startAnimation(animationText);
+    }
+
+    /**
+     * نفس جزء النافذة والنص من animateScaleUp() الأصلية (نفس المدد والمقاييس والـ interpolators تماماً)،
+     * لكن بدون جزء علامة الاستفهام (?) وبدون dismissBubble في النهاية لأنه لا توجد علامة لإخفائها.
+     */
+    private void animatePanelIn() {
+        float pivotPanelX = 0.0f;
+        float pivotPanelY = 0.0f;
+        int questionHeight = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_height);
+        // نفس تعبير المكتبة حرفياً (قسمة أعداد صحيحة)، نُبقيه كما هو ليطابق أنيميشن المكتبة تماماً
+        float panelScale = questionHeight / this.mBalloonHeight;
+        switch (this.mArrowDirection) {
+            case DIRECTION_TOP_LEFT:
+                pivotPanelX = this.mArrowPositionX - this.mBalloonX;
+                pivotPanelY = this.mBalloonHeight;
+                break;
+            case DIRECTION_TOP_RIGHT:
+                pivotPanelX = this.mArrowPositionX - this.mBalloonX;
+                pivotPanelY = this.mBalloonHeight;
+                break;
+            case DIRECTION_BOTTOM_LEFT:
+                pivotPanelX = this.mArrowPositionX - this.mBalloonX;
+                pivotPanelY = 0.0f;
+                break;
+            case DIRECTION_BOTTOM_RIGHT:
+                pivotPanelX = this.mBubbleX - this.mBalloonX;
+                pivotPanelY = 0.0f;
+                break;
+        }
+        AnimationSet animationPanel = new AnimationSet(false);
+        Animation animationPanelScale = new ScaleAnimation(0.27f, 1.0f, panelScale, 1.0f, 0, pivotPanelX, 0, pivotPanelY);
+        animationPanelScale.setInterpolator(INTERPOLATOR_ELASTIC_CUSTOM);
+        animationPanelScale.setDuration(ANIMATION_DURATION_SHOW_SCALE);
+        Animation animationPanelAlpha = new AlphaAnimation(0.0f, 1.0f);
+        animationPanelAlpha.setInterpolator(INTERPOLATOR_SINE_IN_OUT_33);
+        animationPanelAlpha.setDuration(ANIMATION_DURATION_EXPAND_ALPHA);
+        animationPanel.addAnimation(animationPanelScale);
+        animationPanel.addAnimation(animationPanelAlpha);
+        this.mBalloonPanel.startAnimation(animationPanel);
+        Animation animationText = new AlphaAnimation(0.0f, 1.0f);
+        animationText.setInterpolator(INTERPOLATOR_SINE_IN_OUT_33);
+        animationText.setStartOffset(ANIMATION_OFFSET_EXPAND_TEXT);
+        animationText.setDuration(ANIMATION_DURATION_EXPAND_TEXT);
         this.mMessageView.startAnimation(animationText);
         this.mActionView.startAnimation(animationText);
     }
@@ -1555,4 +1569,4 @@ public class OneUiTipPopup {
     public PopupWindow semGetBalloonPopupWindow() {
         return this.mBalloonPopup;
     }
-                                                }
+                                                    }
