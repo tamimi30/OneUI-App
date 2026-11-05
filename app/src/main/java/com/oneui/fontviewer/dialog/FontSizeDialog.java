@@ -1,8 +1,8 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.text.InputFilter;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -12,6 +12,7 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.PopupWindow;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
@@ -19,12 +20,10 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import dev.oneuiproject.oneui.widget.TipPopup;
 import dev.oneuiproject.oneui.widget.Toast;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.widget.ExpandedTipPopup;
-
-import java.util.Locale;
 
 public class FontSizeDialog {
 
@@ -48,7 +47,7 @@ public class FontSizeDialog {
     private AlertDialog dialog;
     private float tempSize;
     private float originalSize;
-    private ExpandedTipPopup fontSizeTipPopup;
+    private TipPopup fontSizeTipPopup;
     private boolean isNumericKeyboardVisible = false;
     private Toast invalidSizeRealtimeToast;
 
@@ -87,14 +86,15 @@ public class FontSizeDialog {
             if (imm != null) {
                 imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
             }
-            fontSizeTipPopup = new ExpandedTipPopup(helpIcon);
+            fontSizeTipPopup = new TipPopup(helpIcon, TipPopup.MODE_NORMAL);
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             // set custom background color with alpha using project color
             fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
-            // نفس آلية android:layoutDirection="locale": الاتجاه يُشتق من لغة التطبيق (Locale)
-            // وليس من إعدادات الـ Configuration التي قد تتأخر أو تختلف عن اللغة.
-            boolean isRtl = TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()) == View.LAYOUT_DIRECTION_RTL;
-            fontSizeTipPopup.show(isRtl ? ExpandedTipPopup.DIRECTION_BOTTOM_RIGHT : ExpandedTipPopup.DIRECTION_BOTTOM_LEFT);
+            boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+            fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
+            // تبدأ المكتبة في حالة البالون (HINT) ثم نشغّل التوسّع فورًا كأن المستخدم لمس البالون،
+            // فيظهر نفس أنيميشن المكتبة (animateScaleUp) بدل الظهور المفاجئ.
+            expandTipPopupWithAnimation(fontSizeTipPopup);
         });
 
         // يرصد ظهور/اختفاء الكيبورد مباشرة، بغض النظر عن السبب (رجوع، Done، إلخ)
@@ -345,6 +345,22 @@ public class FontSizeDialog {
             @Override
             public void onStopTrackingTouch(SeslSeekBar seekBar) {}
         });
+    }
+
+    /**
+     * يحاكي لمسة المستخدم على بالون TipPopup، فتنفّذ المكتبة نفس مسار التوسّع الأصلي:
+     * إظهار نافذة الرسالة ثم animateScaleUp() (تكبير مرن للنافذة + إخفاء البالون + ظهور النص).
+     */
+    private void expandTipPopupWithAnimation(TipPopup tipPopup) {
+        PopupWindow bubbleWindow = tipPopup.semGetBubblePopupWindow();
+        View bubbleView = bubbleWindow != null ? bubbleWindow.getContentView() : null;
+        if (bubbleView == null) {
+            return;
+        }
+        long now = SystemClock.uptimeMillis();
+        MotionEvent down = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, 0f, 0f, 0);
+        bubbleView.dispatchTouchEvent(down);
+        down.recycle();
     }
 
     private void updateFontSizeText(float size) {
