@@ -86,7 +86,7 @@ public class FontSizeDialog {
             if (imm != null) {
                 imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
             }
-            fontSizeTipPopup = new TipPopup(helpIcon, TipPopup.MODE_NORMAL);
+            fontSizeTipPopup = new TipPopup(helpIcon, TIPPOPUP.MODE_TRANSLUCENT);
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             // set custom background color with alpha using project color
             fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
