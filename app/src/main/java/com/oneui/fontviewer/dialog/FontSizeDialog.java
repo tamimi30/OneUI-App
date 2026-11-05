@@ -1,10 +1,15 @@
 package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
-import android.os.SystemClock;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.PathInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.EditText;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -34,6 +39,13 @@ public class FontSizeDialog {
     public interface OnDialogCancelledListener {
         void onDialogCancelled();
     }
+
+    // مدد أنيميشن ظهور رسالة الـ TipPopup (بالمللي ثانية)، مأخوذة من قيم المكتبة الأصلية.
+    private static final long TIP_SCALE_DURATION_MS = 400L;
+    private static final long TIP_PANEL_ALPHA_DURATION_MS = 83L;
+    private static final long TIP_TEXT_ALPHA_OFFSET_MS = 100L;
+    private static final long TIP_TEXT_ALPHA_DURATION_MS = 167L;
+    private static final float TIP_START_SCALE_X = 0.27f;
 
     private final Context context;
     private final float currentSize;
@@ -91,10 +103,11 @@ public class FontSizeDialog {
             // set custom background color with alpha using project color
             // fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
             boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+            // نعرض الرسالة مباشرة بحالة التوسّع (EXPANDED) فلا يظهر البالون الذي بداخله علامة السؤال إطلاقًا،
+            // ثم نشغّل أنيميشن ظهور خاصًا بنا (animateTipPopupIn) بدل أنيميشن المكتبة.
+            fontSizeTipPopup.setExpanded(true);
             fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
-            // تبدأ المكتبة في حالة البالون (HINT) ثم نشغّل التوسّع فورًا كأن المستخدم لمس البالون،
-            // فيظهر نفس أنيميشن المكتبة (animateScaleUp) بدل الظهور المفاجئ.
-            expandTipPopupWithAnimation(fontSizeTipPopup);
+            animateTipPopupIn(fontSizeTipPopup, helpIcon);
         });
 
         // يرصد ظهور/اختفاء الكيبورد مباشرة، بغض النظر عن السبب (رجوع، Done، إلخ)
@@ -348,19 +361,72 @@ public class FontSizeDialog {
     }
 
     /**
-     * يحاكي لمسة المستخدم على بالون TipPopup، فتنفّذ المكتبة نفس مسار التوسّع الأصلي:
-     * إظهار نافذة الرسالة ثم animateScaleUp() (تكبير مرن للنافذة + إخفاء البالون + ظهور النص).
+     * أنيميشن ظهور رسالة TipPopup: تكبير من مكان الأيقونة مع تلاشي، ثم ظهور النص بعده بقليل.
+     * أنيميشن المكتبة الأصلي يستخدم مُسرّعًا مرنًا (elastic) يتجاوز الحجم النهائي، وهامش نافذة
+     * الرسالة صغير (10dp)، فتُقصّ حافة الرسالة عند التجاوز ثم تعود للحجم النهائي.
+     * هنا نستخدم مُسرّعًا بلا تجاوز فتبقى الرسالة داخل حدود نافذتها طوال الأنيميشن.
      */
-    private void expandTipPopupWithAnimation(TipPopup tipPopup) {
-        PopupWindow bubbleWindow = tipPopup.semGetBubblePopupWindow();
-        View bubbleView = bubbleWindow != null ? bubbleWindow.getContentView() : null;
-        if (bubbleView == null) {
+    private void animateTipPopupIn(TipPopup tipPopup, View anchor) {
+        PopupWindow balloonWindow = tipPopup.semGetBalloonPopupWindow();
+        View balloonView = balloonWindow != null ? balloonWindow.getContentView() : null;
+        if (balloonView == null) {
             return;
         }
-        long now = SystemClock.uptimeMillis();
-        MotionEvent down = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, 0f, 0f, 0);
-        bubbleView.dispatchTouchEvent(down);
-        down.recycle();
+        View panel = balloonView.findViewById(dev.oneuiproject.oneui.design.R.id.sem_tip_popup_balloon_panel);
+        View message = balloonView.findViewById(dev.oneuiproject.oneui.design.R.id.sem_tip_popup_message);
+        if (panel == null) {
+            return;
+        }
+
+        // ننتظر أول تخطيط للنافذة (قبل أول رسم) لنعرف حجمها وموقعها على الشاشة،
+        // وبدء الأنيميشن هنا يضمن أن أول إطار يُرسم يكون بحجمه الابتدائي بدون وميض.
+        balloonView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                ViewTreeObserver observer = balloonView.getViewTreeObserver();
+                if (observer.isAlive()) {
+                    observer.removeOnPreDrawListener(this);
+                }
+                if (panel.getWidth() == 0 || panel.getHeight() == 0) {
+                    return true;
+                }
+
+                // نقطة التمدد: منتصف الأيقونة أفقيًا، وأعلى الرسالة (حيث السهم) رأسيًا.
+                int[] anchorLocation = new int[2];
+                int[] panelLocation = new int[2];
+                anchor.getLocationOnScreen(anchorLocation);
+                panel.getLocationOnScreen(panelLocation);
+                float pivotX = anchorLocation[0] + anchor.getWidth() / 2f - panelLocation[0];
+                pivotX = Math.max(0f, Math.min(pivotX, panel.getWidth()));
+                float pivotY = 0f;
+
+                int bubbleSize = context.getResources().getDimensionPixelSize(
+                        dev.oneuiproject.oneui.design.R.dimen.sem_tip_popup_bubble_height);
+                float startScaleY = Math.max(0.1f, Math.min(1f, (float) bubbleSize / panel.getHeight()));
+
+                ScaleAnimation scale = new ScaleAnimation(
+                        TIP_START_SCALE_X, 1f, startScaleY, 1f,
+                        Animation.ABSOLUTE, pivotX, Animation.ABSOLUTE, pivotY);
+                scale.setInterpolator(new PathInterpolator(0.22f, 1f, 0.36f, 1f));
+                scale.setDuration(TIP_SCALE_DURATION_MS);
+
+                AlphaAnimation panelAlpha = new AlphaAnimation(0f, 1f);
+                panelAlpha.setDuration(TIP_PANEL_ALPHA_DURATION_MS);
+
+                AnimationSet panelAnimation = new AnimationSet(false);
+                panelAnimation.addAnimation(scale);
+                panelAnimation.addAnimation(panelAlpha);
+                panel.startAnimation(panelAnimation);
+
+                if (message != null) {
+                    AlphaAnimation textAlpha = new AlphaAnimation(0f, 1f);
+                    textAlpha.setStartOffset(TIP_TEXT_ALPHA_OFFSET_MS);
+                    textAlpha.setDuration(TIP_TEXT_ALPHA_DURATION_MS);
+                    message.startAnimation(textAlpha);
+                }
+                return true;
+            }
+        });
     }
 
     private void updateFontSizeText(float size) {
