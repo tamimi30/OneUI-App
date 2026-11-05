@@ -4,14 +4,19 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
+import android.util.Log;
 import android.view.DisplayCutout;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -26,6 +31,7 @@ import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -36,42 +42,43 @@ import androidx.appcompat.animation.SeslAnimationUtils;
 import androidx.reflect.content.res.SeslConfigurationReflector;
 import androidx.reflect.widget.SeslTextViewReflector;
 
-import java.util.Locale;
-
 import dev.oneuiproject.oneui.design.R;
 
-/**
- * نسخة معدّلة من {@code dev.oneuiproject.oneui.widget.TipPopup} (بإسم مختلف لتجنب تعارض الكلاسات).
- *
- * الفرق عن كلاس المكتبة:
- * 1) لا توجد فقاعة "علامة الاستفهام" إطلاقاً، فالبالون يظهر موسَّعاً مباشرة.
- * 2) عند الظهور يُشغَّل نفس أنيميشن التوسّع الذي تشغّله المكتبة بعد الضغط على علامة الاستفهام
- *    (scale مرن 500ms + alpha + ظهور النص)، بينما كلاس المكتبة مع setExpanded(true) يعرض البالون بلا أي أنيميشن.
- * 3) اتجاه البالون واتجاه النص داخله يؤخذان من الـ locale (نفس مصدر android:layoutDirection="locale")
- *    بدل Configuration.getLayoutDirection().
- */
 public class OneUiTipPopup {
+    private static final int ANIMATION_DURATION_BOUNCE_SCALE1 = 167;
+    private static final int ANIMATION_DURATION_BOUNCE_SCALE2 = 250;
     private static final int ANIMATION_DURATION_DISMISS_ALPHA = 166;
     private static final int ANIMATION_DURATION_DISMISS_SCALE = 166;
     private static final int ANIMATION_DURATION_EXPAND_ALPHA = 83;
+    private static final int ANIMATION_DURATION_EXPAND_SCALE = 500;
     private static final int ANIMATION_DURATION_EXPAND_TEXT = 167;
     private static final int ANIMATION_DURATION_SHOW_SCALE = 500;
+    private static final int ANIMATION_OFFSET_BOUNCE_SCALE = 3000;
     private static final int ANIMATION_OFFSET_EXPAND_TEXT = 100;
-
-    // نقطة بداية أنيميشن التوسّع كما في المكتبة: العرض يبدأ من 0.27، أما الارتفاع فيبدأ من 0
-    // (المكتبة تحسبه بقسمة أعداد صحيحة questionHeight / mBalloonHeight فتكون النتيجة 0 دائماً).
+    // نقطة بداية أنيميشن التوسع كما في animateScaleUp: العرض 0.27، والارتفاع 0
+    // (المكتبة تحسبه بقسمة أعداد صحيحة questionHeight / mBalloonHeight فتكون النتيجة 0).
     private static final float EXPAND_START_SCALE_X = 0.27f;
     private static final float EXPAND_START_SCALE_Y = 0.0f;
-
     public static final int DIRECTION_BOTTOM_LEFT = 2;
     public static final int DIRECTION_BOTTOM_RIGHT = 3;
     public static final int DIRECTION_DEFAULT = -1;
     public static final int DIRECTION_TOP_LEFT = 0;
     public static final int DIRECTION_TOP_RIGHT = 1;
-
+    public static final int MODE_NORMAL = 0;
+    public static final int MODE_TRANSLUCENT = 1;
+    private static final int MSG_DISMISS = 1;
+    private static final int MSG_SCALE_UP = 2;
+    private static final int MSG_TIMEOUT = 0;
+    public static final int STATE_DISMISSED = 0;
+    public static final int STATE_EXPANDED = 2;
+    public static final int STATE_HINT = 1;
+    private static final String TAG = "OneUiTipPopup";
+    private static final int TIMEOUT_DURATION_MS = 7100;
     private static final int TYPE_BALLOON_ACTION = 1;
+    private static final int TYPE_BALLOON_CUSTOM = 2;
     private static final int TYPE_BALLOON_SIMPLE = 0;
-
+    private static final boolean localLOGD = true;
+    private static Handler mHandler;
     private View.OnClickListener mActionClickListener;
     private CharSequence mActionText;
     private Integer mActionTextColor;
@@ -82,28 +89,37 @@ public class OneUiTipPopup {
     private int mArrowPositionY;
     private final int mArrowWidth;
     private int mBackgroundColor;
-    private final View mBalloonView;
-    private final FrameLayout mBalloonBubble;
-    private final FrameLayout mBalloonPanel;
-    private final FrameLayout mBalloonContent;
-    private final ImageView mBalloonBg1;
-    private final ImageView mBalloonBg2;
-    private TipWindow mBalloonPopup;
+    private ImageView mBalloonBg1;
+    private ImageView mBalloonBg2;
+    private FrameLayout mBalloonBubble;
+    private ImageView mBalloonBubbleHint;
+    private ImageView mBalloonBubbleIcon;
+    private FrameLayout mBalloonContent;
     private int mBalloonHeight;
+    private FrameLayout mBalloonPanel;
+    private TipWindow mBalloonPopup;
     private int mBalloonPopupX;
     private int mBalloonPopupY;
+    private final View mBalloonView;
     private int mBalloonWidth;
     private int mBalloonX;
     private int mBalloonY;
-    // أبعاد "الفقاعة" الصغيرة لا تُعرض هنا، لكنها تحدد عرض فتحة السهم في خلفية البالون.
-    private final int mBubbleHeight;
-    private final int mBubbleWidth;
+    private Integer mBorderColor;
+    private ImageView mBubbleBackground;
+    private int mBubbleHeight;
+    private ImageView mBubbleIcon;
+    private TipWindow mBubblePopup;
+    private int mBubblePopupX;
+    private int mBubblePopupY;
+    private final View mBubbleView;
+    private int mBubbleWidth;
     private int mBubbleX;
     private int mBubbleY;
     private final Context mContext;
     private final Rect mDisplayFrame;
     private DisplayMetrics mDisplayMetrics;
     private boolean mForceRealDisplay;
+    private CharSequence mHintDescription;
     private final int mHorizontalTextMargin;
     private int mInitialmMessageViewWidth;
     private boolean mIsDefaultPosition;
@@ -111,31 +127,55 @@ public class OneUiTipPopup {
     private CharSequence mMessageText;
     private Integer mMessageTextColor;
     private final TextView mMessageView;
+    private final int mMode;
+    private boolean mNeedToCallParentViewsOnClick;
     private OnDismissListener mOnDismissListener;
+    private OnStateChangeListener mOnStateChangeListener;
     private final View mParentView;
     private final Resources mResources;
-    private final int mScaleMargin;
+    private int mScaleMargin;
     private int mSideMargin;
+    private int mState;
     private int mType;
     private final int mVerticalTextMargin;
     private final WindowManager mWindowManager;
     private static Interpolator INTERPOLATOR_SINE_IN_OUT_33 = null;
+    private static Interpolator INTERPOLATOR_SINE_IN_OUT_70 = null;
+    private static Interpolator INTERPOLATOR_ELASTIC_50 = null;
     private static Interpolator INTERPOLATOR_ELASTIC_CUSTOM = null;
 
     public interface OnDismissListener {
         void onDismiss();
     }
 
+    public interface OnStateChangeListener {
+        void onStateChanged(int i);
+    }
+
+    public void setOnStateChangeListener(OnStateChangeListener changeListener) {
+        this.mOnStateChangeListener = changeListener;
+    }
+
     public OneUiTipPopup(View parentView) {
+        this(parentView, MODE_NORMAL);
+    }
+
+    public OneUiTipPopup(View parentView, int mode) {
         this.mIsDefaultPosition = true;
         this.mMessageText = null;
         this.mActionText = null;
+        this.mHintDescription = null;
         this.mActionClickListener = null;
         this.mMessageTextColor = null;
         this.mActionTextColor = null;
+        this.mBorderColor = null;
         this.mInitialmMessageViewWidth = 0;
         this.mIsMessageViewMeasured = false;
         this.mForceRealDisplay = false;
+        this.mNeedToCallParentViewsOnClick = false;
+        if (mode < MODE_NORMAL || mode > MODE_TRANSLUCENT) {
+            throw new IllegalArgumentException("Invalid SmartTip mode : " + mode + " ,mode can either be 0 (MODE_NORMAL) or 1 (MODE_TRANSLUCENT)");
+        }
         Context context = parentView.getContext();
         this.mContext = context;
         Resources resources = context.getResources();
@@ -143,49 +183,69 @@ public class OneUiTipPopup {
         this.mParentView = parentView;
         this.mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         this.mDisplayMetrics = resources.getDisplayMetrics();
+        debugLog("mDisplayMetrics = " + this.mDisplayMetrics);
+        this.mState = STATE_HINT;
         this.mType = TYPE_BALLOON_SIMPLE;
+        this.mMode = mode;
         this.mBackgroundColor = context.getColor(R.color.sem_tip_popup_background_color);
         initInterpolator();
-
-        View inflate = LayoutInflater.from(context).inflate(R.layout.sem_tip_popup_balloon, (ViewGroup) null);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        this.mBubbleView = inflater.inflate(R.layout.sem_tip_popup_bubble, (ViewGroup) null);
+        View inflate = inflater.inflate(R.layout.sem_tip_popup_balloon, (ViewGroup) null);
         this.mBalloonView = inflate;
-        // اتجاه التخطيط والنص داخل البالون يتبع الـ locale (مثل android:layoutDirection="locale").
-        inflate.setLayoutDirection(View.LAYOUT_DIRECTION_LOCALE);
-
-        this.mBalloonBubble = (FrameLayout) inflate.findViewById(R.id.sem_tip_popup_balloon_bubble);
-        this.mBalloonPanel = (FrameLayout) inflate.findViewById(R.id.sem_tip_popup_balloon_panel);
-        this.mBalloonContent = (FrameLayout) inflate.findViewById(R.id.sem_tip_popup_balloon_content);
-        this.mBalloonBg1 = (ImageView) inflate.findViewById(R.id.sem_tip_popup_balloon_bg_01);
-        this.mBalloonBg2 = (ImageView) inflate.findViewById(R.id.sem_tip_popup_balloon_bg_02);
-        this.mMessageView = (TextView) inflate.findViewById(R.id.sem_tip_popup_message);
-        this.mActionView = (Button) inflate.findViewById(R.id.sem_tip_popup_action);
-
-        // علامة الاستفهام مخفية دائماً، والبالون الموسَّع هو الظاهر.
-        this.mBalloonBubble.setVisibility(View.GONE);
-        this.mBalloonPanel.setVisibility(View.VISIBLE);
-        this.mMessageView.setVisibility(View.VISIBLE);
-        this.mActionView.setVisibility(View.GONE);
-
-        initBalloonPopup();
-
+        initBubblePopup(mode);
+        initBalloonPopup(mode);
+        TextView textView = (TextView) inflate.findViewById(R.id.sem_tip_popup_message);
+        this.mMessageView = textView;
+        Button button = (Button) inflate.findViewById(R.id.sem_tip_popup_action);
+        this.mActionView = button;
+        textView.setVisibility(View.GONE);
+        button.setVisibility(View.GONE);
         this.mArrowPositionX = -1;
         this.mArrowPositionY = -1;
         this.mArrowDirection = DIRECTION_DEFAULT;
         this.mBalloonX = -1;
+        if (mode == MODE_TRANSLUCENT) {
+            textView.setTextColor(resources.getColor(R.color.sem_tip_popup_text_color_translucent, null));
+            button.setTextColor(resources.getColor(R.color.sem_tip_popup_text_color_translucent, null));
+        }
         this.mScaleMargin = resources.getDimensionPixelSize(R.dimen.sem_tip_popup_scale_margin);
         this.mSideMargin = resources.getDimensionPixelSize(R.dimen.sem_tip_popup_side_margin);
         this.mArrowHeight = resources.getDimensionPixelSize(R.dimen.sem_tip_popup_balloon_arrow_height);
         this.mArrowWidth = resources.getDimensionPixelSize(R.dimen.sem_tip_popup_balloon_arrow_width);
         this.mHorizontalTextMargin = resources.getDimensionPixelSize(R.dimen.sem_tip_popup_balloon_message_margin_horizontal);
         this.mVerticalTextMargin = resources.getDimensionPixelSize(R.dimen.sem_tip_popup_balloon_message_margin_vertical);
-        this.mBubbleWidth = resources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_width);
-        this.mBubbleHeight = resources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_height);
         this.mDisplayFrame = new Rect();
+        this.mBubblePopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                if (OneUiTipPopup.this.mState == STATE_HINT) {
+                    OneUiTipPopup.this.mState = STATE_DISMISSED;
+                    if (OneUiTipPopup.this.mOnStateChangeListener != null) {
+                        OneUiTipPopup.this.mOnStateChangeListener.onStateChanged(OneUiTipPopup.this.mState);
+                        OneUiTipPopup.this.debugLog("mIsShowing : " + OneUiTipPopup.this.isShowing());
+                    }
+                    if (OneUiTipPopup.mHandler != null) {
+                        OneUiTipPopup.mHandler.removeCallbacksAndMessages(null);
+                        OneUiTipPopup.mHandler = null;
+                    }
+                    OneUiTipPopup.this.debugLog("onDismiss - BubblePopup");
+                }
+            }
+        });
         this.mBalloonPopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
-                if (OneUiTipPopup.this.mOnDismissListener != null) {
-                    OneUiTipPopup.this.mOnDismissListener.onDismiss();
+                OneUiTipPopup.this.mState = STATE_DISMISSED;
+                if (OneUiTipPopup.this.mOnStateChangeListener != null) {
+                    OneUiTipPopup.this.mOnStateChangeListener.onStateChanged(OneUiTipPopup.this.mState);
+                    OneUiTipPopup.this.debugLog("mIsShowing : " + OneUiTipPopup.this.isShowing());
+                }
+                OneUiTipPopup.this.debugLog("onDismiss - BalloonPopup");
+                OneUiTipPopup.this.dismissBubble(false);
+                if (OneUiTipPopup.mHandler != null) {
+                    OneUiTipPopup.mHandler.removeCallbacksAndMessages(null);
+                    OneUiTipPopup.mHandler = null;
                 }
             }
         });
@@ -203,55 +263,98 @@ public class OneUiTipPopup {
         if (INTERPOLATOR_SINE_IN_OUT_33 == null) {
             INTERPOLATOR_SINE_IN_OUT_33 = AnimationUtils.loadInterpolator(this.mContext, R.interpolator.sine_in_out_33);
         }
+        if (INTERPOLATOR_SINE_IN_OUT_70 == null) {
+            INTERPOLATOR_SINE_IN_OUT_70 = AnimationUtils.loadInterpolator(this.mContext, R.interpolator.sine_in_out_70);
+        }
+        if (INTERPOLATOR_ELASTIC_50 == null) {
+            INTERPOLATOR_ELASTIC_50 = SeslAnimationUtils.ELASTIC_50;
+        }
         if (INTERPOLATOR_ELASTIC_CUSTOM == null) {
-            INTERPOLATOR_ELASTIC_CUSTOM = SeslAnimationUtils.ELASTIC_40;
+            INTERPOLATOR_ELASTIC_CUSTOM = SeslAnimationUtils.ELASTIC_40; //TODO: new SeslElasticInterpolator(1.0f, 1.3f);
         }
     }
 
-    private void initBalloonPopup() {
+    private void initBubblePopup(int mode) {
+        this.mBubbleBackground = (ImageView) this.mBubbleView.findViewById(R.id.sem_tip_popup_bubble_bg);
+        this.mBubbleIcon = (ImageView) this.mBubbleView.findViewById(R.id.sem_tip_popup_bubble_icon);
+        if (mode == MODE_TRANSLUCENT) {
+            this.mBubbleBackground.setImageResource(R.drawable.sem_tip_popup_hint_background_translucent);
+            this.mBubbleBackground.setImageTintList(null);
+            if (isRTL()) {
+                this.mBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon_translucent_rtl);
+            } else {
+                this.mBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon_translucent);
+            }
+            this.mBubbleIcon.setImageTintList(null);
+            this.mBubbleWidth = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_width_translucent);
+            this.mBubbleHeight = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_height_translucent);
+        } else {
+            this.mBubbleWidth = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_width);
+            this.mBubbleHeight = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_height);
+        }
+        TipWindow tipWindow = new TipWindow(this.mBubbleView, this.mBubbleWidth, this.mBubbleHeight, false);
+        this.mBubblePopup = tipWindow;
+        tipWindow.setTouchable(true);
+        this.mBubblePopup.setOutsideTouchable(true);
+        this.mBubblePopup.setAttachedInDecor(false);
+    }
+
+    private void initBalloonPopup(int mode) {
+        this.mBalloonBubble = (FrameLayout) this.mBalloonView.findViewById(R.id.sem_tip_popup_balloon_bubble);
+        this.mBalloonBubbleHint = (ImageView) this.mBalloonView.findViewById(R.id.sem_tip_popup_balloon_bubble_hint);
+        this.mBalloonBubbleIcon = (ImageView) this.mBalloonView.findViewById(R.id.sem_tip_popup_balloon_bubble_icon);
+        this.mBalloonPanel = (FrameLayout) this.mBalloonView.findViewById(R.id.sem_tip_popup_balloon_panel);
+        this.mBalloonContent = (FrameLayout) this.mBalloonView.findViewById(R.id.sem_tip_popup_balloon_content);
+        this.mBalloonBg1 = (ImageView) this.mBalloonView.findViewById(R.id.sem_tip_popup_balloon_bg_01);
+        this.mBalloonBg2 = (ImageView) this.mBalloonView.findViewById(R.id.sem_tip_popup_balloon_bg_02);
+        if (mode == MODE_TRANSLUCENT) {
+            this.mBalloonBg1.setBackgroundResource(R.drawable.sem_tip_popup_balloon_background_left_translucent);
+            this.mBalloonBg1.setBackgroundTintList(null);
+            this.mBalloonBg2.setBackgroundResource(R.drawable.sem_tip_popup_balloon_background_right_translucent);
+            this.mBalloonBg2.setBackgroundTintList(null);
+        }
+        this.mBalloonBubble.setVisibility(View.VISIBLE);
+        this.mBalloonPanel.setVisibility(View.GONE);
         TipWindow tipWindow = new TipWindow(this.mBalloonView, this.mBalloonWidth, this.mBalloonHeight, true);
         this.mBalloonPopup = tipWindow;
         tipWindow.setFocusable(true);
         this.mBalloonPopup.setTouchable(true);
         this.mBalloonPopup.setOutsideTouchable(true);
         this.mBalloonPopup.setAttachedInDecor(false);
-    }
-
-    /**
-     * يعرض البالون، والاتجاه (يمين/يسار) يُحدَّد من الـ locale.
-     */
-    public void show() {
-        show(isLocaleRtl() ? DIRECTION_BOTTOM_RIGHT : DIRECTION_BOTTOM_LEFT);
+        this.mBalloonPopup.setTouchInterceptor(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (OneUiTipPopup.this.mNeedToCallParentViewsOnClick && OneUiTipPopup.this.mParentView.hasOnClickListeners() && (event.getAction() == 0 || event.getAction() == 4)) {
+                    Rect parentViewBounds = new Rect();
+                    int[] outLocation = new int[2];
+                    OneUiTipPopup.this.mParentView.getLocationOnScreen(outLocation);
+                    parentViewBounds.set(outLocation[0], outLocation[1], outLocation[0] + OneUiTipPopup.this.mParentView.getWidth(), outLocation[1] + OneUiTipPopup.this.mParentView.getHeight());
+                    boolean isTouchContainedInParentView = parentViewBounds.contains((int) event.getRawX(), (int) event.getRawY());
+                    if (isTouchContainedInParentView) {
+                        OneUiTipPopup.this.debugLog("callOnClick for parent view");
+                        OneUiTipPopup.this.mParentView.callOnClick();
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     public void show(int direction) {
-        if (isShowing()) {
-            return;
-        }
-        applyContent();
+        setInternal();
         if (this.mArrowPositionX == -1 || this.mArrowPositionY == -1) {
             calculateArrowPosition();
         }
-        if (direction == DIRECTION_DEFAULT) {
+        if (direction == -1) {
             calculateArrowDirection(this.mArrowPositionX, this.mArrowPositionY);
         } else {
             this.mArrowDirection = direction;
         }
         calculatePopupSize();
         calculatePopupPosition();
+        setBubblePanel();
         setBalloonPanel();
-        this.mBalloonPopup.showAtLocation(this.mParentView, Gravity.NO_GRAVITY, this.mBalloonPopupX, this.mBalloonPopupY);
-        this.mBalloonView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (OneUiTipPopup.this.mType == TYPE_BALLOON_SIMPLE) {
-                    OneUiTipPopup.this.dismiss(true);
-                    return false;
-                }
-                return false;
-            }
-        });
-        animateExpand();
+        showInternal();
     }
 
     public void setMessage(CharSequence message) {
@@ -263,17 +366,55 @@ public class OneUiTipPopup {
         this.mActionClickListener = listener;
     }
 
+    public void semCallParentViewsOnClick(boolean needToCall) {
+        this.mNeedToCallParentViewsOnClick = needToCall;
+    }
+
     public boolean isShowing() {
-        TipWindow tipWindow = this.mBalloonPopup;
-        return tipWindow != null && tipWindow.isShowing();
+        boolean isBubbleShowing = false;
+        boolean isBalloonShowing = false;
+        TipWindow tipWindow = this.mBubblePopup;
+        if (tipWindow != null) {
+            isBubbleShowing = tipWindow.isShowing();
+        }
+        TipWindow tipWindow2 = this.mBalloonPopup;
+        if (tipWindow2 != null) {
+            isBalloonShowing = tipWindow2.isShowing();
+        }
+        return isBubbleShowing || isBalloonShowing;
     }
 
     public void dismiss(boolean withAnimation) {
-        TipWindow tipWindow = this.mBalloonPopup;
-        if (tipWindow != null && tipWindow.isShowing()) {
+        TipWindow tipWindow = this.mBubblePopup;
+        if (tipWindow != null) {
             tipWindow.setUseDismissAnimation(withAnimation);
-            tipWindow.dismiss();
+            debugLog("mBubblePopup.mIsDismissing = " + this.mBubblePopup.mIsDismissing);
+            this.mBubblePopup.dismiss();
         }
+        TipWindow tipWindow2 = this.mBalloonPopup;
+        if (tipWindow2 != null) {
+            tipWindow2.setUseDismissAnimation(withAnimation);
+            debugLog("mBalloonPopup.mIsDismissing = " + this.mBalloonPopup.mIsDismissing);
+            this.mBalloonPopup.dismiss();
+        }
+        OnDismissListener onDismissListener = this.mOnDismissListener;
+        if (onDismissListener != null) {
+            onDismissListener.onDismiss();
+        }
+        Handler handler = mHandler;
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+            mHandler = null;
+        }
+    }
+
+    public void setExpanded(boolean expanded) {
+        if (expanded) {
+            // لا نصفّر mScaleMargin هنا (كما تفعل المكتبة) ليبقى في الإطار مساحة لتجاوز الأنيميشن المرن.
+            this.mState = STATE_EXPANDED;
+            return;
+        }
+        this.mScaleMargin = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_scale_margin);
     }
 
     public void setTargetPosition(int x, int y) {
@@ -285,20 +426,46 @@ public class OneUiTipPopup {
         this.mArrowPositionY = y;
     }
 
+    public void setHintDescription(CharSequence hintDescription) {
+        this.mHintDescription = hintDescription;
+    }
+
     public void update() {
+        update(this.mArrowDirection, false);
+    }
+
+    public void update(int direction, boolean resetHintTimer) {
+        TipWindow tipWindow;
+        TipWindow tipWindow2;
         if (!isShowing() || this.mParentView == null) {
             return;
         }
-        applyContent();
+        setInternal();
         this.mBalloonX = -1;
         this.mBalloonY = -1;
         if (this.mIsDefaultPosition) {
+            debugLog("update - default position");
             calculateArrowPosition();
+        }
+        if (direction == DIRECTION_DEFAULT) {
+            calculateArrowDirection(this.mArrowPositionX, this.mArrowPositionY);
+        } else {
+            this.mArrowDirection = direction;
         }
         calculatePopupSize();
         calculatePopupPosition();
+        setBubblePanel();
         setBalloonPanel();
-        this.mBalloonPopup.update(this.mBalloonPopupX, this.mBalloonPopupY, this.mBalloonPopup.getWidth(), this.mBalloonPopup.getHeight());
+        int i = this.mState;
+        if (i == STATE_HINT && (tipWindow2 = this.mBubblePopup) != null) {
+            tipWindow2.update(this.mBubblePopupX, this.mBubblePopupY, tipWindow2.getWidth(), this.mBubblePopup.getHeight());
+            if (resetHintTimer) {
+                debugLog("Timer Reset!");
+                scheduleTimeout();
+            }
+        } else if (i == STATE_EXPANDED && (tipWindow = this.mBalloonPopup) != null) {
+            tipWindow.update(this.mBalloonPopupX, this.mBalloonPopupY, tipWindow.getWidth(), this.mBalloonPopup.getHeight());
+        }
     }
 
     public void setMessageTextColor(int color) {
@@ -317,35 +484,57 @@ public class OneUiTipPopup {
         this.mBackgroundColor = color;
     }
 
+    public void setBorderColor(int color) {
+        this.mBorderColor = Integer.valueOf((-16777216) | color);
+    }
+
     public void setOutsideTouchEnabled(boolean enabled) {
+        this.mBubblePopup.setFocusable(enabled);
+        this.mBubblePopup.setOutsideTouchable(enabled);
         this.mBalloonPopup.setFocusable(enabled);
         this.mBalloonPopup.setOutsideTouchable(enabled);
+        debugLog("outside enabled : " + enabled);
     }
 
     public void setPopupWindowClippingEnabled(boolean enabled) {
+        this.mBubblePopup.setClippingEnabled(enabled);
         this.mBalloonPopup.setClippingEnabled(enabled);
         this.mForceRealDisplay = !enabled;
         this.mSideMargin = enabled ? this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_side_margin) : 0;
+        debugLog("clipping enabled : " + enabled);
     }
 
-    public void setOnDismissListener(OnDismissListener onDismissListener) {
-        this.mOnDismissListener = onDismissListener;
-    }
-
-    /**
-     * نفس مصدر android:layoutDirection="locale": Locale الافتراضي للتطبيق.
-     */
-    private static boolean isLocaleRtl() {
-        return TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()) == View.LAYOUT_DIRECTION_RTL;
-    }
-
-    private void applyContent() {
+    private void setInternal() {
+        CharSequence charSequence;
+        if (mHandler == null) {
+            mHandler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message message) {
+                    switch (message.what) {
+                        case MSG_TIMEOUT:
+                            OneUiTipPopup.this.dismissBubble(true);
+                            return;
+                        case MSG_DISMISS:
+                            OneUiTipPopup.this.dismissBubble(false);
+                            return;
+                        case MSG_SCALE_UP:
+                            OneUiTipPopup.this.animateScaleUp();
+                            return;
+                        default:
+                            return;
+                    }
+                }
+            };
+        }
+        if (this.mMessageView == null || this.mActionView == null) {
+            return;
+        }
         float currentFontScale = this.mResources.getConfiguration().fontScale;
         int messageTextSize = this.mResources.getDimensionPixelOffset(R.dimen.sem_tip_popup_balloon_message_text_size);
         int actionTextSize = this.mResources.getDimensionPixelOffset(R.dimen.sem_tip_popup_balloon_action_text_size);
         if (currentFontScale > 1.2f) {
-            this.mMessageView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) Math.floor(Math.ceil(messageTextSize / currentFontScale) * 1.2f));
-            this.mActionView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) Math.floor(Math.ceil(actionTextSize / currentFontScale) * 1.2f));
+            this.mMessageView.setTextSize(0, (float) Math.floor(Math.ceil(messageTextSize / currentFontScale) * 1.2f));
+            this.mActionView.setTextSize(0, (float) Math.floor(Math.ceil(actionTextSize / currentFontScale) * 1.2f));
         }
         this.mMessageView.setText(this.mMessageText);
         if (TextUtils.isEmpty(this.mActionText) || this.mActionClickListener == null) {
@@ -367,102 +556,347 @@ public class OneUiTipPopup {
             });
             this.mType = TYPE_BALLOON_ACTION;
         }
-        if (this.mMessageTextColor != null) {
-            this.mMessageView.setTextColor(this.mMessageTextColor.intValue());
+        ImageView imageView = this.mBubbleIcon;
+        if (imageView != null && (charSequence = this.mHintDescription) != null) {
+            imageView.setContentDescription(charSequence);
         }
-        if (this.mActionTextColor != null) {
-            this.mActionView.setTextColor(this.mActionTextColor.intValue());
+        if (this.mMode == MODE_TRANSLUCENT || this.mBubbleIcon == null || this.mBubbleBackground == null || this.mBalloonBubble == null || this.mBalloonBg1 == null || this.mBalloonBg2 == null) {
+            return;
         }
+        Integer num = this.mMessageTextColor;
+        if (num != null) {
+            this.mMessageView.setTextColor(num.intValue());
+        }
+        Integer num2 = this.mActionTextColor;
+        if (num2 != null) {
+            this.mActionView.setTextColor(num2.intValue());
+        }
+        this.mBubbleBackground.setColorFilter(this.mBackgroundColor);
+        this.mBalloonBubbleHint.setColorFilter(this.mBackgroundColor);
         this.mBalloonBg1.setBackgroundTintList(ColorStateList.valueOf(this.mBackgroundColor));
         this.mBalloonBg2.setBackgroundTintList(ColorStateList.valueOf(this.mBackgroundColor));
+        Integer num3 = this.mBorderColor;
+        if (num3 != null) {
+            this.mBubbleIcon.setColorFilter(num3.intValue());
+            this.mBalloonBubbleIcon.setColorFilter(this.mBorderColor.intValue());
+        }
+    }
+
+    private void showInternal() {
+        if (this.mState != STATE_EXPANDED) {
+            this.mState = STATE_HINT;
+            OnStateChangeListener onStateChangeListener = this.mOnStateChangeListener;
+            if (onStateChangeListener != null) {
+                onStateChangeListener.onStateChanged(STATE_HINT);
+                debugLog("mIsShowing : " + isShowing());
+            }
+            TipWindow tipWindow = this.mBubblePopup;
+            if (tipWindow != null) {
+                tipWindow.showAtLocation(this.mParentView, 0, this.mBubblePopupX, this.mBubblePopupY);
+                animateViewIn();
+            }
+            this.mBubbleView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    OneUiTipPopup.this.mState = STATE_EXPANDED;
+                    if (OneUiTipPopup.this.mOnStateChangeListener != null) {
+                        OneUiTipPopup.this.mOnStateChangeListener.onStateChanged(OneUiTipPopup.this.mState);
+                    }
+                    if (OneUiTipPopup.this.mBalloonPopup != null) {
+                        OneUiTipPopup.this.mBalloonPopup.showAtLocation(OneUiTipPopup.this.mParentView, 0, OneUiTipPopup.this.mBalloonPopupX, OneUiTipPopup.this.mBalloonPopupY);
+                    }
+                    if (OneUiTipPopup.mHandler != null) {
+                        OneUiTipPopup.mHandler.removeMessages(0);
+                        OneUiTipPopup.mHandler.sendMessageDelayed(Message.obtain(OneUiTipPopup.mHandler, MSG_DISMISS), 10L);
+                        OneUiTipPopup.mHandler.sendMessageDelayed(Message.obtain(OneUiTipPopup.mHandler, MSG_SCALE_UP), 20L);
+                    }
+                    return false;
+                }
+            });
+        } else {
+            this.mBalloonBubble.setVisibility(View.GONE);
+            this.mBalloonPanel.setVisibility(View.VISIBLE);
+            this.mMessageView.setVisibility(View.VISIBLE);
+            OnStateChangeListener onStateChangeListener2 = this.mOnStateChangeListener;
+            if (onStateChangeListener2 != null) {
+                onStateChangeListener2.onStateChanged(this.mState);
+            }
+            TipWindow tipWindow2 = this.mBalloonPopup;
+            if (tipWindow2 != null) {
+                tipWindow2.showAtLocation(this.mParentView, 0, this.mBalloonPopupX, this.mBalloonPopupY);
+                animateExpandedIn();
+            }
+        }
+        this.mBalloonView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (OneUiTipPopup.this.mType == TYPE_BALLOON_SIMPLE) {
+                    OneUiTipPopup.this.dismiss(true);
+                    return false;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void setBubblePanel() {
+        if (this.mBubblePopup == null) {
+            return;
+        }
+        FrameLayout.LayoutParams paramBubblePanel = (FrameLayout.LayoutParams) this.mBubbleBackground.getLayoutParams();
+        if (this.mMode == MODE_TRANSLUCENT) {
+            paramBubblePanel.width = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_width_translucent);
+            paramBubblePanel.height = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_height_translucent);
+        }
+        switch (this.mArrowDirection) {
+            case DIRECTION_TOP_LEFT:
+                TipWindow tipWindow = this.mBubblePopup;
+                tipWindow.setPivot(tipWindow.getWidth(), this.mBubblePopup.getHeight());
+                paramBubblePanel.gravity = 85;
+                int i = this.mBubbleX;
+                int i2 = this.mScaleMargin;
+                this.mBubblePopupX = i - (i2 * 2);
+                this.mBubblePopupY = this.mBubbleY - (i2 * 2);
+                if (this.mMode == MODE_NORMAL) {
+                    this.mBubbleBackground.setImageResource(R.drawable.sem_tip_popup_hint_background_03);
+                    if (isRTL()) {
+                        this.mBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon_rtl);
+                    } else {
+                        this.mBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon);
+                    }
+                } else {
+                    this.mBubbleBackground.setRotationX(180.0f);
+                }
+                break;
+            case DIRECTION_TOP_RIGHT:
+                TipWindow tipWindow2 = this.mBubblePopup;
+                tipWindow2.setPivot(0.0f, tipWindow2.getHeight());
+                paramBubblePanel.gravity = 83;
+                this.mBubblePopupX = this.mBubbleX;
+                this.mBubblePopupY = this.mBubbleY - (this.mScaleMargin * 2);
+                if (this.mMode == MODE_NORMAL) {
+                    this.mBubbleBackground.setImageResource(R.drawable.sem_tip_popup_hint_background_04);
+                    if (isRTL()) {
+                        this.mBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon_rtl);
+                    } else {
+                        this.mBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon);
+                    }
+                } else {
+                    this.mBubbleBackground.setRotation(180.0f);
+                }
+                break;
+            case DIRECTION_BOTTOM_LEFT:
+                TipWindow tipWindow3 = this.mBubblePopup;
+                tipWindow3.setPivot(tipWindow3.getWidth(), 0.0f);
+                paramBubblePanel.gravity = 53;
+                this.mBubblePopupX = this.mBubbleX - (this.mScaleMargin * 2);
+                this.mBubblePopupY = this.mBubbleY;
+                if (this.mMode == MODE_NORMAL) {
+                    this.mBubbleBackground.setImageResource(R.drawable.sem_tip_popup_hint_background_01);
+                    if (isRTL()) {
+                        this.mBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon_rtl);
+                    } else {
+                        this.mBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon);
+                    }
+                }
+                break;
+            case DIRECTION_BOTTOM_RIGHT:
+                this.mBubblePopup.setPivot(0.0f, 0.0f);
+                paramBubblePanel.gravity = 51;
+                this.mBubblePopupX = this.mBubbleX;
+                this.mBubblePopupY = this.mBubbleY;
+                if (this.mMode == MODE_NORMAL) {
+                    this.mBubbleBackground.setImageResource(R.drawable.sem_tip_popup_hint_background_02);
+                    if (isRTL()) {
+                        this.mBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon_rtl);
+                    } else {
+                        this.mBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon);
+                    }
+                } else {
+                    this.mBubbleBackground.setRotationY(180.0f);
+                }
+                break;
+        }
+        this.mBubbleBackground.setLayoutParams(paramBubblePanel);
+        this.mBubbleIcon.setLayoutParams(paramBubblePanel);
+        this.mBubblePopup.setWidth(this.mBubbleWidth + (this.mScaleMargin * 2));
+        this.mBubblePopup.setHeight(this.mBubbleHeight + (this.mScaleMargin * 2));
     }
 
     private void setBalloonPanel() {
-        int leftMargin = this.mBubbleX - this.mBalloonX;
-        int rightMargin = (this.mBalloonX + this.mBalloonWidth) - this.mBubbleX;
-        DisplayMetrics realMetrics = new DisplayMetrics();
-        this.mWindowManager.getDefaultDisplay().getRealMetrics(realMetrics);
-        int scaleFactor = (int) Math.ceil(realMetrics.density);
-        int minBackgroundWidth = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_balloon_background_minwidth);
-        int horizontalContentMargin = this.mHorizontalTextMargin - this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_button_padding_horizontal);
-        int verticalButtonPadding = this.mActionView.getVisibility() == View.VISIBLE ? this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_button_padding_vertical) : 0;
-        FrameLayout.LayoutParams paramBalloonPanel = (FrameLayout.LayoutParams) this.mBalloonPanel.getLayoutParams();
-        FrameLayout.LayoutParams paramBalloonContent = (FrameLayout.LayoutParams) this.mBalloonContent.getLayoutParams();
-        FrameLayout.LayoutParams paramBalloonBg1 = (FrameLayout.LayoutParams) this.mBalloonBg1.getLayoutParams();
-        FrameLayout.LayoutParams paramBalloonBg2 = (FrameLayout.LayoutParams) this.mBalloonBg2.getLayoutParams();
-        if (Color.alpha(this.mBackgroundColor) < 255) {
-            scaleFactor = 0;
-        }
-        // تصفير الدوران حتى لا يبقى أثر من اتجاه سابق عند استدعاء update().
-        this.mBalloonBg1.setRotation(0.0f);
-        this.mBalloonBg1.setRotationX(0.0f);
-        this.mBalloonBg1.setRotationY(0.0f);
-        this.mBalloonBg2.setRotation(0.0f);
-        this.mBalloonBg2.setRotationX(0.0f);
-        this.mBalloonBg2.setRotationY(0.0f);
-        switch (this.mArrowDirection) {
-            case DIRECTION_TOP_LEFT:
-                this.mBalloonPopup.setPivot((this.mArrowPositionX - this.mBalloonX) + this.mScaleMargin, this.mBalloonHeight + this.mScaleMargin);
-                this.mBalloonBg1.setRotationX(180.0f);
-                this.mBalloonBg2.setRotationX(180.0f);
-                paramBalloonBg2.gravity = 85;
-                paramBalloonBg1.gravity = 85;
-                if (rightMargin - this.mBubbleWidth < minBackgroundWidth) {
-                    int scaledLeftMargin = this.mBalloonWidth - minBackgroundWidth;
-                    paramBalloonBg1.setMargins(0, 0, minBackgroundWidth, 0);
-                    paramBalloonBg2.setMargins(scaledLeftMargin - scaleFactor, 0, 0, 0);
+        int scaleFactor;
+        float f;
+        FrameLayout.LayoutParams paramBalloonContent;
+        float f2;
+        if (this.mBalloonPopup != null) {
+            debugLog("setBalloonPanel()");
+            int i = this.mBubbleX;
+            int i2 = this.mBalloonX;
+            int leftMargin = i - i2;
+            int rightMargin = (i2 + this.mBalloonWidth) - i;
+            int i3 = this.mBubbleY;
+            int i4 = this.mBalloonY;
+            int topMargin = i3 - i4;
+            int bottomMargin = (i4 + this.mBalloonHeight) - (i3 + this.mBubbleHeight);
+            DisplayMetrics realMetrics = new DisplayMetrics();
+            this.mWindowManager.getDefaultDisplay().getRealMetrics(realMetrics);
+            int scaleFactor2 = (int) Math.ceil(realMetrics.density);
+            int minBackgroundWidth = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_balloon_background_minwidth);
+            debugLog("leftMargin[" + leftMargin + "]");
+            debugLog("rightMargin[" + rightMargin + "] mBalloonWidth[" + this.mBalloonWidth + "]");
+            int horizontalContentMargin = this.mHorizontalTextMargin - this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_button_padding_horizontal);
+            int verticalButtonPadding = this.mActionView.getVisibility() == View.VISIBLE ? this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_button_padding_vertical) : 0;
+            FrameLayout.LayoutParams paramBalloonBubble = (FrameLayout.LayoutParams) this.mBalloonBubble.getLayoutParams();
+            FrameLayout.LayoutParams paramBalloonPanel = (FrameLayout.LayoutParams) this.mBalloonPanel.getLayoutParams();
+            FrameLayout.LayoutParams paramBalloonContent2 = (FrameLayout.LayoutParams) this.mBalloonContent.getLayoutParams();
+            FrameLayout.LayoutParams paramBalloonBg1 = (FrameLayout.LayoutParams) this.mBalloonBg1.getLayoutParams();
+            FrameLayout.LayoutParams paramBalloonBg2 = (FrameLayout.LayoutParams) this.mBalloonBg2.getLayoutParams();
+            if (this.mMode == MODE_TRANSLUCENT) {
+                this.mBalloonBubbleHint.setImageResource(R.drawable.sem_tip_popup_hint_background_translucent);
+                this.mBalloonBubbleHint.setImageTintList(null);
+                if (isRTL()) {
+                    this.mBalloonBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon_translucent_rtl);
                 } else {
+                    this.mBalloonBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon_translucent);
+                }
+                this.mBalloonBubbleIcon.setImageTintList(null);
+                paramBalloonBubble.width = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_width_translucent);
+                paramBalloonBubble.height = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_height_translucent);
+                scaleFactor = 0;
+            } else if (Color.alpha(this.mBackgroundColor) < 255) {
+                debugLog("Updating scaleFactor to 0 because transparency is applied to background.");
+                scaleFactor = 0;
+            } else {
+                scaleFactor = scaleFactor2;
+            }
+            switch (this.mArrowDirection) {
+                case DIRECTION_TOP_LEFT:
+                    TipWindow tipWindow = this.mBalloonPopup;
+                    int i5 = this.mArrowPositionX - this.mBalloonX;
+                    int i6 = this.mScaleMargin;
+                    tipWindow.setPivot(i5 + i6, this.mBalloonHeight + i6);
+                    if (this.mMode == MODE_NORMAL) {
+                        this.mBalloonBubbleHint.setImageResource(R.drawable.sem_tip_popup_hint_background_03);
+                        this.mBalloonBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon);
+                        f = 180.0f;
+                    } else {
+                        f = 180.0f;
+                        this.mBalloonBubbleHint.setRotationX(180.0f);
+                    }
+                    this.mBalloonBg1.setRotationX(f);
+                    this.mBalloonBg2.setRotationX(f);
+                    paramBalloonBg2.gravity = 85;
+                    paramBalloonBg1.gravity = 85;
+                    paramBalloonBubble.gravity = 85;
+                    int i7 = this.mBubbleWidth;
+                    if (rightMargin - i7 < minBackgroundWidth) {
+                        int scaledLeftMargin = this.mBalloonWidth - minBackgroundWidth;
+                        paramBalloonBg1.setMargins(0, 0, minBackgroundWidth, 0);
+                        paramBalloonBg2.setMargins(scaledLeftMargin - scaleFactor, 0, 0, 0);
+                        debugLog("Right Margin is less then minimum background width!");
+                        debugLog("updated !! leftMargin[" + scaledLeftMargin + "],  rightMargin[" + minBackgroundWidth + "]");
+                    } else {
+                        paramBalloonBg1.setMargins(0, 0, rightMargin - i7, 0);
+                        paramBalloonBg2.setMargins((this.mBubbleWidth + leftMargin) - scaleFactor, 0, 0, 0);
+                    }
+                    int i8 = this.mVerticalTextMargin;
+                    paramBalloonContent = paramBalloonContent2;
+                    paramBalloonContent.setMargins(horizontalContentMargin, i8, horizontalContentMargin, (this.mArrowHeight + i8) - verticalButtonPadding);
+                    break;
+                case DIRECTION_TOP_RIGHT:
+                    TipWindow tipWindow2 = this.mBalloonPopup;
+                    int i9 = this.mArrowPositionX - this.mBalloonX;
+                    int i10 = this.mScaleMargin;
+                    tipWindow2.setPivot(i9 + i10, this.mBalloonHeight + i10);
+                    if (this.mMode == MODE_NORMAL) {
+                        this.mBalloonBubbleHint.setImageResource(R.drawable.sem_tip_popup_hint_background_04);
+                        this.mBalloonBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon);
+                        f2 = 180.0f;
+                    } else {
+                        f2 = 180.0f;
+                        this.mBalloonBubbleHint.setRotation(180.0f);
+                    }
+                    this.mBalloonBg1.setRotation(f2);
+                    this.mBalloonBg2.setRotation(f2);
+                    paramBalloonBg2.gravity = 83;
+                    paramBalloonBg1.gravity = 83;
+                    paramBalloonBubble.gravity = 83;
+                    if (leftMargin < minBackgroundWidth) {
+                        int scaledRightMargin = this.mBalloonWidth - minBackgroundWidth;
+                        paramBalloonBg1.setMargins(minBackgroundWidth, 0, 0, 0);
+                        paramBalloonBg2.setMargins(0, 0, scaledRightMargin - scaleFactor, 0);
+                        debugLog("Left Margin is less then minimum background width!");
+                        debugLog("updated !! leftMargin[" + minBackgroundWidth + "],  rightMargin[" + scaledRightMargin + "]");
+                    } else {
+                        paramBalloonBg1.setMargins(leftMargin, 0, 0, 0);
+                        paramBalloonBg2.setMargins(0, 0, rightMargin - scaleFactor, 0);
+                    }
+                    int i11 = this.mVerticalTextMargin;
+                    paramBalloonContent = paramBalloonContent2;
+                    paramBalloonContent.setMargins(horizontalContentMargin, i11, horizontalContentMargin, (this.mArrowHeight + i11) - verticalButtonPadding);
+                    break;
+                case DIRECTION_BOTTOM_LEFT:
+                    TipWindow tipWindow3 = this.mBalloonPopup;
+                    int i12 = this.mArrowPositionX - this.mBalloonX;
+                    int i13 = this.mScaleMargin;
+                    tipWindow3.setPivot(i12 + i13, i13);
+                    if (this.mMode == MODE_NORMAL) {
+                        this.mBalloonBubbleHint.setImageResource(R.drawable.sem_tip_popup_hint_background_01);
+                        this.mBalloonBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon);
+                    }
+                    paramBalloonBg2.gravity = 53;
+                    paramBalloonBg1.gravity = 53;
+                    paramBalloonBubble.gravity = 53;
                     paramBalloonBg1.setMargins(0, 0, rightMargin - this.mBubbleWidth, 0);
                     paramBalloonBg2.setMargins((this.mBubbleWidth + leftMargin) - scaleFactor, 0, 0, 0);
-                }
-                paramBalloonContent.setMargins(horizontalContentMargin, this.mVerticalTextMargin, horizontalContentMargin, (this.mArrowHeight + this.mVerticalTextMargin) - verticalButtonPadding);
-                break;
-            case DIRECTION_TOP_RIGHT:
-                this.mBalloonPopup.setPivot((this.mArrowPositionX - this.mBalloonX) + this.mScaleMargin, this.mBalloonHeight + this.mScaleMargin);
-                this.mBalloonBg1.setRotation(180.0f);
-                this.mBalloonBg2.setRotation(180.0f);
-                paramBalloonBg2.gravity = 83;
-                paramBalloonBg1.gravity = 83;
-                if (leftMargin < minBackgroundWidth) {
-                    int scaledRightMargin = this.mBalloonWidth - minBackgroundWidth;
-                    paramBalloonBg1.setMargins(minBackgroundWidth, 0, 0, 0);
-                    paramBalloonBg2.setMargins(0, 0, scaledRightMargin - scaleFactor, 0);
-                } else {
+                    int i14 = this.mArrowHeight;
+                    int i15 = this.mVerticalTextMargin;
+                    paramBalloonContent2.setMargins(horizontalContentMargin, i14 + i15, horizontalContentMargin, i15 - verticalButtonPadding);
+                    paramBalloonContent = paramBalloonContent2;
+                    break;
+                case DIRECTION_BOTTOM_RIGHT:
+                    TipWindow tipWindow4 = this.mBalloonPopup;
+                    int i16 = this.mArrowPositionX - this.mBalloonX;
+                    int i17 = this.mScaleMargin;
+                    tipWindow4.setPivot(i16 + i17, i17);
+                    if (this.mMode == MODE_NORMAL) {
+                        this.mBalloonBubbleHint.setImageResource(R.drawable.sem_tip_popup_hint_background_02);
+                        this.mBalloonBubbleIcon.setImageResource(R.drawable.sem_tip_popup_hint_icon);
+                    } else {
+                        this.mBalloonBubbleHint.setRotationY(180.0f);
+                    }
+                    this.mBalloonBg1.setRotationY(180.0f);
+                    this.mBalloonBg2.setRotationY(180.0f);
+                    paramBalloonBg2.gravity = 51;
+                    paramBalloonBg1.gravity = 51;
+                    paramBalloonBubble.gravity = 51;
                     paramBalloonBg1.setMargins(leftMargin, 0, 0, 0);
                     paramBalloonBg2.setMargins(0, 0, rightMargin - scaleFactor, 0);
-                }
-                paramBalloonContent.setMargins(horizontalContentMargin, this.mVerticalTextMargin, horizontalContentMargin, (this.mArrowHeight + this.mVerticalTextMargin) - verticalButtonPadding);
-                break;
-            case DIRECTION_BOTTOM_LEFT:
-                this.mBalloonPopup.setPivot((this.mArrowPositionX - this.mBalloonX) + this.mScaleMargin, this.mScaleMargin);
-                paramBalloonBg2.gravity = 53;
-                paramBalloonBg1.gravity = 53;
-                paramBalloonBg1.setMargins(0, 0, rightMargin - this.mBubbleWidth, 0);
-                paramBalloonBg2.setMargins((this.mBubbleWidth + leftMargin) - scaleFactor, 0, 0, 0);
-                paramBalloonContent.setMargins(horizontalContentMargin, this.mArrowHeight + this.mVerticalTextMargin, horizontalContentMargin, this.mVerticalTextMargin - verticalButtonPadding);
-                break;
-            case DIRECTION_BOTTOM_RIGHT:
-                this.mBalloonPopup.setPivot((this.mArrowPositionX - this.mBalloonX) + this.mScaleMargin, this.mScaleMargin);
-                this.mBalloonBg1.setRotationY(180.0f);
-                this.mBalloonBg2.setRotationY(180.0f);
-                paramBalloonBg2.gravity = 51;
-                paramBalloonBg1.gravity = 51;
-                paramBalloonBg1.setMargins(leftMargin, 0, 0, 0);
-                paramBalloonBg2.setMargins(0, 0, rightMargin - scaleFactor, 0);
-                paramBalloonContent.setMargins(horizontalContentMargin, this.mArrowHeight + this.mVerticalTextMargin, horizontalContentMargin, this.mVerticalTextMargin - verticalButtonPadding);
-                break;
-            default:
-                break;
+                    int i18 = this.mArrowHeight;
+                    int i19 = this.mVerticalTextMargin;
+                    paramBalloonContent2.setMargins(horizontalContentMargin, i18 + i19, horizontalContentMargin, i19 - verticalButtonPadding);
+                    paramBalloonContent = paramBalloonContent2;
+                    break;
+                default:
+                    paramBalloonContent = paramBalloonContent2;
+                    break;
+            }
+            int i20 = this.mScaleMargin;
+            paramBalloonBubble.setMargins(leftMargin + i20, topMargin + i20, (rightMargin - this.mBubbleWidth) + i20, bottomMargin + i20);
+            int balloonPanelMargin = this.mScaleMargin;
+            paramBalloonPanel.setMargins(balloonPanelMargin, balloonPanelMargin, balloonPanelMargin, balloonPanelMargin);
+            int i21 = this.mBalloonX;
+            int i22 = this.mScaleMargin;
+            this.mBalloonPopupX = i21 - i22;
+            this.mBalloonPopupY = this.mBalloonY - i22;
+            this.mBalloonBubble.setLayoutParams(paramBalloonBubble);
+            this.mBalloonPanel.setLayoutParams(paramBalloonPanel);
+            this.mBalloonBg1.setLayoutParams(paramBalloonBg1);
+            this.mBalloonBg2.setLayoutParams(paramBalloonBg2);
+            this.mBalloonContent.setLayoutParams(paramBalloonContent);
+            this.mBalloonPopup.setWidth(this.mBalloonWidth + (this.mScaleMargin * 2));
+            this.mBalloonPopup.setHeight(this.mBalloonHeight + (this.mScaleMargin * 2));
         }
-        paramBalloonPanel.setMargins(this.mScaleMargin, this.mScaleMargin, this.mScaleMargin, this.mScaleMargin);
-        this.mBalloonPopupX = this.mBalloonX - this.mScaleMargin;
-        this.mBalloonPopupY = this.mBalloonY - this.mScaleMargin;
-        this.mBalloonPanel.setLayoutParams(paramBalloonPanel);
-        this.mBalloonBg1.setLayoutParams(paramBalloonBg1);
-        this.mBalloonBg2.setLayoutParams(paramBalloonBg2);
-        this.mBalloonContent.setLayoutParams(paramBalloonContent);
-        this.mBalloonPopup.setWidth(this.mBalloonWidth + (this.mScaleMargin * 2));
-        this.mBalloonPopup.setHeight(this.mBalloonHeight + (this.mScaleMargin * 2));
     }
 
     private void calculateArrowDirection(int arrowX, int arrowY) {
@@ -491,6 +925,7 @@ public class OneUiTipPopup {
         } else if (arrowX * 2 > this.mDisplayMetrics.widthPixels && arrowY * 2 > this.mDisplayMetrics.heightPixels) {
             this.mArrowDirection = DIRECTION_TOP_LEFT;
         }
+        debugLog("calculateArrowDirection : arrow position (" + arrowX + ", " + arrowY + ") / mArrowDirection = " + this.mArrowDirection);
     }
 
     private void calculateArrowPosition() {
@@ -502,6 +937,7 @@ public class OneUiTipPopup {
         }
         int[] location = new int[2];
         view.getLocationInWindow(location);
+        debugLog("calculateArrowPosition anchor location : " + location[0] + ", " + location[1]);
         int x = location[0] + (this.mParentView.getWidth() / 2);
         int y = location[1] + (this.mParentView.getHeight() / 2);
         if (y * 2 <= this.mDisplayMetrics.heightPixels) {
@@ -510,6 +946,7 @@ public class OneUiTipPopup {
             this.mArrowPositionY = y - (this.mParentView.getHeight() / 2);
         }
         this.mArrowPositionX = x;
+        debugLog("calculateArrowPosition mArrowPosition : " + this.mArrowPositionX + ", " + this.mArrowPositionY);
     }
 
     @SuppressLint("RestrictedApi")
@@ -525,6 +962,7 @@ public class OneUiTipPopup {
             if (windowLocation[0] < 0) {
                 windowWidthInDexMode += windowLocation[0];
             }
+            debugLog("Window width in DexMode " + windowWidthInDexMode);
             if (windowWidthInDexMode <= 480) {
                 balloonMaxWidth = (int) (windowWidthInDexMode * 0.83f);
             } else if (windowWidthInDexMode <= 960) {
@@ -535,6 +973,7 @@ public class OneUiTipPopup {
                 balloonMaxWidth = (int) (windowWidthInDexMode * 0.25f);
             }
         } else {
+            debugLog("screen width DP " + screenWidthDp);
             if (screenWidthDp <= 480) {
                 balloonMaxWidth = (int) (this.mDisplayMetrics.widthPixels * 0.83f);
             } else if (screenWidthDp <= 960) {
@@ -585,13 +1024,17 @@ public class OneUiTipPopup {
         int i2 = this.mArrowDirection;
         if (i2 == 3 || i2 == 1) {
             if (this.mArrowPositionX < this.mDisplayFrame.left + this.mSideMargin + this.mHorizontalTextMargin) {
+                debugLog("Target position is too far to the left!");
                 this.mArrowPositionX = this.mDisplayFrame.left + this.mSideMargin + this.mHorizontalTextMargin;
             } else if (this.mArrowPositionX > ((this.mDisplayFrame.right - this.mSideMargin) - this.mHorizontalTextMargin) - this.mArrowWidth) {
+                debugLog("Target position is too far to the right!");
                 this.mArrowPositionX = ((this.mDisplayFrame.right - this.mSideMargin) - this.mHorizontalTextMargin) - this.mArrowWidth;
             }
         } else if (this.mArrowPositionX < this.mDisplayFrame.left + this.mSideMargin + this.mHorizontalTextMargin + this.mArrowWidth) {
+            debugLog("Target position is too far to the left!");
             this.mArrowPositionX = this.mDisplayFrame.left + this.mSideMargin + this.mHorizontalTextMargin + this.mArrowWidth;
         } else if (this.mArrowPositionX > (this.mDisplayFrame.right - this.mSideMargin) - this.mHorizontalTextMargin) {
+            debugLog("Target position is too far to the right!");
             this.mArrowPositionX = (this.mDisplayFrame.right - this.mSideMargin) - this.mHorizontalTextMargin;
         }
         if (SeslConfigurationReflector.isDexEnabled(mContext.getResources().getConfiguration())) {
@@ -648,20 +1091,135 @@ public class OneUiTipPopup {
                 this.mBalloonY = i12;
                 break;
         }
+        debugLog("QuestionPopup : " + this.mBubbleX + ", " + this.mBubbleY + ", " + this.mBubbleWidth + ", " + this.mBubbleHeight);
+        debugLog("BalloonPopup : " + this.mBalloonX + ", " + this.mBalloonY + ", " + this.mBalloonWidth + ", " + this.mBalloonHeight);
+    }
+
+    public void dismissBubble(boolean withAnimation) {
+        TipWindow tipWindow = this.mBubblePopup;
+        if (tipWindow != null) {
+            tipWindow.setUseDismissAnimation(withAnimation);
+            this.mBubblePopup.dismiss();
+        }
+        OnDismissListener onDismissListener = this.mOnDismissListener;
+        if (onDismissListener != null) {
+            onDismissListener.onDismiss();
+        }
+    }
+
+    public void scheduleTimeout() {
+        if (mHandler != null) {
+            mHandler.removeMessages(0);
+            mHandler.sendMessageDelayed(Message.obtain(mHandler, MSG_TIMEOUT), TIMEOUT_DURATION_MS);
+        }
+    }
+
+    private void animateViewIn() {
+        float pivotX = 0.0f;
+        float pivotY = 0.0f;
+        switch (this.mArrowDirection) {
+            case DIRECTION_TOP_LEFT:
+                pivotX = 1.0f;
+                pivotY = 1.0f;
+                break;
+            case DIRECTION_TOP_RIGHT:
+                pivotX = 0.0f;
+                pivotY = 1.0f;
+                break;
+            case DIRECTION_BOTTOM_LEFT:
+                pivotX = 1.0f;
+                pivotY = 0.0f;
+                break;
+            case DIRECTION_BOTTOM_RIGHT:
+                pivotX = 0.0f;
+                pivotY = 0.0f;
+                break;
+        }
+        Animation animScale = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, 1, pivotX, 1, pivotY);
+        animScale.setInterpolator(INTERPOLATOR_ELASTIC_50);
+        animScale.setDuration(ANIMATION_DURATION_EXPAND_SCALE);
+        animScale.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                OneUiTipPopup.this.scheduleTimeout();
+                OneUiTipPopup.this.animateBounce();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        this.mBubbleView.startAnimation(animScale);
+    }
+
+    public void animateBounce() {
+        float pivotX = 0.0f;
+        float pivotY = 0.0f;
+        switch (this.mArrowDirection) {
+            case DIRECTION_TOP_LEFT:
+                pivotX = this.mBubblePopup.getWidth();
+                pivotY = this.mBubblePopup.getHeight();
+                break;
+            case DIRECTION_TOP_RIGHT:
+                pivotX = 0.0f;
+                pivotY = this.mBubblePopup.getHeight();
+                break;
+            case DIRECTION_BOTTOM_LEFT:
+                pivotX = this.mBubblePopup.getWidth();
+                pivotY = 0.0f;
+                break;
+            case DIRECTION_BOTTOM_RIGHT:
+                pivotX = 0.0f;
+                pivotY = 0.0f;
+                break;
+        }
+        final AnimationSet animationSet = new AnimationSet(false);
+        float f = pivotX;
+        float f2 = pivotY;
+        Animation anim1 = new ScaleAnimation(1.0f, 1.2f, 1.0f, 1.2f, 0, f, 0, f2);
+        anim1.setDuration(ANIMATION_DURATION_BOUNCE_SCALE1);
+        anim1.setInterpolator(INTERPOLATOR_SINE_IN_OUT_70);
+        Animation anim2 = new ScaleAnimation(1.0f, 0.833f, 1.0f, 0.833f, 0, f, 0, f2);
+        anim2.setStartOffset(ANIMATION_DURATION_BOUNCE_SCALE1);
+        anim2.setDuration(ANIMATION_DURATION_BOUNCE_SCALE2);
+        anim2.setInterpolator(INTERPOLATOR_SINE_IN_OUT_33);
+        anim2.setAnimationListener(new Animation.AnimationListener() {
+            int count = 0;
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                this.count++;
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                OneUiTipPopup.this.debugLog("repeat count " + this.count);
+                OneUiTipPopup.this.mBubbleView.startAnimation(animationSet);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        animationSet.addAnimation(anim1);
+        animationSet.addAnimation(anim2);
+        animationSet.setStartOffset(ANIMATION_OFFSET_BOUNCE_SCALE);
+        this.mBubbleView.startAnimation(animationSet);
     }
 
     /**
-     * نفس أنيميشن animateScaleUp في المكتبة (بدون الجزء الخاص بتكبير علامة الاستفهام وإخفائها):
-     * scale مرن لمدة 500ms من نقطة السهم + alpha سريع + ظهور النص بعد 100ms.
+     * نفس أنيميشن التوسع في animateScaleUp لكن للبالون الذي يُعرض موسَّعاً مباشرة بدون علامة الاستفهام:
+     * scale مرن 500ms من نقطة السهم + alpha + ظهور النص. لا يستدعي dismissBubble لأنه لا توجد فقاعة.
      */
-    private void animateExpand() {
+    private void animateExpandedIn() {
         float pivotPanelX = 0.0f;
         float pivotPanelY = 0.0f;
         switch (this.mArrowDirection) {
             case DIRECTION_TOP_LEFT:
-                pivotPanelX = this.mArrowPositionX - this.mBalloonX;
-                pivotPanelY = this.mBalloonHeight;
-                break;
             case DIRECTION_TOP_RIGHT:
                 pivotPanelX = this.mArrowPositionX - this.mBalloonX;
                 pivotPanelY = this.mBalloonHeight;
@@ -676,7 +1234,7 @@ public class OneUiTipPopup {
                 break;
         }
         AnimationSet animationPanel = new AnimationSet(false);
-        Animation animationPanelScale = new ScaleAnimation(EXPAND_START_SCALE_X, 1.0f, EXPAND_START_SCALE_Y, 1.0f, Animation.ABSOLUTE, pivotPanelX, Animation.ABSOLUTE, pivotPanelY);
+        Animation animationPanelScale = new ScaleAnimation(EXPAND_START_SCALE_X, 1.0f, EXPAND_START_SCALE_Y, 1.0f, 0, pivotPanelX, 0, pivotPanelY);
         animationPanelScale.setInterpolator(INTERPOLATOR_ELASTIC_CUSTOM);
         animationPanelScale.setDuration(ANIMATION_DURATION_SHOW_SCALE);
         Animation animationPanelAlpha = new AlphaAnimation(0.0f, 1.0f);
@@ -685,13 +1243,13 @@ public class OneUiTipPopup {
         animationPanel.addAnimation(animationPanelScale);
         animationPanel.addAnimation(animationPanelAlpha);
         this.mBalloonPanel.startAnimation(animationPanel);
-        this.mMessageView.startAnimation(createTextAnimation());
+        this.mMessageView.startAnimation(createExpandTextAnimation());
         if (this.mActionView.getVisibility() == View.VISIBLE) {
-            this.mActionView.startAnimation(createTextAnimation());
+            this.mActionView.startAnimation(createExpandTextAnimation());
         }
     }
 
-    private Animation createTextAnimation() {
+    private Animation createExpandTextAnimation() {
         Animation animationText = new AlphaAnimation(0.0f, 1.0f);
         animationText.setInterpolator(INTERPOLATOR_SINE_IN_OUT_33);
         animationText.setStartOffset(ANIMATION_OFFSET_EXPAND_TEXT);
@@ -699,9 +1257,109 @@ public class OneUiTipPopup {
         return animationText;
     }
 
+    public void animateScaleUp() {
+        float deltaHintY = 0.0f;
+        float pivotHintX = 0.0f;
+        float pivotHintY = 0.0f;
+        float pivotPanelX = 0.0f;
+        float pivotPanelY = 0.0f;
+        int questionHeight = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_bubble_height);
+        float panelScale = questionHeight / this.mBalloonHeight;
+        switch (this.mArrowDirection) {
+            case DIRECTION_TOP_LEFT:
+                pivotHintX = this.mBalloonBubble.getWidth();
+                pivotHintY = this.mBalloonBubble.getHeight();
+                pivotPanelX = this.mArrowPositionX - this.mBalloonX;
+                pivotPanelY = this.mBalloonHeight;
+                deltaHintY = 0.0f - (this.mArrowHeight / 2.0f);
+                break;
+            case DIRECTION_TOP_RIGHT:
+                pivotHintX = 0.0f;
+                pivotHintY = this.mBalloonBubble.getHeight();
+                pivotPanelX = this.mArrowPositionX - this.mBalloonX;
+                pivotPanelY = this.mBalloonHeight;
+                deltaHintY = 0.0f - (this.mArrowHeight / 2.0f);
+                break;
+            case DIRECTION_BOTTOM_LEFT:
+                pivotHintX = this.mBalloonBubble.getWidth();
+                pivotHintY = 0.0f;
+                pivotPanelX = this.mArrowPositionX - this.mBalloonX;
+                pivotPanelY = 0.0f;
+                deltaHintY = this.mArrowHeight / 2.0f;
+                break;
+            case DIRECTION_BOTTOM_RIGHT:
+                pivotHintX = 0.0f;
+                pivotHintY = 0.0f;
+                pivotPanelX = this.mBubbleX - this.mBalloonX;
+                pivotPanelY = 0.0f;
+                deltaHintY = this.mArrowHeight / 2.0f;
+                break;
+        }
+        AnimationSet animationBubble = new AnimationSet(false);
+        TranslateAnimation animationBubbleMove = new TranslateAnimation(0, 0.0f, 0, 0.0f, 0, 0.0f, 0, deltaHintY);
+        animationBubbleMove.setDuration(500L);
+        animationBubbleMove.setInterpolator(INTERPOLATOR_ELASTIC_CUSTOM);
+        Animation animationBubbleScale = new ScaleAnimation(1.0f, 1.7f, 1.0f, 1.7f, 0, pivotHintX, 0, pivotHintY);
+        animationBubbleScale.setDuration(500L);
+        animationBubbleScale.setInterpolator(INTERPOLATOR_ELASTIC_CUSTOM);
+        Animation animationBubbleAlpha = new AlphaAnimation(1.0f, 0.0f);
+        animationBubbleAlpha.setDuration(166L);
+        animationBubbleAlpha.setInterpolator(INTERPOLATOR_SINE_IN_OUT_33);
+        animationBubble.addAnimation(animationBubbleMove);
+        animationBubble.addAnimation(animationBubbleScale);
+        animationBubble.addAnimation(animationBubbleAlpha);
+        animationBubble.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                OneUiTipPopup.this.mBalloonPanel.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                OneUiTipPopup.this.mBalloonBubble.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        this.mBalloonBubble.startAnimation(animationBubble);
+        AnimationSet animationPanel = new AnimationSet(false);
+        Animation animationPanelScale = new ScaleAnimation(0.27f, 1.0f, panelScale, 1.0f, 0, pivotPanelX, 0, pivotPanelY);
+        animationPanelScale.setInterpolator(INTERPOLATOR_ELASTIC_CUSTOM);
+        animationPanelScale.setDuration(ANIMATION_DURATION_SHOW_SCALE);
+        Animation animationPanelAlpha = new AlphaAnimation(0.0f, 1.0f);
+        animationPanelAlpha.setInterpolator(INTERPOLATOR_SINE_IN_OUT_33);
+        animationPanelAlpha.setDuration(ANIMATION_DURATION_EXPAND_ALPHA);
+        animationPanel.addAnimation(animationPanelScale);
+        animationPanel.addAnimation(animationPanelAlpha);
+        this.mBalloonPanel.startAnimation(animationPanel);
+        Animation animationText = new AlphaAnimation(0.0f, 1.0f);
+        animationText.setInterpolator(INTERPOLATOR_SINE_IN_OUT_33);
+        animationText.setStartOffset(ANIMATION_OFFSET_EXPAND_TEXT);
+        animationText.setDuration(ANIMATION_DURATION_EXPAND_TEXT);
+        animationText.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                OneUiTipPopup.this.mMessageView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                OneUiTipPopup.this.dismissBubble(false);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        this.mMessageView.startAnimation(animationText);
+        this.mActionView.startAnimation(animationText);
+    }
+
     private boolean isNavigationbarHide() {
         Context context = this.mContext;
-        return context != null && android.provider.Settings.Global.getInt(context.getContentResolver(), "navigationbar_hide_bar_enabled", 0) == 1;
+        return context != null && Settings.Global.getInt(context.getContentResolver(), "navigationbar_hide_bar_enabled", 0) == 1;
     }
 
     private int getNavagationbarHeight() {
@@ -712,16 +1370,15 @@ public class OneUiTipPopup {
         return 0;
     }
 
-    @SuppressWarnings("deprecation")
     private boolean isTablet() {
         DisplayMetrics realMetrics = new DisplayMetrics();
         this.mWindowManager.getDefaultDisplay().getRealMetrics(realMetrics);
         int shortSize = realMetrics.widthPixels > realMetrics.heightPixels ? realMetrics.heightPixels : realMetrics.widthPixels;
         int shortSizeDp = (shortSize * 160) / realMetrics.densityDpi;
+        debugLog("short size dp  = " + shortSizeDp);
         return shortSizeDp >= 600;
     }
 
-    @SuppressWarnings("deprecation")
     private void getDisplayFrame(Rect screenRect) {
         DisplayCutout displayCutout;
         int navigationbarHeight = getNavagationbarHeight();
@@ -729,11 +1386,14 @@ public class OneUiTipPopup {
         int displayRotation = this.mWindowManager.getDefaultDisplay().getRotation();
         DisplayMetrics realMetrics = new DisplayMetrics();
         this.mWindowManager.getDefaultDisplay().getRealMetrics(realMetrics);
+        debugLog("realMetrics = " + realMetrics);
+        debugLog("is tablet? = " + isTablet());
         if (this.mForceRealDisplay) {
             screenRect.left = 0;
             screenRect.top = 0;
             screenRect.right = realMetrics.widthPixels;
             screenRect.bottom = realMetrics.heightPixels;
+            debugLog("Screen Rect = " + screenRect + " mForceRealDisplay = " + this.mForceRealDisplay);
             return;
         }
         screenRect.left = 0;
@@ -742,11 +1402,14 @@ public class OneUiTipPopup {
         screenRect.bottom = this.mDisplayMetrics.heightPixels;
         Rect bounds = new Rect();
         this.mParentView.getRootView().getWindowVisibleDisplayFrame(bounds);
+        debugLog("Bounds = " + bounds);
         if (isTablet()) {
+            debugLog("tablet");
             if (realMetrics.widthPixels == this.mDisplayMetrics.widthPixels && realMetrics.heightPixels - this.mDisplayMetrics.heightPixels == navigationbarHeight && navigationbarHide) {
                 screenRect.bottom += navigationbarHeight;
             }
         } else {
+            debugLog("phone");
             switch (displayRotation) {
                 case Surface.ROTATION_0:
                     if (realMetrics.widthPixels == this.mDisplayMetrics.widthPixels && realMetrics.heightPixels - this.mDisplayMetrics.heightPixels == navigationbarHeight && navigationbarHide) {
@@ -762,6 +1425,7 @@ public class OneUiTipPopup {
                     if (windowInsets != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && (displayCutout = windowInsets.getDisplayCutout()) != null) {
                         screenRect.left += displayCutout.getSafeInsetLeft();
                         screenRect.right += displayCutout.getSafeInsetLeft();
+                        debugLog("displayCutout.getSafeInsetLeft() :  " + displayCutout.getSafeInsetLeft());
                         break;
                     }
                     break;
@@ -776,6 +1440,7 @@ public class OneUiTipPopup {
                             break;
                         }
                     } else if (realMetrics.widthPixels == this.mDisplayMetrics.widthPixels && bounds.top == navigationbarHeight) {
+                        debugLog("Top Docked");
                         screenRect.top += navigationbarHeight;
                         screenRect.bottom += navigationbarHeight;
                         break;
@@ -792,6 +1457,7 @@ public class OneUiTipPopup {
                             break;
                         }
                     } else if (realMetrics.heightPixels == this.mDisplayMetrics.heightPixels && bounds.left == navigationbarHeight) {
+                        debugLog("Left Docked");
                         screenRect.left += navigationbarHeight;
                         screenRect.right += navigationbarHeight;
                         break;
@@ -799,9 +1465,14 @@ public class OneUiTipPopup {
                     break;
             }
         }
+        debugLog("Screen Rect = " + screenRect);
     }
 
-    private static class TipWindow extends PopupWindow {
+    public void setOnDismissListener(OnDismissListener onDismissListener) {
+        this.mOnDismissListener = onDismissListener;
+    }
+
+    public static class TipWindow extends PopupWindow {
         private boolean mIsDismissing;
         private boolean mIsUsingDismissAnimation;
         private float mPivotX;
@@ -835,7 +1506,7 @@ public class OneUiTipPopup {
 
         private void animateViewOut() {
             AnimationSet animationSet = new AnimationSet(true);
-            Animation animScale = new ScaleAnimation(1.0f, 0.81f, 1.0f, 0.81f, Animation.ABSOLUTE, this.mPivotX, Animation.ABSOLUTE, this.mPivotY);
+            Animation animScale = new ScaleAnimation(1.0f, 0.81f, 1.0f, 0.81f, 0, this.mPivotX, 0, this.mPivotY);
             animScale.setInterpolator(OneUiTipPopup.INTERPOLATOR_ELASTIC_CUSTOM);
             animScale.setDuration(ANIMATION_DURATION_DISMISS_SCALE);
             Animation animAlpha = new AlphaAnimation(1.0f, 0.0f);
@@ -852,7 +1523,6 @@ public class OneUiTipPopup {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     TipWindow.super.dismiss();
-                    TipWindow.this.mIsDismissing = false;
                 }
 
                 @Override
@@ -862,4 +1532,27 @@ public class OneUiTipPopup {
             getContentView().startAnimation(animationSet);
         }
     }
-}
+
+    private boolean isRTL() {
+        boolean rtl = this.mContext.getResources().getConfiguration().getLayoutDirection() == 1;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return rtl && !this.mContext.getResources().getConfiguration().getLocales().get(0).toString().equals("iw_IL");
+        } else {
+            return rtl;
+        }
+    }
+
+    public void debugLog(String msg) {
+        if (localLOGD) {
+            Log.d(TAG, " #### " + msg);
+        }
+    }
+
+    public PopupWindow semGetBubblePopupWindow() {
+        return this.mBubblePopup;
+    }
+
+    public PopupWindow semGetBalloonPopupWindow() {
+        return this.mBalloonPopup;
+    }
+                                                }
