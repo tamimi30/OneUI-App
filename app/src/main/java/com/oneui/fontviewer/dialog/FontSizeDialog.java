@@ -2,6 +2,7 @@ package com.oneui.fontviewer.dialog;
 
 import android.content.Context;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -18,10 +19,12 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import dev.oneuiproject.oneui.widget.TipPopup;
 import dev.oneuiproject.oneui.widget.Toast;
 
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.widget.OneUiTipPopup;
+
+import java.util.Locale;
 
 public class FontSizeDialog {
 
@@ -45,7 +48,7 @@ public class FontSizeDialog {
     private AlertDialog dialog;
     private float tempSize;
     private float originalSize;
-    private TipPopup fontSizeTipPopup;
+    private OneUiTipPopup fontSizeTipPopup;
     private boolean isNumericKeyboardVisible = false;
     private Toast invalidSizeRealtimeToast;
 
@@ -84,13 +87,14 @@ public class FontSizeDialog {
             if (imm != null) {
                 imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
             }
-            fontSizeTipPopup = new TipPopup(helpIcon, TipPopup.MODE_NORMAL);
+            fontSizeTipPopup = new OneUiTipPopup(helpIcon, OneUiTipPopup.MODE_NORMAL);
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             // set custom background color with alpha using project color
             fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
             fontSizeTipPopup.setExpanded(true);
-            boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
-            fontSizeTipPopup.show(isRtl ? TipPopup.DIRECTION_BOTTOM_RIGHT : TipPopup.DIRECTION_BOTTOM_LEFT);
+            // الاتجاه من نظام الـ locale (نفس مصدر android:layoutDirection="locale")
+            boolean isRtl = TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()) == View.LAYOUT_DIRECTION_RTL;
+            fontSizeTipPopup.show(isRtl ? OneUiTipPopup.DIRECTION_BOTTOM_RIGHT : OneUiTipPopup.DIRECTION_BOTTOM_LEFT);
         });
 
         // يرصد ظهور/اختفاء الكيبورد مباشرة، بغض النظر عن السبب (رجوع، Done، إلخ)
