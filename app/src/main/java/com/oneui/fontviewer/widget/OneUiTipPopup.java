@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -385,7 +384,6 @@ public class OneUiTipPopup {
     }
 
     private void setPositionsAndSizes(Direction direction) {
-        applyParentWindowMode();
         if (arrowPositionX == -1 || arrowPositionY == -1) {
             calculateArrowPosition();
         }
@@ -958,11 +956,16 @@ public class OneUiTipPopup {
         balloonPopup.setHeight(balloonHeight + (scaleMargin * 2));
     }
 
-    private void calculateArrowDirection(int arrowX, int arrowY) {
+    private void calculateArrowDirection(int windowArrowX, int windowArrowY) {
+        // arrowX/arrowY بإحداثيات النافذة؛ نحوّلها لإحداثيات الشاشة قبل مقارنتها بأبعاد الشاشة (مهم داخل الـ Dialog)
+        int[] windowOffset = new int[2];
+        getWindowOffsetOnScreen(windowOffset);
+        int arrowX = windowArrowX + windowOffset[0];
+        int arrowY = windowArrowY + windowOffset[1];
         if (isDefaultPosition) {
             int[] location = new int[2];
-            getAnchorLocation(location);
-            int parentY = location[1] + (parentView.getHeight() / 2);
+            parentView.getLocationInWindow(location);
+            int parentY = location[1] + windowOffset[1] + (parentView.getHeight() / 2);
 
             if (arrowX * 2 <= displayMetrics.widthPixels) {
                 arrowDirection = arrowY <= parentY ? Direction.TOP_RIGHT : Direction.BOTTOM_RIGHT;
@@ -983,12 +986,14 @@ public class OneUiTipPopup {
 
     private void calculateArrowPosition() {
         int[] location = new int[2];
-        getAnchorLocation(location);
+        parentView.getLocationInWindow(location);
         debugLog("calculateArrowPosition anchor location : " + location[0] + ", " + location[1]);
 
         arrowPositionX = location[0] + (parentView.getWidth() / 2);
         int y = location[1] + (parentView.getHeight() / 2);
-        if (y * 2 <= displayMetrics.heightPixels) {
+        int[] windowOffset = new int[2];
+        getWindowOffsetOnScreen(windowOffset);
+        if ((y + windowOffset[1]) * 2 <= displayMetrics.heightPixels) {
             arrowPositionY = (parentView.getHeight() / 2) + y;
         } else {
             arrowPositionY = y - (parentView.getHeight() / 2);
@@ -1049,6 +1054,11 @@ public class OneUiTipPopup {
 
     private void calculatePopupPosition() {
         getDisplayFrame(displayFrame);
+        // displayFrame بإحداثيات الشاشة بينما بقية الحسابات (وموضع showAtLocation) بإحداثيات نافذة الأيقونة.
+        // داخل الـ Dialog النافذة لا تبدأ من (0,0) فكان الـ pop-up يُزاح ويُقصّ من الجانب، فنُزيح الإطار بنفس المقدار.
+        int[] windowOffset = new int[2];
+        getWindowOffsetOnScreen(windowOffset);
+        displayFrame.offset(-windowOffset[0], -windowOffset[1]);
 
         if (balloonX < 0) {
             if (arrowDirection == Direction.BOTTOM_RIGHT || arrowDirection == Direction.TOP_RIGHT) {
@@ -1123,46 +1133,17 @@ public class OneUiTipPopup {
         return Math.max(min, Math.min(value, max));
     }
 
-    // عندما تكون الأيقونة داخل نافذة عائمة (مثل Dialog) فهي أصغر من الشاشة، والـ pop-up هو نافذة ابنة
-    // لتلك النافذة، فكان يُقصّ عند حدودها وتُحسب مواضعه بإحداثيات النافذة بينما الإطار المرجعي
-    // (displayFrame) بإحداثيات الشاشة. لذلك في هذه الحالة نعتمد إحداثيات الشاشة المطلقة في كل مكان.
-    private boolean isParentWindowFloating() {
+    // موضع بداية نافذة الأيقونة على الشاشة: (0,0) في الـ Activity كاملة الشاشة، وغير ذلك داخل الـ Dialog.
+    // في وضع DeX توجد معالجة خاصة أصلاً لذلك نُرجع (0,0).
+    private void getWindowOffsetOnScreen(int[] outOffset) {
+        outOffset[0] = 0;
+        outOffset[1] = 0;
         if (isDeskTopMode()) {
-            return false;
+            return;
         }
         View rootView = parentView.getRootView();
-        if (rootView == null) {
-            return false;
-        }
-        int[] windowLocation = new int[2];
-        rootView.getLocationOnScreen(windowLocation);
-        if (windowLocation[0] != 0 || windowLocation[1] != 0
-                || rootView.getWidth() < displayMetrics.widthPixels) {
-            return true;
-        }
-        ViewGroup.LayoutParams lp = rootView.getLayoutParams();
-        return lp instanceof WindowManager.LayoutParams
-                && (lp.width != ViewGroup.LayoutParams.MATCH_PARENT
-                || lp.height != ViewGroup.LayoutParams.MATCH_PARENT);
-    }
-
-    // موضع الأيقونة: بإحداثيات الشاشة إن كانت داخل نافذة عائمة، وإلا بإحداثيات النافذة كما كان.
-    private void getAnchorLocation(int[] outLocation) {
-        if (isParentWindowFloating()) {
-            parentView.getLocationOnScreen(outLocation);
-        } else {
-            parentView.getLocationInWindow(outLocation);
-        }
-    }
-
-    // يجعل النافذتين (bubble و balloon) تُوضعان بإحداثيات الشاشة المطلقة وغير مقيّدتين بحدود الـ Dialog.
-    private void applyParentWindowMode() {
-        boolean floating = isParentWindowFloating();
-        if (bubblePopup != null) {
-            bubblePopup.setLayoutInScreenEnabled(floating);
-        }
-        if (balloonPopup != null) {
-            balloonPopup.setLayoutInScreenEnabled(floating);
+        if (rootView != null) {
+            rootView.getLocationOnScreen(outOffset);
         }
     }
 
