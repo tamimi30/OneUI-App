@@ -391,6 +391,14 @@ public class OneUiTipPopup {
             calculateArrowDirection(arrowPositionX, arrowPositionY);
         } else {
             arrowDirection = direction;
+            // arrowPositionY حُسب مسبقاً على أساس الاتجاه التلقائي (أعلى الأيقونة إن كانت في النصف السفلي من الشاشة).
+            // عند فرض اتجاه يدوياً نعيد حسابه ليتوافق مع الاتجاه، وإلا غطّى الـ pop-up الأيقونة نفسها.
+            if (isDefaultPosition) {
+                int[] anchorLocation = new int[2];
+                parentView.getLocationInWindow(anchorLocation);
+                boolean isBottom = direction == Direction.BOTTOM_LEFT || direction == Direction.BOTTOM_RIGHT;
+                arrowPositionY = isBottom ? anchorLocation[1] + parentView.getHeight() : anchorLocation[1];
+            }
         }
         calculatePopupSize();
         calculatePopupPosition();
