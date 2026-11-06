@@ -63,7 +63,7 @@
 	<string name="toast_translation_api_error">فشلت ترجمة البيانات الوصفية، خدمة الترجمة غير متوفرة.</string>
 	<string name="toast_invalid_font_size">تم إدخال قيمة غير صالحة.</string>
 	<string name="toast_font_name_extraction_warning">تعذّر استخراج اسم الخط.</string>
-	<string name="font_size_dialog_tip"> إضغط على الرقم لتعديل حجم النص بدقة إضغط على الرقم لتعديل حجم النص بدقة إضغط على الرقم لتعديل حجم النص بدقة.</string>
+	<string name="font_size_dialog_tip">إضغط على الرقم لتعديل حجم النص بدقة.</string>
 
     <!-- Font info labels -->
     <string name="font_info_label_full_name">الاسم الكامل</string>
