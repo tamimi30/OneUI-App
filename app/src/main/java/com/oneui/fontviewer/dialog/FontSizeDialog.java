@@ -79,12 +79,8 @@ public class FontSizeDialog {
                 fontSizeTipPopup.dismiss(true);
                 return;
             }
-            fontSizeValue.clearFocus();
-            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
-            }
             fontSizeTipPopup = new OneUiTipPopup(helpIcon, OneUiTipPopup.MODE_TRANSLUCENT);
+            fontSizeTipPopup.setKeepSoftInputEnabled(true);
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             // set custom background color with alpha using project color
             // fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
