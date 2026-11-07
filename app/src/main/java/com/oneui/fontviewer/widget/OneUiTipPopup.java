@@ -514,6 +514,14 @@ public class OneUiTipPopup {
         debugLog("outside enabled : " + enabled);
     }
 
+    // Added: when enabled, the popup windows are flagged as not interacting with the input method, so
+    // showing the popup over a window whose soft keyboard is open does not close the keyboard.
+    public void setKeepSoftInputEnabled(boolean enabled) {
+        int inputMethodMode = enabled ? PopupWindow.INPUT_METHOD_NOT_NEEDED : PopupWindow.INPUT_METHOD_FROM_FOCUSABLE;
+        this.mBubblePopup.setInputMethodMode(inputMethodMode);
+        this.mBalloonPopup.setInputMethodMode(inputMethodMode);
+    }
+
     public void setPopupWindowClippingEnabled(boolean enabled) {
         this.mBubblePopup.setClippingEnabled(enabled);
         this.mBalloonPopup.setClippingEnabled(enabled);
@@ -1572,4 +1580,4 @@ public class OneUiTipPopup {
     public PopupWindow semGetBalloonPopupWindow() {
         return this.mBalloonPopup;
     }
-            }
+                                  }
