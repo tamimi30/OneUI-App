@@ -156,10 +156,6 @@ public class OneUiTipPopup {
 
     private DisplayMetrics displayMetrics;
     private boolean forceRealDisplay = false;
-    // true when the anchor lives inside a Dialog (see setDialogMode)
-    private boolean dialogMode = false;
-    // true when the pop-up windows are positioned in absolute screen coordinates
-    private boolean useScreenCoordinates = false;
     private CharSequence hintDescription;
 
     private int initialMessageViewWidth = 0;
@@ -442,7 +438,10 @@ public class OneUiTipPopup {
     public void setExpanded(boolean expanded) {
         if (expanded) {
             state = State.EXPANDED;
-            scaleMargin = 0;
+            // scaleMargin is intentionally NOT zeroed here (the original library does zero it).
+            // The expand animation uses an elastic interpolator that overshoots past 100%,
+            // so the popup window needs spare room around the balloon; with a margin of 0
+            // the window is exactly the balloon's size and the overshoot gets clipped.
             return;
         }
         scaleMargin = resources.getDimensionPixelSize(R.dimen.sem_tip_popup_scale_margin);
@@ -560,51 +559,6 @@ public class OneUiTipPopup {
         forceRealDisplay = !enabled;
         sideMargin = enabled ? resources.getDimensionPixelSize(R.dimen.sem_tip_popup_side_margin) : 0;
         debugLog("clipping enabled : " + enabled);
-    }
-
-    /**
-     * Call this when the anchor view ({@code parentView}) is inside a Dialog.
-     * <p>
-     * By default a PopupWindow is clipped to the window that contains its anchor. In an
-     * Activity that window is the whole screen, so nothing is cut. Inside a Dialog the
-     * containing window is the (smaller) dialog window, so the pop-up gets cut at the
-     * dialog's edges. This is the difference between your app and the OneUI 8 sample app,
-     * where the pop-up is shown from an Activity/Fragment and not from a Dialog.
-     * <p>
-     * With dialog mode enabled the pop-up windows are:
-     * <ul>
-     *     <li>clipped to the screen, not to the dialog window,</li>
-     *     <li>positioned in absolute screen coordinates (all the position math here then uses
-     *     {@code getLocationOnScreen()} instead of {@code getLocationInWindow()}),</li>
-     *     <li>kept inside the horizontal bounds of the dialog window, so the pop-up doesn't
-     *     stick out of the dialog.</li>
-     * </ul>
-     * Must be called before {@link #show()}.
-     */
-    public void setDialogMode(boolean enabled) {
-        dialogMode = enabled;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            useScreenCoordinates = enabled;
-            bubblePopup.setIsClippedToScreen(enabled);
-            bubblePopup.setIsLaidOutInScreen(enabled);
-            balloonPopup.setIsClippedToScreen(enabled);
-            balloonPopup.setIsLaidOutInScreen(enabled);
-        } else {
-            // Before Android 10 there is no public way to lay the window out in screen
-            // coordinates, so keep window coordinates and just drop the clipping.
-            useScreenCoordinates = false;
-            bubblePopup.setClippingEnabled(!enabled);
-            balloonPopup.setClippingEnabled(!enabled);
-        }
-        debugLog("dialog mode : " + enabled + " / screen coordinates : " + useScreenCoordinates);
-    }
-
-    private void getAnchorLocation(int[] outLocation) {
-        if (useScreenCoordinates) {
-            parentView.getLocationOnScreen(outLocation);
-        } else {
-            parentView.getLocationInWindow(outLocation);
-        }
     }
 
     private static int opaque(int color) {
@@ -1008,7 +962,7 @@ public class OneUiTipPopup {
     private void calculateArrowDirection(int arrowX, int arrowY) {
         if (isDefaultPosition) {
             int[] location = new int[2];
-            getAnchorLocation(location);
+            parentView.getLocationInWindow(location);
             int parentY = location[1] + (parentView.getHeight() / 2);
 
             if (arrowX * 2 <= displayMetrics.widthPixels) {
@@ -1030,7 +984,7 @@ public class OneUiTipPopup {
 
     private void calculateArrowPosition() {
         int[] location = new int[2];
-        getAnchorLocation(location);
+        parentView.getLocationInWindow(location);
         debugLog("calculateArrowPosition anchor location : " + location[0] + ", " + location[1]);
 
         arrowPositionX = location[0] + (parentView.getWidth() / 2);
@@ -1438,20 +1392,6 @@ public class OneUiTipPopup {
         screenRect.top = 0;
         screenRect.right = displayMetrics.widthPixels;
         screenRect.bottom = displayMetrics.heightPixels;
-
-        if (dialogMode) {
-            // Keep the pop-up inside the dialog window (same coordinate space as the
-            // anchor position: screen coordinates or window coordinates).
-            View rootView = parentView.getRootView();
-            int[] rootLocation = new int[2];
-            if (useScreenCoordinates) {
-                rootView.getLocationOnScreen(rootLocation);
-            }
-            screenRect.left = rootLocation[0];
-            screenRect.right = rootLocation[0] + rootView.getWidth();
-            debugLog("Screen Rect (dialog mode) = " + screenRect);
-            return;
-        }
 
         Rect bounds = new Rect();
         parentView.getRootView().getWindowVisibleDisplayFrame(bounds);
