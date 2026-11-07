@@ -131,6 +131,7 @@ public class OneUiTipPopup {
     private final View mParentView;
     private final Resources mResources;
     private int mScaleMargin;
+    private boolean mExpandedDirectly;
     private int mSideMargin;
     private int mState;
     private int mType;
@@ -348,6 +349,7 @@ public class OneUiTipPopup {
             this.mArrowDirection = direction;
         }
         calculatePopupSize();
+        updateExpandedScaleMargin();
         calculatePopupPosition();
         setBubblePanel();
         setBalloonPanel();
@@ -406,15 +408,30 @@ public class OneUiTipPopup {
     }
 
     public void setExpanded(boolean expanded) {
+        this.mExpandedDirectly = expanded;
         if (expanded) {
             this.mState = STATE_EXPANDED;
             // mScaleMargin is intentionally NOT zeroed here (the original library does zero it).
             // The expand animation uses an elastic interpolator that overshoots past 100%,
             // so the popup window needs spare room around the balloon; with a margin of 0
             // the window is exactly the balloon's size and the overshoot gets clipped.
+            // The margin is enlarged to fit the overshoot in updateExpandedScaleMargin().
             return;
         }
         this.mScaleMargin = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_scale_margin);
+    }
+
+    // Added: ELASTIC_40 overshoots to about 1.09 (scale up to ~1.07 horizontally from the 0.27 start
+    // and ~1.09 vertically). The default scale margin (10dp) is too small for that on a wide balloon,
+    // so the margin is sized from the balloon itself (8% of its width / 10% of its height).
+    // Only applies when shown directly in the expanded state; the hint bubble flow is untouched.
+    private void updateExpandedScaleMargin() {
+        if (!this.mExpandedDirectly) {
+            return;
+        }
+        int defaultMargin = this.mResources.getDimensionPixelSize(R.dimen.sem_tip_popup_scale_margin);
+        int overshootMargin = (int) Math.ceil(Math.max(this.mBalloonWidth * 0.08f, this.mBalloonHeight * 0.1f));
+        this.mScaleMargin = Math.max(defaultMargin, overshootMargin);
     }
 
     public void setTargetPosition(int x, int y) {
@@ -453,6 +470,7 @@ public class OneUiTipPopup {
             this.mArrowDirection = direction;
         }
         calculatePopupSize();
+        updateExpandedScaleMargin();
         calculatePopupPosition();
         setBubblePanel();
         setBalloonPanel();
@@ -623,6 +641,10 @@ public class OneUiTipPopup {
             }
             TipWindow tipWindow2 = this.mBalloonPopup;
             if (tipWindow2 != null) {
+                // The window is larger than the balloon by mScaleMargin on every side, so it starts left
+                // of the balloon's side margin. With clipping on, a popup that belongs to a Dialog is
+                // pushed back inside the dialog window and the balloon would shift.
+                tipWindow2.setClippingEnabled(false);
                 tipWindow2.showAtLocation(this.mParentView, 0, this.mBalloonPopupX, this.mBalloonPopupY);
                 animateBalloonScaleUp();
             }
@@ -1550,4 +1572,4 @@ public class OneUiTipPopup {
     public PopupWindow semGetBalloonPopupWindow() {
         return this.mBalloonPopup;
     }
-                    }
+            }
