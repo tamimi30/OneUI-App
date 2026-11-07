@@ -85,8 +85,6 @@ public class FontSizeDialog {
                 imm.hideSoftInputFromWindow(fontSizeValue.getWindowToken(), 0);
             }
             fontSizeTipPopup = new OneUiTipPopup(helpIcon, OneUiTipPopup.Mode.TRANSLUCENT);
-            // The anchor is inside a Dialog: without this the pop-up gets clipped by the dialog window.
-            fontSizeTipPopup.setDialogMode(true);
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             // set custom background color with alpha using project color
             // fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
