@@ -79,14 +79,14 @@ public class FontSizeDialog {
                 fontSizeTipPopup.dismiss(true);
                 return;
             }
-            fontSizeTipPopup = new OneUiTipPopup(helpIcon, OneUiTipPopup.MODE_TRANSLUCENT);
+            fontSizeTipPopup = new OneUiTipPopup(helpIcon, OneUiTipPopup.Mode.TRANSLUCENT);
             fontSizeTipPopup.setKeepSoftInputEnabled(true);
             fontSizeTipPopup.setMessage(context.getString(R.string.font_size_dialog_tip));
             // set custom background color with alpha using project color
             // fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
             fontSizeTipPopup.setExpanded(true);
             boolean isRtl = helpIcon.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
-            fontSizeTipPopup.show(isRtl ? OneUiTipPopup.DIRECTION_BOTTOM_RIGHT : OneUiTipPopup.DIRECTION_BOTTOM_LEFT);
+            fontSizeTipPopup.show(isRtl ? OneUiTipPopup.Direction.BOTTOM_RIGHT : OneUiTipPopup.Direction.BOTTOM_LEFT);
         });
 
         // يرصد ظهور/اختفاء الكيبورد مباشرة، بغض النظر عن السبب (رجوع، Done، إلخ)
