@@ -42,11 +42,8 @@ import androidx.appcompat.animation.SeslAnimationUtils;
 import androidx.reflect.content.res.SeslConfigurationReflector;
 import androidx.reflect.widget.SeslTextViewReflector;
 
-
 import com.oneui.fontviewer.BuildConfig;
 import com.oneui.fontviewer.R;
-
-import java.lang.reflect.Constructor;
 
 public class OneUiTipPopup {
     private static final int ANIMATION_DURATION_BOUNCE_SCALE1 = 167;
@@ -270,23 +267,8 @@ public class OneUiTipPopup {
             INTERPOLATOR_ELASTIC_50 = SeslAnimationUtils.ELASTIC_50;
         }
         if (INTERPOLATOR_ELASTIC_CUSTOM == null) {
-            INTERPOLATOR_ELASTIC_CUSTOM = createElasticInterpolator(1.0f, 1.3f);
+            INTERPOLATOR_ELASTIC_CUSTOM = SeslAnimationUtils.ELASTIC_40; //TODO: new SeslElasticInterpolator(1.0f, 1.3f);
         }
-    }
-
-    @SuppressLint("PrivateApi")
-    private static Interpolator createElasticInterpolator(float amplitude, float period) {
-        try {
-            Constructor<?> constructor = Class.forName("androidx.appcompat.animation.SeslElasticInterpolator")
-                    .getDeclaredConstructor(float.class, float.class);
-            constructor.setAccessible(true);
-            Object interpolator = constructor.newInstance(amplitude, period);
-            if (interpolator instanceof Interpolator) {
-                return (Interpolator) interpolator;
-            }
-        } catch (Throwable ignored) {
-        }
-        return SeslAnimationUtils.ELASTIC_40;
     }
 
     private void initBubblePopup(int mode) {
@@ -1568,4 +1550,4 @@ public class OneUiTipPopup {
     public PopupWindow semGetBalloonPopupWindow() {
         return this.mBalloonPopup;
     }
-  }
+                    }
