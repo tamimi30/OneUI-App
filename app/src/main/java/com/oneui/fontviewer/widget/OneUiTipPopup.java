@@ -438,7 +438,10 @@ public class OneUiTipPopup {
     public void setExpanded(boolean expanded) {
         if (expanded) {
             state = State.EXPANDED;
-            scaleMargin = 0;
+            // scaleMargin is intentionally NOT zeroed here (the original library does zero it).
+            // The expand animation uses an elastic interpolator that overshoots past 100%,
+            // so the popup window needs spare room around the balloon; with a margin of 0
+            // the window is exactly the balloon's size and the overshoot gets clipped.
             return;
         }
         scaleMargin = resources.getDimensionPixelSize(R.dimen.sem_tip_popup_scale_margin);
