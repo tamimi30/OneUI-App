@@ -89,7 +89,8 @@ public class FontSizeDialog {
             // set custom background color with alpha using project color
             // fontSizeTipPopup.setBackgroundColorWithAlpha(ContextCompat.getColor(context, R.color.orange));
             fontSizeTipPopup.setExpanded(true);
-            fontSizeTipPopup.show();
+            boolean isRtl = context.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+            fontSizeTipPopup.show(isRtl ? OneUiTipPopup.Direction.BOTTOM_RIGHT : OneUiTipPopup.Direction.BOTTOM_LEFT);
         });
 
         // يرصد ظهور/اختفاء الكيبورد مباشرة، بغض النظر عن السبب (رجوع، Done، إلخ)
