@@ -52,7 +52,7 @@ import com.oneui.fontviewer.ui.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.ui.fragment.fontviewer.manager.FontViewerStorageManager;
 import com.oneui.fontviewer.ui.fragment.fontviewer.manager.FontViewerPreferenceManager;
 import com.oneui.fontviewer.ui.fragment.systemfont.data.SystemFontCache;
-import com.oneui.fontviewer.ui.metadata.FontMetadataExtractor;
+import com.oneui.fontviewer.ui.utils.metadata.FontMetadataExtractor;
 import com.oneui.fontviewer.ui.settings.viewmodel.SettingsViewModel;
 import com.oneui.fontviewer.ui.utils.list.FontWeightWidthExtractor;
 import com.oneui.fontviewer.ui.fragment.fontviewer.utils.BoldItalicFormatting;

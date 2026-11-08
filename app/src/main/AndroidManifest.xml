@@ -83,7 +83,7 @@
             </activity>
 
         <activity
-            android:name=".ui.FontOpenTriggerActivity"
+            android:name=".ui.fragment.fontviewer.FontOpenTriggerActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="true"
             android:noHistory="true"

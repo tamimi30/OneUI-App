@@ -15,7 +15,7 @@ import com.oneui.fontviewer.data.database.AppDatabase;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
 import com.oneui.fontviewer.ui.fragment.localfont.fontdirectory.LocalFontDirectory;
-import com.oneui.fontviewer.ui.metadata.FontMetadataExtractor;
+import com.oneui.fontviewer.ui.utils.metadata.FontMetadataExtractor;
 import com.oneui.fontviewer.ui.utils.list.FontWeightWidthExtractor; 
 
 public class LocalFontRepository {

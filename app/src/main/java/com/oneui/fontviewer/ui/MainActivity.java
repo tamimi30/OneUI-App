@@ -30,13 +30,14 @@ import com.oneui.fontviewer.ui.fragment.localfont.LocalFontListFragment;
 import com.oneui.fontviewer.ui.fragment.systemfont.SystemFontListFragment;
 import com.oneui.fontviewer.ui.fragment.favorite.FavoriteFontListFragment;
 import com.oneui.fontviewer.ui.fragment.trash.TrashFragment;
-import com.oneui.fontviewer.ui.drawer.DrawerListAdapter;
+import com.oneui.fontviewer.ui.navi.DrawerListAdapter;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.widget.list.search.SearchCoordinator;
 import com.oneui.fontviewer.ui.settings.SettingsActivity;
 import com.oneui.fontviewer.ui.fragment.home.HomeActivity;
 import com.oneui.fontviewer.ui.utils.notification.BatchOperationState;
 import com.oneui.fontviewer.ui.fragment.AppScreen;
+import com.oneui.fontviewer.ui.navi.NavManager;
 
 public class MainActivity extends BaseActivity
     implements LocalFontListFragment.OnFontSelectedListener,
