@@ -1,0 +1,85 @@
+package com.oneui.fontviewer.ui.fragment.systemfont.adapter;
+
+import android.graphics.Typeface;
+import android.view.View;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.ui.utils.metadata.FontWeightWidthExtractor;
+import com.oneui.fontviewer.ui.widget.list.search.TextHighlighter;
+
+public class SystemFontViewHolder extends RecyclerView.ViewHolder {
+
+    private final TextView nameView;
+    private final TextView weightWidthView;
+    private final Typeface originalTypeface;
+
+    public SystemFontViewHolder(@NonNull View itemView) {
+        super(itemView);
+        nameView        = itemView.findViewById(R.id.font_item_name);
+        weightWidthView = itemView.findViewById(R.id.font_item_weight_width); 
+        originalTypeface = nameView.getTypeface();
+    }
+
+    public void bind(String displayName, String path, boolean isSearchActive,
+                     String searchQuery, boolean isLastOpened, TextHighlighter highlighter,
+                     String weightWidthLabel) {
+
+        if (isSearchActive && searchQuery != null && !searchQuery.isEmpty()) {
+            nameView.setText(highlighter.highlightText(displayName, searchQuery));
+        } else {
+            nameView.setText(displayName);
+        }
+
+        bindLastOpened(isLastOpened);
+
+        if (weightWidthView != null) {
+            String formattedLabel = FontWeightWidthExtractor.formatLabel(itemView.getContext(), weightWidthLabel);
+            String label = (formattedLabel != null && !formattedLabel.isEmpty())
+                    ? formattedLabel
+                    : itemView.getContext().getString(R.string.unknown_font);
+            weightWidthView.setText(label);
+        }
+
+        nameView.setTag(path);
+    }
+
+    public void bindLastOpened(boolean isLastOpened) {
+        if (nameView == null) return;
+
+        if (isLastOpened) {
+            int primaryColor = ContextCompat.getColor(nameView.getContext(), R.color.sesl_primary_color_dark);
+            nameView.setTextColor(primaryColor);
+        } else {
+            nameView.setTextColor(
+                ContextCompat.getColor(nameView.getContext(), R.color.primary_text_color)
+            );
+        }
+    }
+
+    public void setTypeface(Typeface typeface) {
+        if (nameView != null && typeface != null) {
+            nameView.setTypeface(typeface);
+        }
+    }
+
+    public void setDefaultTypeface(Typeface defaultTypeface) {
+        if (nameView != null) {
+            nameView.setTypeface(defaultTypeface != null ? defaultTypeface : originalTypeface);
+        }
+    }
+
+    public Object getTag() {
+        return nameView != null ? nameView.getTag() : null;
+    }
+
+    public void setOnClickListener(View.OnClickListener listener) {
+        if (itemView != null) {
+            itemView.setOnClickListener(listener);
+        }
+    }
+}

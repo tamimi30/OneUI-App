@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/main_content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.oneui.fontviewer.ui.widget.list.OneUiRecyclerView
+            android:id="@+id/font_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="10dp"
+            android:scrollbarStyle="outsideOverlay"
+            android:background="@color/oui_background_color"
+            android:scrollbars="vertical" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/empty_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingStart="45dp"
+                android:paddingEnd="45dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/empty_icon"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="7dp"
+                    android:tint="#ff0381fe"
+                    android:src="@drawable/ic_oui_device_outline" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/empty_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sec-roboto-light"
+                    android:gravity="center"
+                    android:layout_marginBottom="11dp"
+                    android:text="@string/local_fonts_empty_title"
+                    android:textSize="17sp"
+                    android:textColor="@color/drawer_icon_color" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/empty_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sec-roboto-light"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4sp"
+                    android:text="@string/local_fonts_empty_message"
+                    android:textSize="13sp"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/no_results_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/no_results_found"
+                    android:fontFamily="sec-roboto-light"
+                    android:textSize="17sp"
+                    android:textColor="@color/drawer_icon_color" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- ★ حاوية مؤشر التحميل — تظهر فقط في قائمة الخطوط المحلية أثناء تحميل المجلد ★ -->
+        <LinearLayout
+            android:id="@+id/loading_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <androidx.appcompat.widget.SeslProgressBar
+                style="@style/Widget.AppCompat.ProgressBar.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/loading_fonts"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/select_folder_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/folder_container_inner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingStart="45dp"
+            android:paddingEnd="45dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sec-roboto-light"
+                android:text="@string/local_fonts_select_folder_description"
+                android:textSize="17sp"
+                android:lineSpacingExtra="4sp"
+                android:textColor="@color/drawer_icon_color"
+                android:gravity="center"
+                android:layout_marginBottom="7dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/select_folder_button"
+                android:layout_width="210dp"
+                android:backgroundTint="?attr/colorPrimary"
+                style="@style/OneUI.AppInfoButton"
+                android:textSize="18sp"
+                android:textColor="@color/oui_appinfolayout_button_primary_text"
+                android:text="@string/local_fonts_select_folder_button" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>
