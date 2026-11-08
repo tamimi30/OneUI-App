@@ -1,0 +1,216 @@
+package com.oneui.fontviewer.ui.fragment.home;
+
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+
+import dev.oneuiproject.oneui.utils.internal.ToolbarLayoutUtils;
+
+import com.oneui.fontviewer.R;
+
+public class HomeFragment extends Fragment {
+
+    private boolean mEnableBackToHeader;
+    private AppBarLayout mAppBarLayout;
+    private CollapsingToolbarLayout mCollapsingToolbar;
+    private Toolbar mToolbar;
+    private View mSwipeUpContainer;
+    private ViewGroup mBottomContainer;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+
+    private AppBarOffsetListener mOffsetListener;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initViews(view);
+        setupToolbar();
+        setupAppBar(getResources().getConfiguration());
+        initContent(view);
+    }
+
+    private void initContent(View view) {
+        ImageView headerIcon = view.findViewById(R.id.header_app_icon);
+        if (headerIcon != null) {
+            headerIcon.setImageResource(R.drawable.ic_launcher);
+        }
+
+        ImageView bottomIcon = view.findViewById(R.id.bottom_app_icon);
+        if (bottomIcon != null) {
+            bottomIcon.setImageResource(R.drawable.ic_launcher);
+        }
+
+        try {
+            String versionName = requireContext().getPackageManager()
+                    .getPackageInfo(requireContext().getPackageName(), 0).versionName;
+            String versionText = "Version " + versionName;
+
+            TextView headerVersion = view.findViewById(R.id.about_header_app_version);
+            if (headerVersion != null) {
+                headerVersion.setText(versionText);
+            }
+
+            TextView bottomVersion = view.findViewById(R.id.about_bottom_app_version);
+            if (bottomVersion != null) {
+                bottomVersion.setText(versionText);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initViews(View view) {
+        mAppBarLayout = view.findViewById(R.id.app_bar);
+        mCollapsingToolbar = view.findViewById(R.id.collapsing_toolbar);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mSwipeUpContainer = view.findViewById(R.id.swipe_up_container);
+        mBottomContainer = view.findViewById(R.id.bottom_container);
+
+        mOffsetListener = new AppBarOffsetListener();
+    }
+
+    private void setupToolbar() {
+        if (getActivity() instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) requireActivity();
+            activity.setSupportActionBar(mToolbar);
+            if (activity.getSupportActionBar() != null) {
+                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
+            mToolbar.setNavigationOnClickListener(v -> activity.onBackPressed());
+        }
+    }
+
+
+    private void setupAppBar(Configuration config) {
+        ToolbarLayoutUtils.hideStatusBarForLandscape(requireActivity(), config.orientation);
+        ToolbarLayoutUtils.updateListBothSideMargin(requireActivity(), mBottomContainer);
+
+        if (config.orientation != Configuration.ORIENTATION_LANDSCAPE && !isInMultiWindowMode()) {
+            mAppBarLayout.seslSetCustomHeightProportion(true, 0.5f);
+            mEnableBackToHeader = true;
+
+            if (mOffsetListener != null) {
+                mAppBarLayout.removeOnOffsetChangedListener(mOffsetListener);
+                mAppBarLayout.addOnOffsetChangedListener(mOffsetListener);
+            }
+
+            mAppBarLayout.setExpanded(true, false);
+
+            if (mSwipeUpContainer != null) {
+                mSwipeUpContainer.setVisibility(View.VISIBLE);
+                ViewGroup.LayoutParams lp = mSwipeUpContainer.getLayoutParams();
+                lp.height = getResources().getDisplayMetrics().heightPixels / 2;
+            }
+        } else {
+            if (mOffsetListener != null) {
+                mAppBarLayout.removeOnOffsetChangedListener(mOffsetListener);
+            }
+
+            mAppBarLayout.setExpanded(false, false);
+            mEnableBackToHeader = false;
+            mAppBarLayout.seslSetCustomHeightProportion(true, 0);
+
+            if (mBottomContainer != null) {
+                mBottomContainer.setAlpha(1f);
+            }
+            if (mSwipeUpContainer != null) {
+                mSwipeUpContainer.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    
+
+    public boolean handleBackPressed() {
+        if (mEnableBackToHeader && mAppBarLayout != null && mAppBarLayout.seslIsCollapsed()) {
+            mAppBarLayout.setExpanded(true, true);
+            return true;
+        }
+        return false;
+    }
+
+    
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setupAppBar(newConfig);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mAppBarLayout != null && mOffsetListener != null) {
+            mAppBarLayout.removeOnOffsetChangedListener(mOffsetListener);
+        }
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    private boolean isInMultiWindowMode() {
+        return requireActivity().isInMultiWindowMode();
+    }
+
+    private class AppBarOffsetListener implements AppBarLayout.OnOffsetChangedListener {
+        @Override
+        public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+            final int totalScrollRange = appBarLayout.getTotalScrollRange();
+            final int abs = Math.abs(verticalOffset);
+
+            if (mSwipeUpContainer != null) {
+                if (abs >= totalScrollRange / 2) {
+                    mSwipeUpContainer.setAlpha(0f);
+                } else if (abs == 0) {
+                    mSwipeUpContainer.setAlpha(1f);
+                } else {
+                    float offsetAlpha = (appBarLayout.getY() / totalScrollRange);
+                    float arrowAlpha = 1 - (offsetAlpha * -3);
+
+                    if (arrowAlpha < 0) {
+                        arrowAlpha = 0;
+                    } else if (arrowAlpha > 1) {
+                        arrowAlpha = 1;
+                    }
+                    mSwipeUpContainer.setAlpha(arrowAlpha);
+                }
+            }
+
+            if (mBottomContainer != null) {
+                final float alphaRange = mCollapsingToolbar.getHeight() * 0.143f;
+                final float layoutPosition = Math.abs(appBarLayout.getTop());
+                float bottomAlpha = (150.0f / alphaRange) * (layoutPosition - (mCollapsingToolbar.getHeight() * 0.35f));
+
+                if (bottomAlpha < 0) {
+                    bottomAlpha = 0;
+                } else if (bottomAlpha >= 255) {
+                    bottomAlpha = 255;
+                }
+
+                mBottomContainer.setAlpha(bottomAlpha / 255);
+            }
+        }
+    }
+}
