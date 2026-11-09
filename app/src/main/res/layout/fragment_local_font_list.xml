@@ -78,7 +78,6 @@
 
         </androidx.core.widget.NestedScrollView>
 
-        <!-- ★ حاوية مؤشر التحميل — تظهر فقط في قائمة الخطوط المحلية أثناء تحميل المجلد ★ -->
         <LinearLayout
             android:id="@+id/loading_container"
             android:layout_width="match_parent"

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/axis_item_container"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:paddingTop="14dp"
@@ -38,7 +36,6 @@
             android:layout_height="wrap_content"
             android:padding="7dp"
             android:layout_marginEnd="-7dp"
-            android:orientation="vertical"
             android:gravity="center"
             android:background="@drawable/sort_btn_ripple_oval"
             android:clickable="true"
@@ -47,7 +44,6 @@
             android:tooltipText="@string/axis_info_button_description">
 
             <ImageView
-                android:id="@+id/axis_info_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_oui_info_outline"
