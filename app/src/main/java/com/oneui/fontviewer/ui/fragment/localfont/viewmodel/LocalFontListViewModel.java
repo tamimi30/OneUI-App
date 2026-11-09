@@ -50,6 +50,10 @@ public class LocalFontListViewModel extends AndroidViewModel {
     private boolean mIsFolderSyncing = false;
     private List<FontEntity> mPendingSyncFonts = null;
 
+    // أقل مدة بين فحصين صامتين متتاليين للمجلد، حتى لا يتكرر الفحص عند التنقل السريع بين التطبيقات
+    private static final long MIN_SILENT_REFRESH_INTERVAL_MS = 2000;
+    private long mLastSilentRefreshTime = 0;
+
     private AtomicBoolean trashCancelFlag = new AtomicBoolean(false);
 
     // خيط خلفي مخصص لتحميل معاينات الخطوط قبل نشر القائمة للواجهة
@@ -420,7 +424,47 @@ public class LocalFontListViewModel extends AndroidViewModel {
         loadFontsFromPath(folderPath, true);
     }
 
+    /**
+     * يفحص مجلد الخطوط بصمت بعد عودة المستخدم للتطبيق (مثلاً بعد إضافة ملف من تطبيق ملفات آخر)،
+     * دون شاشة تحميل، وينشر القائمة للواجهة فقط إن تغيّر شيء فعلاً، حتى لا يحدث وميض عند عدم وجود تغييرات.
+     */
+    public void refreshFontsSilently() {
+        final String folderPath = preferenceManager.getFontFolderPath();
+        if (folderPath == null || folderPath.isEmpty()) return;
+
+        // فحص سابق أو تحميل ما زال شغالاً، لا نبدأ فحصاً ثانياً فوقه
+        if (mIsFolderSyncing || Boolean.TRUE.equals(isLoadingLiveData.getValue())) return;
+
+        long now = android.os.SystemClock.elapsedRealtime();
+        if (now - mLastSilentRefreshTime < MIN_SILENT_REFRESH_INTERVAL_MS) return;
+        mLastSilentRefreshTime = now;
+
+        if (fontPreloadExecutor.isShutdown()) return;
+        try {
+            fontPreloadExecutor.execute(() -> {
+                // إن كان المجلد غير متاح الآن (صلاحية سُحبت، أو ذاكرة خارجية انفصلت) نتجاهل الفحص،
+                // لأن المزامنة كانت ستعدّ ذلك مجلداً فارغاً وتحذف كل الخطوط من قاعدة البيانات
+                File directory = new File(folderPath);
+                if (!directory.isDirectory() || directory.list() == null) {
+                    Log.w(TAG, "refreshFontsSilently: folder not accessible, skipping");
+                    return;
+                }
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    // قد يبدأ تحميل آخر أو يتغير المجلد أثناء فحص الوصول، فنتأكد مرة أخيرة قبل المزامنة
+                    if (mIsFolderSyncing || !folderPath.equals(preferenceManager.getFontFolderPath())) return;
+                    loadFontsFromPath(folderPath, false, true);
+                });
+            });
+        } catch (RejectedExecutionException e) {
+            Log.w(TAG, "refreshFontsSilently: task rejected, executor already shut down", e);
+        }
+    }
+
     public void loadFontsFromPath(String folderPath, boolean showLoading) {
+        loadFontsFromPath(folderPath, showLoading, false);
+    }
+
+    private void loadFontsFromPath(String folderPath, boolean showLoading, boolean publishOnlyIfChanged) {
         if (folderPath == null || folderPath.isEmpty()) {
             return;
         }
@@ -437,10 +481,14 @@ public class LocalFontListViewModel extends AndroidViewModel {
         mIsFolderSyncing = true;
 
         final long startTime = System.currentTimeMillis();
-        
+
+        // عدد التغييرات التي وجدتها المزامنة (إضافة + تعديل + حذف)، نحتاجه في الفحص الصامت
+        final int[] changedCount = {0};
+
         repository.loadAndSyncLocalFonts(folderPath, new LocalFontRepository.OnSyncCompleteListener() {
             @Override
             public void onSyncComplete(int added, int updated, int deleted) {
+                changedCount[0] = added + updated + deleted;
                 String message = String.format("Synced: %d added, %d updated, %d deleted",
                     added, updated, deleted);
                 Log.d(TAG, message);
@@ -448,6 +496,21 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
             @Override
             public void onFullExtractionComplete() {
+                // الفحص الصامت ولم يتغير شيء في المجلد: لا ننشر القائمة ولا نلمس الواجهة، فلا وميض
+                if (publishOnlyIfChanged && changedCount[0] == 0) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        mIsFolderSyncing = false;
+
+                        // إن وصل تحديث من قاعدة البيانات أثناء الفحص (مثل استخراج اسم خط) لا نضيّعه
+                        List<FontEntity> pending = mPendingSyncFonts;
+                        mPendingSyncFonts = null;
+                        if (pending != null) {
+                            publishFontsAfterPreload(pending, null);
+                        }
+                    });
+                    return;
+                }
+
                 List<FontEntity> freshFontsFromDb;
                 try {
                     freshFontsFromDb = repository.getLocalFontsSync();
