@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp"
+    android:paddingTop="11dp"
+    android:paddingBottom="10dp"
     android:paddingStart="11dp"
     android:paddingEnd="17dp"
     android:layout_marginEnd="13dp"
@@ -19,24 +19,25 @@
         android:id="@+id/axis_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="100sp"
         android:textSize="13sp"
         android:textColor="?android:attr/textColorSecondary"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:paddingStart="13dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginBottom="0dp"
-        android:background="@drawable/sort_btn_ripple"
+        android:paddingEnd="13dp"
+        android:background="@drawable/axis_name_ripple"
         android:clickable="true"
         android:focusable="true"
         android:tooltipText="@string/axis_info_button_description" />
+        
+    <View
+        android:layout_width="100sp"
+        android:layout_height="2dp"
+        android:layout_marginEnd="37dp" />
 
     <com.oneui.fontviewer.ui.widget.AxisSpinner
         android:id="@+id/axis_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
