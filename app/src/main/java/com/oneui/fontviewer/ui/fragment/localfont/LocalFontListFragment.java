@@ -89,6 +89,10 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
     private final Set<String> mFavoritePaths = new HashSet<>();
 
     private boolean mIsFirstLoad = true;
+
+    // يصبح true عند إيقاف الشاشة (التطبيقات الأخيرة أو الانتقال لشاشة أخرى)، فنفحص المجلد عند العودة
+    private boolean mWasStopped = false;
+
     private boolean mHasNotifiedReady = false;
     private boolean mAwaitingInitialFontsLoad = false;
 
@@ -812,6 +816,30 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
         out.putString("sort_type", mSortManager.getCurrentSortType().name());
         out.putBoolean("sort_asc", mSortManager.isSortAscending());
         out.putBoolean("is_first_load", mIsFirstLoad);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mWasStopped = true;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // عند العودة للتطبيق (من التطبيقات الأخيرة أو من شاشة أخرى) نفحص المجلد بصمت،
+        // فيظهر أي ملف أضيف من خارج التطبيق دون شاشة تحميل ودون وميض
+        if (mWasStopped) {
+            mWasStopped = false;
+            if (!mIsFirstLoad
+                    && !mIsBatchOperationRunning
+                    && mViewModel != null
+                    && mLocalFontPermissionManager != null
+                    && mLocalFontPermissionManager.hasRequiredPermissions()) {
+                mViewModel.refreshFontsSilently();
+            }
+        }
     }
 
     @Override
