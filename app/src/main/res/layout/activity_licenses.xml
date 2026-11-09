@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<dev.oneuiproject.oneui.layout.ToolbarLayout 
+<dev.oneuiproject.oneui.layout.ToolbarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar_layout"
@@ -16,25 +16,16 @@
         android:overScrollMode="always"
         android:scrollbars="vertical">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/license_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
-
-            <TextView
-                android:id="@+id/license_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/description_text_color"
-                android:textSize="16dp"
-                android:lineSpacingExtra="4dp"
-                android:textAlignment="viewStart"
-                android:autoLink="web"
-                android:textColorLink="?attr/colorPrimaryDark"
-                android:linksClickable="true"/>
-
-        </LinearLayout>
+            android:padding="24dp"
+            android:textColor="@color/description_text_color"
+            android:textSize="16dp"
+            android:lineSpacingExtra="4dp"
+            android:autoLink="web"
+            android:textColorLink="?attr/colorPrimaryDark" />
 
     </androidx.core.widget.NestedScrollView>
 
