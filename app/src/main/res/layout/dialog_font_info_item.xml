@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="69.75dp"
+    android:layoutDirection="locale"
     android:gravity="center_vertical"
     android:orientation="vertical"
     android:focusable="true"
@@ -17,14 +18,12 @@
         android:id="@+id/font_info_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textDirection="locale"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
         android:id="@+id/font_info_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textDirection="locale"
         android:lineSpacingExtra="4sp"
         android:textAppearance="?attr/textAppearanceListItem"
         android:autoLink="web|email"
