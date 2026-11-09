@@ -475,7 +475,7 @@ public class FontViewerFragment extends Fragment {
 
     /**
      * ★ ينفخ (Inflate) نسخة واحدة من قالب البطاقة الموحّد vf_axis_spinner_item لهذا المحور، ويربط
-     *   اسم المحور وزر المعلومات الخاص به، ثم يضيفها الى صف المحاور. هذا يحدث مرة واحدة فقط
+     *   اسم المحور (الذي يفتح ديالوج معلومات المحور عند الضغط عليه)، ثم يضيفها الى صف المحاور. هذا يحدث مرة واحدة فقط
      *   عند إنشاء الـ Fragment (initViews)، وليس عند كل فتح خط، فلا توجد أي كلفة أداء إضافية
      *   عند فتح الخطوط لاحقاً — نفس عدد الـ Views ونفس منطق الإظهار/الإخفاء كما كان سابقاً ★
      */
@@ -488,15 +488,11 @@ public class FontViewerFragment extends Fragment {
         TextView nameText = item.findViewById(R.id.axis_name_text);
         if (nameText != null) {
             nameText.setText(labelRes);
+            nameText.setOnClickListener(v ->
+                    AxisInfoDialog.show(requireContext(), infoTitleRes, infoImageRes, infoDescriptionRes));
         }
 
         AppCompatSpinner spinner = item.findViewById(R.id.axis_spinner);
-
-        View infoContainer = item.findViewById(R.id.axis_info_icon_container);
-        if (infoContainer != null) {
-            infoContainer.setOnClickListener(v ->
-                    AxisInfoDialog.show(requireContext(), infoTitleRes, infoImageRes, infoDescriptionRes));
-        }
 
         parent.addView(item);
 
@@ -505,7 +501,7 @@ public class FontViewerFragment extends Fragment {
 
     /**
      * نفس فكرة inflateAxisItem تماماً، لكن للمحاور الثنائية القيمة: ينفخ بطاقة vf_axis_switch_item
-     * (الاسم وزر المعلومات في الأعلى والمفتاح تحتهما) ويضيفها الى صف المحاور مرة واحدة فقط عند الإنشاء.
+     * (الاسم القابل للضغط لفتح معلومات المحور في الأعلى والمفتاح تحته) ويضيفها الى صف المحاور مرة واحدة فقط عند الإنشاء.
      */
     private AxisSwitchUi inflateAxisSwitchItem(ViewGroup parent, String axisTag, @StringRes int labelRes,
                                                 @StringRes int infoTitleRes, @DrawableRes int infoImageRes,
@@ -516,15 +512,11 @@ public class FontViewerFragment extends Fragment {
         TextView nameText = item.findViewById(R.id.axis_name_text);
         if (nameText != null) {
             nameText.setText(labelRes);
+            nameText.setOnClickListener(v ->
+                    AxisInfoDialog.show(requireContext(), infoTitleRes, infoImageRes, infoDescriptionRes));
         }
 
         SwitchCompat switchView = item.findViewById(R.id.axis_switch);
-
-        View infoContainer = item.findViewById(R.id.axis_info_icon_container);
-        if (infoContainer != null) {
-            infoContainer.setOnClickListener(v ->
-                    AxisInfoDialog.show(requireContext(), infoTitleRes, infoImageRes, infoDescriptionRes));
-        }
 
         parent.addView(item);
 
