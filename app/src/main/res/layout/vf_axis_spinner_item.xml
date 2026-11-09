@@ -15,43 +15,19 @@
     android:background="@drawable/vf_axis_item_bg"
     android:visibility="gone">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/axis_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="5dp">
-
-        <TextView
-            android:id="@+id/axis_name_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="100sp"
-            android:textSize="13sp"
-            android:textColor="?android:attr/textColorSecondary"
-            android:layout_marginEnd="1dp" />
-
-        <LinearLayout
-            android:id="@+id/axis_info_icon_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="7dp"
-            android:layout_marginEnd="-7dp"
-            android:background="@drawable/sort_btn_ripple_oval"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:contentDescription="@string/axis_info_button_description"
-            android:tooltipText="@string/axis_info_button_description">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_oui_info_outline"
-                android:tint="?android:attr/textColorSecondary" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+        android:minWidth="100sp"
+        android:textSize="13sp"
+        android:textColor="?android:attr/textColorSecondary"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/sort_btn_ripple"
+        android:clickable="true"
+        android:focusable="true"
+        android:tooltipText="@string/axis_info_button_description" />
 
     <com.oneui.fontviewer.ui.widget.AxisSpinner
         android:id="@+id/axis_spinner"
