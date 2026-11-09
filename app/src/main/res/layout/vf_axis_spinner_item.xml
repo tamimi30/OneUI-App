@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingTop="11dp"
-    android:paddingBottom="10dp"
-    android:paddingStart="11dp"
-    android:paddingEnd="17dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
     android:layout_marginEnd="13dp"
     android:clipToPadding="false"
     android:clipChildren="false"
@@ -23,8 +23,10 @@
         android:textColor="?android:attr/textColorSecondary"
         android:paddingTop="2sp"
         android:paddingBottom="2sp"
-        android:paddingStart="13dp"
-        android:paddingEnd="13dp"
+        android:paddingStart="4sp"
+        android:paddingEnd="4sp"
+        android:layout_marginTop="-2sp"
+        android:layout_marginStart="-4sp"
         android:background="@drawable/axis_name_ripple"
         android:clickable="true"
         android:focusable="true"
@@ -33,11 +35,14 @@
     <View
         android:layout_width="100sp"
         android:layout_height="2dp"
-        android:layout_marginEnd="37dp" />
+        android:layout_marginEnd="4dp" />
 
     <com.oneui.fontviewer.ui.widget.AxisSpinner
         android:id="@+id/axis_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginStart="-13dp" 
+        android:layout_marginEnd="-9dp"
+        android:layout_marginBottom="-4dp"/>
 
 </LinearLayout>
