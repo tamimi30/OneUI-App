@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:minHeight="44dp"
     android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:background="@drawable/oui_toast_frame_mtrl">
 
     <TextView

@@ -38,6 +38,7 @@
                     android:id="@+id/empty_icon"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
+                    android:layout_marginBottom="0dp"
                     android:tint="#ff34a853"
                     android:src="@drawable/ic_android_outline" />
 
