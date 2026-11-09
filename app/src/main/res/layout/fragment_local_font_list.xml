@@ -134,7 +134,6 @@
                 android:layout_width="210dp"
                 android:backgroundTint="?attr/colorPrimary"
                 style="@style/OneUI.AppInfoButton"
-                android:textSize="18sp"
                 android:textColor="@color/oui_appinfolayout_button_primary_text"
                 android:text="@string/local_fonts_select_folder_button" />
 
