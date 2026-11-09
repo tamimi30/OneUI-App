@@ -25,29 +25,21 @@
                 android:layout_height="wrap_content"
                 android:text="@string/vf_axes_title" />
 
-            <LinearLayout
+            <com.oneui.fontviewer.ui.widget.scrollview.OneUiHorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:scrollbars="none"
+                android:overScrollMode="always"
                 android:clipToOutline="true"
                 android:background="@drawable/vf_axis_container_bg">
 
-                <com.oneui.fontviewer.ui.widget.scrollview.OneUiHorizontalScrollView
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:id="@+id/variable_axes_row"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:scrollbars="none"
-                    android:overScrollMode="always">
+                    android:layoutDirection="locale" />
 
-                    <LinearLayout
-                        android:id="@+id/variable_axes_row"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layoutDirection="locale" />
-
-                </com.oneui.fontviewer.ui.widget.scrollview.OneUiHorizontalScrollView>
-
-            </LinearLayout>
+            </com.oneui.fontviewer.ui.widget.scrollview.OneUiHorizontalScrollView>
 
         </LinearLayout>
 
