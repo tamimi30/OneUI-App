@@ -131,6 +131,7 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/select_folder_button"
+                android:layout_width="210dp"
                 android:backgroundTint="?attr/colorPrimary"
                 style="@style/OneUI.AppInfoButton"
                 android:textColor="@color/oui_appinfolayout_button_primary_text"
