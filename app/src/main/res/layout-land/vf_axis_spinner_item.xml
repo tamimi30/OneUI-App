@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:layout_marginBottom="13dp"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:background="@drawable/vf_axis_item_bg"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/axis_name_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="?android:attr/textColorSecondary"
+        android:paddingTop="2sp"
+        android:paddingBottom="2sp"
+        android:paddingStart="6sp"
+        android:paddingEnd="6sp"
+        android:layout_marginTop="-2sp"
+        android:layout_marginStart="-6sp"
+        android:background="@drawable/axis_name_ripple"
+        android:clickable="true"
+        android:focusable="true"
+        android:tooltipText="@string/axis_info_button_description" />
+        
+    <View
+        android:layout_width="100sp"
+        android:layout_height="2dp"
+        android:layout_marginEnd="26dp" />
+
+    <com.oneui.fontviewer.ui.widget.AxisSpinner
+        android:id="@+id/axis_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="-13dp" 
+        android:layout_marginEnd="-9dp"
+        android:layout_marginBottom="-4dp"/>
+
+</LinearLayout>
