@@ -44,18 +44,18 @@
     
     <LinearLayout
         android:id="@+id/variable_axes_container"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:orientation="vertical">
 
         <dev.oneuiproject.oneui.widget.Separator
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/vf_axes_title" />
 
         <com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scrollbars="vertical"
             android:overScrollMode="always"
