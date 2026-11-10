@@ -5,18 +5,18 @@
     android:orientation="horizontal"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
     
+    <dev.oneuiproject.oneui.widget.Separator
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/transparent"
+        android:text="@string/vf_axes_title" />
+    
     <dev.oneuiproject.oneui.widget.RoundLinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1.0"
         android:layout_marginEnd="13dp"
         android:orientation="vertical">
-        	
-        <dev.oneuiproject.oneui.widget.Separator
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/transparent"
-            android:text="@string/vf_axes_title" />
     
         <com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView
             android:layout_width="match_parent"
