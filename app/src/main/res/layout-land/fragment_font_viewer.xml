@@ -21,12 +21,8 @@
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="14dp"
-            android:paddingHorizontal="24dp"
-            android:background="@color/oui_background_color"
             android:orientation="vertical">	
         
-    
             <com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -43,7 +39,7 @@
                     <dev.oneuiproject.oneui.widget.RoundLinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:paddingTop="27dp"
+                        android:paddingTop="14dp"
                         android:paddingHorizontal="24dp"
                         android:background="@color/oui_background_color"
                         android:orientation="vertical">
