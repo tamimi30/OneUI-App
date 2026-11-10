@@ -32,12 +32,12 @@
     <style name="OneUI.AppInfoButton" parent="Widget.AppCompat.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:minHeight">34.67sp</item>
+        <item name="android:minHeight">52dp</item>
         <item name="android:layout_marginTop">15dp</item>
-        <item name="android:paddingStart">16sp</item>
-        <item name="android:paddingEnd">16sp</item>
-        <item name="android:paddingTop">8sp</item>
-        <item name="android:paddingBottom">8sp</item>
+        <item name="android:paddingStart">15dp</item>
+        <item name="android:paddingEnd">15dp</item>
+        <item name="android:paddingTop">0sp</item>
+        <item name="android:paddingBottom">0sp</item>
         <item name="android:background">@drawable/oui_btn_app_info</item>
         <item name="android:textSize">17sp</item>
         <item name="android:textStyle">bold</item>
