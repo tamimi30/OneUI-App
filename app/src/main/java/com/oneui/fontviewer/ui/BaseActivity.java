@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.oneui.fontviewer.ui.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.ui.utils.anim.TransitionUtils;
 

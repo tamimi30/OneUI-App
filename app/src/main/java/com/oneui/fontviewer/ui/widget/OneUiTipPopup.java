@@ -15,16 +15,6 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.PopupWindow;
-import android.widget.TextView;
-import androidx.reflect.content.res.SeslConfigurationReflector;
-
-import androidx.annotation.ColorInt;
-import androidx.appcompat.animation.SeslAnimationUtils;
-
 import android.view.DisplayCutout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -41,12 +31,20 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
-import java.lang.reflect.Constructor;
-
+import androidx.annotation.ColorInt;
+import androidx.appcompat.animation.SeslAnimationUtils;
+import androidx.reflect.content.res.SeslConfigurationReflector;
 
 import com.oneui.fontviewer.BuildConfig;
 import com.oneui.fontviewer.R;
+
+import java.lang.reflect.Constructor;
 
 /**
  * Java port of the TipPopup class from OneUI Design 8.
@@ -135,38 +133,38 @@ public class OneUiTipPopup {
     private ImageView balloonBubbleHint;
     private ImageView balloonBubbleIcon;
     private FrameLayout balloonContent;
-    private int balloonHeight;
+    private int balloonHeight = 0;
     private FrameLayout balloonPanel;
     private TipWindow balloonPopup;
-    private int balloonPopupX;
-    private int balloonPopupY;
+    private int balloonPopupX = 0;
+    private int balloonPopupY = 0;
     private final View balloonView;
-    private int balloonWidth;
+    private int balloonWidth = 0;
     private int balloonX = -1;
-    private int balloonY;
+    private int balloonY = 0;
     private Integer iconColor;
     private ImageView bubbleBackground;
-    private int bubbleHeight;
+    private int bubbleHeight = 0;
     private ImageView bubbleIcon;
     private TipWindow bubblePopup;
-    private int bubblePopupX;
-    private int bubblePopupY;
+    private int bubblePopupX = 0;
+    private int bubblePopupY = 0;
     private final View bubbleView;
-    private int bubbleWidth;
-    private int bubbleX;
-    private int bubbleY;
+    private int bubbleWidth = 0;
+    private int bubbleX = 0;
+    private int bubbleY = 0;
 
     private DisplayMetrics displayMetrics;
-    private boolean forceRealDisplay;
+    private boolean forceRealDisplay = false;
     private CharSequence hintDescription;
 
-    private int initialMessageViewWidth;
+    private int initialMessageViewWidth = 0;
     private boolean isDefaultPosition = true;
-    private boolean isMessageViewMeasured;
+    private boolean isMessageViewMeasured = false;
     private CharSequence messageText;
     private Integer messageTextColor;
 
-    private boolean needToCallParentViewsOnClick;
+    private boolean needToCallParentViewsOnClick = false;
     private OnDismissListener onDismissListener;
     private OnStateChangeListener onStateChangeListener;
 
@@ -450,9 +448,7 @@ public class OneUiTipPopup {
     }
 
     public void setTargetPosition(int x, int y) {
-        if (x < 0 || y < 0) {
-            return;
-        }
+        if (x < 0 || y < 0) return;
 
         isDefaultPosition = false;
         arrowPositionX = x;
@@ -630,9 +626,7 @@ public class OneUiTipPopup {
 
         bubbleIcon.setContentDescription(hintDescription);
 
-        if (mode == Mode.TRANSLUCENT) {
-            return;
-        }
+        if (mode == Mode.TRANSLUCENT) return;
 
         if (messageTextColor != null) {
             messageView.setTextColor(messageTextColor);
@@ -1045,8 +1039,8 @@ public class OneUiTipPopup {
             actionView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             balloonWidth = Math.max(balloonWidth, actionView.getMeasuredWidth()
                     + (resources.getDimensionPixelSize(R.dimen.sem_tip_popup_button_padding_horizontal) * 2));
-            balloonHeight += actionView.getMeasuredHeight()
-                    - resources.getDimensionPixelSize(R.dimen.sem_tip_popup_button_padding_vertical);
+            balloonHeight += (actionView.getMeasuredHeight()
+                    - resources.getDimensionPixelSize(R.dimen.sem_tip_popup_button_padding_vertical));
         }
     }
 
@@ -1512,16 +1506,12 @@ public class OneUiTipPopup {
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation a) {
-                if (onStart != null) {
-                    onStart.run();
-                }
+                if (onStart != null) onStart.run();
             }
 
             @Override
             public void onAnimationEnd(Animation a) {
-                if (onEnd != null) {
-                    onEnd.run();
-                }
+                if (onEnd != null) onEnd.run();
             }
 
             @Override
@@ -1531,10 +1521,10 @@ public class OneUiTipPopup {
     }
 
     static class TipWindow extends PopupWindow {
-        boolean isDismissing;
+        boolean isDismissing = false;
         private boolean isUsingDismissAnimation = true;
-        float pivotX = 0.0F;
-        float pivotY = 0.0F;
+        float pivotX = 0.0f;
+        float pivotY = 0.0f;
 
         TipWindow(View contentView, int width, int height, boolean focusable) {
             super(contentView, width, height, focusable);

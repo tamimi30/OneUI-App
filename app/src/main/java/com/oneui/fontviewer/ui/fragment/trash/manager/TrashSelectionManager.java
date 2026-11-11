@@ -1,23 +1,22 @@
 package com.oneui.fontviewer.ui.fragment.trash.manager;
 
 import android.os.Build;
-import android.window.OnBackInvokedCallback;
-import android.window.OnBackInvokedDispatcher;
-import androidx.activity.OnBackPressedCallback;
-import androidx.recyclerview.widget.RecyclerView;
-
-import androidx.fragment.app.FragmentActivity;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
-import java.util.List;
-
+import androidx.activity.OnBackPressedCallback;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.ui.fragment.trash.adapter.TrashListAdapter;
+
+import java.util.List;
+
 import com.oneui.fontviewer.ui.widget.layout.OneUiDrawerLayout;
 
 public class TrashSelectionManager {
@@ -28,7 +27,7 @@ public class TrashSelectionManager {
     private final TrashListAdapter adapter;
     private final RecyclerView     recyclerView;
 
-    private boolean             isSelecting;
+    private boolean             isSelecting      = false;
     private boolean             checkAllListening = true;
 
     private SelectionActionListener actionListener;
@@ -88,33 +87,24 @@ public class TrashSelectionManager {
     private void setupBackHandling() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             onBackInvokedCallback = () -> {
-                if (isSelecting) {
-                    setSelecting(false);
-                }
+                if (isSelecting) setSelecting(false);
             };
         }
 
         onBackPressedCallback = new OnBackPressedCallback(false) {
             @Override
             public void handleOnBackPressed() {
-                if (isSelecting) {
-                    setSelecting(false);
-                }
+                if (isSelecting) setSelecting(false);
             }
         };
     }
 
 
     public void setSelecting(boolean enabled) {
-        if (isSelecting == enabled) {
-            return;
-        }
+        if (isSelecting == enabled) return;
         isSelecting = enabled;
-        if (enabled) {
-            activateSelectionMode();
-        } else {
-            deactivateSelectionMode();
-        }
+        if (enabled) activateSelectionMode();
+        else          deactivateSelectionMode();
     }
 
     private void activateSelectionMode() {
@@ -137,9 +127,7 @@ public class TrashSelectionManager {
         });
 
         drawerLayout.setActionModeCheckboxListener((menuItem, isChecked) -> {
-            if (checkAllListening) {
-                toggleSelectAll(isChecked);
-            }
+            if (checkAllListening) toggleSelectAll(isChecked);
             updateActionModeUI();
         });
 
@@ -169,9 +157,7 @@ public class TrashSelectionManager {
 
 
     public void toggleSelection(int position) {
-        if (!isSelecting) {
-            setSelecting(true);
-        }
+        if (!isSelecting) setSelecting(true);
 
         // حالة التحديد محفوظة في الـ Adapter بمعرّف العنصر
         adapter.setItemSelected(position, !adapter.isItemSelected(position));
@@ -203,7 +189,7 @@ public class TrashSelectionManager {
             MenuItem restoreItemBottom  = bottomMenu  != null ? bottomMenu.findItem(R.id.action_restore)   : null;
             MenuItem restoreItemToolbar = toolbarMenu != null ? toolbarMenu.findItem(R.id.action_restore)  : null;
 
-            boolean isAllSelected = selectedCount == totalCount;
+            boolean isAllSelected = (selectedCount == totalCount);
 
             String deleteText = isAllSelected
                     ? activity.getString(R.string.action_delete_all)
@@ -213,18 +199,10 @@ public class TrashSelectionManager {
                     ? activity.getString(R.string.action_restore_all)
                     : activity.getString(R.string.action_restore);
 
-            if (deleteItemBottom != null) {
-                deleteItemBottom.setTitle(deleteText);
-            }
-            if (deleteItemToolbar != null) {
-                deleteItemToolbar.setTitle(deleteText);
-            }
-            if (restoreItemBottom != null) {
-                restoreItemBottom.setTitle(restoreText);
-            }
-            if (restoreItemToolbar != null) {
-                restoreItemToolbar.setTitle(restoreText);
-            }
+            if (deleteItemBottom  != null) deleteItemBottom.setTitle(deleteText);
+            if (deleteItemToolbar != null) deleteItemToolbar.setTitle(deleteText);
+            if (restoreItemBottom  != null) restoreItemBottom.setTitle(restoreText);
+            if (restoreItemToolbar != null) restoreItemToolbar.setTitle(restoreText);
         }
 
         checkAllListening = true;
@@ -238,16 +216,12 @@ public class TrashSelectionManager {
 
 
     private void handleRestoreAction() {
-        if (adapter.getSelectedCount() == 0 || actionListener == null) {
-            return;
-        }
+        if (adapter.getSelectedCount() == 0 || actionListener == null) return;
         actionListener.onRestoreRequested(adapter.getSelectedFonts());
     }
 
     private void handleDeleteAction() {
-        if (adapter.getSelectedCount() == 0 || actionListener == null) {
-            return;
-        }
+        if (adapter.getSelectedCount() == 0 || actionListener == null) return;
         actionListener.onDeletePermanentlyRequested(adapter.getSelectedFonts());
     }
     
@@ -264,9 +238,7 @@ public class TrashSelectionManager {
     }
 
     public void cleanup() {
-        if (isSelecting) {
-            setSelecting(false);
-        }
+        if (isSelecting) setSelecting(false);
         adapter.setOnSelectionPrunedListener(null);
         onBackPressedCallback = null;
         onBackInvokedCallback = null;

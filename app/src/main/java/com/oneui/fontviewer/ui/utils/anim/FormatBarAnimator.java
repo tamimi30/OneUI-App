@@ -1,20 +1,18 @@
 package com.oneui.fontviewer.ui.utils.anim;
 
-import android.content.Context;
-import com.google.android.material.animation.MotionSpec;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
+import com.google.android.material.animation.MotionSpec;
 import com.oneui.fontviewer.R;
 
-public final class FormatBarAnimator {
+public class FormatBarAnimator {
 
     private FormatBarAnimator() {}
 

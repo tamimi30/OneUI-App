@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-
 import com.oneui.fontviewer.R;
 
 public class OneUiTextHelper {

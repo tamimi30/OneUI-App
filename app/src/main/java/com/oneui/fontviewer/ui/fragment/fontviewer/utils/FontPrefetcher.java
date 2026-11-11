@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
 
+import com.oneui.fontviewer.ui.fragment.localfont.data.LocalFontCache;
+import com.oneui.fontviewer.ui.fragment.systemfont.data.SystemFontCache;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -11,10 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-
-import com.oneui.fontviewer.ui.fragment.localfont.data.LocalFontCache;
-import com.oneui.fontviewer.ui.fragment.systemfont.data.SystemFontCache;
 
 /**
  * يجهّز الخط مسبقاً قبل أن تُرسم شاشة عارض الخط، حتى لا يظهر الخط الافتراضي ولا تتأخر بطاقات المحاور.
@@ -35,7 +34,7 @@ public final class FontPrefetcher {
 
     // القيم الافتراضية الاحتياطية لكل محور، تُستخدم فقط اذا تعذّرت قراءة القيمة الافتراضية الفعلية
     // من جدول fvar الخاص بالخط نفسه (تطابق AXIS_FALLBACK_DEFAULTS في FontViewerFragment)
-    private static final float DEFAULT_FONT_WEIGHT = 400F;
+    private static final float DEFAULT_FONT_WEIGHT = 400f;
     private static final Map<String, Float> AXIS_FALLBACK_DEFAULTS = new HashMap<>();
     static {
         AXIS_FALLBACK_DEFAULTS.put(VariableFontHelper.AXIS_WGHT, DEFAULT_FONT_WEIGHT);

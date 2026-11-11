@@ -1,14 +1,12 @@
 package com.oneui.fontviewer.ui.fragment.systemfont.adapter;
 
 import android.graphics.Typeface;
+import android.view.View;
 import android.widget.TextView;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import androidx.annotation.NonNull;
-
-import android.view.View;
-
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.utils.metadata.FontWeightWidthExtractor;
@@ -41,7 +39,7 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
 
         if (weightWidthView != null) {
             String formattedLabel = FontWeightWidthExtractor.formatLabel(itemView.getContext(), weightWidthLabel);
-            String label = formattedLabel != null && !formattedLabel.isEmpty()
+            String label = (formattedLabel != null && !formattedLabel.isEmpty())
                     ? formattedLabel
                     : itemView.getContext().getString(R.string.unknown_font);
             weightWidthView.setText(label);
@@ -51,9 +49,7 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindLastOpened(boolean isLastOpened) {
-        if (nameView == null) {
-            return;
-        }
+        if (nameView == null) return;
 
         if (isLastOpened) {
             int primaryColor = ContextCompat.getColor(nameView.getContext(), R.color.sesl_primary_color_dark);

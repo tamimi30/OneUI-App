@@ -3,20 +3,19 @@ package com.oneui.fontviewer.ui.settings.about;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
-import dev.oneuiproject.oneui.layout.ToolbarLayout;
 
 import androidx.annotation.NonNull;
 
-import android.view.MenuItem;
+import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.ui.BaseActivity;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-
-import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.ui.BaseActivity;
+import dev.oneuiproject.oneui.layout.ToolbarLayout;
 
 public class LicensesActivity extends BaseActivity {
 
@@ -49,9 +48,7 @@ public class LicensesActivity extends BaseActivity {
     }
 
     private void loadLicenseText() {
-        if (mLicenseTextView == null) {
-            return;
-        }
+        if (mLicenseTextView == null) return;
 
         StringBuilder text = new StringBuilder();
         try {

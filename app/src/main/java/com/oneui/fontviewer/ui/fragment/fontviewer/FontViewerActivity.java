@@ -5,30 +5,30 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 import android.widget.Toast;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import dev.oneuiproject.oneui.dialog.ProgressDialog;
-import dev.oneuiproject.oneui.layout.ToolbarLayout;
+
+import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
-import android.view.View;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Map;
-
+import dev.oneuiproject.oneui.dialog.ProgressDialog;
+import dev.oneuiproject.oneui.layout.ToolbarLayout;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.BaseActivity;
-import com.oneui.fontviewer.ui.dialog.FontErrorDialog;
 import com.oneui.fontviewer.ui.dialog.FontInfoDialog;
+import com.oneui.fontviewer.ui.dialog.FontErrorDialog;
+import com.oneui.fontviewer.ui.utils.translation.TranslationService;
 import com.oneui.fontviewer.ui.utils.FileUtils;
 import com.oneui.fontviewer.ui.utils.anim.FormatBarAnimator;
-import com.oneui.fontviewer.ui.utils.translation.TranslationService;
 import com.oneui.fontviewer.ui.widget.TextDrawable;
 
 public class FontViewerActivity extends BaseActivity
-    implements FontViewerFragment.OnFontChangedListener {
+        implements FontViewerFragment.OnFontChangedListener {
 
     public static final String EXTRA_FONT_PATH          = "extra_font_path";
     public static final String EXTRA_FONT_REAL_NAME     = "extra_font_real_name";
@@ -53,7 +53,7 @@ public class FontViewerActivity extends BaseActivity
     private String currentFontFileName;
 
     private ProgressDialog loadingDialog;
-    private long loadingDialogShownAt;
+    private long loadingDialogShownAt = 0L;
     private static final long MIN_LOADING_DIALOG_MS = 500;
 
     @Override
@@ -130,14 +130,10 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void loadFontFromIntent(Intent intent) {
-        if (intent == null || mFontViewerFragment == null) {
-            return;
-        }
+        if (intent == null || mFontViewerFragment == null) return;
 
         String path = intent.getStringExtra(EXTRA_FONT_PATH);
-        if (path == null || path.isEmpty()) {
-            return;
-        }
+        if (path == null || path.isEmpty()) return;
 
         if (path.startsWith("content://")) {
             String fileName = intent.getStringExtra(EXTRA_FONT_FILE_NAME);
@@ -184,9 +180,7 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void updateTitle() {
-        if (mToolbarLayout == null) {
-            return;
-        }
+        if (mToolbarLayout == null) return;
 
         String title;
         if (currentFontRealName != null && !currentFontRealName.isEmpty()) {
@@ -197,7 +191,7 @@ public class FontViewerActivity extends BaseActivity
             title = getString(R.string.drawer_font_viewer);
         }
 
-        String subtitle = currentFontFileName != null && !currentFontFileName.isEmpty()
+        String subtitle = (currentFontFileName != null && !currentFontFileName.isEmpty())
                 ? FileUtils.removeExtension(currentFontFileName)
                 : getString(R.string.font_viewer_select_description);
 
@@ -225,9 +219,7 @@ public class FontViewerActivity extends BaseActivity
             boolean[] isFinished = {false};
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (!isFinished[0]) {
-                    showLoadingDialog();
-                }
+                if (!isFinished[0]) showLoadingDialog();
             }, 250);
 
             translationService.translateMetadata(meta, new TranslationService.TranslationCallback() {
@@ -264,9 +256,7 @@ public class FontViewerActivity extends BaseActivity
     }
 
     private void showFontInfoDialog(Map<String, String> metadata) {
-        if (mFontViewerFragment == null) {
-            return;
-        }
+        if (mFontViewerFragment == null) return;
 
         if (currentFontRealName == null || currentFontRealName.isEmpty()
                 || metadata == null || metadata.isEmpty()) {

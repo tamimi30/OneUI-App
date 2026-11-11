@@ -2,18 +2,17 @@ package com.oneui.fontviewer.ui.settings;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import dev.oneuiproject.oneui.layout.ToolbarLayout;
-
-import androidx.annotation.NonNull;
-
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.BaseActivity;
 import com.oneui.fontviewer.ui.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.ui.utils.anim.TransitionUtils;
+
+import dev.oneuiproject.oneui.layout.ToolbarLayout;
 
 public class SettingsActivity extends BaseActivity {
 

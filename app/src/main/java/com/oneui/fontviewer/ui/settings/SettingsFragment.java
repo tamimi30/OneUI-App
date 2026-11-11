@@ -9,26 +9,25 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.Toast;
-import androidx.preference.DropDownPreference;
-import androidx.preference.EditTextPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreferenceCompat;
-import dev.oneuiproject.oneui.preference.HorizontalRadioPreference;
-import dev.oneuiproject.oneui.preference.internal.PreferenceRelatedCard;
-import dev.oneuiproject.oneui.utils.PreferenceUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.EditTextPreference;
+import androidx.preference.DropDownPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
 
-import android.view.View;
+import dev.oneuiproject.oneui.preference.HorizontalRadioPreference;
+import dev.oneuiproject.oneui.preference.internal.PreferenceRelatedCard;
+import dev.oneuiproject.oneui.utils.PreferenceUtils;
 
-
-import com.oneui.fontviewer.FontViewerApp;
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.FontViewerApp;
 import com.oneui.fontviewer.ui.settings.about.AboutActivity;
 import com.oneui.fontviewer.ui.settings.utils.SettingsHelper;
 import com.oneui.fontviewer.ui.settings.viewmodel.SettingsViewModel;
@@ -46,7 +45,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private DropDownPreference languagePreference;
 
     // لمزامنة أول قيمة تصل من DataStore مع لغة النظام الفعلية (مرة واحدة فقط)
-    private boolean mLanguageSyncedAfterLoad;
+    private boolean mLanguageSyncedAfterLoad = false;
     private HorizontalRadioPreference themePreference;
     private SwitchPreferenceCompat themeAutoPreference;
     

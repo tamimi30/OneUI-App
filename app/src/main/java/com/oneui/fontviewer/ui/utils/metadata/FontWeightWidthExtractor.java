@@ -3,11 +3,10 @@ package com.oneui.fontviewer.ui.utils.metadata;
 import android.content.Context;
 import android.util.Log;
 
+import com.oneui.fontviewer.R;
+
 import java.io.File;
 import java.io.RandomAccessFile;
-
-
-import com.oneui.fontviewer.R;
 
 public class FontWeightWidthExtractor {
 
@@ -26,15 +25,11 @@ public class FontWeightWidthExtractor {
         }
         try {
             int[] ww = readWeightWidth(fontFile, ttcIndex);
-            if (ww == null) {
-                return null;
-            }
+            if (ww == null) return null;
 
             boolean hasWeight = ww[0] > 0;
             boolean hasWidth  = hasWidthName(ww[1]);
-            if (!hasWeight && !hasWidth) {
-                return null;
-            }
+            if (!hasWeight && !hasWidth) return null;
 
             boolean isVF = isVariableFont(fontFile, ttcIndex);
 
@@ -49,14 +44,10 @@ public class FontWeightWidthExtractor {
     // تحويل الصيغة المخزّنة لنص يُعرض حسب لغة التطبيق. أي نص لا يطابق الصيغة
     // (مثل النصوص القديمة المخزّنة سابقاً) يُعاد كما هو
     public static String formatLabel(Context context, String raw) {
-        if (raw == null || raw.isEmpty()) {
-            return raw;
-        }
+        if (raw == null || raw.isEmpty()) return raw;
 
         String[] parts = raw.split("\\|", -1);
-        if (parts.length != 3) {
-            return raw;
-        }
+        if (parts.length != 3) return raw;
 
         int weightClass;
         int widthClass;
@@ -68,9 +59,7 @@ public class FontWeightWidthExtractor {
         }
 
         String label = buildLabel(getWeightName(context, weightClass), getWidthName(context, widthClass));
-        if (label == null) {
-            return null;
-        }
+        if (label == null) return null;
 
         return "1".equals(parts[2]) ? VF_PREFIX + " • " + label : label;
     }
@@ -80,9 +69,7 @@ public class FontWeightWidthExtractor {
         try {
             raf = new RandomAccessFile(fontFile, "r");
             long fontOffset = resolveFontOffset(raf, ttcIndex);
-            if (fontOffset < 0) {
-                return null;
-            }
+            if (fontOffset < 0) return null;
 
             raf.seek(fontOffset + 4); 
             int numTables = raf.readUnsignedShort();
@@ -103,9 +90,7 @@ public class FontWeightWidthExtractor {
                 }
             }
 
-            if (os2Offset < 0) {
-                return null;
-            }
+            if (os2Offset < 0) return null;
 
             raf.seek(os2Offset + 2); 
             raf.skipBytes(2);        
@@ -118,12 +103,7 @@ public class FontWeightWidthExtractor {
             Log.w(TAG, "readWeightWidth failed: " + e.getMessage());
             return null;
         } finally {
-            if (raf != null) {
-                try {
-                    raf.close();
-                } catch (Exception ignored) {
-                }
-            }
+            if (raf != null) try { raf.close(); } catch (Exception ignored) {}
         }
     }
 
@@ -133,9 +113,7 @@ public class FontWeightWidthExtractor {
         try {
             raf = new RandomAccessFile(fontFile, "r");
             long fontOffset = resolveFontOffset(raf, ttcIndex);
-            if (fontOffset < 0) {
-                return false;
-            }
+            if (fontOffset < 0) return false;
 
             raf.seek(fontOffset + 4);
             int numTables = raf.readUnsignedShort();
@@ -145,21 +123,14 @@ public class FontWeightWidthExtractor {
                 byte[] tag = new byte[4];
                 raf.read(tag);
                 String t = new String(tag, "ISO-8859-1");
-                raf.skipBytes(12);
+                raf.skipBytes(12); 
 
-                if ("fvar".equals(t)) {
-                    return true;
-                }
+                if ("fvar".equals(t)) return true;
             }
         } catch (Exception e) {
             Log.w(TAG, "isVariableFont check failed: " + e.getMessage());
         } finally {
-            if (raf != null) {
-                try {
-                    raf.close();
-                } catch (Exception ignored) {
-                }
-            }
+            if (raf != null) try { raf.close(); } catch (Exception ignored) {}
         }
         return false;
     }
@@ -174,9 +145,7 @@ public class FontWeightWidthExtractor {
         if ("ttcf".equals(tag)) {
             raf.skipBytes(4); 
             long numFonts = readUInt32(raf);
-            if (ttcIndex < 0 || ttcIndex >= numFonts) {
-                return -1;
-            }
+            if (ttcIndex < 0 || ttcIndex >= numFonts) return -1;
             raf.seek(12 + (long) ttcIndex * 4);
             return readUInt32(raf);
         }
@@ -193,23 +162,15 @@ public class FontWeightWidthExtractor {
     private static String buildLabel(String weight, String width) {
         boolean hasWeight = weight != null && !weight.isEmpty();
         boolean hasWidth  = width  != null && !width.isEmpty();
-        if (!hasWeight && !hasWidth) {
-            return null;
-        }
-        if (!hasWeight) {
-            return width;
-        }
-        if (!hasWidth) {
-            return weight;
-        }
+        if (!hasWeight && !hasWidth) return null;
+        if (!hasWeight) return width;
+        if (!hasWidth)  return weight;
         return weight + " • " + width;
     }
 
 
     public static String getWeightName(Context context, int w) {
-        if (w <= 0) {
-            return null;
-        }
+        if (w <= 0) return null;
 
         switch (w) {
             case 100: return context.getString(R.string.font_info_weight_thin);

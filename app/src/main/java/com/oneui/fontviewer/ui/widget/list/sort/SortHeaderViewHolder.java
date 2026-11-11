@@ -1,18 +1,16 @@
 package com.oneui.fontviewer.ui.widget.list.sort;
 
-import androidx.recyclerview.widget.RecyclerView;
-
-import androidx.annotation.NonNull;
-
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
 
 public class SortHeaderViewHolder extends RecyclerView.ViewHolder {
     
     private final SortByItemLayout sortLayout;
-    private boolean isListenerSet;
+    private boolean isListenerSet = false;
     
     public SortHeaderViewHolder(@NonNull View itemView) {
         super(itemView);

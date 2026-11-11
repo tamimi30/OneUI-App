@@ -7,17 +7,16 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import androidx.annotation.NonNull;
-
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
 
 public class OneUiRecyclerView extends RecyclerView {
 
-    private static final float CORNER_RADIUS_DP = 26F;
+    private static final float CORNER_RADIUS_DP = 26f;
 
     private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path mPath = new Path();

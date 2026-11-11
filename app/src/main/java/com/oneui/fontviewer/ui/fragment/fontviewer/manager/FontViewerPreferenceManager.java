@@ -3,11 +3,11 @@ package com.oneui.fontviewer.ui.fragment.fontviewer.manager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-
-import com.oneui.fontviewer.ui.fragment.fontviewer.utils.VariableFontHelper;
 import com.oneui.fontviewer.ui.settings.datastore.SettingsDataStore;
+import com.oneui.fontviewer.ui.fragment.fontviewer.utils.VariableFontHelper;
 
 public class FontViewerPreferenceManager {
     

@@ -2,15 +2,13 @@ package com.oneui.fontviewer.ui.navi;
 
 import android.graphics.Typeface;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.TextView;
-import androidx.recyclerview.widget.RecyclerView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
-
-import android.view.View;
-
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
 

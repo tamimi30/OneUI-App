@@ -5,16 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.appbar.AppBarLayout;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,29 +12,39 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+
+import com.google.android.material.appbar.AppBarLayout;
+
+import com.oneui.fontviewer.ui.widget.layout.OneUiDrawerLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
-import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.ui.fragment.AppScreen;           
+import com.oneui.fontviewer.ui.MainActivity;
 import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.data.entity.FontFileInfo;
-import com.oneui.fontviewer.ui.MainActivity;
-import com.oneui.fontviewer.ui.fragment.AppScreen;
-import com.oneui.fontviewer.ui.fragment.systemfont.adapter.SystemFontListAdapter;
-import com.oneui.fontviewer.ui.fragment.systemfont.data.SystemFontCache;
-import com.oneui.fontviewer.ui.fragment.systemfont.data.SystemFontInfo;
-import com.oneui.fontviewer.ui.fragment.systemfont.viewmodel.SystemFontListViewModel;
-import com.oneui.fontviewer.ui.settings.viewmodel.SettingsViewModel;
-import com.oneui.fontviewer.ui.widget.layout.OneUiDrawerLayout;
-import com.oneui.fontviewer.ui.widget.list.ItemDecoration;
-import com.oneui.fontviewer.ui.widget.list.UiStateManager;
 import com.oneui.fontviewer.ui.widget.list.search.SearchFilterManager;
 import com.oneui.fontviewer.ui.widget.list.search.SearchViewModel;
-import com.oneui.fontviewer.ui.widget.list.sort.SortByItemLayout;
 import com.oneui.fontviewer.ui.widget.list.sort.SortManager;
+import com.oneui.fontviewer.ui.widget.list.sort.SortByItemLayout;
+import com.oneui.fontviewer.ui.widget.list.UiStateManager;
+import com.oneui.fontviewer.ui.widget.list.ItemDecoration;
+import com.oneui.fontviewer.ui.fragment.systemfont.adapter.SystemFontListAdapter;
+import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.ui.fragment.systemfont.viewmodel.SystemFontListViewModel;
+import com.oneui.fontviewer.ui.settings.viewmodel.SettingsViewModel;
+import com.oneui.fontviewer.ui.fragment.systemfont.data.SystemFontInfo;
+import com.oneui.fontviewer.ui.fragment.systemfont.data.SystemFontCache;
 
 public class SystemFontListFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
@@ -70,7 +70,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
     private boolean mIsFirstLoad = true;
 
-    private boolean mNeedsScrollRestore;
+    private boolean mNeedsScrollRestore = false;
 
     public interface OnFontSelectedListener {
         void onFontSelected(String fontPath, String realName, String fileName,
@@ -98,8 +98,9 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     }
 
     private void setupManagerListeners() {
-        mSearchManager.setSearchResultListener((count, empty) ->
-            mUIManager.updateEmptyView(empty, mSearchManager.isSearchActive()));
+        mSearchManager.setSearchResultListener((count, empty) -> {
+            mUIManager.updateEmptyView(empty, mSearchManager.isSearchActive());
+        });
 
         mSortManager.setSortChangeListener((type, asc) -> {
             if (mAdapter != null) {
@@ -268,8 +269,9 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         });
 
 
-        mAdapter.setSortChangeListener((type, asc) ->
-            mSortManager.setSortOptions(type, asc));
+        mAdapter.setSortChangeListener((type, asc) -> {
+            mSortManager.setSortOptions(type, asc);
+        });
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -298,15 +300,11 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     private DefaultItemAnimator mItemAnimator;
 
     private void setupRecyclerViewAnimator() {
-        if (mRecyclerView == null) {
-            return;
-        }
+        if (mRecyclerView == null) return;
         if (mRecyclerView.getItemAnimator() instanceof DefaultItemAnimator) {
             mItemAnimator = (DefaultItemAnimator) mRecyclerView.getItemAnimator();
         }
-        if (mItemAnimator == null) {
-            return;
-        }
+        if (mItemAnimator == null) return;
         mItemAnimator.setSupportsChangeAnimations(false);
         mRecyclerView.setItemAnimator(mItemAnimator);
     }
@@ -326,17 +324,11 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     }
 
     private void showUnsupportedView() {
-        if (getView() == null) {
-            return;
-        }
+        if (getView() == null) return;
         View unsupportedView = getView().findViewById(R.id.unsupported_view);
         View mainContent     = getView().findViewById(R.id.main_content_layout);
-        if (unsupportedView != null) {
-            unsupportedView.setVisibility(View.VISIBLE);
-        }
-        if (mainContent != null) {
-            mainContent.setVisibility(View.GONE);
-        }
+        if (unsupportedView != null) unsupportedView.setVisibility(View.VISIBLE);
+        if (mainContent != null)     mainContent.setVisibility(View.GONE);
     }
 
     private void refreshAdapterData() {
@@ -483,9 +475,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
 
             mSearchViewModel.deactivateSearch();
         } else {
-            if (mAdapter != null) {
-                mAdapter.smartUpdate();
-            }
+            if (mAdapter != null) mAdapter.smartUpdate();
 
             updateMainActivityFontsCount(mCurrentFontsList.size());
 
@@ -531,11 +521,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mMainHandler != null) {
-            mMainHandler.removeCallbacksAndMessages(null);
-        }
-        if (mExecutor != null) {
-            mExecutor.shutdown();
-        }
+        if (mMainHandler != null) mMainHandler.removeCallbacksAndMessages(null);
+        if (mExecutor != null)    mExecutor.shutdown();
     }
 }
