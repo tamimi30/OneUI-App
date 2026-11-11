@@ -45,14 +45,20 @@
             </com.oneui.fontviewer.ui.widget.scrollview.OneUiHorizontalScrollView>
             
         </LinearLayout>
-
+        
+        <dev.oneuiproject.oneui.widget.RoundFrameLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToOutline="true"
+            android:orientation="vertical">
+            
+            
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:minHeight="800dp"
             android:paddingVertical="27dp"
             android:paddingHorizontal="24dp"
-            android:clipToOutline="true"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
@@ -73,6 +79,8 @@
                 android:textColor="@color/font_preview_text_color" />
 
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+        
+        </dev.oneuiproject.oneui.widget.RoundFrameLayout>
 
     </LinearLayout>
 
