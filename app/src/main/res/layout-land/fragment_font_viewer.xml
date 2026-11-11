@@ -46,10 +46,8 @@
         android:orientation="vertical">  
   
         <dev.oneuiproject.oneui.widget.Separator
-            android:id="@+id/variable_axes_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:textColor="@android:color/transparent"
             android:text="@string/vf_axes_title" />     
 
