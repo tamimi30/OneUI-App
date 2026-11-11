@@ -38,64 +38,71 @@
         </com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView>
         
     </LinearLayout>
-  
-    <dev.oneuiproject.oneui.widget.Separator
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/transparent"
-        android:text="@string/vf_axes_title" />
-
-    <dev.oneuiproject.oneui.widget.RoundLinearLayout
+    
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1.0"
-        android:orientation="vertical">     
+        android:orientation="vertical">
+  
+        <dev.oneuiproject.oneui.widget.Separator
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/transparent"
+            android:text="@string/vf_axes_title" />
 
-        <com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView
+        <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToOutline="true"
-            android:overScrollMode="always"
-            android:scrollbars="vertical"
-            android:fillViewport="true">
-        	
-            <LinearLayout
+            android:orientation="vertical">     
+
+            <com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" 
-                android:orientation="vertical"
-                android:paddingBottom="100dp">
-            	
-                <dev.oneuiproject.oneui.widget.RoundLinearLayout
+                android:layout_height="match_parent"
+                android:clipToOutline="true"
+                android:overScrollMode="always"
+                android:scrollbars="vertical"
+                android:fillViewport="true">
+        	
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingVertical="14dp"
-                    android:paddingHorizontal="24dp"
-                    android:background="@color/oui_background_color"
-                    android:orientation="vertical">
-                	
-                    <TextView
-                        android:id="@+id/weight_label_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="17sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="14dp"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/preview_sentence"
+                    android:layout_height="match_parent" 
+                    android:orientation="vertical"
+                    android:paddingBottom="100dp">
+            	
+                    <dev.oneuiproject.oneui.widget.RoundLinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="34dp"
-                        android:textColor="@color/font_preview_text_color" />
+                        android:layout_height="match_parent"
+                        android:paddingVertical="14dp"
+                        android:paddingHorizontal="24dp"
+                        android:background="@color/oui_background_color"
+                        android:orientation="vertical">
+                	
+                        <TextView
+                            android:id="@+id/weight_label_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="14dp"
+                            android:visibility="gone" />
 
-                </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+                        <TextView
+                            android:id="@+id/preview_sentence"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="34dp"
+                            android:textColor="@color/font_preview_text_color" />
 
-            </LinearLayout>
+                    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
-        </com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView>
+                </LinearLayout>
+
+            </com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView>
         
-    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+        </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+        
+    </LinearLayout>
     
 </LinearLayout>
