@@ -7,10 +7,9 @@
     android:scrollbarStyle="outsideOverlay"
     android:scrollbars="vertical"
     android:paddingHorizontal="10dp"
-    android:background="@drawable/round_scrollview_bg"
     android:fillViewport="true">
 
-    <LinearLayout
+    <dev.oneuiproject.oneui.widget.RoundLinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -33,6 +32,7 @@
                 android:scrollbars="none"
                 android:overScrollMode="always"
                 android:clipToOutline="true"
+                android:layout_marginBottom="18dp"
                 android:background="@drawable/vf_axis_container_bg">
 
                 <LinearLayout
@@ -43,18 +43,13 @@
 
             </com.oneui.fontviewer.ui.widget.scrollview.OneUiHorizontalScrollView>
 
-        </LinearLayout>
-
-        <dev.oneuiproject.oneui.widget.Separator
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="27dp"
             android:paddingBottom="100dp"
             android:paddingHorizontal="24dp"
+            android:background="@color/oui_background_color"
             android:orientation="vertical">
 
             <TextView
@@ -76,6 +71,6 @@
 
         </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
-    </LinearLayout>
+    </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
 </com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView>
