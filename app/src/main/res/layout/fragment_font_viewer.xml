@@ -42,6 +42,8 @@
                     android:layoutDirection="locale" />
 
             </com.oneui.fontviewer.ui.widget.scrollview.OneUiHorizontalScrollView>
+            
+        </LinearLayout>
 
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
