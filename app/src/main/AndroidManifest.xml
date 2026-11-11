@@ -123,7 +123,7 @@
 
         <activity
             android:name=".ui.fragment.fontviewer.FontViewerActivity"
-            android:configChanges="orientation|screenSize|screenLayout" />
+            android:configChanges="screenSize" />
 
         <activity
             android:name=".ui.settings.about.AboutActivity" />
