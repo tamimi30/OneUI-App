@@ -47,7 +47,7 @@
             
         </LinearLayout>
 
-        <dev.oneuiproject.oneui.widget.RoundLinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingVertical="14dp"
@@ -70,7 +70,7 @@
                 android:textSize="34dp"
                 android:textColor="@color/font_preview_text_color" />
 
-        </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
