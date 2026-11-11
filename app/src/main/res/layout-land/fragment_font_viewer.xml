@@ -24,6 +24,7 @@
             android:scrollbars="none"
             android:overScrollMode="always"
             android:fillViewport="true"
+            android:clipToOutline="true"
             android:layout_marginEnd="13dp"
             android:background="@drawable/vf_axis_container_bg">
 
@@ -59,7 +60,6 @@
             <com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clipToOutline="true"
                 android:overScrollMode="always"
                 android:scrollbars="vertical"
                 android:fillViewport="true">
