@@ -14,7 +14,6 @@
         android:overScrollMode="always"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
-        android:paddingHorizontal="10dp"
         android:fillViewport="true">
 
         <LinearLayout
