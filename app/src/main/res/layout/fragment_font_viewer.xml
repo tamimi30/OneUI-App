@@ -6,6 +6,8 @@
     android:overScrollMode="always"
     android:scrollbarStyle="outsideOverlay"
     android:scrollbars="vertical"
+    android:clipToOutline="true"
+    android:background="@drawable/round_scrollview_bg"
     android:fillViewport="true">
 
     <LinearLayout
