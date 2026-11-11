@@ -6,6 +6,7 @@
     android:overScrollMode="always"
     android:scrollbarStyle="outsideOverlay"
     android:scrollbars="vertical"
+    android:paddingHorizontal="10dp"
     android:clipToOutline="true"
     android:background="@drawable/round_scrollview_bg"
     android:fillViewport="true">
