@@ -18,7 +18,7 @@ public class TextDrawable extends Drawable {
    
     private final int intrinsicSize;
 
-    private static final float REFERENCE_TEXT_SIZE_DP = 24f;
+    private static final float REFERENCE_TEXT_SIZE_DP = 24F;
 
     public TextDrawable(Context context, String text, float textSizeInDp, int textColor) {
         this.text = text;

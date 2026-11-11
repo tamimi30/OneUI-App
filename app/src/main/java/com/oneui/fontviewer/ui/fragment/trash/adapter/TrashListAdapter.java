@@ -1,27 +1,29 @@
 package com.oneui.fontviewer.ui.fragment.trash.adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.data.entity.FontEntity;
-import com.oneui.fontviewer.ui.widget.list.SelectableLinearLayout;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+
+import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.data.entity.FontEntity;
+import com.oneui.fontviewer.ui.widget.list.SelectableLinearLayout;
 
 public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -34,7 +36,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final Context context;
     private List<FontEntity> mItems = new ArrayList<>();
 
-    private boolean isSelectionMode = false;
+    private boolean isSelectionMode;
 
     // التحديد مرتبط بمعرّف العنصر (id) وليس بموضعه، حتى لا يتحدد عنصر آخر إذا تغيرت القائمة أثناء التحديد
     private final Set<Long> selectedIds = new HashSet<>();
@@ -68,7 +70,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
     public void submitList(@Nullable List<FontEntity> newList) {
-        List<FontEntity> safeNew = (newList != null) ? newList : Collections.emptyList();
+        List<FontEntity> safeNew = newList != null ? newList : Collections.emptyList();
 
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(
                 new TrashDiffCallback(mItems, safeNew));
@@ -98,7 +100,9 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     // يزيل من التحديد أي عنصر لم يعد موجوداً في القائمة بعد تحديثها
     private void pruneSelection() {
-        if (selectedIds.isEmpty()) return;
+        if (selectedIds.isEmpty()) {
+            return;
+        }
 
         Set<Long> present = new HashSet<>();
         for (FontEntity font : mItems) {
@@ -119,15 +123,23 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) return VIEW_TYPE_HEADER;
-        if (position == getItemCount() - 1) return VIEW_TYPE_SPACE;
+        if (position == 0) {
+            return VIEW_TYPE_HEADER;
+        }
+        if (position == getItemCount() - 1) {
+            return VIEW_TYPE_SPACE;
+        }
         return VIEW_TYPE_ITEM;
     }
 
     @Override
     public long getItemId(int position) {
-        if (position == 0) return Long.MIN_VALUE;              
-        if (position == getItemCount() - 1) return Long.MAX_VALUE; 
+        if (position == 0) {
+            return Long.MIN_VALUE;
+        }
+        if (position == getItemCount() - 1) {
+            return Long.MAX_VALUE;
+        } 
         return mItems.get(position - 1).getId();                
     }
 
@@ -180,9 +192,13 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         holder.itemView.setOnClickListener(v -> {
             int pos = holder.getBindingAdapterPosition();
-            if (pos == RecyclerView.NO_POSITION) return;
+            if (pos == RecyclerView.NO_POSITION) {
+                return;
+            }
             if (isSelectionMode) {
-                if (selectionListener != null) selectionListener.onToggleSelection(pos);
+                if (selectionListener != null) {
+                    selectionListener.onToggleSelection(pos);
+                }
             } else {
                 Toast.makeText(context, R.string.toast_prepare_file_to_open,
                         Toast.LENGTH_SHORT).show();
@@ -191,7 +207,9 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         holder.itemView.setOnLongClickListener(v -> {
             int pos = holder.getBindingAdapterPosition();
-            if (pos == RecyclerView.NO_POSITION) return false;
+            if (pos == RecyclerView.NO_POSITION) {
+                return false;
+            }
             if (selectionListener != null) {
                 if (!isSelectionMode) {
                     selectionListener.onStartSelection(pos);
@@ -244,17 +262,24 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void setSelectionMode(boolean enabled) {
         this.isSelectionMode = enabled;
-        if (!enabled) selectedIds.clear();
+        if (!enabled) {
+            selectedIds.clear();
+        }
         notifyItemRangeChanged(1, mItems.size(), PAYLOAD_UPDATE_SELECTION);
     }
 
     public void setItemSelected(int adapterPosition, boolean selected) {
         FontEntity font = getItemAtAdapterPosition(adapterPosition);
-        if (font == null) return;
+        if (font == null) {
+            return;
+        }
 
         long id = font.getId();
-        if (selected) selectedIds.add(id);
-        else selectedIds.remove(id);
+        if (selected) {
+            selectedIds.add(id);
+        } else {
+            selectedIds.remove(id);
+        }
 
         notifyItemChanged(adapterPosition, PAYLOAD_UPDATE_SELECTION);
     }
@@ -268,7 +293,9 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public boolean isItemSelected(int adapterPosition) {
         FontEntity font = getItemAtAdapterPosition(adapterPosition);
-        if (font == null) return false;
+        if (font == null) {
+            return false;
+        }
 
         long id = font.getId();
         return selectedIds.contains(id);
@@ -282,11 +309,15 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @NonNull
     public List<FontEntity> getSelectedFonts() {
         List<FontEntity> result = new ArrayList<>(selectedIds.size());
-        if (selectedIds.isEmpty()) return result;
+        if (selectedIds.isEmpty()) {
+            return result;
+        }
 
         for (FontEntity font : mItems) {
             long id = font.getId();
-            if (selectedIds.contains(id)) result.add(font);
+            if (selectedIds.contains(id)) {
+                result.add(font);
+            }
         }
         return result;
     }
@@ -305,7 +336,9 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Nullable
     public FontEntity getItemAtAdapterPosition(int adapterPosition) {
         int itemIndex = adapterPosition - 1;
-        if (itemIndex < 0 || itemIndex >= mItems.size()) return null;
+        if (itemIndex < 0 || itemIndex >= mItems.size()) {
+            return null;
+        }
         return mItems.get(itemIndex);
     }
 

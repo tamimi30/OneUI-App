@@ -2,9 +2,8 @@ package com.oneui.fontviewer.ui.widget.list.sort;
 
 import android.content.Context;
 import android.util.Log;
-
-
 import io.reactivex.rxjava3.schedulers.Schedulers;
+
 
 import com.oneui.fontviewer.ui.settings.datastore.SettingsDataStore;
 
@@ -37,7 +36,7 @@ public class SortManager {
 
     public SortManager(Context context, String listType) {
         this.dataStore    = SettingsDataStore.getInstance(context);
-        this.listType     = (listType != null) ? listType.toUpperCase() : LIST_TYPE_LOCAL;
+        this.listType     = listType != null ? listType.toUpperCase() : LIST_TYPE_LOCAL;
         loadSortPreferences();
     }
 
@@ -160,7 +159,9 @@ public class SortManager {
     
 
     private void notifySortChanged() {
-        if (listener != null) listener.onSortChanged(currentSortType, isSortAscending);
+        if (listener != null) {
+            listener.onSortChanged(currentSortType, isSortAscending);
+        }
     }
 
     

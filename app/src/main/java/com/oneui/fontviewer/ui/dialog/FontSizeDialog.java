@@ -2,23 +2,24 @@ package com.oneui.fontviewer.ui.dialog;
 
 import android.content.Context;
 import android.text.InputFilter;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.EditText;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SeslSeekBar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import dev.oneuiproject.oneui.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SeslSeekBar;
+
+import android.view.ActionMode;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.widget.OneUiTipPopup;
@@ -44,9 +45,9 @@ public class FontSizeDialog {
 
     private AlertDialog dialog;
     private float tempSize;
-    private float originalSize;
+    private final float originalSize;
     private OneUiTipPopup fontSizeTipPopup;
-    private boolean isNumericKeyboardVisible = false;
+    private boolean isNumericKeyboardVisible;
     private Toast invalidSizeRealtimeToast;
 
     public FontSizeDialog(Context context, float currentSize, float minSize, float maxSize) {
@@ -130,7 +131,9 @@ public class FontSizeDialog {
         // Also track focus changes to re-enable/disable the seekBar when keyboard
         // is shown/hidden by other means.
         fontSizeValue.setOnFocusChangeListener((v, hasFocus) -> {
-            if (seekBar == null) return;
+            if (seekBar == null) {
+                return;
+            }
             if (hasFocus) {
                 seekBar.setEnabled(false);
                 seekBar.setAlpha(0.4f);
@@ -194,11 +197,17 @@ public class FontSizeDialog {
                         if (enteredSize > maxSize || enteredSize < minSize) {
                             Toast.makeText(context, R.string.toast_invalid_font_size, Toast.LENGTH_SHORT).show();
                         }
-                        if (enteredSize > maxSize) enteredSize = maxSize;
-                        if (enteredSize < minSize) enteredSize = minSize;
+                        if (enteredSize > maxSize) {
+                            enteredSize = maxSize;
+                        }
+                        if (enteredSize < minSize) {
+                            enteredSize = minSize;
+                        }
 
                         int newProgress = (int) (enteredSize - minSize);
-                        if (seekBar != null) seekBar.setProgress(newProgress);
+                        if (seekBar != null) {
+                            seekBar.setProgress(newProgress);
+                        }
                         updateFontSizeText(enteredSize);
                         tempSize = enteredSize;
                         
@@ -237,8 +246,12 @@ public class FontSizeDialog {
                     if (enteredSize > maxSize || enteredSize < minSize) {
                         Toast.makeText(context, R.string.toast_invalid_font_size, Toast.LENGTH_SHORT).show();
                     }
-                    if (enteredSize > maxSize) enteredSize = maxSize;
-                    if (enteredSize < minSize) enteredSize = minSize;
+                    if (enteredSize > maxSize) {
+                        enteredSize = maxSize;
+                    }
+                    if (enteredSize < minSize) {
+                        enteredSize = minSize;
+                    }
                     tempSize = enteredSize;
                 } catch (NumberFormatException ignored) {}
             }

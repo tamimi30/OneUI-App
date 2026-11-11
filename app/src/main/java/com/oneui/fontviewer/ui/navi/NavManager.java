@@ -1,21 +1,22 @@
 package com.oneui.fontviewer.ui.navi;
 
-import android.view.View;
-import android.view.ViewGroup;
-
 import androidx.core.view.GravityCompat;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.oneui.fontviewer.ui.widget.layout.OneUiDrawerLayout;
+import android.view.View;
+import android.view.ViewGroup;
 
-import com.oneui.fontviewer.ui.fragment.localfont.LocalFontListFragment;
-import com.oneui.fontviewer.ui.fragment.favorite.FavoriteFontListFragment;
-import com.oneui.fontviewer.ui.fragment.trash.TrashFragment;
-import com.oneui.fontviewer.ui.widget.list.search.SearchCoordinator;
+
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.fragment.AppScreen;
+import com.oneui.fontviewer.ui.fragment.favorite.FavoriteFontListFragment;
+import com.oneui.fontviewer.ui.fragment.localfont.LocalFontListFragment;
+import com.oneui.fontviewer.ui.fragment.trash.TrashFragment;
+import com.oneui.fontviewer.ui.widget.layout.OneUiDrawerLayout;
+import com.oneui.fontviewer.ui.widget.list.search.SearchCoordinator;
 
 public class NavManager {
 
@@ -57,7 +58,9 @@ public class NavManager {
             if (child instanceof ViewGroup) {
                 androidx.drawerlayout.widget.DrawerLayout result =
                         findInnerDrawerLayout((ViewGroup) child);
-                if (result != null) return result;
+                if (result != null) {
+                    return result;
+                }
             }
         }
         return null;
@@ -138,11 +141,17 @@ public class NavManager {
         AppScreen currentScreen = mHost.getCurrentScreen();
         Fragment currentFragment = mHost.getFragment(currentScreen);
         if (currentFragment instanceof LocalFontListFragment) {
-            if (((LocalFontListFragment) currentFragment).handleBackPressed()) return;
+            if (((LocalFontListFragment) currentFragment).handleBackPressed()) {
+                return;
+            }
         } else if (currentFragment instanceof FavoriteFontListFragment) {
-            if (((FavoriteFontListFragment) currentFragment).handleBackPressed()) return;
+            if (((FavoriteFontListFragment) currentFragment).handleBackPressed()) {
+                return;
+            }
         } else if (currentFragment instanceof TrashFragment) {
-            if (((TrashFragment) currentFragment).handleBackPressed()) return;
+            if (((TrashFragment) currentFragment).handleBackPressed()) {
+                return;
+            }
         }
 
         if (mHost.getSearchCoordinator().isSearchExpanded()) {

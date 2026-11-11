@@ -4,11 +4,11 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import dev.oneuiproject.oneui.utils.internal.ToolbarLayoutUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,10 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import dev.oneuiproject.oneui.utils.internal.ToolbarLayoutUtils;
 
 import com.oneui.fontviewer.R;
 
@@ -31,7 +31,7 @@ public class HomeFragment extends Fragment {
     private Toolbar mToolbar;
     private View mSwipeUpContainer;
     private ViewGroup mBottomContainer;
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     private AppBarOffsetListener mOffsetListener;
 
@@ -186,7 +186,7 @@ public class HomeFragment extends Fragment {
                 } else if (abs == 0) {
                     mSwipeUpContainer.setAlpha(1f);
                 } else {
-                    float offsetAlpha = (appBarLayout.getY() / totalScrollRange);
+                    float offsetAlpha = appBarLayout.getY() / totalScrollRange;
                     float arrowAlpha = 1 - (offsetAlpha * -3);
 
                     if (arrowAlpha < 0) {

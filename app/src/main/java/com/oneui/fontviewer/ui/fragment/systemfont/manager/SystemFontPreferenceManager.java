@@ -2,10 +2,10 @@ package com.oneui.fontviewer.ui.fragment.systemfont.manager;
 
 import android.content.Context;
 import android.util.Log;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 
 import com.oneui.fontviewer.ui.settings.datastore.SettingsDataStore;
-
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SystemFontPreferenceManager {
     

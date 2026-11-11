@@ -3,10 +3,13 @@ package com.oneui.fontviewer.ui.widget;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+
+import androidx.appcompat.widget.AppCompatSpinner;
+
 import android.view.View;
 import android.view.ViewParent;
 
-import androidx.appcompat.widget.AppCompatSpinner;
+
 import com.oneui.fontviewer.ui.widget.scrollview.OneUiHorizontalScrollView;
 
 public class AxisSpinner extends AppCompatSpinner {

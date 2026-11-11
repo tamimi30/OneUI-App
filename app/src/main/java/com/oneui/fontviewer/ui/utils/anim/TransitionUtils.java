@@ -1,8 +1,5 @@
 package com.oneui.fontviewer.ui.utils.anim;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -15,12 +12,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
+import android.widget.FrameLayout;
+
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.PathInterpolator;
-import android.widget.FrameLayout;
 
 public final class TransitionUtils {
 
@@ -302,8 +303,8 @@ public final class TransitionUtils {
         private final AnimationType mType;
 
         private Bitmap mSnapshot;
-        private float mProgress = 0f;
-        private boolean mReleased = false;
+        private float mProgress = 0F;
+        private boolean mReleased;
 
         SnapshotOverlayView(Context context, Bitmap snapshot, AnimationType type) {
             super(context);

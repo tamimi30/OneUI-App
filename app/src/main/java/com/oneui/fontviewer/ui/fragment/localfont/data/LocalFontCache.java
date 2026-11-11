@@ -4,15 +4,16 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
 
-import com.oneui.fontviewer.data.database.AppDatabase;
-import com.oneui.fontviewer.data.entity.FontEntity;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class LocalFontCache {
+
+import com.oneui.fontviewer.data.database.AppDatabase;
+import com.oneui.fontviewer.data.entity.FontEntity;
+
+public final class LocalFontCache {
     
     private static final String TAG = "LocalFontCache";
     private static LocalFontCache instance;
@@ -20,7 +21,7 @@ public class LocalFontCache {
     private final ConcurrentHashMap<String, Typeface> memoryCache;
     private Context context;
     private AppDatabase database;
-    private volatile boolean isInitialized = false;
+    private volatile boolean isInitialized;
 
     private final java.util.concurrent.ExecutorService fontLoaderExecutor =
         java.util.concurrent.Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -77,7 +78,9 @@ public class LocalFontCache {
                 
                 cachedFonts.sort((f1, f2) -> {
                     int countCompare = Integer.compare(f2.getAccessCount(), f1.getAccessCount());
-                    if (countCompare != 0) return countCompare;
+                    if (countCompare != 0) {
+                        return countCompare;
+                    }
                     
                     return Long.compare(f2.getLastAccessTime(), f1.getLastAccessTime());
                 });
@@ -107,7 +110,9 @@ public class LocalFontCache {
     }
     
     public Typeface getIfCached(String fontPath) {
-        if (fontPath == null) return null;
+        if (fontPath == null) {
+            return null;
+        }
         return memoryCache.get(fontPath);
     }
     

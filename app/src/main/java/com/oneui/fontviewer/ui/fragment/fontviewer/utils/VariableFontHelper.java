@@ -5,14 +5,14 @@ import android.graphics.Typeface;
 import android.graphics.fonts.Font;
 import android.graphics.fonts.FontVariationAxis;
 
-
-import com.oneui.fontviewer.R;
-
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+
+import com.oneui.fontviewer.R;
 
 public class VariableFontHelper {
     
@@ -72,7 +72,9 @@ public class VariableFontHelper {
 
         boolean result = detectVariableFont(fontFile, ttcIndex);
         if (result) {
-            if (VARIABLE_FONT_CACHE.size() >= 64) VARIABLE_FONT_CACHE.clear();
+            if (VARIABLE_FONT_CACHE.size() >= 64) {
+                VARIABLE_FONT_CACHE.clear();
+            }
             VARIABLE_FONT_CACHE.put(cacheKey, Boolean.TRUE);
         }
         return result;
@@ -344,8 +346,12 @@ public class VariableFontHelper {
         Map<String, float[]> axes = FVAR_CACHE.get(key);
         if (axes == null) {
             axes = parseAllAxesFromFvar(fontFile, ttcIndex);
-            if (axes == null) return null;          // فشلت القراءة: لا نخزّن
-            if (FVAR_CACHE.size() >= 64) FVAR_CACHE.clear();
+            if (axes == null) {
+                return null;          // فشلت القراءة: لا نخزّن
+            }
+            if (FVAR_CACHE.size() >= 64) {
+                FVAR_CACHE.clear();
+            }
             FVAR_CACHE.put(key, axes);
         }
         float[] range = axes.get(targetTag);
@@ -365,7 +371,9 @@ public class VariableFontHelper {
             if ("ttcf".equals(new String(header, "US-ASCII"))) {
                 raf.seek(8);
                 long numFonts = readUInt32(raf);
-                if (ttcIndex >= numFonts) return null;
+                if (ttcIndex >= numFonts) {
+                    return null;
+                }
                 raf.seek(12 + (ttcIndex * 4));
                 fontOffset = readUInt32(raf);
             }
@@ -383,8 +391,10 @@ public class VariableFontHelper {
                     break;
                 }
             }
-            if (fvarOffset == -1) return result;    // لا fvar: خريطة فارغة
+            if (fvarOffset == -1) {
+                return result;    // لا fvar: خريطة فارغة
 
+            }
             raf.seek(fvarOffset + 4);
             int axesArrayOffset = readUInt16(raf);
             raf.seek(fvarOffset + 8);
@@ -395,7 +405,9 @@ public class VariableFontHelper {
                 raf.seek(fvarOffset + axesArrayOffset + (i * axisSize));
                 byte[] tag = new byte[4];
                 raf.read(tag);
-                float min = readFixed(raf), def = readFixed(raf), max = readFixed(raf);
+                float min = readFixed(raf);
+                float def = readFixed(raf);
+                float max = readFixed(raf);
                 result.putIfAbsent(new String(tag, "US-ASCII"), new float[]{min, def, max});
             }
             return result;

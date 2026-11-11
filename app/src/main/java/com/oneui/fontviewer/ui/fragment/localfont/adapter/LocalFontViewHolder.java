@@ -2,18 +2,20 @@ package com.oneui.fontviewer.ui.fragment.localfont.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import androidx.annotation.NonNull;
+
+import android.view.View;
+
+
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.utils.metadata.FontWeightWidthExtractor;
-import com.oneui.fontviewer.ui.widget.list.search.TextHighlighter;
 import com.oneui.fontviewer.ui.widget.list.SelectableLinearLayout;
+import com.oneui.fontviewer.ui.widget.list.search.TextHighlighter;
 
 public class LocalFontViewHolder extends RecyclerView.ViewHolder {
 
@@ -69,7 +71,7 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
 
         if (weightWidthTextView != null) {
             String formattedLabel = FontWeightWidthExtractor.formatLabel(itemView.getContext(), weightWidthLabel);
-            String label = (formattedLabel != null && !formattedLabel.isEmpty())
+            String label = formattedLabel != null && !formattedLabel.isEmpty()
                     ? formattedLabel
                     : itemView.getContext().getString(R.string.unknown_font);
             weightWidthTextView.setText(label);
@@ -96,15 +98,14 @@ public class LocalFontViewHolder extends RecyclerView.ViewHolder {
             favoriteIconView.animate().cancel(); 
 
             if (animate) {
-                    boolean isCurrentlyVisible = (favoriteIconView.getVisibility() == View.VISIBLE);
+                    boolean isCurrentlyVisible = favoriteIconView.getVisibility() == View.VISIBLE;
                     if (isFavorite && !isCurrentlyVisible) {
                         favoriteIconView.setAlpha(0f);
                         favoriteIconView.setVisibility(View.VISIBLE);
                         favoriteIconView.animate().alpha(1f).setDuration(350).start();
                     } else if (!isFavorite && isCurrentlyVisible) {
-                        favoriteIconView.animate().alpha(0f).setDuration(350).withEndAction(() -> {
-                            favoriteIconView.setVisibility(View.INVISIBLE);
-                        }).start();
+                        favoriteIconView.animate().alpha(0f).setDuration(350).withEndAction(() ->
+                            favoriteIconView.setVisibility(View.INVISIBLE)).start();
                     } else if (isFavorite && isCurrentlyVisible) {
                         favoriteIconView.setAlpha(1f); 
                     } else if (!isFavorite && !isCurrentlyVisible) {

@@ -2,15 +2,17 @@ package com.oneui.fontviewer.ui.dialog;
 
 import android.content.Context;
 import android.text.method.LinkMovementMethod;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import java.util.Map;
+
 
 import com.oneui.fontviewer.R;
 

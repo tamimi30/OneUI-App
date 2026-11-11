@@ -6,21 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
-import com.oneui.fontviewer.ui.widget.layout.OneUiDrawerLayout;
+import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
+
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.fragment.AppScreen;
-import com.oneui.fontviewer.ui.fragment.favorite.FavoriteFontListFragment; 
+import com.oneui.fontviewer.ui.fragment.favorite.FavoriteFontListFragment;
 import com.oneui.fontviewer.ui.fragment.localfont.LocalFontListFragment;
 import com.oneui.fontviewer.ui.fragment.systemfont.SystemFontListFragment;
+import com.oneui.fontviewer.ui.widget.layout.OneUiDrawerLayout;
 
 
 public class SearchCoordinator {
@@ -37,13 +38,13 @@ public class SearchCoordinator {
     private ScreenProvider screenProvider;
     private FragmentProvider fragmentProvider;
 
-    private boolean    isSearchExpanded = false;
+    private boolean    isSearchExpanded;
     private String     savedSearchQuery = "";
-    private AppScreen  lastScreen       = null; 
+    private AppScreen  lastScreen; 
 
     private SearchStateListener stateListener;
 
-    private boolean mPendingSearchRestore = false;
+    private boolean mPendingSearchRestore;
 
 
     public interface ScreenProvider {
@@ -101,7 +102,9 @@ public class SearchCoordinator {
 
 
     private void setupSearchView() {
-        if (drawerLayout == null) return;
+        if (drawerLayout == null) {
+            return;
+        }
 
         searchView = drawerLayout.getSearchView();
 
@@ -119,13 +122,17 @@ public class SearchCoordinator {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 performSearch(query);
-                if (stateListener != null) stateListener.onSearchQueryChanged(query);
+                if (stateListener != null) {
+                    stateListener.onSearchQueryChanged(query);
+                }
                 return true;
             }
             @Override
             public boolean onQueryTextChange(String newText) {
                 performSearch(newText);
-                if (stateListener != null) stateListener.onSearchQueryChanged(newText);
+                if (stateListener != null) {
+                    stateListener.onSearchQueryChanged(newText);
+                }
                 return true;
             }
 
@@ -161,13 +168,19 @@ public class SearchCoordinator {
 
         if (fragmentProvider != null) {
             Fragment localFrag = fragmentProvider.getFragment(AppScreen.LOCAL_FONTS);
-            if (localFrag instanceof LocalFontListFragment) ((LocalFontListFragment) localFrag).resetFilter();
+            if (localFrag instanceof LocalFontListFragment) {
+                ((LocalFontListFragment) localFrag).resetFilter();
+            }
 
             Fragment sysFrag = fragmentProvider.getFragment(AppScreen.SYSTEM_FONTS);
-            if (sysFrag instanceof SystemFontListFragment) ((SystemFontListFragment) sysFrag).resetFilter();
+            if (sysFrag instanceof SystemFontListFragment) {
+                ((SystemFontListFragment) sysFrag).resetFilter();
+            }
 
             Fragment favFrag = fragmentProvider.getFragment(AppScreen.FAVORITES);
-            if (favFrag instanceof FavoriteFontListFragment) ((FavoriteFontListFragment) favFrag).resetFilter();
+            if (favFrag instanceof FavoriteFontListFragment) {
+                ((FavoriteFontListFragment) favFrag).resetFilter();
+            }
         }
 
         if (stateListener != null) {
@@ -235,12 +248,14 @@ public class SearchCoordinator {
 
 
     public void saveState(@NonNull Bundle outState) {
-        if (screenProvider == null) return; 
+        if (screenProvider == null) {
+            return;
+        } 
 
         AppScreen currentScreen = screenProvider.getCurrentScreen();
-        boolean isSearchableScreen = (currentScreen == AppScreen.LOCAL_FONTS
+        boolean isSearchableScreen = currentScreen == AppScreen.LOCAL_FONTS
                 || currentScreen == AppScreen.SYSTEM_FONTS
-                || currentScreen == AppScreen.FAVORITES);
+                || currentScreen == AppScreen.FAVORITES;
 
         if (isSearchExpanded && isSearchableScreen) {
             outState.putBoolean(KEY_SEARCH_EXPANDED, true);
@@ -260,15 +275,17 @@ public class SearchCoordinator {
     }
 
     public void restoreState(@NonNull Bundle savedInstanceState) {
-        if (screenProvider == null) return; 
+        if (screenProvider == null) {
+            return;
+        } 
 
         isSearchExpanded = savedInstanceState.getBoolean(KEY_SEARCH_EXPANDED, false);
         savedSearchQuery = savedInstanceState.getString(KEY_SEARCH_QUERY, "");
 
         AppScreen currentScreen = screenProvider.getCurrentScreen();
-        boolean isSearchableScreen = (currentScreen == AppScreen.LOCAL_FONTS
+        boolean isSearchableScreen = currentScreen == AppScreen.LOCAL_FONTS
                 || currentScreen == AppScreen.SYSTEM_FONTS
-                || currentScreen == AppScreen.FAVORITES);
+                || currentScreen == AppScreen.FAVORITES;
 
         if (isSearchExpanded && isSearchableScreen) {
             if (searchMenuItem != null && drawerLayout != null) {
@@ -291,7 +308,9 @@ public class SearchCoordinator {
 
 
     public void collapseSearch() {
-        if (!isSearchExpanded) return;
+        if (!isSearchExpanded) {
+            return;
+        }
         if (drawerLayout != null) {
             drawerLayout.dismissSearchMode(); 
         }
@@ -304,7 +323,9 @@ public class SearchCoordinator {
     }
 
     public void clearSearchFocus() {
-        if (searchView == null) return;
+        if (searchView == null) {
+            return;
+        }
 
         searchView.clearFocus();
 

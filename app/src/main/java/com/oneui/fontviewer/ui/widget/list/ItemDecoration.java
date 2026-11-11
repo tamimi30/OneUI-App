@@ -5,14 +5,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.util.SeslRoundedCorner;
 import androidx.appcompat.util.SeslSubheaderRoundedCorner;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.View;
+import android.view.ViewGroup;
+
 
 import com.oneui.fontviewer.R;
 

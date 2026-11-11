@@ -3,13 +3,14 @@ package com.oneui.fontviewer.ui.settings.about;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
+import dev.oneuiproject.oneui.layout.AppInfoLayout;
+import dev.oneuiproject.oneui.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import dev.oneuiproject.oneui.layout.AppInfoLayout;
-import dev.oneuiproject.oneui.widget.Toast;
+import android.view.View;
+import android.view.ViewGroup;
+
 
 import com.oneui.fontviewer.R;
 
@@ -61,7 +62,9 @@ private void setButtonsWidth(float ratio, int... buttonIds) {
 
 public void changeStatus(View v) {
     int s = appInfoLayout.getStatus() + 1;
-    if (s == 4) s = -1;
+    if (s == 4) {
+        s = -1;
+    }
     appInfoLayout.setStatus(s);
 }
 

@@ -4,6 +4,15 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import androidx.core.content.ContextCompat;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.Transformations;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,24 +22,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 
-import com.oneui.fontviewer.data.entity.FontEntity;
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.data.entity.FontEntity;
+import com.oneui.fontviewer.ui.dialog.ActionDialogs;
 import com.oneui.fontviewer.ui.fragment.localfont.data.LocalFontCache;
 import com.oneui.fontviewer.ui.fragment.localfont.data.LocalFontRepository;
-import com.oneui.fontviewer.ui.fragment.trash.data.TrashRepository;   
-import com.oneui.fontviewer.ui.dialog.ActionDialogs;          
 import com.oneui.fontviewer.ui.fragment.localfont.manager.LocalFontPreferenceManager;
+import com.oneui.fontviewer.ui.fragment.trash.data.TrashRepository;
 import com.oneui.fontviewer.ui.utils.notification.BatchOperationState;
-import com.oneui.fontviewer.ui.utils.notification.OperationForegroundService;                  
+import com.oneui.fontviewer.ui.utils.notification.OperationForegroundService;
 
 public class LocalFontListViewModel extends AndroidViewModel {
     
@@ -47,12 +48,12 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
     private final MutableLiveData<List<FontEntity>> favoritesLiveData;
 
-    private boolean mIsFolderSyncing = false;
-    private List<FontEntity> mPendingSyncFonts = null;
+    private boolean mIsFolderSyncing;
+    private List<FontEntity> mPendingSyncFonts;
 
     // أقل مدة بين فحصين صامتين متتاليين للمجلد، حتى لا يتكرر الفحص عند التنقل السريع بين التطبيقات
     private static final long MIN_SILENT_REFRESH_INTERVAL_MS = 2000;
-    private long mLastSilentRefreshTime = 0;
+    private long mLastSilentRefreshTime;
 
     private AtomicBoolean trashCancelFlag = new AtomicBoolean(false);
 
@@ -190,7 +191,9 @@ public class LocalFontListViewModel extends AndroidViewModel {
     }
 
     public void toggleFavoritesBatch(List<String> paths, boolean isFavorite, Runnable onSuccess) {
-        if (paths == null || paths.isEmpty()) return;
+        if (paths == null || paths.isEmpty()) {
+            return;
+        }
 
         BatchOperationState.setProcessing(true);
 
@@ -303,12 +306,16 @@ public class LocalFontListViewModel extends AndroidViewModel {
     public void moveFontsToTrashInMemory(@NonNull List<String> paths,
                                           TrashRepository.OnProgressListener progressListener,
                                           Runnable onComplete) {
-        if (paths.isEmpty()) return;
+        if (paths.isEmpty()) {
+            return;
+        }
 
         List<FontEntity> currentList = fontsLiveData.getValue();
         if (currentList == null || currentList.isEmpty()) {
             Log.w(TAG, "moveFontsToTrashInMemory: font list is empty");
-            if (onComplete != null) new Handler(Looper.getMainLooper()).post(onComplete);
+            if (onComplete != null) {
+                new Handler(Looper.getMainLooper()).post(onComplete);
+            }
             return;
         }
 
@@ -321,12 +328,16 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
         if (fontsToMove.isEmpty()) {
             Log.w(TAG, "moveFontsToTrashInMemory: no matching entities found for given paths");
-            if (onComplete != null) new Handler(Looper.getMainLooper()).post(onComplete);
+            if (onComplete != null) {
+                new Handler(Looper.getMainLooper()).post(onComplete);
+            }
             return;
         }
 
         int sourceIndex = BatchOperationState.getSourceFragmentIndex();
-        if (sourceIndex == -1) sourceIndex = 2; 
+        if (sourceIndex == -1) {
+            sourceIndex = 2;
+        } 
         BatchOperationState.setProcessing(true, sourceIndex);
 
         trashCancelFlag = new AtomicBoolean(false);
@@ -430,16 +441,24 @@ public class LocalFontListViewModel extends AndroidViewModel {
      */
     public void refreshFontsSilently() {
         final String folderPath = preferenceManager.getFontFolderPath();
-        if (folderPath == null || folderPath.isEmpty()) return;
+        if (folderPath == null || folderPath.isEmpty()) {
+            return;
+        }
 
         // فحص سابق أو تحميل ما زال شغالاً، لا نبدأ فحصاً ثانياً فوقه
-        if (mIsFolderSyncing || Boolean.TRUE.equals(isLoadingLiveData.getValue())) return;
+        if (mIsFolderSyncing || Boolean.TRUE.equals(isLoadingLiveData.getValue())) {
+            return;
+        }
 
         long now = android.os.SystemClock.elapsedRealtime();
-        if (now - mLastSilentRefreshTime < MIN_SILENT_REFRESH_INTERVAL_MS) return;
+        if (now - mLastSilentRefreshTime < MIN_SILENT_REFRESH_INTERVAL_MS) {
+            return;
+        }
         mLastSilentRefreshTime = now;
 
-        if (fontPreloadExecutor.isShutdown()) return;
+        if (fontPreloadExecutor.isShutdown()) {
+            return;
+        }
         try {
             fontPreloadExecutor.execute(() -> {
                 // إن كان المجلد غير متاح الآن (صلاحية سُحبت، أو ذاكرة خارجية انفصلت) نتجاهل الفحص،
@@ -451,7 +470,9 @@ public class LocalFontListViewModel extends AndroidViewModel {
                 }
                 new Handler(Looper.getMainLooper()).post(() -> {
                     // قد يبدأ تحميل آخر أو يتغير المجلد أثناء فحص الوصول، فنتأكد مرة أخيرة قبل المزامنة
-                    if (mIsFolderSyncing || !folderPath.equals(preferenceManager.getFontFolderPath())) return;
+                    if (mIsFolderSyncing || !folderPath.equals(preferenceManager.getFontFolderPath())) {
+                        return;
+                    }
                     loadFontsFromPath(folderPath, false, true);
                 });
             });

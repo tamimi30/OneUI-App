@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatButton;
+
+
 import com.oneui.fontviewer.ui.widget.textview.OneUiTextHelper;
 
 
@@ -25,7 +27,9 @@ public class OneUiButton extends AppCompatButton {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        if (attrs == null) return;
+        if (attrs == null) {
+            return;
+        }
         OneUiTextHelper.applyFontLevel(this, context, attrs);
     }
 }

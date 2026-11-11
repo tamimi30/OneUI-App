@@ -3,41 +3,42 @@ package com.oneui.fontviewer.ui;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import androidx.core.splashscreen.SplashScreen;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.os.Handler;
-
-import androidx.annotation.NonNull;
-import androidx.core.splashscreen.SplashScreen;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import com.oneui.fontviewer.ui.widget.layout.OneUiDrawerLayout;
 
+import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.ui.fragment.AppScreen;
+import com.oneui.fontviewer.ui.fragment.favorite.FavoriteFontListFragment;
 import com.oneui.fontviewer.ui.fragment.fontviewer.FontViewerActivity;
 import com.oneui.fontviewer.ui.fragment.fontviewer.utils.FontPrefetcher;
+import com.oneui.fontviewer.ui.fragment.home.HomeActivity;
 import com.oneui.fontviewer.ui.fragment.localfont.LocalFontListFragment;
 import com.oneui.fontviewer.ui.fragment.systemfont.SystemFontListFragment;
-import com.oneui.fontviewer.ui.fragment.favorite.FavoriteFontListFragment;
 import com.oneui.fontviewer.ui.fragment.trash.TrashFragment;
 import com.oneui.fontviewer.ui.navi.DrawerListAdapter;
-import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.ui.widget.list.search.SearchCoordinator;
-import com.oneui.fontviewer.ui.settings.SettingsActivity;
-import com.oneui.fontviewer.ui.fragment.home.HomeActivity;
-import com.oneui.fontviewer.ui.utils.notification.BatchOperationState;
-import com.oneui.fontviewer.ui.fragment.AppScreen;
 import com.oneui.fontviewer.ui.navi.NavManager;
+import com.oneui.fontviewer.ui.settings.SettingsActivity;
+import com.oneui.fontviewer.ui.utils.notification.BatchOperationState;
+import com.oneui.fontviewer.ui.widget.layout.OneUiDrawerLayout;
+import com.oneui.fontviewer.ui.widget.list.search.SearchCoordinator;
 
 public class MainActivity extends BaseActivity
     implements LocalFontListFragment.OnFontSelectedListener,
@@ -45,10 +46,10 @@ public class MainActivity extends BaseActivity
     FavoriteFontListFragment.OnFontSelectedListener,
     NavManager.Host {
 
-    private boolean isUIReady = false;
-    private boolean mIsMinSplashTimeElapsed = false;
-    private boolean mIsInitialDataReady = false;
-    private long mSplashStartTime = 0L;
+    private boolean isUIReady;
+    private boolean mIsMinSplashTimeElapsed;
+    private boolean mIsInitialDataReady;
+    private long mSplashStartTime;
     private OneUiDrawerLayout mDrawerLayout;
     private RecyclerView mDrawerListView;
     private DrawerListAdapter mDrawerAdapter;
@@ -67,10 +68,10 @@ public class MainActivity extends BaseActivity
 
     public static final String EXTRA_TARGET_FRAGMENT = "target_fragment";
 
-    private int mLocalFontsCount    = 0;
-    private int mSystemFontsCount   = 0;
-    private int mFavoriteFontsCount = 0;
-    private int mTrashFontsCount    = 0;
+    private int mLocalFontsCount;
+    private int mSystemFontsCount;
+    private int mFavoriteFontsCount;
+    private int mTrashFontsCount;
 
     private NavManager mNavManager;
 
@@ -233,7 +234,7 @@ public class MainActivity extends BaseActivity
 
         mSearchCoordinator.setProviders(
                 () -> mCurrentScreen,
-                screen -> mFragmentsMap.get(screen)
+                mFragmentsMap::get
         );
 
         mSearchCoordinator.setSearchStateListener(new SearchCoordinator.SearchStateListener() {
@@ -314,7 +315,9 @@ public class MainActivity extends BaseActivity
 
         FragmentManager fm = getSupportFragmentManager();
         for (AppScreen screen : AppScreen.values()) {
-            if (screen == AppScreen.HOME || screen == AppScreen.FONT_VIEWER) continue;
+            if (screen == AppScreen.HOME || screen == AppScreen.FONT_VIEWER) {
+                continue;
+            }
             Fragment f = fm.findFragmentByTag(screen.name());
             if (f != null) {
                 mFragmentsMap.put(screen, f);
@@ -347,16 +350,24 @@ public class MainActivity extends BaseActivity
     private void warmUpOtherScreens() {
         Handler warmupHandler = new Handler(getMainLooper());
         warmupHandler.postDelayed(() -> {
-            if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
+            if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) {
+                return;
+            }
             warmUpScreenSilently(AppScreen.SYSTEM_FONTS);
             warmupHandler.postDelayed(() -> {
-                if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
+                if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) {
+                    return;
+                }
                 warmUpScreenSilently(AppScreen.FAVORITES);
                 warmupHandler.postDelayed(() -> {
-                    if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
+                    if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) {
+                        return;
+                    }
                     warmUpScreenSilently(AppScreen.TRASH);
                     warmupHandler.postDelayed(() -> {
-                        if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) return;
+                        if (isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) {
+                            return;
+                        }
                         warmUpScreenSilently(null);
                     }, 120);
                 }, 120);
@@ -368,10 +379,14 @@ public class MainActivity extends BaseActivity
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         for (AppScreen s : AppScreen.values()) {
-            if (s == mCurrentScreen) continue;
+            if (s == mCurrentScreen) {
+                continue;
+            }
 
             Fragment frag = mFragmentsMap.get(s);
-            if (frag == null || !frag.isAdded()) continue;
+            if (frag == null || !frag.isAdded()) {
+                continue;
+            }
 
             if (s == screenToShow) {
                 transaction.show(frag);
@@ -441,7 +456,8 @@ public class MainActivity extends BaseActivity
 
         final int touchSlop = ViewConfiguration.get(this).getScaledTouchSlop();
         mDrawerListView.setOnTouchListener(new View.OnTouchListener() {
-            private float startX, startY;
+            private float startX;
+            private float startY;
 
             @Override
             public boolean onTouch(View v, MotionEvent ev) {

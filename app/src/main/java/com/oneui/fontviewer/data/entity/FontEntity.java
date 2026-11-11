@@ -1,9 +1,10 @@
 package com.oneui.fontviewer.data.entity;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
+import androidx.room.Entity;
 import androidx.room.Index;
+import androidx.room.PrimaryKey;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -13,9 +14,9 @@ import androidx.annotation.Nullable;
         @Index(value = "path", unique = true),
         @Index(value = "is_system_font"),
         @Index(value = "last_modified"),
-        @Index(value = "is_favorite"),  
-        @Index(value = "is_trashed"),   
-        @Index(value = "deleted_at")    
+        @Index(value = "is_favorite"),
+        @Index(value = "is_trashed"),
+        @Index(value = "deleted_at")
     }
 )
 public class FontEntity {

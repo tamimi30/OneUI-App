@@ -5,13 +5,15 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
+
+import android.view.Gravity;
+import android.view.View;
+
 
 import com.oneui.fontviewer.R;
 
@@ -26,9 +28,9 @@ public class SelectableLinearLayout extends LinearLayout {
     private CheckBox checkBox;
     private SelectableAnimatedDrawable checkDrawable;
     private ImageView imageTarget;
-    private int imageTargetId = 0;
+    private int imageTargetId;
 
-    private boolean isSelectionMode = false;
+    private boolean isSelectionMode;
 
     public SelectableLinearLayout(Context context) {
         super(context);
@@ -92,7 +94,9 @@ public class SelectableLinearLayout extends LinearLayout {
     }
 
     public void setSelectionMode(boolean mode) {
-        if (isSelectionMode == mode) return;
+        if (isSelectionMode == mode) {
+            return;
+        }
         isSelectionMode = mode;
         if (checkMode == CHECK_MODE_CHECKBOX && checkBox != null) {
 
