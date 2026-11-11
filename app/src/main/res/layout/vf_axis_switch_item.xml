@@ -26,7 +26,6 @@
         android:paddingStart="6sp"
         android:paddingEnd="6sp"
         android:layout_marginTop="-2sp"
-        android:layout_marginBottom="-2sp"
         android:layout_marginStart="-6sp"
         android:background="@drawable/axis_name_ripple"
         android:clickable="true"
