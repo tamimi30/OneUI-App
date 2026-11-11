@@ -5,16 +5,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     	
-    <dev.oneuiproject.oneui.widget.RoundFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="10dp"
-        android:orientation="vertical" /> 
-    	
     <com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="10dp"
+        android:clipToPadding="false"
         android:overScrollMode="always"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
@@ -87,5 +82,11 @@
     </LinearLayout>
 
 </com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView>
+
+    <dev.oneuiproject.oneui.widget.RoundFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="10dp"
+        android:orientation="vertical" /> 
 
 </dev.oneuiproject.oneui.widget.RoundFrameLayout>
