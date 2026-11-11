@@ -36,7 +36,7 @@
         android:scrollbars="vertical"
         android:fillViewport="true">
         	
-        <LinearLayout
+        <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" 
             android:orientation="vertical"
@@ -69,7 +69,7 @@
 
             </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
-        </LinearLayout>
+        </dev.oneuiproject.oneui.widget.RoundLinearLayout>
 
     </com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView>
     
