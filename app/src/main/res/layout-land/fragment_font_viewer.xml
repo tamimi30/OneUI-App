@@ -6,7 +6,7 @@
     android:orientation="horizontal"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedlScrollView
+    <com.oneui.fontviewer.ui.widget.scrollview.OneUiNestedScrollView
         android:id="@+id/variable_axes_container"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
