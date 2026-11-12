@@ -3,6 +3,8 @@ package com.oneui.fontviewer;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -20,6 +22,7 @@ import com.oneui.fontviewer.ui.utils.CrashHandler;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * App - النسخة المحسّنة لحل مشكلة وميض الثيم
@@ -32,6 +35,12 @@ import java.util.List;
 public class FontViewerApp extends Application {
 
     private static final String TAG = "App";
+
+    // أقصى مدة ننتظرها قراءة الثيم على الخيط الرئيسي أثناء onCreate.
+    // بعد إعادة تشغيل الجهاز قد يتأخر القرص والخيوط بسبب إقلاع النظام، ولا يجوز أن يبقى الخيط الرئيسي
+    // محجوباً بلا حد (وإلا ظهر ANR). عند انتهاء المهلة نبدأ بثيم النظام ثم نطبّق الثيم المحفوظ فور وصوله.
+    private static final long THEME_READ_TIMEOUT_MS = 1500L;
+
     private static FontViewerApp sInstance;
     private static final List<WeakReference<Activity>> activities = new ArrayList<>();
     
@@ -45,13 +54,15 @@ public class FontViewerApp extends Application {
         // Initialize crash handler first
         CrashHandler.init(this);
         
-        // ★★★ الحل الرئيسي: تهيئة الكاش مبكراً جداً ★★★
-        initializeCaches();
-        
         // ★★★ تهيئة DataStore هنا مباشرة (ليس في خيط خلفي) ★★★
         // السبب: نحتاجه فوراً لقراءة إعدادات الثيم
+        // ملاحظة: قدّمناه على تهيئة الكاش، لأن إنشاء SettingsDataStore يبدأ قراءة ملف الإعدادات من القرص
+        // في الخلفية فوراً، فيسبق ذلك أي عمل آخر يزاحمه على القرص والمعالج عند الإقلاع بعد إعادة تشغيل الجهاز
         initializeDataStore();
-        
+
+        // ★★★ الحل الرئيسي: تهيئة الكاش مبكراً جداً ★★★
+        initializeCaches();
+
         // ★★★ تطبيق الثيم بشكل متزامن لمنع الوميض ★★★
         applyInitialTheme();
         
@@ -127,11 +138,16 @@ public class FontViewerApp extends Application {
      * - استخدام blockingFirst() آمن هنا لأننا نقرأ قيمة واحدة صغيرة فقط
      * - العملية سريعة جداً (أقل من 10ms عادةً) ولن تسبب تجميد
      * - هذا يضمن تطبيق الثيم الصحيح قبل ظهور أي شاشة
+     *
+     * تحديث: التقدير "أقل من 10ms" لا يصح دائماً، فبعد إعادة تشغيل الجهاز قد تستغرق القراءة الأولى من القرص
+     * ثواني، لذلك أُضيفت مهلة THEME_READ_TIMEOUT_MS: إن انتهت نعود لثيم النظام ثم نطبّق الثيم المحفوظ لاحقاً.
      */
     private void applyInitialTheme() {
         try {
             // قراءة إعداد الثيم التلقائي بشكل متزامن
-            Boolean isAuto = settingsDataStore.getThemeAuto().blockingFirst();
+            Boolean isAuto = settingsDataStore.getThemeAuto()
+                    .timeout(THEME_READ_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                    .blockingFirst();
             
             if (isAuto != null && isAuto) {
                 // الثيم تلقائي - اتبع إعدادات النظام
@@ -140,7 +156,9 @@ public class FontViewerApp extends Application {
                 Log.d(TAG, "✓ Theme set to FOLLOW_SYSTEM (Blocking Mode)");
             } else {
                 // الثيم يدوي - اقرأ الوضع المحدد
-                Integer themeMode = settingsDataStore.getThemeMode().blockingFirst();
+                Integer themeMode = settingsDataStore.getThemeMode()
+                        .timeout(THEME_READ_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                        .blockingFirst();
                 
                 if (themeMode != null && themeMode == 1) {
                     // وضع داكن
@@ -159,7 +177,39 @@ public class FontViewerApp extends Application {
             Log.e(TAG, "Failed to apply initial theme synchronously", e);
             AppCompatDelegate.setDefaultNightMode(
                 AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+
+            // لم نقرأ الثيم المحفوظ في الوقت المناسب: ننتظره في خيط خلفي (دون حجب الخيط الرئيسي) ثم نطبّقه
+            applySavedThemeWhenReady();
         }
+    }
+
+    /**
+     * يقرأ الثيم المحفوظ في خيط خلفي ثم يطبّقه على الخيط الرئيسي. يُستدعى فقط في الحالة النادرة التي
+     * تأخرت فيها القراءة المتزامنة في applyInitialTheme عن المهلة المحددة.
+     */
+    private void applySavedThemeWhenReady() {
+        new Thread(() -> {
+            try {
+                Boolean isAuto = settingsDataStore.getThemeAuto().blockingFirst();
+                Integer themeMode = settingsDataStore.getThemeMode().blockingFirst();
+
+                final int nightMode;
+                if (isAuto != null && isAuto) {
+                    nightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+                } else if (themeMode != null && themeMode == 1) {
+                    nightMode = AppCompatDelegate.MODE_NIGHT_YES;
+                } else {
+                    nightMode = AppCompatDelegate.MODE_NIGHT_NO;
+                }
+
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    AppCompatDelegate.setDefaultNightMode(nightMode);
+                    Log.d(TAG, "✓ Saved theme applied after delayed read");
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to apply saved theme after delayed read", e);
+            }
+        }, "Theme-LateApply").start();
     }
     
     private void setupActivityTracking() {

@@ -1061,40 +1061,54 @@ public class FontViewerFragment extends Fragment {
     }
 
     private void loadLastUsedFont() {
-        String lastPath     = preferenceManager.getLastViewedFontPath();
-        String lastFileName = preferenceManager.getLastViewedFontFileName();
-        String lastRealName = preferenceManager.getLastViewedFontRealName();
+        // قراءة آخر خط عُرض (الإعدادات + فحص الملف + استخراج وزنه وعرضه من الملف) كانت تتم على الخيط الرئيسي أثناء
+        // إنشاء الشاشة. بعد إعادة تشغيل الجهاز تكون ملفات الخطوط خارج ذاكرة النظام المؤقتة، فتتأخر القراءة وتتجمد
+        // الواجهة. لذلك تُنفَّذ الآن في الخلفية، ثم تُطبَّق النتيجة على الخيط الرئيسي.
+        bgExecutor.execute(() -> {
+            String lastPath     = preferenceManager.getLastViewedFontPath();
+            String lastFileName = preferenceManager.getLastViewedFontFileName();
+            String lastRealName = preferenceManager.getLastViewedFontRealName();
 
-        if (lastPath != null && !lastPath.isEmpty()) {
-            File localFile = new File(lastPath);
-            if (localFile.exists()) {
-                currentFontPath     = lastPath;
-                currentFontFileName = lastFileName;
-                currentFontRealName = lastRealName;
-                currentTtcIndex     = 0;
-                isSystemFont        = false;
-                currentWeightWidthLabel = FontWeightWidthExtractor.extract(localFile, 0);
+            if (lastPath != null && !lastPath.isEmpty()) {
+                File localFile = new File(lastPath);
+                if (localFile.exists()) {
+                    final String weightWidthLabel = FontWeightWidthExtractor.extract(localFile, 0);
 
-                if (currentFontRealName != null && (currentFontRealName.isEmpty() || currentFontRealName.equals(getString(R.string.unknown_font)))) {
-                    currentFontRealName = null;
-                }
-
-                if (originalFontPath == null || originalFontPath.isEmpty()) {
                     String lastOriginalPath = preferenceManager.getLastViewedFontOriginalPath();
-                    if (lastOriginalPath != null && !lastOriginalPath.isEmpty()) {
-                        originalFontPath = lastOriginalPath;
-                    } else {
-                        originalFontPath = extractRealPathFromUri(lastPath);
-                    }
-                }
+                    final String resolvedOriginalPath = (lastOriginalPath != null && !lastOriginalPath.isEmpty())
+                            ? lastOriginalPath
+                            : extractRealPathFromUri(lastPath);
 
-                notifyFontChangedImmediate();
-                // اعادة فتح آخر خط تم عرضه: نستخدم آخر قيمة محفوظة لكل محور من محاوره
-                loadFontFromPathWithAxes(lastPath, null, false);
-            } else {
-                preferenceManager.clearLastViewedFont();
+                    mainHandler.post(() -> {
+                        // الشاشة أُغلقت، أو اختار المستخدم خطاً آخر أثناء القراءة في الخلفية: لا نكتب فوق اختياره
+                        if (!isAdded() || (currentFontPath != null && !currentFontPath.isEmpty())) {
+                            return;
+                        }
+
+                        currentFontPath     = lastPath;
+                        currentFontFileName = lastFileName;
+                        currentFontRealName = lastRealName;
+                        currentTtcIndex     = 0;
+                        isSystemFont        = false;
+                        currentWeightWidthLabel = weightWidthLabel;
+
+                        if (currentFontRealName != null && (currentFontRealName.isEmpty() || currentFontRealName.equals(getString(R.string.unknown_font)))) {
+                            currentFontRealName = null;
+                        }
+
+                        if (originalFontPath == null || originalFontPath.isEmpty()) {
+                            originalFontPath = resolvedOriginalPath;
+                        }
+
+                        notifyFontChangedImmediate();
+                        // اعادة فتح آخر خط تم عرضه: نستخدم آخر قيمة محفوظة لكل محور من محاوره
+                        loadFontFromPathWithAxes(lastPath, null, false);
+                    });
+                } else {
+                    preferenceManager.clearLastViewedFont();
+                }
             }
-        }
+        });
     }
 
     public Map<String, String> getFontMetadata() {
