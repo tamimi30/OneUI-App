@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Text size of the closed axis Spinner -->
-    <dimen name="axis_spinner_text_size">15dp</dimen>
+    <dimen name="axis_spinner_text_size">25dp</dimen>
     <!-- Height of the closed axis Spinner (keep >= 24dp, the arrow height) -->
-    <dimen name="axis_spinner_min_height">20dp</dimen>
+    <dimen name="axis_spinner_min_height">30dp</dimen>
     <!-- Vertical padding around the text -->
     <dimen name="axis_spinner_vpadding">2dp</dimen>
 </resources>
