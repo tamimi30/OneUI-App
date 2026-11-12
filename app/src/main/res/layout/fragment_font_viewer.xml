@@ -13,7 +13,6 @@
         android:scrollbars="vertical"
         android:paddingHorizontal="10dp"
         android:background="@drawable/round_scrollview_bg"
-        android:clipToOutline="true"
         android:fillViewport="true">
 
         <LinearLayout
