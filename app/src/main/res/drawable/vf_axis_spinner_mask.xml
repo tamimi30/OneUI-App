@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Based on sesl_spinner_background_mask (Samsung / OneUI Project).
+     The original had <size android:height="48dp"/>, which forced a 48dp minimum
+     height on the Spinner. It is removed here, so the height now comes from the item view. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/white" />
+    <corners android:radius="26dp" />
+</shape>

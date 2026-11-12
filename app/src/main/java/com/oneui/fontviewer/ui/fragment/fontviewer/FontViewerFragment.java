@@ -847,7 +847,7 @@ public class FontViewerFragment extends Fragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
             requireContext(),
-            android.R.layout.simple_spinner_item,
+            R.layout.vf_axis_spinner_selected,
             instanceNames
         );
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);

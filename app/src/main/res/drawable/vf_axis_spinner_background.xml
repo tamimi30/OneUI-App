@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Based on sesl_spinner_background_light (Samsung / OneUI Project).
+     Differences: uses our own mask (no 48dp floor). The arrow still comes from the library. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingEnd="29dp"
+    android:paddingMode="stack">
+
+    <item>
+        <ripple android:color="?attr/colorControlHighlight">
+            <item
+                android:id="@android:id/mask"
+                android:drawable="@drawable/vf_axis_spinner_mask" />
+        </ripple>
+    </item>
+
+    <!-- Arrow: size / distance from the end can be tuned here -->
+    <item
+        android:width="22dp"
+        android:height="24dp"
+        android:end="7dp"
+        android:drawable="@drawable/sesl_spinner_background_am_alpha_light"
+        android:gravity="end|center" />
+
+</layer-list>
