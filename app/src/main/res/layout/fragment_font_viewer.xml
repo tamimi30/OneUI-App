@@ -11,6 +11,7 @@
         android:overScrollMode="always"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
+        android:background="#DBDB00"
         android:paddingHorizontal="10dp"
         android:fillViewport="true">
 
