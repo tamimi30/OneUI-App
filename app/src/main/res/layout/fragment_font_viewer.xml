@@ -11,7 +11,7 @@
         android:overScrollMode="always"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
-        android:paddingHorizontal="10dp"
+        android:padding="10dp"
         android:fillViewport="true">
 
         <LinearLayout
@@ -87,7 +87,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="10dp"
-        android:clipToOutline="true"
         android:orientation="vertical" /> 
 
 </FrameLayout>
