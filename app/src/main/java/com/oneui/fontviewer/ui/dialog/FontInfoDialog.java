@@ -171,10 +171,6 @@ public class FontInfoDialog {
             if (isLinklessField(key)) {
                 valueView.setAutoLinkMask(0);
             }
-            // المسار يُعرض من اليسار لليمين دائماً، حتى لا تتبعثر الأجزاء عند اختلاط كلمة عربية (الذاكرة الداخلية) مع أسماء المجلدات
-            if ("Path".equals(key)) {
-                valueView.setTextDirection(View.TEXT_DIRECTION_LTR);
-            }
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
 
