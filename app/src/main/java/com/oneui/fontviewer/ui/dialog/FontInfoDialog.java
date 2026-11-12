@@ -11,10 +11,24 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.oneui.fontviewer.R;
 
 public class FontInfoDialog {
+
+    // مسارات الذاكرة الداخلية: /storage/emulated/0 و /storage/self/primary و /sdcard ... والباقي بعدها هو المسار النسبي
+    private static final Pattern INTERNAL_STORAGE_PATH = Pattern.compile(
+            "^/(?:storage/emulated/\\d+|storage/self/primary|sdcard|mnt/sdcard|storage/sdcard0|data/media/\\d+)(?:/(.*))?$");
+
+    // مسارات بطاقة الذاكرة: /storage/XXXX-XXXX (أي مجلد داخل /storage غير emulated و self) أو /mnt/media_rw/XXXX-XXXX
+    private static final Pattern SD_CARD_PATH = Pattern.compile(
+            "^/(?:storage/(?!emulated(?:/|$)|self(?:/|$))[^/]+|mnt/media_rw/[^/]+)(?:/(.*))?$");
+
+    // اذا فُتح الخط عبر رابط content:// ولم يُعثر على مساره الحقيقي: primary يعني الذاكرة الداخلية وغيره (XXXX-XXXX) بطاقة الذاكرة
+    private static final Pattern STORAGE_DOCUMENT_URI = Pattern.compile(
+            "^content://com\\.android\\.externalstorage\\.documents/(?:tree/.*?/)?document/([^:/]+):(.*)$");
 
     private final Context context;
     private final Map<String, String> metadata;
@@ -157,6 +171,10 @@ public class FontInfoDialog {
             if (isLinklessField(key)) {
                 valueView.setAutoLinkMask(0);
             }
+            // المسار يُعرض من اليسار لليمين دائماً، حتى لا تتبعثر الأجزاء عند اختلاط كلمة عربية (الذاكرة الداخلية) مع أسماء المجلدات
+            if ("Path".equals(key)) {
+                valueView.setTextDirection(View.TEXT_DIRECTION_LTR);
+            }
             valueView.setText(value);
             valueView.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -197,9 +215,47 @@ public class FontInfoDialog {
                 return localizeScripts(value);
             case "VariableAxes":
                 return localizeAxes(value);
+            case "Path":
+                return localizePath(value);
             default:
                 return value;
         }
+    }
+
+    // ايضاً مسار الملف: نستبدل storage/emulated/0 بكلمة "الذاكرة الداخلية"، ومعرّف بطاقة الذاكرة (الارقام) بكلمة "بطاقة SD"،
+    // حسب لغة التطبيق، وبقية المسار (المجلدات واسم الملف) كما هي
+    private String localizePath(String path) {
+        if (path == null || path.isEmpty()) {
+            return path;
+        }
+
+        Matcher internal = INTERNAL_STORAGE_PATH.matcher(path);
+        if (internal.matches()) {
+            return buildLocalizedPath(R.string.storage_internal, internal.group(1));
+        }
+
+        Matcher sdCard = SD_CARD_PATH.matcher(path);
+        if (sdCard.matches()) {
+            return buildLocalizedPath(R.string.storage_sd_card, sdCard.group(1));
+        }
+
+        Matcher document = STORAGE_DOCUMENT_URI.matcher(path);
+        if (document.matches()) {
+            int nameResId = "primary".equalsIgnoreCase(document.group(1))
+                    ? R.string.storage_internal
+                    : R.string.storage_sd_card;
+            return buildLocalizedPath(nameResId, document.group(2));
+        }
+
+        return path;
+    }
+
+    private String buildLocalizedPath(int storageNameResId, String relativePath) {
+        String storageName = context.getString(storageNameResId);
+        if (relativePath == null || relativePath.isEmpty()) {
+            return storageName;
+        }
+        return storageName + "/" + relativePath;
     }
 
     private String localizeWeight(String value) {

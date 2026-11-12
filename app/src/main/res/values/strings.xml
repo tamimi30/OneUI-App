@@ -92,6 +92,10 @@
     <string name="font_info_label_file_name">File name</string>
     <string name="font_info_label_path">Path</string>
 
+    <!-- Storage names shown in the font path -->
+    <string name="storage_internal">Internal storage</string>
+    <string name="storage_sd_card">SD card</string>
+
     <!-- Font info values -->
     <string name="font_info_weight_thin">Thin</string>
     <string name="font_info_weight_extra_light">Extra Light</string>
