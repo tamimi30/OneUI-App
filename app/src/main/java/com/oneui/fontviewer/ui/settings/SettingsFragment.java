@@ -8,18 +8,14 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.preference.EditTextPreference;
 import androidx.preference.DropDownPreference;
 import androidx.preference.Preference;
@@ -60,54 +56,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private PreferenceRelatedCard mRelatedCard;
 
-    // ═══════════════════════════════════════════════════════════════════
-    // استعادة موضع تمرير القائمة بعد إعادة بناء الشاشة (تغيير الثيم أو اللغة)
-    //
-    // السبب: عند إعادة البناء يعيد RecyclerView موضع التمرير المحفوظ في أول تخطيط (layout)،
-    // لكن محتوى القائمة وقتها (وحجم منطقة العرض بعد انطواء الـ App bar) قد يكون أقصر مما كان عليه
-    // قبل إعادة البناء. فإذا كان خط النظام صغيراً فالقائمة كلها تكاد تتسع في الشاشة، فيرى
-    // RecyclerView أن الموضع المحفوظ يتجاوز نهاية المحتوى ويعيد القائمة إلى البداية، ثم يكتمل
-    // المحتوى بعدها دون أن يعود التمرير. مع الخط الكبير تبقى القائمة أطول من الشاشة في كل الأحوال
-    // فلا تظهر المشكلة (وهذا ما يحدث في تطبيق المثال لأن قائمته طويلة جداً).
-    //
-    // الحل: نحفظ أول عنصر ظاهر (ترتيبه + إزاحته) ونعيد تطبيقه قبل رسم كل إطار خلال مهلة قصيرة،
-    // كلما اختلف الموضع الحالي عن المحفوظ وتغيّر حجم المحتوى أو القائمة.
-    // ═══════════════════════════════════════════════════════════════════
-    private static final String STATE_SCROLL_POSITION = "settings_scroll_position";
-    private static final String STATE_SCROLL_OFFSET = "settings_scroll_offset";
-
-    // المدة (بالمللي ثانية) التي نواصل فيها تثبيت موضع التمرير بعد إعادة البناء
-    private static final long SCROLL_RESTORE_WINDOW_MS = 1500L;
-
-    private int mSavedScrollPosition = RecyclerView.NO_POSITION;
-    private int mSavedScrollOffset;
-
-    // القائمة التي نستعيد موضعها حالياً (null = لا توجد استعادة جارية)
-    private RecyclerView mRestoreList;
-    private long mRestoreDeadline;
-
-    // آخر حالة شاهدناها في الاستعادة، حتى لا نكرر نفس المحاولة إذا لم يتغير شيء (مثلاً لو كان
-    // الموضع المطلوب أبعد من نهاية المحتوى الحالي)
-    private boolean mRestoreHasPrev;
-    private int mRestorePrevPosition;
-    private int mRestorePrevOffset;
-    private int mRestorePrevSignature;
-
-    // إرجاع false من onPreDraw يلغي رسم هذا الإطار، فنعيد التخطيط بالموضع الصحيح قبل أن يراه المستخدم
-    private final ViewTreeObserver.OnPreDrawListener mScrollRestorePreDraw =
-            () -> !applyScrollRestore();
-
-    // إذا بدأ المستخدم السحب بنفسه نتوقف فوراً ولا ننازعه على التمرير
-    private final RecyclerView.OnScrollListener mScrollRestoreDragListener =
-            new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                        stopScrollRestore();
-                    }
-                }
-            };
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -124,12 +72,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         super.onCreate(savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
-
-        if (savedInstanceState != null) {
-            mSavedScrollPosition = savedInstanceState.getInt(
-                    STATE_SCROLL_POSITION, RecyclerView.NO_POSITION);
-            mSavedScrollOffset = savedInstanceState.getInt(STATE_SCROLL_OFFSET, 0);
-        }
 
         initPreferences();
         setupPreferenceListeners();
@@ -398,157 +340,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         super.onViewCreated(view, savedInstanceState);
         getView().setBackgroundColor(mContext.getColor(dev.oneuiproject.oneui.design.R.color.oui_background_color));
         getListView().seslSetLastRoundedCorner(false);
-
-        startScrollRestore();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        int position = RecyclerView.NO_POSITION;
-        int offset = 0;
-
-        if (mRestoreList != null) {
-            // الاستعادة لم تنتهِ بعد (إعادة بناء متتالية): نحفظ الموضع المطلوب لا الموضع اللحظي
-            position = mSavedScrollPosition;
-            offset = mSavedScrollOffset;
-        } else {
-            RecyclerView list = getView() != null ? getListView() : null;
-            int[] anchor = list != null ? getListAnchor(list) : null;
-            // لا حاجة للحفظ إذا كانت القائمة في أعلاها
-            if (anchor != null && !(anchor[0] == 0 && anchor[1] >= 0)) {
-                position = anchor[0];
-                offset = anchor[1];
-            }
-        }
-
-        outState.putInt(STATE_SCROLL_POSITION, position);
-        outState.putInt(STATE_SCROLL_OFFSET, offset);
-    }
-
-    @Override
-    public void onDestroyView() {
-        stopScrollRestore();
-        super.onDestroyView();
-    }
-
-    /**
-     * يرجع {ترتيب أول عنصر ظاهر، إزاحة أعلاه عن بداية القائمة}، أو null إذا لم تكن القائمة جاهزة.
-     */
-    @Nullable
-    private int[] getListAnchor(@NonNull RecyclerView list) {
-        RecyclerView.LayoutManager layoutManager = list.getLayoutManager();
-        if (!(layoutManager instanceof LinearLayoutManager) || list.getChildCount() == 0) {
-            return null;
-        }
-
-        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
-        int position = linearLayoutManager.findFirstVisibleItemPosition();
-        if (position == RecyclerView.NO_POSITION) {
-            return null;
-        }
-
-        View child = linearLayoutManager.findViewByPosition(position);
-        if (child == null) {
-            return null;
-        }
-
-        return new int[] {
-                position,
-                linearLayoutManager.getDecoratedTop(child) - list.getPaddingTop()
-        };
-    }
-
-    private void startScrollRestore() {
-        if (mSavedScrollPosition == RecyclerView.NO_POSITION) {
-            return;
-        }
-
-        RecyclerView list = getListView();
-        if (list == null) {
-            return;
-        }
-
-        mRestoreList = list;
-        mRestoreHasPrev = false;
-        mRestoreDeadline = SystemClock.uptimeMillis() + SCROLL_RESTORE_WINDOW_MS;
-
-        list.getViewTreeObserver().addOnPreDrawListener(mScrollRestorePreDraw);
-        list.addOnScrollListener(mScrollRestoreDragListener);
-    }
-
-    private void stopScrollRestore() {
-        RecyclerView list = mRestoreList;
-        mRestoreList = null;
-        mSavedScrollPosition = RecyclerView.NO_POSITION;
-
-        if (list != null) {
-            ViewTreeObserver observer = list.getViewTreeObserver();
-            if (observer.isAlive()) {
-                observer.removeOnPreDrawListener(mScrollRestorePreDraw);
-            }
-            list.removeOnScrollListener(mScrollRestoreDragListener);
-        }
-    }
-
-    /**
-     * يُستدعى قبل رسم كل إطار أثناء مهلة الاستعادة.
-     *
-     * @return true إذا غيّرنا موضع التمرير (فيُلغى رسم هذا الإطار ويُعاد التخطيط)، وإلا false
-     */
-    private boolean applyScrollRestore() {
-        RecyclerView list = mRestoreList;
-        if (list == null) {
-            return false;
-        }
-
-        if (SystemClock.uptimeMillis() > mRestoreDeadline) {
-            stopScrollRestore();
-            return false;
-        }
-
-        RecyclerView.Adapter<?> adapter = list.getAdapter();
-        RecyclerView.LayoutManager layoutManager = list.getLayoutManager();
-        if (adapter == null
-                || !(layoutManager instanceof LinearLayoutManager)
-                || mSavedScrollPosition >= adapter.getItemCount()) {
-            // المحتوى لم يكتمل بعد، ننتظر الإطار التالي
-            return false;
-        }
-
-        int[] current = getListAnchor(list);
-        if (current == null) {
-            return false;
-        }
-
-        int signature = list.computeVerticalScrollRange() * 31 + list.getHeight();
-
-        if (current[0] == mSavedScrollPosition && current[1] == mSavedScrollOffset) {
-            // الموضع صحيح حالياً. نتذكره لنكتشف إن عبث به أحد لاحقاً خلال المهلة
-            mRestoreHasPrev = true;
-            mRestorePrevPosition = current[0];
-            mRestorePrevOffset = current[1];
-            mRestorePrevSignature = signature;
-            return false;
-        }
-
-        if (mRestoreHasPrev
-                && current[0] == mRestorePrevPosition
-                && current[1] == mRestorePrevOffset
-                && signature == mRestorePrevSignature) {
-            // لا شيء تغيّر منذ آخر محاولة (الموضع المطلوب غير ممكن حالياً)، لا داعي لتكرارها
-            return false;
-        }
-
-        mRestoreHasPrev = true;
-        mRestorePrevPosition = current[0];
-        mRestorePrevOffset = current[1];
-        mRestorePrevSignature = signature;
-
-        ((LinearLayoutManager) layoutManager)
-                .scrollToPositionWithOffset(mSavedScrollPosition, mSavedScrollOffset);
-        return true;
     }
 
     private void setupRelatedCard() {
