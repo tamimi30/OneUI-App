@@ -82,7 +82,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onResume() {
         super.onResume();
         syncLanguageFromSystem();
-        setupRelatedCard();
     }
 
     /**
@@ -340,6 +339,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         super.onViewCreated(view, savedInstanceState);
         getView().setBackgroundColor(mContext.getColor(dev.oneuiproject.oneui.design.R.color.oui_background_color));
         getListView().seslSetLastRoundedCorner(false);
+
+        // البطاقة تُضاف هنا (قبل أول تخطيط للقائمة) وليس في onResume، حتى تكون القائمة كاملة
+        // عندما يعيد RecyclerView موضع التمرير بعد إعادة بناء الشاشة. وإلا فمع خط النظام الصغير
+        // تكاد القائمة بدونها تتسع في الشاشة فيُعاد التمرير إلى البداية.
+        setupRelatedCard();
     }
 
     private void setupRelatedCard() {
