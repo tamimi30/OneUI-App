@@ -65,6 +65,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        // بطاقة الروابط تُضاف هنا (قبل ربط القائمة بالمحوّل) وليس في onStart أو onResume. إضافتها بعد الربط
+        // تجعل المحوّل يضيفها لاحقاً في رسالة مؤجلة، أي بعد أول رسم للقائمة، فتطول القائمة بعد أن استعاد
+        // RecyclerView موضع التمرير مرة واحدة، فيضيع الموضع عندما تكون القائمة قصيرة (حجم خط صغير).
+        setupRelatedCard();
     }
 
     @Override
@@ -82,7 +87,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onResume() {
         super.onResume();
         syncLanguageFromSystem();
-        setupRelatedCard();
     }
 
     /**
