@@ -12,13 +12,13 @@
             app:entriesImage="@array/settings_theme_entries_image"
             app:entryValues="@array/settings_theme_values"
             android:defaultValue="0"
-            
+            android:persistent="false"
             app:viewType="image" />
 
         <SwitchPreferenceCompat
             android:key="theme_auto"
             android:defaultValue="true"
-            
+            android:persistent="false"
             android:title="@string/settings_system_default" />
 
     </PreferenceCategory>
@@ -45,7 +45,7 @@
         <SwitchPreferenceCompat
             android:key="enable_translation"
             android:title="@string/settings_translation"
-            android:summary="@string/settings_translation_description"
+            android:summary=" ترجم معلومات الخط تلقائيا الى اللغة العربية عند الضغط على ايقزنة البيانات الوصفية للخط.ترجم معلومات الخط تلقائيا الى اللغة العربية عند الضغط على ايقزنة البيانات الوصفية للخط.ترجم معلومات الخط تلقائيا الى اللغة العربية عند الضغط على ايقزنة البيانات الوصفية للخط.ترجم معلومات الخط تلقائيا الى اللغة العربية عند الضغط على ايقزنة البيانات الوصفية للخط.ترجم معلومات الخط تلقائيا الى اللغة العربية عند الضغط على ايقزنة البيانات الوصفية للخط.ترجم معلومات الخط تلقائيا الى اللغة العربية عند الضغط على ايقزنة البيانات الوصفية للخط.ترجم معلومات الخط تلقائيا الى اللغة العربية عند الضغط على ايقزنة البيانات الوصفية للخط.جم معلومات الخط تلقائيا الى اللغة العربية عند الضغط على ايقزنة البيانات الوصفية للخط. "
             android:persistent="false"
             android:defaultValue="false" />
 
