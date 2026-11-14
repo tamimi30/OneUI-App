@@ -75,14 +75,62 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         initPreferences();
         setupPreferenceListeners();
+        applyStoredValues();
         observeViewModel();
+    }
+
+    /**
+     * يضع القيم المحفوظة في عناصر القائمة فوراً (قبل أول رسم للقائمة)، بدل انتظار وصولها لاحقاً من DataStore.
+     *
+     * السبب: عند إعادة بناء الشاشة (تغيير الثيم أو اللغة) يستعيد النظام موضع تمرير القائمة في أول رسم لها.
+     * إذا كانت القائمة وقتها أقصر مما كانت عليه (مثلاً نص المعاينة يظهر "Not set" في سطر واحد بدل أسطره
+     * الثلاثة، لأن قيمته لم تصل بعد) فإن النظام يقصّ الموضع المحفوظ، وعندما يكون الخط صغيراً تكون القائمة
+     * كلها أقصر من الشاشة فيعود الموضع إلى البداية، ولا يُستعاد بعد ذلك حتى لو كبرت القائمة.
+     * الخط الكبير لا يظهر فيه ذلك لأن القائمة تبقى أطول من الشاشة حتى في هذه الحالة.
+     *
+     * القراءة هنا فورية لأن SettingsDataStore يحتفظ بنسخة في الذاكرة. ولا يستدعي setValue مستمعي التغيير،
+     * فلا يُطبَّق ثيم ولا لغة بسبب هذه الدالة.
+     */
+    private void applyStoredValues() {
+        if (languagePreference != null) {
+            languagePreference.setValue(String.valueOf(SettingsHelper.getLanguageMode(mContext)));
+        }
+
+        boolean themeAuto = SettingsHelper.isThemeAuto(mContext);
+        if (themeAutoPreference != null) {
+            themeAutoPreference.setChecked(themeAuto);
+        }
+        if (themePreference != null) {
+            themePreference.setValue(String.valueOf(SettingsHelper.getThemeMode(mContext)));
+            themePreference.setEnabled(!themeAuto);
+        }
+
+        if (fontPreviewPreference != null) {
+            fontPreviewPreference.setChecked(SettingsHelper.isFontPreviewEnabled(mContext));
+        }
+        if (translationPreference != null) {
+            translationPreference.setChecked(SettingsHelper.isTranslationEnabled(mContext));
+        }
+        if (previewTextPreference != null) {
+            String text = SettingsHelper.getPreviewText(mContext);
+            if (text != null) {
+                previewTextPreference.setText(text);
+            }
+        }
+    }
+
+    // البطاقة السفلية تُضاف في onStart (كما في تطبيق المثال) وليس في onResume، حتى تكون موجودة
+    // في القائمة قبل أول رسم لها فيُستعاد موضع التمرير على القائمة كاملة.
+    @Override
+    public void onStart() {
+        super.onStart();
+        setupRelatedCard();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         syncLanguageFromSystem();
-        setupRelatedCard();
     }
 
     /**
