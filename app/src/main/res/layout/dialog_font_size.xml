@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:minWidth="80dp"
         android:textSize="30sp"
-        app:maxFontLevel="large"
+        app:maxFontLevel="extraMedium"
         android:textColor="?android:attr/textColorPrimary"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
