@@ -52,10 +52,11 @@ public class OneUiTextHelper {
             case 2: return 0.9f;  // extra_small
             case 3: return 1.0f;  // small
             case 4: return 1.1f;  // medium
-            case 5: return 1.3f;  // large
-            case 6: return 1.5f;  // extra_large
-            case 7: return 1.7f;  // huge
-            case 8: return 2.0f;  // extra_huge
+            case 5: return 1.2f;  // extra_medium
+            case 6: return 1.3f;  // large
+            case 7: return 1.5f;  // extra_large
+            case 8: return 1.7f;  // huge
+            case 9: return 2.0f;  // extra_huge
             default: return 1.0f;
         }
     }
