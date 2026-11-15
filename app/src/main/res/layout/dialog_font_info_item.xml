@@ -18,14 +18,14 @@
         android:id="@+id/font_info_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textDirection="locale"
+        android:textDirection="viewStart"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
         android:id="@+id/font_info_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textDirection="locale"
+        android:textDirection="viewStart"
         android:lineSpacingExtra="4sp"
         android:textAppearance="?attr/textAppearanceListItem"
         android:autoLink="web|email"
