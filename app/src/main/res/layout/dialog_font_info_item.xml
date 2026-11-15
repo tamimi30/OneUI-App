@@ -17,7 +17,7 @@
         android:id="@+id/font_info_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textDirection="locale"
+        
         android:textAlignment="textStart"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="textStart"
-        android:textDirection="locale"
+        
         android:lineSpacingExtra="4sp"
         android:textAppearance="?attr/textAppearanceListItem"
         android:autoLink="web|email"
