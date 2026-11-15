@@ -18,14 +18,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textDirection="locale"
-        android:textAlignment="rtl"
+        android:textAlignment="textStart"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
         android:id="@+id/font_info_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAlignment="rtl"
+        android:textAlignment="textStart"
         android:textDirection="locale"
         android:lineSpacingExtra="4sp"
         android:textAppearance="?attr/textAppearanceListItem"
