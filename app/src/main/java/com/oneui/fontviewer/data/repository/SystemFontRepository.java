@@ -5,7 +5,9 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import androidx.lifecycle.LiveData;
@@ -13,6 +15,7 @@ import androidx.lifecycle.LiveData;
 import com.oneui.fontviewer.data.database.FontDao;
 import com.oneui.fontviewer.data.database.AppDatabase;
 import com.oneui.fontviewer.data.database.FontEntity;
+import com.oneui.fontviewer.data.cache.SystemFontCache;
 import com.oneui.fontviewer.data.source.SystemFontManager;
 import com.oneui.fontviewer.data.parser.FontMetadataExtractor;
 import com.oneui.fontviewer.data.parser.FontWeightWidthExtractor; 
@@ -75,9 +78,12 @@ public class SystemFontRepository {
 
                 List<FontEntity> existingFonts = fontDao.getSystemFontsSync();
                 List<FontEntity> fontsToAdd = new ArrayList<>();
+                Set<String> currentPaths = new HashSet<>();
                 int updated = 0;
+                int deleted = 0;
 
                 for (SystemFontInfo fontInfo : systemFonts) {
+                    currentPaths.add(fontInfo.getPath());
                     FontEntity existing = findByPath(existingFonts, fontInfo.getPath());
 
                     if (existing == null) {
@@ -118,12 +124,41 @@ public class SystemFontRepository {
                     }
                 }
 
+                // حذف الخطوط التي كانت محفوظة في قاعدة البيانات ولم تعد موجودة في النظام
+                // (مثلاً خط حُذف بتحديث للنظام)، وإلا تبقى ظاهرة في القائمة بملفات غير موجودة.
+                // نصل الى هنا فقط اذا أعاد النظام قائمة غير فارغة (انظر الفحص أعلاه)، فلا نمسح القائمة كلها بسبب خطأ عابر.
+                List<FontEntity> staleFonts = new ArrayList<>();
+                List<String> stalePaths = new ArrayList<>();
+                for (FontEntity existing : existingFonts) {
+                    if (!currentPaths.contains(existing.getPath())) {
+                        staleFonts.add(existing);
+                        stalePaths.add(existing.getPath());
+                    }
+                }
+
+                if (!staleFonts.isEmpty()) {
+                    deleted = fontDao.deleteAll(staleFonts);
+                    SystemFontCache.getInstance().evict(stalePaths);
+                    Log.d(TAG, "Removed " + deleted + " system fonts that no longer exist");
+                }
+
                 if (!fontsToAdd.isEmpty()) {
                     fontDao.insertAll(fontsToAdd);
                 }
 
+                // === كود اختبار مؤقت: احذفه بعد الاختبار ===
+                android.content.SharedPreferences testPrefs =
+                        context.getSharedPreferences("sysfont_delete_test", Context.MODE_PRIVATE);
+                if (!testPrefs.getBoolean("fake_inserted", false)) {
+                    FontEntity fake = new FontEntity("/system/fonts/FakeGoogleSans.ttf", "FakeGoogleSans.ttf");
+                    fake.setSystemFont(true);
+                    fontDao.insert(fake);
+                    testPrefs.edit().putBoolean("fake_inserted", true).apply();
+                }
+                // === نهاية كود الاختبار ===
+
                 if (listener != null) {
-                    listener.onSyncComplete(fontsToAdd.size(), updated, 0);
+                    listener.onSyncComplete(fontsToAdd.size(), updated, deleted);
                 }
 
                 extractSystemFontsRealNamesInBackgroundPrioritized();
