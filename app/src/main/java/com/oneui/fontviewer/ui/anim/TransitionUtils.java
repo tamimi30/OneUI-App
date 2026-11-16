@@ -56,13 +56,20 @@ public final class TransitionUtils {
     // تغيير أنيميشن الثيم
     public static final AnimationType THEME_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
 
+    // مدة أنيميشن تغيير الثيم بالميلي ثانية (مستقلة عن مدة اللغة)
+    public static final long THEME_DURATION_MS = 600L;
+
     // تغيير أنيميشن اللغة
-    public static final AnimationType LANGUAGE_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
+    public static final AnimationType LANGUAGE_ANIMATION = AnimationType.FADE;
+
+    // مدة أنيميشن تغيير اللغة بالميلي ثانية (مستقلة عن مدة الثيم)
+    public static final long LANGUAGE_DURATION_MS = 300L;
 
     private static final long PENDING_TIMEOUT_MS = 3000L;
 
     private static Bitmap sSnapshot;
     private static AnimationType sAnimation;
+    private static long sDurationMs;
     private static String sOwnerActivityName;
     private static int sOldNightFlag;
     private static String sOldLanguage;
@@ -71,14 +78,14 @@ public final class TransitionUtils {
     private TransitionUtils() {}
 
     public static void prepareForThemeChange(Activity activity) {
-        capture(activity, THEME_ANIMATION);
+        capture(activity, THEME_ANIMATION, THEME_DURATION_MS);
     }
 
     public static void prepareForLanguageChange(Activity activity) {
-        capture(activity, LANGUAGE_ANIMATION);
+        capture(activity, LANGUAGE_ANIMATION, LANGUAGE_DURATION_MS);
     }
 
-    private static void capture(Activity activity, AnimationType animation) {
+    private static void capture(Activity activity, AnimationType animation, long durationMs) {
         discardPending();
 
         if (activity == null || animation == AnimationType.NONE) {
@@ -100,6 +107,7 @@ public final class TransitionUtils {
 
             sSnapshot = snapshot;
             sAnimation = animation;
+            sDurationMs = durationMs;
             sOwnerActivityName = activity.getClass().getName();
             sOldNightFlag = getNightFlag(activity);
             sOldLanguage = getLanguage(activity);
@@ -127,6 +135,7 @@ public final class TransitionUtils {
 
         Bitmap snapshot = sSnapshot;
         AnimationType type = sAnimation;
+        long durationMs = sDurationMs;
         int oldNightFlag = sOldNightFlag;
         String oldLanguage = sOldLanguage;
         boolean expired = SystemClock.elapsedRealtime() - sCaptureTime > PENDING_TIMEOUT_MS;
@@ -141,7 +150,7 @@ public final class TransitionUtils {
         }
 
         ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
-        SnapshotOverlayView overlay = new SnapshotOverlayView(activity, snapshot, type);
+        SnapshotOverlayView overlay = new SnapshotOverlayView(activity, snapshot, type, durationMs);
         decor.addView(overlay, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
@@ -161,7 +170,7 @@ public final class TransitionUtils {
         }
 
         ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
-        decor.addView(new SnapshotOverlayView(activity, sSnapshot, sAnimation),
+        decor.addView(new SnapshotOverlayView(activity, sSnapshot, sAnimation, sDurationMs),
                 new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT));
@@ -248,7 +257,7 @@ public final class TransitionUtils {
             params.topMargin = mLocation[1];
 
             SnapshotOverlayView overlay =
-                    new SnapshotOverlayView(mTarget.getContext(), snapshot, mAnimation);
+                    new SnapshotOverlayView(mTarget.getContext(), snapshot, mAnimation, mAnimation.durationMs);
             ((FrameLayout) mTarget.getRootView()).addView(overlay, params);
             overlay.start();
         }
@@ -284,6 +293,7 @@ public final class TransitionUtils {
     private static void clearPending() {
         sSnapshot = null;
         sAnimation = null;
+        sDurationMs = 0L;
         sOwnerActivityName = null;
     }
 
@@ -300,15 +310,17 @@ public final class TransitionUtils {
         private final Rect mDst = new Rect();
         private final Paint mPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
         private final AnimationType mType;
+        private final long mDurationMs;
 
         private Bitmap mSnapshot;
         private float mProgress = 0f;
         private boolean mReleased = false;
 
-        SnapshotOverlayView(Context context, Bitmap snapshot, AnimationType type) {
+        SnapshotOverlayView(Context context, Bitmap snapshot, AnimationType type, long durationMs) {
             super(context);
             mSnapshot = snapshot;
             mType = type;
+            mDurationMs = durationMs;
 
             setWillNotDraw(false);
             setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -317,7 +329,7 @@ public final class TransitionUtils {
 
         void start() {
             final ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
-            animator.setDuration(mType.durationMs);
+            animator.setDuration(mDurationMs);
             animator.setInterpolator(mType.createInterpolator());
             animator.addUpdateListener(a -> {
                 mProgress = (float) a.getAnimatedValue();
