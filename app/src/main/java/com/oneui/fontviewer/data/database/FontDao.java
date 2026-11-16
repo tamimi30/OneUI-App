@@ -25,7 +25,11 @@ public interface FontDao {
     
     @Delete
     int delete(FontEntity font);
-    
+
+    // حذف مجموعة صفوف دفعة واحدة (تُستخدم لإزالة خطوط النظام التي لم تعد موجودة في النظام)
+    @Delete
+    int deleteAll(List<FontEntity> fonts);
+
     
     
     @Query("DELETE FROM fonts WHERE path = :path")
