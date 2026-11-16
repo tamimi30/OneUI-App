@@ -317,7 +317,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 
                 if (mRecyclerView != null && mRecyclerView.getVisibility() == View.VISIBLE) {
                     mRecyclerView.setAlpha(0f);
-                    mRecyclerView.animate().alpha(1f).setDuration(400).start();
+                    mRecyclerView.animate().alpha(1f).setDuration(650).start();
                 }
             }
         });
