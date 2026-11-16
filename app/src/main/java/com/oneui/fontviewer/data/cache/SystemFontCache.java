@@ -9,6 +9,7 @@ import com.oneui.fontviewer.data.database.FontEntity;
 import com.oneui.fontviewer.data.parser.VariableFontHelper;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -105,6 +106,22 @@ public class SystemFontCache {
         }, "SystemFontCache-Preloader").start();
     }
     
+    /**
+     * يزيل من الذاكرة المؤقتة الخطوط التي لم تعد موجودة في النظام، حتى لا يبقى Typeface لملف محذوف.
+     */
+    public void evict(Collection<String> fontPaths) {
+        if (fontPaths == null || fontPaths.isEmpty()) {
+            return;
+        }
+
+        for (String path : fontPaths) {
+            if (path != null) {
+                memoryCache.remove(path);
+                weightedCache.remove(path);
+            }
+        }
+    }
+
     public Typeface getIfCached(String fontPath) {
         if (fontPath == null) return null;
         return memoryCache.get(fontPath);
