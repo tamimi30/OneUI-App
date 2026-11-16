@@ -154,6 +154,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
                     mAwaitingInitialFontsLoad = true;
                     mAnimateFolderChange = true;
+                    TransitionUtils.debug(mContext, "folder selected");
                     mViewModel.saveFolderPath(directoryPath);
                     mViewModel.loadFontsFromPath(directoryPath);
                 }
@@ -317,6 +318,8 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 }
             } else {
                 // تغيير المجلد: نلتقط صورة لشاشة التحميل قبل إخفائها، ثم نشغّل الأنيميشن بعد ظهور القائمة
+                TransitionUtils.debug(getContext(), "loading finished: folderFlag=" + mAnimateFolderChange
+                        + ", hasView=" + (getView() != null));
                 TransitionUtils.Handle folderTransition = null;
                 if (mAnimateFolderChange && getView() != null) {
                     folderTransition = TransitionUtils.beginForFolderChange(getView());
