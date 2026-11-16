@@ -77,7 +77,7 @@ public final class TransitionUtils {
     public static final AnimationType SPLASH_ANIMATION = AnimationType.FADE;
 
     // مدة أنيميشن خروج شاشة Splash بالميلي ثانية
-    public static final long SPLASH_DURATION_MS = 600L;
+    public static final long SPLASH_DURATION_MS = 1200L;
 
     private static final long PENDING_TIMEOUT_MS = 3000L;
 
