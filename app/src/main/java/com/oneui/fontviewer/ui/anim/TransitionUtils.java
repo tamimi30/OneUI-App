@@ -58,12 +58,12 @@ public final class TransitionUtils {
     // تغيير أنيميشن الثيم
     public static final AnimationType THEME_ANIMATION = AnimationType.FADE;
 
-    public static final long THEME_DURATION_MS = 650L;
+    public static final long THEME_DURATION_MS = 600L;
 
     // تغيير أنيميشن اللغة
     public static final AnimationType LANGUAGE_ANIMATION = AnimationType.FADE;
 
-    public static final long LANGUAGE_DURATION_MS = 650L;
+    public static final long LANGUAGE_DURATION_MS = 400L;
     
 
     private static final long PENDING_TIMEOUT_MS = 3000L;
