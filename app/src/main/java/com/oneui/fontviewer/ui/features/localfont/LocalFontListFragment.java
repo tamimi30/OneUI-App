@@ -56,7 +56,6 @@ import com.oneui.fontviewer.ui.features.localfont.recyclerview.LocalFontListAdap
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.features.settings.SettingsViewModel;
 import com.oneui.fontviewer.service.BatchOperationState;
-import com.oneui.fontviewer.ui.anim.TransitionUtils;
 import com.oneui.fontviewer.ui.list.recyclerview.DurationItemAnimator;
 import com.oneui.fontviewer.data.model.FontFileInfoWithMetadata;
 
@@ -96,9 +95,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private boolean mHasNotifiedReady = false;
     private boolean mAwaitingInitialFontsLoad = false;
-
-    // يصبح true عندما يختار المستخدم مجلداً جديداً، ليُشغَّل أنيميشن تغيير المجلد عند ظهور القائمة
-    private boolean mAnimateFolderChange = false;
 
     private boolean mNeedsScrollRestore = false;
 
@@ -153,8 +149,6 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
 
                     mAwaitingInitialFontsLoad = true;
-                    mAnimateFolderChange = true;
-                    TransitionUtils.debug(mContext, "folder selected");
                     mViewModel.saveFolderPath(directoryPath);
                     mViewModel.loadFontsFromPath(directoryPath);
                 }
@@ -317,22 +311,11 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                     setDrawerLocked(true); 
                 }
             } else {
-                // تغيير المجلد: نلتقط صورة لشاشة التحميل قبل إخفائها، ثم نشغّل الأنيميشن بعد ظهور القائمة
-                TransitionUtils.debug(getContext(), "loading finished: folderFlag=" + mAnimateFolderChange
-                        + ", hasView=" + (getView() != null));
-                TransitionUtils.Handle folderTransition = null;
-                if (mAnimateFolderChange && getView() != null) {
-                    folderTransition = TransitionUtils.beginForFolderChange(getView());
-                }
-                mAnimateFolderChange = false;
-
                 mUIManager.hideLoadingState();
                 refreshAdapterData();
                 setDrawerLocked(false); 
                 
-                if (folderTransition != null) {
-                    folderTransition.play();
-                } else if (mRecyclerView != null && mRecyclerView.getVisibility() == View.VISIBLE) {
+                if (mRecyclerView != null && mRecyclerView.getVisibility() == View.VISIBLE) {
                     mRecyclerView.setAlpha(0f);
                     mRecyclerView.animate().alpha(1f).setDuration(400).start();
                 }
