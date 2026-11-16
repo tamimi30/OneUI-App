@@ -74,10 +74,10 @@ public final class TransitionUtils {
     public static final long FOLDER_DURATION_MS = 600L;
 
     // أنيميشن خروج شاشة Splash (ظهور التطبيق)
-    public static final AnimationType SPLASH_ANIMATION = AnimationType.FADE;
+    public static final AnimationType SPLASH_ANIMATION = ANIMATIONTYPE.WIPE_TOP_TO_BOTTOM;
 
     // مدة أنيميشن خروج شاشة Splash بالميلي ثانية
-    public static final long SPLASH_DURATION_MS = 1200L;
+    public static final long SPLASH_DURATION_MS = 600L;
 
     private static final long PENDING_TIMEOUT_MS = 3000L;
 
