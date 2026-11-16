@@ -55,7 +55,7 @@ import com.oneui.fontviewer.data.cache.SystemFontCache;
 import com.oneui.fontviewer.data.parser.FontMetadataExtractor;
 import com.oneui.fontviewer.ui.features.settings.SettingsViewModel;
 import com.oneui.fontviewer.data.parser.FontWeightWidthExtractor;
-import com.oneui.fontviewer.ui.features.fontviewer.util.BoldItalicFormatting;
+import com.oneui.fontviewer.ui.features.fontviewer.utils.BoldItalicFormatting;
 
 public class FontViewerFragment extends Fragment {
 
