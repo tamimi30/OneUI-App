@@ -30,9 +30,11 @@ public final class TransitionUtils {
 
         NONE(0L, 0f, 0f, 1f, 1f),
 
-        FADE(600L, 0.22f, 0.25f, 0f, 1f),
+        FADE(600L, 0.33f, 0f, 0.67f, 1f),
 
         WIPE_TOP_TO_BOTTOM(600L, 0.33f, 0f, 0.3f, 1f);
+        
+        // FADE(600L, 0.22f, 0.25f, 0f, 1f) منحنى One UI.
 
         final long durationMs;
         final float x1;
@@ -54,16 +56,15 @@ public final class TransitionUtils {
     }
 
     // تغيير أنيميشن الثيم
-    public static final AnimationType THEME_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
+    public static final AnimationType THEME_ANIMATION = AnimationType.FADE;
 
-    // مدة أنيميشن تغيير الثيم بالميلي ثانية (مستقلة عن مدة اللغة)
-    public static final long THEME_DURATION_MS = 600L;
+    public static final long THEME_DURATION_MS = 650L;
 
     // تغيير أنيميشن اللغة
     public static final AnimationType LANGUAGE_ANIMATION = AnimationType.FADE;
 
-    // مدة أنيميشن تغيير اللغة بالميلي ثانية (مستقلة عن مدة الثيم)
-    public static final long LANGUAGE_DURATION_MS = 600L;
+    public static final long LANGUAGE_DURATION_MS = 650L;
+    
 
     private static final long PENDING_TIMEOUT_MS = 3000L;
 
