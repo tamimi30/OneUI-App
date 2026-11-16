@@ -71,15 +71,26 @@ public final class TransitionUtils {
     public static final AnimationType FOLDER_ANIMATION = AnimationType.FADE;
 
     // مدة أنيميشن تغيير المجلد بالميلي ثانية
-    public static final long FOLDER_DURATION_MS = 600L;
+    public static final long FOLDER_DURATION_MS = 400L;
 
     // أنيميشن خروج شاشة Splash (ظهور التطبيق)
-    public static final AnimationType SPLASH_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
+    public static final AnimationType SPLASH_ANIMATION = AnimationType.FADE;
 
     // مدة أنيميشن خروج شاشة Splash بالميلي ثانية
     public static final long SPLASH_DURATION_MS = 600L;
 
     private static final long PENDING_TIMEOUT_MS = 3000L;
+
+    // === تشخيص مؤقت: يعرض رسائل Toast تبيّن أين يتوقف الأنيميشن. اجعله false بعد الانتهاء من التشخيص ===
+    private static final boolean DEBUG_TOASTS = true;
+
+    public static void debug(Context context, String message) {
+        if (!DEBUG_TOASTS || context == null) {
+            return;
+        }
+        android.widget.Toast.makeText(context.getApplicationContext(), "TU: " + message,
+                android.widget.Toast.LENGTH_SHORT).show();
+    }
 
     private static Bitmap sSnapshot;
     private static AnimationType sAnimation;
@@ -257,6 +268,8 @@ public final class TransitionUtils {
 
             if (target == null || animation == AnimationType.NONE
                     || target.getWidth() <= 0 || target.getHeight() <= 0) {
+                debug(target != null ? target.getContext() : null, "begin skipped: type=" + animation
+                        + ", size=" + (target != null ? target.getWidth() + "x" + target.getHeight() : "null"));
                 return;
             }
 
@@ -281,6 +294,9 @@ public final class TransitionUtils {
 
             if (snapshot == null || mTarget == null || !mTarget.isAttachedToWindow()
                     || !(mTarget.getRootView() instanceof FrameLayout)) {
+                debug(mTarget != null ? mTarget.getContext() : null, "play skipped: snapshot=" + (snapshot != null)
+                        + ", attached=" + (mTarget != null && mTarget.isAttachedToWindow())
+                        + ", rootIsFrame=" + (mTarget != null && mTarget.getRootView() instanceof FrameLayout));
                 return;
             }
 
@@ -294,6 +310,8 @@ public final class TransitionUtils {
                     new SnapshotOverlayView(mTarget.getContext(), snapshot, mAnimation, mDurationMs);
             ((FrameLayout) mTarget.getRootView()).addView(overlay, params);
             overlay.start();
+            debug(mTarget.getContext(), "play started: " + snapshot.getWidth() + "x" + snapshot.getHeight()
+                    + ", type=" + mAnimation + ", ms=" + mDurationMs);
         }
 
         /** يتخلى عن اللقطة دون تشغيل أي أنيميشن. */
@@ -315,6 +333,8 @@ public final class TransitionUtils {
     public static void playSplashExit(SplashScreenViewProvider provider) {
         final View view = provider.getView();
         final AnimationType type = SPLASH_ANIMATION;
+        debug(view.getContext(), "splash exit called: type=" + type + ", ms=" + SPLASH_DURATION_MS
+                + ", size=" + view.getWidth() + "x" + view.getHeight());
 
         if (type == AnimationType.NONE || SPLASH_DURATION_MS <= 0
                 || view.getWidth() <= 0 || view.getHeight() <= 0) {
@@ -355,6 +375,7 @@ public final class TransitionUtils {
                 }
                 removed[0] = true;
                 view.setClipBounds(null);
+                debug(view.getContext(), "splash anim ended");
                 provider.remove();
             }
         });
