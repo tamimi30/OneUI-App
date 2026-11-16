@@ -37,12 +37,13 @@
 
     </FrameLayout>
 
-    <EditText
+    <com.oneui.fontviewer.ui.widget.OneUiEditText
         android:id="@+id/font_size_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minWidth="80dp"
-        android:textSize="36dp"
+        android:textSize="30sp"
+        app:maxFontLevel="extra_medium"
         android:textColor="?android:attr/textColorPrimary"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
