@@ -11,7 +11,6 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.core.splashscreen.SplashScreen;
-import com.oneui.fontviewer.ui.anim.TransitionUtils;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -86,9 +85,6 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
 
         splashScreen.setKeepOnScreenCondition(() -> !isUIReady);
-
-        // أنيميشن خروج شاشة Splash (النوع والمدة من TransitionUtils)
-        splashScreen.setOnExitAnimationListener(TransitionUtils::playSplashExit);
 
         if (android.os.Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out);
