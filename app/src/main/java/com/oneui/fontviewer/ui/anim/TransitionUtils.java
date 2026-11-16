@@ -22,8 +22,6 @@ import android.view.ViewTreeObserver;
 import android.view.animation.PathInterpolator;
 import android.widget.FrameLayout;
 
-import androidx.core.splashscreen.SplashScreenViewProvider;
-
 public final class TransitionUtils {
 
     private static final String TAG = "TransitionUtils";
@@ -67,30 +65,7 @@ public final class TransitionUtils {
     // مدة أنيميشن تغيير اللغة بالميلي ثانية (مستقلة عن مدة الثيم)
     public static final long LANGUAGE_DURATION_MS = 600L;
 
-    // أنيميشن تغيير المجلد (عند ظهور قائمة الخطوط بعد اختيار مجلد جديد)
-    public static final AnimationType FOLDER_ANIMATION = AnimationType.FADE;
-
-    // مدة أنيميشن تغيير المجلد بالميلي ثانية
-    public static final long FOLDER_DURATION_MS = 400L;
-
-    // أنيميشن خروج شاشة Splash (ظهور التطبيق)
-    public static final AnimationType SPLASH_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
-
-    // مدة أنيميشن خروج شاشة Splash بالميلي ثانية
-    public static final long SPLASH_DURATION_MS = 600L;
-
     private static final long PENDING_TIMEOUT_MS = 3000L;
-
-    // === تشخيص مؤقت: يعرض رسائل Toast تبيّن أين يتوقف الأنيميشن. اجعله false بعد الانتهاء من التشخيص ===
-    private static final boolean DEBUG_TOASTS = false;
-
-    public static void debug(Context context, String message) {
-        if (!DEBUG_TOASTS || context == null) {
-            return;
-        }
-        android.widget.Toast.makeText(context.getApplicationContext(), "TU: " + message,
-                android.widget.Toast.LENGTH_SHORT).show();
-    }
 
     private static Bitmap sSnapshot;
     private static AnimationType sAnimation;
@@ -215,12 +190,7 @@ public final class TransitionUtils {
      * @param change    الكود الذي يغيّر الواجهة
      */
     public static void run(View target, AnimationType animation, Runnable change) {
-        run(target, animation, animation.durationMs, change);
-    }
-
-    /** نفس run لكن بمدة محددة (بالميلي ثانية) بدل المدة الافتراضية للنوع. */
-    public static void run(View target, AnimationType animation, long durationMs, Runnable change) {
-        Handle handle = begin(target, animation, durationMs);
+        Handle handle = begin(target, animation);
         change.run();
         handle.play();
     }
@@ -237,39 +207,22 @@ public final class TransitionUtils {
      * إذا فشلت العملية أو أُلغيت نستدعي cancel() (أو نترك الكائن، فلا يتسرب شيء).
      */
     public static Handle begin(View target, AnimationType animation) {
-        return begin(target, animation, animation.durationMs);
-    }
-
-    /** نفس begin لكن بمدة محددة (بالميلي ثانية) بدل المدة الافتراضية للنوع. */
-    public static Handle begin(View target, AnimationType animation, long durationMs) {
-        return new Handle(target, animation, durationMs);
-    }
-
-    /**
-     * يلتقط صورة للشكل الحالي لأنيميشن تغيير المجلد (FOLDER_ANIMATION بمدة FOLDER_DURATION_MS).
-     * بعد أن تصبح القائمة الجديدة جاهزة نستدعي play() على الكائن المُعاد.
-     */
-    public static Handle beginForFolderChange(View target) {
-        return begin(target, FOLDER_ANIMATION, FOLDER_DURATION_MS);
+        return new Handle(target, animation);
     }
 
     public static final class Handle {
 
         private final View mTarget;
         private final AnimationType mAnimation;
-        private final long mDurationMs;
         private final int[] mLocation = new int[2];
         private Bitmap mSnapshot;
 
-        private Handle(View target, AnimationType animation, long durationMs) {
+        private Handle(View target, AnimationType animation) {
             mTarget = target;
             mAnimation = animation;
-            mDurationMs = durationMs;
 
             if (target == null || animation == AnimationType.NONE
                     || target.getWidth() <= 0 || target.getHeight() <= 0) {
-                debug(target != null ? target.getContext() : null, "begin skipped: type=" + animation
-                        + ", size=" + (target != null ? target.getWidth() + "x" + target.getHeight() : "null"));
                 return;
             }
 
@@ -277,11 +230,10 @@ public final class TransitionUtils {
                 finishTouchEffects(target);
                 target.getLocationInWindow(mLocation);
 
-                // نلتقط النافذة كاملة ثم نقصّ منها منطقة العنصر، وليس العنصر وحده: العنصر (مثل جذر Fragment)
-                // لا يرسم الخلفية السوداء بنفسها (تأتي من عناصر أعلى منه)، فتكون لقطته شفافة وتظهر الواجهة
-                // الجديدة تحتها فوراً دون أن يُرى أي أنيميشن. لقطة النافذة تحمل ما يراه المستخدم فعلاً،
-                // وهي نفس طريقة لقطة الثيم واللغة.
-                mSnapshot = captureRegionOfWindow(target, mLocation);
+                Bitmap snapshot = Bitmap.createBitmap(
+                        target.getWidth(), target.getHeight(), Bitmap.Config.ARGB_8888);
+                target.draw(new Canvas(snapshot));
+                mSnapshot = snapshot;
             } catch (RuntimeException | OutOfMemoryError e) {
                 Log.e(TAG, "Failed to capture snapshot", e);
             }
@@ -295,9 +247,6 @@ public final class TransitionUtils {
 
             if (snapshot == null || mTarget == null || !mTarget.isAttachedToWindow()
                     || !(mTarget.getRootView() instanceof FrameLayout)) {
-                debug(mTarget != null ? mTarget.getContext() : null, "play skipped: snapshot=" + (snapshot != null)
-                        + ", attached=" + (mTarget != null && mTarget.isAttachedToWindow())
-                        + ", rootIsFrame=" + (mTarget != null && mTarget.getRootView() instanceof FrameLayout));
                 return;
             }
 
@@ -308,134 +257,14 @@ public final class TransitionUtils {
             params.topMargin = mLocation[1];
 
             SnapshotOverlayView overlay =
-                    new SnapshotOverlayView(mTarget.getContext(), snapshot, mAnimation, mDurationMs);
+                    new SnapshotOverlayView(mTarget.getContext(), snapshot, mAnimation, mAnimation.durationMs);
             ((FrameLayout) mTarget.getRootView()).addView(overlay, params);
             overlay.start();
-            debug(mTarget.getContext(), "play started: " + snapshot.getWidth() + "x" + snapshot.getHeight()
-                    + ", type=" + mAnimation + ", ms=" + mDurationMs);
         }
 
         /** يتخلى عن اللقطة دون تشغيل أي أنيميشن. */
         public void cancel() {
             mSnapshot = null;
-        }
-    }
-
-    /**
-     * ★ أنيميشن خروج شاشة Splash ★
-     *
-     * يُمرَّر كمستمع خروج في MainActivity:
-     *
-     *     splashScreen.setOnExitAnimationListener(TransitionUtils::playSplashExit);
-     *
-     * شاشة الـ Splash هنا عنصر حقيقي يعطيه النظام (وليس لقطة)، فنحرّكه هو نفسه بالنوع SPLASH_ANIMATION
-     * والمدة SPLASH_DURATION_MS ثم نزيله، فيظهر التطبيق الجاهز تحته.
-     */
-    public static void playSplashExit(SplashScreenViewProvider provider) {
-        final View view = provider.getView();
-        final AnimationType type = SPLASH_ANIMATION;
-        debug(view.getContext(), "splash exit called: type=" + type + ", ms=" + SPLASH_DURATION_MS
-                + ", size=" + view.getWidth() + "x" + view.getHeight());
-
-        if (type == AnimationType.NONE || SPLASH_DURATION_MS <= 0
-                || view.getWidth() <= 0 || view.getHeight() <= 0) {
-            provider.remove();
-            return;
-        }
-
-        final int width = view.getWidth();
-        final int height = view.getHeight();
-        final Rect clip = new Rect();
-        final Rect iconClip = new Rect();
-        final boolean[] removed = {false};
-
-        // الأيقونة قد لا تتأثر بقصّ/شفافية عنصر الـ Splash الأب، فتبقى ظاهرة فوق التطبيق حتى النهاية.
-        // لذلك نطبّق التأثير عليها هي أيضاً بإحداثياتها الخاصة.
-        final View icon = provider.getIconView();
-        int iconTopInSplash = 0;
-        if (icon != null) {
-            int[] splashLocation = new int[2];
-            int[] iconLocation = new int[2];
-            view.getLocationInWindow(splashLocation);
-            icon.getLocationInWindow(iconLocation);
-            iconTopInSplash = iconLocation[1] - splashLocation[1];
-        }
-        final int iconTop = iconTopInSplash;
-
-        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
-        animator.setDuration(SPLASH_DURATION_MS);
-        animator.setInterpolator(type.createInterpolator());
-        animator.addUpdateListener(a -> {
-            float progress = (float) a.getAnimatedValue();
-            switch (type) {
-                case FADE:
-                    view.setAlpha(1f - progress);
-                    if (icon != null) {
-                        icon.setAlpha(1f - progress);
-                    }
-                    break;
-
-                case WIPE_TOP_TO_BOTTOM:
-                    int edge = Math.round(height * progress);
-                    clip.set(0, edge, width, height);
-                    view.setClipBounds(clip);
-
-                    if (icon != null) {
-                        // حافة المسح بإحداثيات الأيقونة نفسها
-                        int edgeInIcon = edge - iconTop;
-                        if (edgeInIcon >= icon.getHeight()) {
-                            icon.setAlpha(0f);
-                        } else {
-                            iconClip.set(0, Math.max(0, edgeInIcon), icon.getWidth(), icon.getHeight());
-                            icon.setClipBounds(iconClip);
-                        }
-                    }
-                    break;
-
-                case NONE:
-                default:
-                    break;
-            }
-        });
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (removed[0]) {
-                    return;
-                }
-                removed[0] = true;
-                view.setClipBounds(null);
-                if (icon != null) {
-                    icon.setClipBounds(null);
-                }
-                debug(view.getContext(), "splash anim ended");
-                provider.remove();
-            }
-        });
-        animator.start();
-    }
-
-    private static Bitmap captureRegionOfWindow(View target, int[] location) {
-        View root = target.getRootView();
-        if (root == null || root.getWidth() <= 0 || root.getHeight() <= 0) {
-            return null;
-        }
-
-        Bitmap full = Bitmap.createBitmap(root.getWidth(), root.getHeight(), Bitmap.Config.ARGB_8888);
-        try {
-            root.draw(new Canvas(full));
-
-            int x = Math.max(0, Math.min(location[0], full.getWidth() - 1));
-            int y = Math.max(0, Math.min(location[1], full.getHeight() - 1));
-            int width = Math.min(target.getWidth(), full.getWidth() - x);
-            int height = Math.min(target.getHeight(), full.getHeight() - y);
-            if (width <= 0 || height <= 0) {
-                return null;
-            }
-
-            return Bitmap.createBitmap(full, x, y, width, height);
-        } finally {
-            full.recycle();
         }
     }
 
