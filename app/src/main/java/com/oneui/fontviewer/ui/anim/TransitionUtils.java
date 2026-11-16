@@ -63,7 +63,7 @@ public final class TransitionUtils {
     public static final AnimationType LANGUAGE_ANIMATION = AnimationType.FADE;
 
     // مدة أنيميشن تغيير اللغة بالميلي ثانية (مستقلة عن مدة الثيم)
-    public static final long LANGUAGE_DURATION_MS = 300L;
+    public static final long LANGUAGE_DURATION_MS = 600L;
 
     private static final long PENDING_TIMEOUT_MS = 3000L;
 
