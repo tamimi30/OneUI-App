@@ -1,4 +1,4 @@
-package com.oneui.fontviewer.ui.features.fontviewer.util;
+package com.oneui.fontviewer.ui.features.fontviewer.utils;
 
 import android.os.Bundle;
 import android.view.View;
