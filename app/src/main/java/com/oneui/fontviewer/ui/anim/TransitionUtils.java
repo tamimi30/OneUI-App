@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -74,7 +75,7 @@ public final class TransitionUtils {
     public static final long FOLDER_DURATION_MS = 400L;
 
     // أنيميشن خروج شاشة Splash (ظهور التطبيق)
-    public static final AnimationType SPLASH_ANIMATION = AnimationType.FADE;
+    public static final AnimationType SPLASH_ANIMATION = AnimationType.WIPE_TOP_TO_BOTTOM;
 
     // مدة أنيميشن خروج شاشة Splash بالميلي ثانية
     public static final long SPLASH_DURATION_MS = 600L;
@@ -82,7 +83,7 @@ public final class TransitionUtils {
     private static final long PENDING_TIMEOUT_MS = 3000L;
 
     // === تشخيص مؤقت: يعرض رسائل Toast تبيّن أين يتوقف الأنيميشن. اجعله false بعد الانتهاء من التشخيص ===
-    private static final boolean DEBUG_TOASTS = true;
+    private static final boolean DEBUG_TOASTS = false;
 
     public static void debug(Context context, String message) {
         if (!DEBUG_TOASTS || context == null) {
@@ -279,7 +280,14 @@ public final class TransitionUtils {
 
                 Bitmap snapshot = Bitmap.createBitmap(
                         target.getWidth(), target.getHeight(), Bitmap.Config.ARGB_8888);
-                target.draw(new Canvas(snapshot));
+                Canvas canvas = new Canvas(snapshot);
+
+                // نرسم خلفية النافذة أولاً: العنصر وحده (مثل جذر Fragment) غالباً بلا خلفية، فتكون اللقطة
+                // شفافة وتظهر الواجهة الجديدة تحتها فوراً دون أن يُرى أي أنيميشن (بخلاف لقطة الثيم واللغة
+                // التي تُلتقط من decorView بخلفيته)
+                drawWindowBackground(target, canvas);
+
+                target.draw(canvas);
                 mSnapshot = snapshot;
             } catch (RuntimeException | OutOfMemoryError e) {
                 Log.e(TAG, "Failed to capture snapshot", e);
@@ -380,6 +388,27 @@ public final class TransitionUtils {
             }
         });
         animator.start();
+    }
+
+    private static void drawWindowBackground(View target, Canvas canvas) {
+        View root = target.getRootView();
+        Drawable background = root != null ? root.getBackground() : null;
+        if (background == null) {
+            return;
+        }
+
+        // نرسم نسخة من الخلفية حتى لا نغيّر حدود الـ Drawable الأصلي الذي تستخدمه النافذة نفسها
+        Drawable.ConstantState state = background.getConstantState();
+        Drawable copy = state != null ? state.newDrawable().mutate() : background;
+
+        int[] location = new int[2];
+        target.getLocationInWindow(location);
+
+        canvas.save();
+        canvas.translate(-location[0], -location[1]);
+        copy.setBounds(0, 0, root.getWidth(), root.getHeight());
+        copy.draw(canvas);
+        canvas.restore();
     }
 
     private static void finishTouchEffects(View view) {
