@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -278,17 +277,11 @@ public final class TransitionUtils {
                 finishTouchEffects(target);
                 target.getLocationInWindow(mLocation);
 
-                Bitmap snapshot = Bitmap.createBitmap(
-                        target.getWidth(), target.getHeight(), Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(snapshot);
-
-                // نرسم خلفية النافذة أولاً: العنصر وحده (مثل جذر Fragment) غالباً بلا خلفية، فتكون اللقطة
-                // شفافة وتظهر الواجهة الجديدة تحتها فوراً دون أن يُرى أي أنيميشن (بخلاف لقطة الثيم واللغة
-                // التي تُلتقط من decorView بخلفيته)
-                drawWindowBackground(target, canvas);
-
-                target.draw(canvas);
-                mSnapshot = snapshot;
+                // نلتقط النافذة كاملة ثم نقصّ منها منطقة العنصر، وليس العنصر وحده: العنصر (مثل جذر Fragment)
+                // لا يرسم الخلفية السوداء بنفسها (تأتي من عناصر أعلى منه)، فتكون لقطته شفافة وتظهر الواجهة
+                // الجديدة تحتها فوراً دون أن يُرى أي أنيميشن. لقطة النافذة تحمل ما يراه المستخدم فعلاً،
+                // وهي نفس طريقة لقطة الثيم واللغة.
+                mSnapshot = captureRegionOfWindow(target, mLocation);
             } catch (RuntimeException | OutOfMemoryError e) {
                 Log.e(TAG, "Failed to capture snapshot", e);
             }
@@ -353,7 +346,21 @@ public final class TransitionUtils {
         final int width = view.getWidth();
         final int height = view.getHeight();
         final Rect clip = new Rect();
+        final Rect iconClip = new Rect();
         final boolean[] removed = {false};
+
+        // الأيقونة قد لا تتأثر بقصّ/شفافية عنصر الـ Splash الأب، فتبقى ظاهرة فوق التطبيق حتى النهاية.
+        // لذلك نطبّق التأثير عليها هي أيضاً بإحداثياتها الخاصة.
+        final View icon = provider.getIconView();
+        int iconTopInSplash = 0;
+        if (icon != null) {
+            int[] splashLocation = new int[2];
+            int[] iconLocation = new int[2];
+            view.getLocationInWindow(splashLocation);
+            icon.getLocationInWindow(iconLocation);
+            iconTopInSplash = iconLocation[1] - splashLocation[1];
+        }
+        final int iconTop = iconTopInSplash;
 
         ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
         animator.setDuration(SPLASH_DURATION_MS);
@@ -363,11 +370,26 @@ public final class TransitionUtils {
             switch (type) {
                 case FADE:
                     view.setAlpha(1f - progress);
+                    if (icon != null) {
+                        icon.setAlpha(1f - progress);
+                    }
                     break;
 
                 case WIPE_TOP_TO_BOTTOM:
-                    clip.set(0, Math.round(height * progress), width, height);
+                    int edge = Math.round(height * progress);
+                    clip.set(0, edge, width, height);
                     view.setClipBounds(clip);
+
+                    if (icon != null) {
+                        // حافة المسح بإحداثيات الأيقونة نفسها
+                        int edgeInIcon = edge - iconTop;
+                        if (edgeInIcon >= icon.getHeight()) {
+                            icon.setAlpha(0f);
+                        } else {
+                            iconClip.set(0, Math.max(0, edgeInIcon), icon.getWidth(), icon.getHeight());
+                            icon.setClipBounds(iconClip);
+                        }
+                    }
                     break;
 
                 case NONE:
@@ -383,6 +405,9 @@ public final class TransitionUtils {
                 }
                 removed[0] = true;
                 view.setClipBounds(null);
+                if (icon != null) {
+                    icon.setClipBounds(null);
+                }
                 debug(view.getContext(), "splash anim ended");
                 provider.remove();
             }
@@ -390,25 +415,28 @@ public final class TransitionUtils {
         animator.start();
     }
 
-    private static void drawWindowBackground(View target, Canvas canvas) {
+    private static Bitmap captureRegionOfWindow(View target, int[] location) {
         View root = target.getRootView();
-        Drawable background = root != null ? root.getBackground() : null;
-        if (background == null) {
-            return;
+        if (root == null || root.getWidth() <= 0 || root.getHeight() <= 0) {
+            return null;
         }
 
-        // نرسم نسخة من الخلفية حتى لا نغيّر حدود الـ Drawable الأصلي الذي تستخدمه النافذة نفسها
-        Drawable.ConstantState state = background.getConstantState();
-        Drawable copy = state != null ? state.newDrawable().mutate() : background;
+        Bitmap full = Bitmap.createBitmap(root.getWidth(), root.getHeight(), Bitmap.Config.ARGB_8888);
+        try {
+            root.draw(new Canvas(full));
 
-        int[] location = new int[2];
-        target.getLocationInWindow(location);
+            int x = Math.max(0, Math.min(location[0], full.getWidth() - 1));
+            int y = Math.max(0, Math.min(location[1], full.getHeight() - 1));
+            int width = Math.min(target.getWidth(), full.getWidth() - x);
+            int height = Math.min(target.getHeight(), full.getHeight() - y);
+            if (width <= 0 || height <= 0) {
+                return null;
+            }
 
-        canvas.save();
-        canvas.translate(-location[0], -location[1]);
-        copy.setBounds(0, 0, root.getWidth(), root.getHeight());
-        copy.draw(canvas);
-        canvas.restore();
+            return Bitmap.createBitmap(full, x, y, width, height);
+        } finally {
+            full.recycle();
+        }
     }
 
     private static void finishTouchEffects(View view) {
