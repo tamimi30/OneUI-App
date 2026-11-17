@@ -249,6 +249,6 @@
     <string name="sort_descending">تنازلي</string>
 
     <string name="exit_on_double_back">اضغط مرة أخرى للخروج</string>
-    <string name="no_fonts_found"></string>
+    <string name="no_fonts_subtitle"></string>
     
 </resources>
