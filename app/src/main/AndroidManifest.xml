@@ -51,10 +51,10 @@
 
         <meta-data
             android:name="theming-meta"
-            android:value="meta_998_sesl_app" />
+            android:value="meta_font_viewer" />
         <meta-data
             android:name="theming-meta-xml"
-            android:value="@xml/meta_998_sesl_app" />
+            android:value="@xml/meta_font_viewer" />
 
         <activity
             android:name=".ui.MainActivity"
