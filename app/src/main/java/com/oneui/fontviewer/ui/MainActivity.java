@@ -522,7 +522,7 @@ public class MainActivity extends BaseActivity
 
     private String getFontsCountString(int count) {
         if (count == 0) {
-            return getString(R.string.no_fonts_found);
+            return getString(R.string.no_fonts_subtitle);
         }
         return getResources().getQuantityString(R.plurals.font_count_subtitle, count, count);
     }
