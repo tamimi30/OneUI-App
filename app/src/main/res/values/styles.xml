@@ -49,7 +49,7 @@
         
 
     <!-- Closed axis Spinner item (light). The night variant is in values-night/styles.xml -->
-    <style name="AxisSpinnerItem" parent="Widget.AppCompat.Light.TextView.SpinnerItem">
+    <style name="AxisSpinnerItem" parent="">
         <item name="android:textSize">@dimen/axis_spinner_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:minHeight">@dimen/axis_spinner_min_height</item>
