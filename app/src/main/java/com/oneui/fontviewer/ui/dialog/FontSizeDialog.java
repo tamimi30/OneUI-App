@@ -4,21 +4,20 @@ import android.content.Context;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SeslSeekBar;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
-import dev.oneuiproject.oneui.widget.Toast;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.widget.OneUiTipPopup;
@@ -39,7 +38,7 @@ public class FontSizeDialog {
     private final float maxSize;
     private OnFontSizeChangedListener sizeListener;
     private OnDialogCancelledListener cancelListener;
-    private EditText fontSizeValue;
+    private AppCompatEditText fontSizeValue;
     private SeslSeekBar seekBar;
 
     private AlertDialog dialog;
