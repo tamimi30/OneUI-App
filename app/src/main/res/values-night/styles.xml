@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Closed axis Spinner item (night) -->
-    <style name="AxisSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+    <style name="AxisSpinnerItem" parent="">
         <item name="android:textSize">@dimen/axis_spinner_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:minHeight">@dimen/axis_spinner_min_height</item>
