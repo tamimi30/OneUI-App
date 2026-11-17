@@ -8,7 +8,7 @@
         android:fromAlpha="0"
         android:toAlpha="1"/>
     <scale
-        android:interpolator="@anim/one_easing_interpolator"
+        android:interpolator="@interpolator/one_easing_interpolator"
         android:duration="450"
         android:pivotX="50%"
         android:pivotY="50%"
