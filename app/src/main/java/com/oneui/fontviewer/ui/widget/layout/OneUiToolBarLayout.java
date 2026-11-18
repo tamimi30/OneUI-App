@@ -615,6 +615,11 @@ public class OneUiToolBarLayout extends LinearLayout {
 
                 dotIcon.setOrientation(getResources().getConfiguration()
                         .orientation == Configuration.ORIENTATION_LANDSCAPE);
+                // اتجاه الواجهة: العربية تعكس موضع النقطة
+                final int layoutDirection = isAttachedToWindow()
+                        ? getLayoutDirection()
+                        : getResources().getConfiguration().getLayoutDirection();
+                dotIcon.setRtl(layoutDirection == View.LAYOUT_DIRECTION_RTL);
 
                 mNavigationBadgeIcon.invalidateSelf();
                 mMainToolbar.setNavigationIcon(mNavigationBadgeIcon);

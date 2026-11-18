@@ -3,6 +3,7 @@ package com.oneui.fontviewer.ui.features.settings.about;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,6 +17,10 @@ import com.oneui.fontviewer.data.model.UpdateCheckResult;
 import com.oneui.fontviewer.utils.StoreLauncher;
 
 public class AboutActivity extends AppCompatActivity {
+
+// أقل مدة يبقى فيها مؤشر التحميل ظاهراً قبل عرض نتيجة التحقق (بالمللي ثانية)
+private static final long MIN_LOADING_TIME_MS = 700L;
+
 private AppInfoLayout appInfoLayout;
     
 @Override
@@ -59,12 +64,25 @@ protected void onCreate(Bundle savedInstanceState) {
 
 private void checkForUpdate() {
     appInfoLayout.setStatus(AppInfoLayout.LOADING);
+    final long startTime = SystemClock.uptimeMillis();
 
     UpdateRepository.getInstance(this).checkForAbout(result -> {
         if (isFinishing() || isDestroyed()) {
             return;
         }
-        showUpdateStatus(result);
+
+        // الرد عندما لا يوجد تحديث سريع جداً (أقل من ثانية)، فيختفي مؤشر التحميل قبل أن يُرى.
+        // نُبقيه ظاهراً مدة قصيرة على الأقل قبل عرض النتيجة.
+        long remaining = MIN_LOADING_TIME_MS - (SystemClock.uptimeMillis() - startTime);
+        if (remaining > 0) {
+            appInfoLayout.postDelayed(() -> {
+                if (!isFinishing() && !isDestroyed()) {
+                    showUpdateStatus(result);
+                }
+            }, remaining);
+        } else {
+            showUpdateStatus(result);
+        }
     });
 }
 

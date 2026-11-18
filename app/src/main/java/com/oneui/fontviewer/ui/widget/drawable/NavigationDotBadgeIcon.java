@@ -31,6 +31,9 @@ public class NavigationDotBadgeIcon extends Drawable {
     private final float mRadiusPx;
     private boolean mIsLandscape = false;
 
+    // في الواجهة من اليمين لليسار (العربية) تنعكس الأيقونة فتنتقل النقطة إلى زاويتها العلوية اليسرى
+    private boolean mIsRtl = false;
+
     public NavigationDotBadgeIcon(@NonNull Context context) {
         mPaint.setColor(context.getColor(R.color.oui_n_badge_background_color));
         mRadiusPx = DOT_RADIUS_DP * context.getResources().getDisplayMetrics().density;
@@ -41,11 +44,16 @@ public class NavigationDotBadgeIcon extends Drawable {
         mIsLandscape = isLandscape;
     }
 
+    public void setRtl(boolean isRtl) {
+        mIsRtl = isRtl;
+    }
+
     @Override
     public void draw(@NonNull Canvas canvas) {
         final Rect bounds = getBounds();
+        final float centerX = mIsRtl ? 1f - DOT_CENTER_X : DOT_CENTER_X;
         canvas.drawCircle(
-                bounds.left + bounds.width() * DOT_CENTER_X,
+                bounds.left + bounds.width() * centerX,
                 bounds.top + bounds.height() * DOT_CENTER_Y,
                 mRadiusPx, mPaint);
     }
