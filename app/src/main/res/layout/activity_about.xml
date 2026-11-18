@@ -7,10 +7,10 @@
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_status"
+        android:id="@+id/button_github"
         style="@style/OneUI.AppInfoButton"
-        android:onClick="changeStatus"
-        android:text="@string/about_button_status" />
+        android:onClick="openGitHubPage"
+        android:text="@string/about_button_github" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button_licenses"
