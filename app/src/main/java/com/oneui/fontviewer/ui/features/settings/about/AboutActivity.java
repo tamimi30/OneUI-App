@@ -46,31 +46,36 @@ protected void onCreate(Bundle savedInstanceState) {
             checkForUpdate();
         }
     });
-}
 
-@Override
-protected void onResume() {
-    super.onResume();
-    // مؤشر تحميل ثم النتيجة، عند كل فتح للصفحة (مثل Samsung Video)
-    checkForUpdate();
+    // أول فتح لصفحة "حول" في هذه الزيارة للإعدادات: مؤشر تحميل ثم النتيجة.
+    // أي فتح تالٍ (بعد الرجوع منها) يعرض النتيجة نفسها فوراً دون مؤشر تحميل (مثل Samsung Video).
+    UpdateRepository updateRepository = UpdateRepository.getInstance(this);
+    if (updateRepository.hasAboutResult()) {
+        showUpdateStatus(updateRepository.getAboutResult());
+    } else {
+        checkForUpdate();
+    }
 }
 
 private void checkForUpdate() {
     appInfoLayout.setStatus(AppInfoLayout.LOADING);
 
-    UpdateRepository.getInstance(this).forceCheck(result -> {
+    UpdateRepository.getInstance(this).checkForAbout(result -> {
         if (isFinishing() || isDestroyed()) {
             return;
         }
-
-        if (result.status == UpdateCheckResult.Status.UPDATE_AVAILABLE) {
-            appInfoLayout.setStatus(AppInfoLayout.UPDATE_AVAILABLE);
-        } else if (result.status == UpdateCheckResult.Status.NO_UPDATE) {
-            appInfoLayout.setStatus(AppInfoLayout.NO_UPDATE);
-        } else {
-            appInfoLayout.setStatus(AppInfoLayout.NO_CONNECTION);
-        }
+        showUpdateStatus(result);
     });
+}
+
+private void showUpdateStatus(UpdateCheckResult result) {
+    if (result.status == UpdateCheckResult.Status.UPDATE_AVAILABLE) {
+        appInfoLayout.setStatus(AppInfoLayout.UPDATE_AVAILABLE);
+    } else if (result.status == UpdateCheckResult.Status.NO_UPDATE) {
+        appInfoLayout.setStatus(AppInfoLayout.NO_UPDATE);
+    } else {
+        appInfoLayout.setStatus(AppInfoLayout.NO_CONNECTION);
+    }
 }
 
 private void setButtonsWidth(float ratio, int... buttonIds) {

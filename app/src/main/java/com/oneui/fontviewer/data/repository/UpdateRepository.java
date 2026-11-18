@@ -50,6 +50,11 @@ public class UpdateRepository {
     // آخر نتيجة في هذه الجلسة (مثل mResultCode في Samsung)، تُستخدم لرسم صفحة "حول" فوراً
     private UpdateCheckResult mLastResult = null;
 
+    // نتيجة التحقق الخاصة بصفحة "حول" خلال زيارة واحدة للإعدادات.
+    // في Samsung: أول فتح لصفحة "حول" يعرض مؤشر التحميل ويتحقق، وأي فتح تالٍ (بعد الرجوع منها)
+    // يعرض النتيجة نفسها فوراً دون مؤشر تحميل، ولا يتحقق من جديد إلا بعد الخروج من الإعدادات والدخول إليها.
+    private UpdateCheckResult mAboutResult = null;
+
     private UpdateRepository(Context context) {
         appContext = context.getApplicationContext();
         prefs = new UpdatePreferenceManager(appContext);
@@ -76,6 +81,31 @@ public class UpdateRepository {
 
     public boolean isUpdateAvailable() {
         return prefs.isUpdateAvailable();
+    }
+
+    /**
+     * يُستدعى عند فتح شاشة الإعدادات من جديد، فيُسمح لصفحة "حول" بالتحقق مرة أخرى.
+     */
+    public void resetAboutCheck() {
+        mAboutResult = null;
+    }
+
+    public boolean hasAboutResult() {
+        return mAboutResult != null;
+    }
+
+    public UpdateCheckResult getAboutResult() {
+        return mAboutResult;
+    }
+
+    /**
+     * تحقق صفحة "حول" (فوري بغض النظر عن فترة الـ 24 ساعة)، ونتيجته تُحفظ لباقي زيارة الإعدادات.
+     */
+    public void checkForAbout(Callback callback) {
+        forceCheck(result -> {
+            mAboutResult = result;
+            callback.onResult(result);
+        });
     }
 
     /**

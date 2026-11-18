@@ -3,6 +3,7 @@ package com.oneui.fontviewer.ui.widget.preference;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,6 +59,13 @@ public class UpdateCardPreference extends Preference {
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
+
+        // نفس ما تفعله TipsCardPreference في المكتبة: بدون ضبط اللون صراحةً يظهر النص باهتاً
+        // لأن البطاقة غير قابلة للتحديد (setSelectable(false))
+        int textColor = getContext().getColor(R.color.oui_primary_text_color);
+        ((TextView) holder.itemView.findViewById(android.R.id.title)).setTextColor(textColor);
+        ((TextView) holder.itemView.findViewById(android.R.id.summary)).setTextColor(textColor);
+
         holder.itemView.findViewById(R.id.update_card_update).setOnClickListener(mUpdateClickListener);
         holder.itemView.findViewById(R.id.update_card_not_now).setOnClickListener(mNotNowClickListener);
     }

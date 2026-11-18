@@ -64,6 +64,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private UpdateCardPreference mUpdateCardPreference;
     private UpdatePreferenceManager mUpdatePrefs;
 
+    // true بعد الضغط على "ليس الآن": تختفي البطاقة طوال هذه الزيارة للإعدادات فقط،
+    // وتعود عند الخروج من الإعدادات والدخول إليها مرة أخرى (فلا نحفظها بشكل دائم)
+    private boolean mUpdateCardDismissed = false;
+    private static final String STATE_UPDATE_CARD_DISMISSED = "update_card_dismissed";
+
     // يجب الاحتفاظ بالمستمع في متغير، لأن SharedPreferences لا تحتفظ إلا بمرجع ضعيف له
     private final SharedPreferences.OnSharedPreferenceChangeListener mUpdatePrefListener =
             (sharedPreferences, key) -> refreshUpdateCard();
@@ -87,6 +92,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            // نحافظ على إخفاء البطاقة عند إعادة بناء الشاشة (مثل تغيير اللغة)
+            mUpdateCardDismissed = savedInstanceState.getBoolean(STATE_UPDATE_CARD_DISMISSED, false);
+        }
 
         viewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
 
@@ -115,9 +124,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         syncLanguageFromSystem();
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(STATE_UPDATE_CARD_DISMISSED, mUpdateCardDismissed);
+    }
+
     /**
      * يربط زرّي بطاقة التحديث. "تحديث" يفتح صفحة التطبيق في المتجر الذي ثبّت منه المستخدم
-     * (Play أو Galaxy Store أو GitHub)، و"ليس الآن" يخفي البطاقة وتعود لاحقاً (انظر UpdateConfig).
+     * (Play أو Galaxy Store أو GitHub)، و"ليس الآن" يخفي البطاقة حتى الخروج من الإعدادات والدخول إليها مرة أخرى.
      */
     private void initUpdateCard() {
         mUpdatePrefs = UpdateRepository.getInstance(requireContext()).getPreferences();
@@ -126,14 +141,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (mUpdateCardPreference != null) {
             mUpdateCardPreference.setOnUpdateClickListener(v ->
                     StoreLauncher.openUpdatePage(requireContext()));
-            mUpdateCardPreference.setOnNotNowClickListener(v ->
-                    mUpdatePrefs.snoozeUpdateCard());
+            mUpdateCardPreference.setOnNotNowClickListener(v -> {
+                mUpdateCardDismissed = true;
+                refreshUpdateCard();
+            });
         }
     }
 
     private void refreshUpdateCard() {
         if (mUpdateCardPreference != null && mUpdatePrefs != null) {
-            mUpdateCardPreference.setVisible(mUpdatePrefs.shouldShowUpdateCard());
+            mUpdateCardPreference.setVisible(mUpdatePrefs.isUpdateAvailable() && !mUpdateCardDismissed);
         }
     }
 

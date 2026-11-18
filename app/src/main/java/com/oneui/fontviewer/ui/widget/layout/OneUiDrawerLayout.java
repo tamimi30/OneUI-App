@@ -403,7 +403,7 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
 
         final float density = getResources().getDisplayMetrics().density;
         final int dotSize = (int) (6 * density);
-        final int dotMargin = (int) (9 * density);
+        final int dotMargin = (int) (11 * density);
 
         mHeaderBadge.setText("");
         ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mHeaderBadge.getLayoutParams();

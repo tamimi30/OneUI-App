@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.base.BaseActivity;
 import com.oneui.fontviewer.data.repository.SettingsRepository;
+import com.oneui.fontviewer.data.repository.UpdateRepository;
 import com.oneui.fontviewer.ui.anim.TransitionUtils;
 
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
@@ -32,6 +33,9 @@ public class SettingsActivity extends BaseActivity {
         initToolbar();
         
         if (savedInstanceState == null) {
+            // زيارة جديدة للإعدادات: صفحة "حول" تتحقق من التحديث مجدداً عند فتحها (مثل Samsung)
+            UpdateRepository.getInstance(this).resetAboutCheck();
+
             getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settings_container, new SettingsFragment())

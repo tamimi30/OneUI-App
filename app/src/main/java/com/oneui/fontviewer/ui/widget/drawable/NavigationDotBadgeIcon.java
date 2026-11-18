@@ -15,13 +15,14 @@ import dev.oneuiproject.oneui.design.R;
 
 /**
  * نقطة صغيرة (بدون نص) فوق أيقونة زر التنقل، مثل النقطة التي تظهر في تطبيقات Samsung عند وجود تحديث.
- * موضعها هو نفس موضع شارة الرقم/N في مكتبة OneUI، لكن بحجم أصغر.
+ * موضعها عند الزاوية العلوية اليمنى لخطوط الأيقونة.
  */
 public class NavigationDotBadgeIcon extends Drawable {
 
-    private static final float BADGE_ICON_X = 0.8125f;
-    private static final float BADGE_ICON_Y = 0.1458f;
-    private static final float Y_DIFF = 4.f;
+    // مركز النقطة كنسبة من أبعاد الأيقونة (24dp): عند الزاوية العلوية اليمنى لخطوط أيقونة القائمة
+    // وليس فوقها. لتحريكها عدّل القيمتين: زيادة X تحرّكها لليمين، وزيادة Y تحرّكها للأسفل.
+    private static final float DOT_CENTER_X = 0.83f;
+    private static final float DOT_CENTER_Y = 0.20f;
 
     // نصف قطر النقطة (القطر 6dp مثل sesl_dot_badge)
     private static final float DOT_RADIUS_DP = 3.f;
@@ -35,6 +36,7 @@ public class NavigationDotBadgeIcon extends Drawable {
         mRadiusPx = DOT_RADIUS_DP * context.getResources().getDisplayMetrics().density;
     }
 
+    // الموضع صار نفسه في الاتجاهين، وتبقى الدالة ليستدعيها OneUiToolBarLayout مثل شارة المكتبة
     public void setOrientation(boolean isLandscape) {
         mIsLandscape = isLandscape;
     }
@@ -42,11 +44,10 @@ public class NavigationDotBadgeIcon extends Drawable {
     @Override
     public void draw(@NonNull Canvas canvas) {
         final Rect bounds = getBounds();
-        final float x = bounds.width() * BADGE_ICON_X;
-        final float y = mIsLandscape
-                ? (bounds.height() * BADGE_ICON_Y) - Y_DIFF
-                : -Y_DIFF;
-        canvas.drawCircle(x, y, mRadiusPx, mPaint);
+        canvas.drawCircle(
+                bounds.left + bounds.width() * DOT_CENTER_X,
+                bounds.top + bounds.height() * DOT_CENTER_Y,
+                mRadiusPx, mPaint);
     }
 
     @Override

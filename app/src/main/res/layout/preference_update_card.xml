@@ -42,11 +42,15 @@
         <TextView
             android:id="@+id/update_card_not_now"
             style="@style/OneUI.TipsCardTextButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_weight="0"
             android:text="@string/update_card_not_now" />
 
         <TextView
             android:id="@+id/update_card_update"
             style="@style/OneUI.TipsCardTextButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_weight="0"
             android:text="@string/update_card_update" />
 
     </LinearLayout>
