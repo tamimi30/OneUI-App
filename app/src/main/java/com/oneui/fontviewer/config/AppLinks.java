@@ -11,8 +11,8 @@ public final class AppLinks {
     }
 
     // ★ عدّل هاتين القيمتين فقط (اسم حسابك واسم المستودع على GitHub) ★
-    public static final String GITHUB_OWNER = "YOUR_GITHUB_USERNAME";
-    public static final String GITHUB_REPOSITORY = "YOUR_REPOSITORY_NAME";
+    public static final String GITHUB_OWNER = "tamimi30";
+    public static final String GITHUB_REPOSITORY = "OneUI-App";
 
     // الصفحة التي يفتحها زر GitHub في صفحة "حول" (صفحتك الشخصية).
     // لفتح صفحة المستودع بدلاً منها استبدلها بـ GITHUB_REPOSITORY_URL.
