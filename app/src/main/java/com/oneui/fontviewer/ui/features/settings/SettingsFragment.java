@@ -29,7 +29,6 @@ import dev.oneuiproject.oneui.utils.PreferenceUtils;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.FontViewerApp;
 import com.oneui.fontviewer.ui.features.settings.about.AboutActivity;
-import com.oneui.fontviewer.ui.features.settings.update.UpdateAvailableCardPreference;
 import com.oneui.fontviewer.data.repository.SettingsRepository;
 import com.oneui.fontviewer.ui.anim.TransitionUtils;
 
@@ -70,9 +69,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         // تجعل المحوّل يضيفها لاحقاً في رسالة مؤجلة، أي بعد أول رسم للقائمة، فتطول القائمة بعد أن استعاد
         // RecyclerView موضع التمرير مرة واحدة، فيضيع الموضع عندما تكون القائمة قصيرة (حجم خط صغير).
         setupRelatedCard();
-
-        // بطاقة التحديث في أعلى القائمة، لنفس السبب تُضاف هنا قبل ربط القائمة بالمحوّل (انظر UpdateAvailableCardPreference)
-        UpdateAvailableCardPreference.showIfNeeded(this);
     }
 
     @Override

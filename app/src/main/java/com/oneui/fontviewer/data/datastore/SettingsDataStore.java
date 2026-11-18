@@ -49,12 +49,6 @@ public class SettingsDataStore {
     private final Preferences.Key<String> KEY_LAST_OPENED_FONT_PATH;
     private final Preferences.Key<String> KEY_FOLDER_PATH;
 
-    // Update check keys
-    private final Preferences.Key<Long> KEY_UPDATE_LAST_CHECK_TIME;
-    private final Preferences.Key<Boolean> KEY_UPDATE_AVAILABLE;
-    private final Preferences.Key<String> KEY_UPDATE_AVAILABLE_VERSION_NAME;
-    private final Preferences.Key<Long> KEY_UPDATE_AVAILABLE_VERSION_CODE;
-
     
     
     // Local fonts keys (Local fonts)
@@ -93,8 +87,6 @@ public class SettingsDataStore {
     public static final boolean DEFAULT_FONT_PREVIEW_ENABLED = true;
     public static final boolean DEFAULT_TRANSLATION_ENABLED = false;
     public static final boolean DEFAULT_NOTIFICATIONS_ENABLED = true;
-    public static final long DEFAULT_UPDATE_LAST_CHECK_TIME = 0L;
-    public static final boolean DEFAULT_UPDATE_AVAILABLE = false;
     public static final String DEFAULT_PREVIEW_TEXT = 
             "The quick brown fox jumps over the lazy dog.\n\n" +
             "0123456789";
@@ -124,12 +116,6 @@ public class SettingsDataStore {
         KEY_PREVIEW_TEXT = PreferencesKeys.stringKey("preview_text");
         KEY_LAST_OPENED_FONT_PATH = PreferencesKeys.stringKey("last_opened_font_path");
         KEY_FOLDER_PATH = PreferencesKeys.stringKey("folder_path");
-
-        // Initialize update check keys
-        KEY_UPDATE_LAST_CHECK_TIME = PreferencesKeys.longKey("update_last_check_time");
-        KEY_UPDATE_AVAILABLE = PreferencesKeys.booleanKey("update_available");
-        KEY_UPDATE_AVAILABLE_VERSION_NAME = PreferencesKeys.stringKey("update_available_version_name");
-        KEY_UPDATE_AVAILABLE_VERSION_CODE = PreferencesKeys.longKey("update_available_version_code");
 
         
         
@@ -693,71 +679,6 @@ public class SettingsDataStore {
         );
     }
     
-    // ════════════════════════════════════════════════════════════
-    // Update Check
-    // ════════════════════════════════════════════════════════════
-
-    // وقت آخر فحص تلقائي (يقابل galaxyapps_check_once_a_day في Samsung Video)، 0 = لم يُفحص قط
-    public Flowable<Long> getUpdateLastCheckTime() {
-        return data().map(prefs ->
-            prefs.get(KEY_UPDATE_LAST_CHECK_TIME) != null ?
-            prefs.get(KEY_UPDATE_LAST_CHECK_TIME) : DEFAULT_UPDATE_LAST_CHECK_TIME
-        );
-    }
-
-    public Single<Preferences> setUpdateLastCheckTime(long timeMillis) {
-        return update(prefs -> {
-            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            mutablePrefs.set(KEY_UPDATE_LAST_CHECK_TIME, timeMillis);
-            return Single.just(mutablePrefs);
-        });
-    }
-
-    // هل يوجد تحديث متوفر؟ (يقابل galaxyapps_show_badge_notifications، وهو ما يُظهر النقطة والبطاقة)
-    public Flowable<Boolean> getUpdateAvailable() {
-        return data().map(prefs ->
-            prefs.get(KEY_UPDATE_AVAILABLE) != null ?
-            prefs.get(KEY_UPDATE_AVAILABLE) : DEFAULT_UPDATE_AVAILABLE
-        );
-    }
-
-    // اسم الإصدار المتوفر (يقابل galaxyapps_can_update_version)، وفارغ إن كان المصدر لا يعطيه
-    public Flowable<String> getUpdateAvailableVersionName() {
-        return data().map(prefs ->
-            prefs.get(KEY_UPDATE_AVAILABLE_VERSION_NAME) != null ?
-            prefs.get(KEY_UPDATE_AVAILABLE_VERSION_NAME) : ""
-        );
-    }
-
-    // رقم الإصدار المتوفر، و0 إن كان المصدر لا يعطيه
-    public Flowable<Long> getUpdateAvailableVersionCode() {
-        return data().map(prefs ->
-            prefs.get(KEY_UPDATE_AVAILABLE_VERSION_CODE) != null ?
-            prefs.get(KEY_UPDATE_AVAILABLE_VERSION_CODE) : 0L
-        );
-    }
-
-    // الحقول الثلاثة تُكتب معاً في عملية واحدة حتى لا يقرأ أحد حالة نصف محدّثة
-    public Single<Preferences> setAvailableUpdate(String versionName, long versionCode) {
-        return update(prefs -> {
-            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            mutablePrefs.set(KEY_UPDATE_AVAILABLE, true);
-            mutablePrefs.set(KEY_UPDATE_AVAILABLE_VERSION_NAME, versionName);
-            mutablePrefs.set(KEY_UPDATE_AVAILABLE_VERSION_CODE, versionCode);
-            return Single.just(mutablePrefs);
-        });
-    }
-
-    public Single<Preferences> clearAvailableUpdate() {
-        return update(prefs -> {
-            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            mutablePrefs.set(KEY_UPDATE_AVAILABLE, false);
-            mutablePrefs.set(KEY_UPDATE_AVAILABLE_VERSION_NAME, "");
-            mutablePrefs.set(KEY_UPDATE_AVAILABLE_VERSION_CODE, 0L);
-            return Single.just(mutablePrefs);
-        });
-    }
-
     // ════════════════════════════════════════════════════════════
     // Clear All
     // ════════════════════════════════════════════════════════════
