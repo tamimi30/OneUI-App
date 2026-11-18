@@ -3,6 +3,7 @@ package com.oneui.fontviewer.ui.features.settings;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
@@ -28,6 +29,10 @@ import dev.oneuiproject.oneui.utils.PreferenceUtils;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.FontViewerApp;
+import com.oneui.fontviewer.data.prefs.UpdatePreferenceManager;
+import com.oneui.fontviewer.data.repository.UpdateRepository;
+import com.oneui.fontviewer.utils.StoreLauncher;
+import com.oneui.fontviewer.ui.widget.preference.UpdateCardPreference;
 import com.oneui.fontviewer.ui.features.settings.about.AboutActivity;
 import com.oneui.fontviewer.data.repository.SettingsRepository;
 import com.oneui.fontviewer.ui.anim.TransitionUtils;
@@ -54,6 +59,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private Preference reportIssuePreference;
 
     private PreferenceRelatedCard mRelatedCard;
+
+    // بطاقة "يتوفر تحديث جديد" في أعلى الإعدادات
+    private UpdateCardPreference mUpdateCardPreference;
+    private UpdatePreferenceManager mUpdatePrefs;
+
+    // يجب الاحتفاظ بالمستمع في متغير، لأن SharedPreferences لا تحتفظ إلا بمرجع ضعيف له
+    private final SharedPreferences.OnSharedPreferenceChangeListener mUpdatePrefListener =
+            (sharedPreferences, key) -> refreshUpdateCard();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -83,9 +96,45 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        // تحديث البطاقة فوراً عند الرجوع للشاشة، ثم متابعة أي تغيير في حالة التحديث
+        refreshUpdateCard();
+        mUpdatePrefs.registerListener(mUpdatePrefListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mUpdatePrefs.unregisterListener(mUpdatePrefListener);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         syncLanguageFromSystem();
+    }
+
+    /**
+     * يربط زرّي بطاقة التحديث. "تحديث" يفتح صفحة التطبيق في المتجر الذي ثبّت منه المستخدم
+     * (Play أو Galaxy Store أو GitHub)، و"ليس الآن" يخفي البطاقة وتعود لاحقاً (انظر UpdateConfig).
+     */
+    private void initUpdateCard() {
+        mUpdatePrefs = UpdateRepository.getInstance(requireContext()).getPreferences();
+
+        mUpdateCardPreference = findPreference("update_card");
+        if (mUpdateCardPreference != null) {
+            mUpdateCardPreference.setOnUpdateClickListener(v ->
+                    StoreLauncher.openUpdatePage(requireContext()));
+            mUpdateCardPreference.setOnNotNowClickListener(v ->
+                    mUpdatePrefs.snoozeUpdateCard());
+        }
+    }
+
+    private void refreshUpdateCard() {
+        if (mUpdateCardPreference != null && mUpdatePrefs != null) {
+            mUpdateCardPreference.setVisible(mUpdatePrefs.shouldShowUpdateCard());
+        }
     }
 
     /**
@@ -115,6 +164,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
 
     private void initPreferences() {
+
+        initUpdateCard();
 
         languagePreference = findPreference("language_mode");
         if (languagePreference != null) {

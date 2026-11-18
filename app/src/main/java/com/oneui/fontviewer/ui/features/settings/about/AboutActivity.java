@@ -9,9 +9,11 @@ import android.view.ViewGroup;
 import androidx.appcompat.app.AppCompatActivity;
 
 import dev.oneuiproject.oneui.layout.AppInfoLayout;
-import dev.oneuiproject.oneui.widget.Toast;
 
 import com.oneui.fontviewer.R;
+import com.oneui.fontviewer.data.repository.UpdateRepository;
+import com.oneui.fontviewer.data.model.UpdateCheckResult;
+import com.oneui.fontviewer.utils.StoreLauncher;
 
 public class AboutActivity extends AppCompatActivity {
 private AppInfoLayout appInfoLayout;
@@ -24,7 +26,6 @@ protected void onCreate(Bundle savedInstanceState) {
     appInfoLayout = findViewById(R.id.appInfoLayout);
 
     setButtonsWidth(0.61f,
-            R.id.button_status,
             R.id.button_licenses,
             R.id.app_info_update);
 
@@ -34,12 +35,40 @@ protected void onCreate(Bundle savedInstanceState) {
     appInfoLayout.setMainButtonClickListener(new AppInfoLayout.OnClickListener() {
         @Override
         public void onUpdateClicked(View v) {
-            Toast.makeText(AboutActivity.this, "onUpdateClicked", Toast.LENGTH_SHORT).show();
+            // يفتح صفحة التطبيق في المتجر الذي ثبّت منه المستخدم، ثم نغلق صفحة "حول" (مثل Samsung Video)
+            if (StoreLauncher.openUpdatePage(AboutActivity.this)) {
+                finish();
+            }
         }
 
         @Override
         public void onRetryClicked(View v) {
-            Toast.makeText(AboutActivity.this, "onRetryClicked", Toast.LENGTH_SHORT).show();
+            checkForUpdate();
+        }
+    });
+}
+
+@Override
+protected void onResume() {
+    super.onResume();
+    // مؤشر تحميل ثم النتيجة، عند كل فتح للصفحة (مثل Samsung Video)
+    checkForUpdate();
+}
+
+private void checkForUpdate() {
+    appInfoLayout.setStatus(AppInfoLayout.LOADING);
+
+    UpdateRepository.getInstance(this).forceCheck(result -> {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+
+        if (result.status == UpdateCheckResult.Status.UPDATE_AVAILABLE) {
+            appInfoLayout.setStatus(AppInfoLayout.UPDATE_AVAILABLE);
+        } else if (result.status == UpdateCheckResult.Status.NO_UPDATE) {
+            appInfoLayout.setStatus(AppInfoLayout.NO_UPDATE);
+        } else {
+            appInfoLayout.setStatus(AppInfoLayout.NO_CONNECTION);
         }
     });
 }
@@ -57,12 +86,6 @@ private void setButtonsWidth(float ratio, int... buttonIds) {
             button.setLayoutParams(lp);
         }
     }
-}
-
-public void changeStatus(View v) {
-    int s = appInfoLayout.getStatus() + 1;
-    if (s == 4) s = -1;
-    appInfoLayout.setStatus(s);
 }
 
 public void openLicensesPage(View v) {

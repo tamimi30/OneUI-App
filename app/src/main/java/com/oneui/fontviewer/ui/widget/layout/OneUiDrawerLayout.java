@@ -78,6 +78,9 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
     private View mHeaderView;
     private AppCompatImageButton mHeaderButton;
     private TextView mHeaderBadge;
+    // الهوامش الأصلية لشارة زر الدرج (قبل تصغيرها إلى نقطة)، لنستعيدها عند عرض رقم أو N
+    private int mHeaderBadgeDefaultTopMargin = -1;
+    private int mHeaderBadgeDefaultEndMargin = -1;
     private FrameLayout mDrawerContainer;
     private float scrimAlpha;
     private int systemBarsColor;
@@ -358,11 +361,15 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
      * The badge is small orange circle in the top right of the icon which contains text.
      * It can either be a 'N' or a number up to 99.
      *
-     * @param count {@link #N_BADGE} to show a 'N', 0 to hide the badge or any number up to 99.
+     * @param count {@link #N_BADGE} to show a 'N', {@link #DOT_BADGE} to show a small dot without text,
+     *              0 to hide the badge or any number up to 99.
      */
     public void setDrawerButtonBadge(int count) {
         if (mHeaderBadge != null) {
-            if (count > 0) {
+            if (count == DOT_BADGE) {
+                showHeaderBadgeAsDot();
+            } else if (count > 0) {
+                restoreHeaderBadgeMargins();
                 if (count > 99) {
                     count = 99;
                 }
@@ -378,6 +385,7 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
 
                 mHeaderBadge.setVisibility(View.VISIBLE);
             } else if (count == N_BADGE) {
+                restoreHeaderBadgeMargins();
                 mHeaderBadge.setText(getResources().getString(R.string.oui_new_badge_text));
                 mHeaderBadge.setVisibility(View.VISIBLE);
             } else {
@@ -387,6 +395,40 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
             Log.e(TAG, "setDrawerButtonBadge: this method can be used " +
                     "only with the default header view");
         }
+    }
+
+    // نقطة صغيرة بدون نص بدل شارة الرقم (قطرها 6dp)، موضوعة عند الزاوية العلوية لأيقونة الزر
+    private void showHeaderBadgeAsDot() {
+        rememberHeaderBadgeMargins();
+
+        final float density = getResources().getDisplayMetrics().density;
+        final int dotSize = (int) (6 * density);
+        final int dotMargin = (int) (9 * density);
+
+        mHeaderBadge.setText("");
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mHeaderBadge.getLayoutParams();
+        lp.width = dotSize;
+        lp.height = dotSize;
+        lp.topMargin = dotMargin;
+        lp.setMarginEnd(dotMargin);
+        mHeaderBadge.setLayoutParams(lp);
+        mHeaderBadge.setVisibility(View.VISIBLE);
+    }
+
+    private void rememberHeaderBadgeMargins() {
+        if (mHeaderBadgeDefaultTopMargin < 0) {
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mHeaderBadge.getLayoutParams();
+            mHeaderBadgeDefaultTopMargin = lp.topMargin;
+            mHeaderBadgeDefaultEndMargin = lp.getMarginEnd();
+        }
+    }
+
+    private void restoreHeaderBadgeMargins() {
+        rememberHeaderBadgeMargins();
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mHeaderBadge.getLayoutParams();
+        lp.topMargin = mHeaderBadgeDefaultTopMargin;
+        lp.setMarginEnd(mHeaderBadgeDefaultEndMargin);
+        mHeaderBadge.setLayoutParams(lp);
     }
 
     /**

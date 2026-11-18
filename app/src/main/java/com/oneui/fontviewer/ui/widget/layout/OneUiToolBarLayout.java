@@ -46,6 +46,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import dev.oneuiproject.oneui.design.R;
 import dev.oneuiproject.oneui.utils.internal.ToolbarLayoutUtils;
 import dev.oneuiproject.oneui.view.internal.NavigationBadgeIcon;
+import com.oneui.fontviewer.ui.widget.drawable.NavigationDotBadgeIcon;
 
 /**
  * Custom collapsing Appbar like in any App from Samsung. Includes a {@link SearchView} and Samsung's ActionMode.
@@ -72,6 +73,9 @@ public class OneUiToolBarLayout extends LinearLayout {
     private static final int ROOT = 3;
 
     public static final int N_BADGE = -1;
+
+    // نقطة صغيرة بدون نص (تظهر عند توفر تحديث، مثل تطبيقات Samsung)
+    public static final int DOT_BADGE = -2;
 
     protected AppCompatActivity mActivity;
     protected Context mContext;
@@ -312,10 +316,12 @@ public class OneUiToolBarLayout extends LinearLayout {
         setExpanded(!isLandscape & mExpanded);
 
         if (mNavigationBadgeIcon != null) {
-            NavigationBadgeIcon badgeIcon
-                    = (NavigationBadgeIcon) mNavigationBadgeIcon
-                    .getDrawable(1);
-            badgeIcon.setOrientation(isLandscape);
+            Drawable badge = mNavigationBadgeIcon.getDrawable(1);
+            if (badge instanceof NavigationBadgeIcon) {
+                ((NavigationBadgeIcon) badge).setOrientation(isLandscape);
+            } else if (badge instanceof NavigationDotBadgeIcon) {
+                ((NavigationDotBadgeIcon) badge).setOrientation(isLandscape);
+            }
         }
     }
 
@@ -591,13 +597,31 @@ public class OneUiToolBarLayout extends LinearLayout {
      * The badge is small orange circle in the top right of the icon which contains text.
      * It can either be a 'N' or a number up to 99.
      *
-     * @param count {@link #N_BADGE} to show a 'N', 0 to hide the badge or any number up to 99.
+     * @param count {@link #N_BADGE} to show a 'N', {@link #DOT_BADGE} to show a small dot without text,
+     *              0 to hide the badge or any number up to 99.
      */
     public void setNavigationButtonBadge(int count) {
         if (mNavigationIcon != null) {
-            if (count != 0) {
+            if (count == DOT_BADGE) {
+                NavigationDotBadgeIcon dotIcon;
+                if (mNavigationBadgeIcon != null
+                        && mNavigationBadgeIcon.getDrawable(1) instanceof NavigationDotBadgeIcon) {
+                    dotIcon = (NavigationDotBadgeIcon) mNavigationBadgeIcon.getDrawable(1);
+                } else {
+                    dotIcon = new NavigationDotBadgeIcon(mContext);
+                    mNavigationBadgeIcon = new LayerDrawable(
+                            new Drawable[]{mNavigationIcon, dotIcon});
+                }
+
+                dotIcon.setOrientation(getResources().getConfiguration()
+                        .orientation == Configuration.ORIENTATION_LANDSCAPE);
+
+                mNavigationBadgeIcon.invalidateSelf();
+                mMainToolbar.setNavigationIcon(mNavigationBadgeIcon);
+            } else if (count != 0) {
                 NavigationBadgeIcon badgeIcon;
-                if (mNavigationBadgeIcon == null) {
+                if (mNavigationBadgeIcon == null
+                        || !(mNavigationBadgeIcon.getDrawable(1) instanceof NavigationBadgeIcon)) {
                     badgeIcon = new NavigationBadgeIcon(mContext);
                     mNavigationBadgeIcon = new LayerDrawable(
                             new Drawable[]{mNavigationIcon, badgeIcon});

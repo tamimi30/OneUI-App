@@ -1,6 +1,7 @@
 package com.oneui.fontviewer.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.oneui.fontviewer.ui.widget.layout.OneUiDrawerLayout;
+import com.oneui.fontviewer.ui.widget.layout.OneUiToolBarLayout;
+import com.oneui.fontviewer.data.prefs.UpdatePreferenceManager;
+import com.oneui.fontviewer.data.repository.UpdateRepository;
 
 import com.oneui.fontviewer.ui.features.fontviewer.FontViewerActivity;
 import com.oneui.fontviewer.data.cache.FontPrefetcher;
@@ -77,6 +81,16 @@ public class MainActivity extends BaseActivity
 
     private SearchCoordinator mSearchCoordinator;
 
+    private UpdatePreferenceManager mUpdatePrefs;
+
+    // يجب الاحتفاظ بالمستمع في متغير، لأن SharedPreferences لا تحتفظ إلا بمرجع ضعيف له
+    private final SharedPreferences.OnSharedPreferenceChangeListener mUpdatePrefListener =
+            (sharedPreferences, key) -> {
+                if (UpdatePreferenceManager.KEY_SHOW_BADGE.equals(key)) {
+                    refreshUpdateBadges();
+                }
+            };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
@@ -129,6 +143,11 @@ public class MainActivity extends BaseActivity
 
         requestNotificationPermissionIfNeeded();
 
+        // تحقق تلقائي من التحديث: مرة كل 24 ساعة فقط، ويتخطى أول تشغيل (مثل Samsung Video)
+        UpdateRepository updateRepository = UpdateRepository.getInstance(this);
+        mUpdatePrefs = updateRepository.getPreferences();
+        updateRepository.checkIfNeeded();
+
         long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
         long remainingDelay = Math.max(0L, 4500L - elapsedTime);
 
@@ -155,6 +174,27 @@ public class MainActivity extends BaseActivity
     public void setAppReady() {
         mIsInitialDataReady = true;
         checkSplashReadyState();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // النقطة على أيقونة درج التنقل وعلى أيقونة الإعدادات داخل الدرج، وتتحدث فور وصول نتيجة التحقق
+        refreshUpdateBadges();
+        mUpdatePrefs.registerListener(mUpdatePrefListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mUpdatePrefs.unregisterListener(mUpdatePrefListener);
+    }
+
+    private void refreshUpdateBadges() {
+        if (mDrawerLayout != null) {
+            int badge = mUpdatePrefs.isUpdateAvailable() ? OneUiToolBarLayout.DOT_BADGE : 0;
+            mDrawerLayout.setButtonBadges(badge, badge);
+        }
     }
 
     @Override

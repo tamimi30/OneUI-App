@@ -2,6 +2,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- بطاقة التحديث: مخفية افتراضياً، وتظهر من SettingsFragment عند توفر تحديث -->
+    <com.oneui.fontviewer.ui.widget.preference.UpdateCardPreference
+        android:key="update_card"
+        android:title="@string/update_card_title"
+        android:summary="@string/update_card_summary"
+        app:isPreferenceVisible="false" />
+
     <PreferenceCategory
         android:title="@string/settings_theme">
 
