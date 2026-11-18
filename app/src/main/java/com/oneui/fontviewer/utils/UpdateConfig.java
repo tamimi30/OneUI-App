@@ -10,8 +10,8 @@ public final class UpdateConfig {
 
     // اسم حساب GitHub واسم المستودع (من رابط المستودع: github.com/OWNER/REPO).
     // ★ يجب تعديلهما قبل التجربة، وإلا يُتخطى التحقق عند التثبيت من GitHub ★
-    public static final String GITHUB_OWNER = "YOUR_GITHUB_USERNAME";
-    public static final String GITHUB_REPO = "YOUR_REPOSITORY_NAME";
+    public static final String GITHUB_OWNER = "tamimi30";
+    public static final String GITHUB_REPO = "OneUI-App";
 
     // هل نعتبر الإصدارات المعلّمة Pre-release تحديثاً؟
     // true  = للتجربة الآن (تضع نسخة تجريبية على GitHub وتعلّمها Pre-release فيظهر التحديث).
