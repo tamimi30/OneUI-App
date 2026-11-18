@@ -38,6 +38,8 @@ import com.oneui.fontviewer.ui.features.home.HomeActivity;
 import com.oneui.fontviewer.service.BatchOperationState;
 import com.oneui.fontviewer.ui.navigation.drawerlist.DrawerListItem;
 import com.oneui.fontviewer.ui.navigation.NavManager;
+import com.oneui.fontviewer.ui.navigation.UpdateBadgeController;
+import com.oneui.fontviewer.data.repository.UpdateRepository;
 import com.oneui.fontviewer.ui.base.BaseActivity;
 
 public class MainActivity extends BaseActivity
@@ -107,6 +109,8 @@ public class MainActivity extends BaseActivity
         setupSearchCoordinator();
 
         setupDrawerButton();
+
+        setupUpdateCheck();
 
         if (savedInstanceState != null) {
             mLocalFontsCount    = savedInstanceState.getInt(KEY_LOCAL_FONTS_COUNT, 0);
@@ -287,6 +291,18 @@ public class MainActivity extends BaseActivity
             mDrawerLayout.setDrawerButtonTooltip(getText(R.string.drawer_settings));
             mDrawerLayout.setDrawerButtonOnClickListener(v -> openSettingsActivity());
         }
+    }
+
+    /**
+     * نقطة التحديث على أيقونتي الدرج والإعدادات + الفحص التلقائي (مرة كل 24 ساعة فقط، والتحقق من
+     * الفاصل يتم داخل UpdateRepository فلا يضر استدعاؤه عند كل إعادة بناء للشاشة).
+     */
+    private void setupUpdateCheck() {
+        UpdateRepository updateRepository = UpdateRepository.getInstance(this);
+        if (mDrawerLayout != null) {
+            UpdateBadgeController.attach(this, mDrawerLayout, updateRepository);
+        }
+        updateRepository.checkForUpdateIfDue();
     }
 
     private void setDrawerOpen(boolean open, boolean animate) {

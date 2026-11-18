@@ -122,6 +122,9 @@ dependencies {
     implementation 'androidx.documentfile:documentfile:1.1.0'
     implementation 'androidx.core:core-splashscreen:1.2.0'
 
+    // Google Play In-App Updates (للتحقق من وجود تحديث في Play، يُستخدم فقط إذا نُزّل التطبيق من Play)
+    implementation 'com.google.android.play:app-update:2.1.0'
+
     // Testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
