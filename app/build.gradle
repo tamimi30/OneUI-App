@@ -99,9 +99,6 @@ dependencies {
     implementation 'io.github.oneuiproject:icons:1.1.0'
     implementation 'com.airbnb.android:lottie:6.7.1'
 
-    // Google Play In-App Updates: للتحقق فقط من وجود تحديث عندما يكون التطبيق مثبتاً من Play
-    implementation 'com.google.android.play:app-update:2.1.0'
-
      // Lifecycle Components
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.11.0'
     implementation 'androidx.lifecycle:lifecycle-livedata:2.11.0'
