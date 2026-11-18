@@ -40,10 +40,10 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:fontFamily="sec-roboto-light"
-        android:text="Monospaced   "
+        android:text="Monospaced"
         app:maxFontLevel="medium"
         android:layout_marginBottom="5dp"
-        android:layout_marginEnd="0dp" />
+        android:layout_marginEnd="28dp" />
 
     <com.oneui.fontviewer.ui.widget.AxisSpinner
         android:id="@+id/axis_spinner"
