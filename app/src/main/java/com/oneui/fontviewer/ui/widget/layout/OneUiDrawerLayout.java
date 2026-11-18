@@ -358,8 +358,7 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
      * The badge is small orange circle in the top right of the icon which contains text.
      * It can either be a 'N' or a number up to 99.
      *
-     * @param count {@link #N_BADGE} to show a 'N', {@link #DOT_BADGE} to show a small dot without text,
-     *              0 to hide the badge or any number up to 99.
+     * @param count {@link #N_BADGE} to show a 'N', 0 to hide the badge or any number up to 99.
      */
     public void setDrawerButtonBadge(int count) {
         if (mHeaderBadge != null) {
@@ -380,21 +379,6 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
                 mHeaderBadge.setVisibility(View.VISIBLE);
             } else if (count == N_BADGE) {
                 mHeaderBadge.setText(getResources().getString(R.string.oui_new_badge_text));
-                mHeaderBadge.setVisibility(View.VISIBLE);
-            } else if (count == DOT_BADGE) {
-                // نفس خلفية الشارة المدورة لكن بحجم صغير وبدون نص، فتظهر كنقطة دائرية
-                mHeaderBadge.setText("");
-
-                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mHeaderBadge.getLayoutParams();
-                int dotSize = getResources().getDimensionPixelSize(com.oneui.fontviewer.R.dimen.update_badge_dot_size);
-                lp.width = dotSize;
-                lp.height = dotSize;
-                lp.topMargin = getResources().getDimensionPixelSize(
-                        com.oneui.fontviewer.R.dimen.update_badge_dot_header_margin_top);
-                lp.setMarginEnd(getResources().getDimensionPixelSize(
-                        com.oneui.fontviewer.R.dimen.update_badge_dot_header_margin_end));
-                mHeaderBadge.setLayoutParams(lp);
-
                 mHeaderBadge.setVisibility(View.VISIBLE);
             } else {
                 mHeaderBadge.setVisibility(View.GONE);

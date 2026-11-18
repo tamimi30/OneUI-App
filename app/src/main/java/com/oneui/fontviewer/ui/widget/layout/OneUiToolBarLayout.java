@@ -47,8 +47,6 @@ import dev.oneuiproject.oneui.design.R;
 import dev.oneuiproject.oneui.utils.internal.ToolbarLayoutUtils;
 import dev.oneuiproject.oneui.view.internal.NavigationBadgeIcon;
 
-import com.oneui.fontviewer.ui.widget.drawable.DotBadgeDrawable;
-
 /**
  * Custom collapsing Appbar like in any App from Samsung. Includes a {@link SearchView} and Samsung's ActionMode.
  */
@@ -74,9 +72,6 @@ public class OneUiToolBarLayout extends LinearLayout {
     private static final int ROOT = 3;
 
     public static final int N_BADGE = -1;
-
-    // نقطة صغيرة بدون نص (مثل نقطة توفر التحديث في تطبيقات Samsung) بدل شارة N أو الرقم
-    public static final int DOT_BADGE = -2;
 
     protected AppCompatActivity mActivity;
     protected Context mContext;
@@ -317,11 +312,10 @@ public class OneUiToolBarLayout extends LinearLayout {
         setExpanded(!isLandscape & mExpanded);
 
         if (mNavigationBadgeIcon != null) {
-            Drawable badge = mNavigationBadgeIcon.getDrawable(1);
-            // النقطة لا تحتاج اتجاه الشاشة، فالتحويل ينطبق على شارة N والرقم فقط
-            if (badge instanceof NavigationBadgeIcon) {
-                ((NavigationBadgeIcon) badge).setOrientation(isLandscape);
-            }
+            NavigationBadgeIcon badgeIcon
+                    = (NavigationBadgeIcon) mNavigationBadgeIcon
+                    .getDrawable(1);
+            badgeIcon.setOrientation(isLandscape);
         }
     }
 
@@ -597,38 +591,30 @@ public class OneUiToolBarLayout extends LinearLayout {
      * The badge is small orange circle in the top right of the icon which contains text.
      * It can either be a 'N' or a number up to 99.
      *
-     * @param count {@link #N_BADGE} to show a 'N', {@link #DOT_BADGE} to show a small dot without text,
-     *              0 to hide the badge or any number up to 99.
+     * @param count {@link #N_BADGE} to show a 'N', 0 to hide the badge or any number up to 99.
      */
     public void setNavigationButtonBadge(int count) {
         if (mNavigationIcon != null) {
             if (count != 0) {
-                if (count == DOT_BADGE) {
-                    // النقطة ليس لها نص ولا اتجاه، فنبني طبقتها من جديد في كل مرة (رخيص جداً)
+                NavigationBadgeIcon badgeIcon;
+                if (mNavigationBadgeIcon == null) {
+                    badgeIcon = new NavigationBadgeIcon(mContext);
                     mNavigationBadgeIcon = new LayerDrawable(
-                            new Drawable[]{mNavigationIcon, new DotBadgeDrawable(mContext)});
+                            new Drawable[]{mNavigationIcon, badgeIcon});
                 } else {
-                    NavigationBadgeIcon badgeIcon;
-                    Drawable currentBadge = mNavigationBadgeIcon != null
-                            ? mNavigationBadgeIcon.getDrawable(1) : null;
-                    if (currentBadge instanceof NavigationBadgeIcon) {
-                        badgeIcon = (NavigationBadgeIcon) currentBadge;
-                    } else {
-                        badgeIcon = new NavigationBadgeIcon(mContext);
-                        mNavigationBadgeIcon = new LayerDrawable(
-                                new Drawable[]{mNavigationIcon, badgeIcon});
-                    }
+                    badgeIcon = (NavigationBadgeIcon) mNavigationBadgeIcon
+                            .getDrawable(1);
+                }
 
-                    badgeIcon.setOrientation(getResources().getConfiguration()
-                            .orientation == Configuration.ORIENTATION_LANDSCAPE);
+                badgeIcon.setOrientation(getResources().getConfiguration()
+                        .orientation == Configuration.ORIENTATION_LANDSCAPE);
 
-                    if (count == N_BADGE) {
-                        badgeIcon.setText(mContext.getResources()
-                                .getString(R.string.oui_new_badge_text));
-                    } else {
-                        badgeIcon.setText(count > 99
-                                ? "99" : String.valueOf(count));
-                    }
+                if (count == N_BADGE) {
+                    badgeIcon.setText(mContext.getResources()
+                            .getString(R.string.oui_new_badge_text));
+                } else {
+                    badgeIcon.setText(count > 99
+                            ? "99" : String.valueOf(count));
                 }
 
                 mNavigationBadgeIcon.invalidateSelf();

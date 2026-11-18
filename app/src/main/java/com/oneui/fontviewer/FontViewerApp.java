@@ -15,7 +15,6 @@ import com.oneui.fontviewer.data.database.AppDatabase;
 import com.oneui.fontviewer.data.datastore.SettingsDataStore;
 import com.oneui.fontviewer.data.repository.LocalFontRepository;
 import com.oneui.fontviewer.data.repository.SystemFontRepository;
-import com.oneui.fontviewer.data.repository.UpdateRepository;
 import com.oneui.fontviewer.data.cache.LocalFontCache;
 import com.oneui.fontviewer.data.cache.SystemFontCache;
 import com.oneui.fontviewer.utils.CrashHandler;
@@ -128,9 +127,6 @@ public class FontViewerApp extends Application {
         
         SystemFontRepository.getInstance(this);
         Log.d(TAG, "SystemFontRepository initialized");
-
-        UpdateRepository.getInstance(this);
-        Log.d(TAG, "UpdateRepository initialized");
     }
     
     /**

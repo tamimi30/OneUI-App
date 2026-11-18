@@ -6,10 +6,4 @@
     <dimen name="axis_spinner_min_height">30dp</dimen>
     <!-- Vertical padding around the text -->
     <dimen name="axis_spinner_vpadding">2dp</dimen>
-
-    <!-- Update-available dot badge (on the drawer icon and the drawer's settings icon) -->
-    <dimen name="update_badge_dot_size">6dp</dimen>
-    <!-- Dot position inside the drawer's settings button (relative to the button's top / end edges) -->
-    <dimen name="update_badge_dot_header_margin_top">12dp</dimen>
-    <dimen name="update_badge_dot_header_margin_end">12dp</dimen>
 </resources>

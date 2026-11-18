@@ -32,13 +32,7 @@
 	<string name="about_title">حول Font Viewer Plus</string>
 	<string name="about_licenses">تراخيص مفتوحة المصدر</string>
 	<string name="about_button_licenses">تراخيص المصدر</string>
-
-	<!-- Update -->
-	<string name="update_card_title">يتوفر تحديث جديد</string>
-	<string name="update_card_description">قم بالتحديث للحصول على أحدث المميزات</string>
-	<string name="update_card_button_update">تحديث</string>
-	<string name="update_card_button_not_now">ليس الآن</string>
-	<string name="toast_cannot_open_link">تعذّر فتح الرابط</string>
+	<string name="about_button_status">الحالة</string>
 	
     <!-- Home -->
     <string name="drawer_home">الرئيسية</string>
@@ -257,4 +251,12 @@
     <string name="exit_on_double_back">اضغط مرة أخرى للخروج</string>
     <string name="no_fonts_subtitle"></string>
     
+
+    <!-- التحقق من التحديثات -->
+    <string name="update_card_title">يتوفر تحديث جديد</string>
+    <string name="update_card_summary">قم بالتحديث للحصول على أحدث المميزات</string>
+    <string name="update_card_update">تحديث</string>
+    <string name="update_card_not_now">ليس الآن</string>
+    <string name="update_open_store_failed">تعذّر فتح صفحة التحديث</string>
+
 </resources>
