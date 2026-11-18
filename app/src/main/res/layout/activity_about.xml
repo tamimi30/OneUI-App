@@ -7,12 +7,6 @@
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_status"
-        style="@style/OneUI.AppInfoButton"
-        android:onClick="changeStatus"
-        android:text="@string/about_button_status" />
-
-    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button_licenses"
         style="@style/OneUI.AppInfoButton"
         android:onClick="openLicensesPage"

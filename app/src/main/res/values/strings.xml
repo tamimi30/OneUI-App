@@ -251,4 +251,11 @@
     <string name="exit_on_double_back">Press again to exit</string>
     <string name="no_fonts_subtitle"></string>
 
+    <!-- Update check -->
+    <string name="update_card_title">A new update is available</string>
+    <string name="update_card_summary">Update to get the latest features</string>
+    <string name="update_card_update">Update</string>
+    <string name="update_card_not_now">Not now</string>
+    <string name="update_open_store_failed">Couldn\'t open the update page</string>
+
 </resources>
