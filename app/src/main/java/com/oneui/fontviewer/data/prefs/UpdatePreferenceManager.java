@@ -20,6 +20,7 @@ public class UpdatePreferenceManager {
     private static final String PREFS_NAME = "update_state";
     private static final String KEY_AVAILABLE_VERSION = "available_version_name";
     private static final String KEY_AVAILABLE_RELEASE_URL = "available_release_url";
+    private static final String KEY_AVAILABLE_VERSION_CODE = "available_version_code";
 
     private final SharedPreferences preferences;
 
@@ -35,13 +36,15 @@ public class UpdatePreferenceManager {
         if (versionName == null || releaseUrl == null) {
             return null;
         }
-        return new UpdateInfo(versionName, releaseUrl);
+        return new UpdateInfo(versionName, releaseUrl,
+                preferences.getLong(KEY_AVAILABLE_VERSION_CODE, 0));
     }
 
     public void saveAvailableUpdate(@NonNull UpdateInfo updateInfo) {
         preferences.edit()
                 .putString(KEY_AVAILABLE_VERSION, updateInfo.getVersionName())
                 .putString(KEY_AVAILABLE_RELEASE_URL, updateInfo.getReleaseUrl())
+                .putLong(KEY_AVAILABLE_VERSION_CODE, updateInfo.getVersionCode())
                 .apply();
     }
 
@@ -49,6 +52,7 @@ public class UpdatePreferenceManager {
         preferences.edit()
                 .remove(KEY_AVAILABLE_VERSION)
                 .remove(KEY_AVAILABLE_RELEASE_URL)
+                .remove(KEY_AVAILABLE_VERSION_CODE)
                 .apply();
     }
 }

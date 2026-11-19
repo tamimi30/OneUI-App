@@ -14,9 +14,12 @@ import androidx.lifecycle.MutableLiveData;
 import com.oneui.fontviewer.BuildConfig;
 import com.oneui.fontviewer.data.model.UpdateCheckState;
 import com.oneui.fontviewer.data.model.UpdateInfo;
-import com.oneui.fontviewer.data.network.GitHubReleaseApi;
 import com.oneui.fontviewer.data.prefs.UpdatePreferenceManager;
-import com.oneui.fontviewer.utils.VersionComparator;
+import com.oneui.fontviewer.data.source.GalaxyStoreUpdateSource;
+import com.oneui.fontviewer.data.source.GitHubUpdateSource;
+import com.oneui.fontviewer.data.source.InstallSourceResolver;
+import com.oneui.fontviewer.data.source.PlayStoreUpdateSource;
+import com.oneui.fontviewer.data.source.UpdateSource;
 
 import java.util.Optional;
 
@@ -38,6 +41,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  *  - جلسة الإعدادات تبدأ عند فتح الإعدادات وتنتهي بالخروج منها، فإذا دخلت الإعدادات
  *    مرة ثانية يعود التحقق مع مؤشر التحميل. (تغيير اللغة أو الثيم لا ينهي الجلسة.)
  *
+ * مصدر معرفة التحديث يتبع مكان تثبيت التطبيق: Play أو Galaxy Store أو GitHub (انظر createUpdateSource).
+ *
  * لا يوجد أي انتظار زمني (مثل 24 ساعة) بين عمليات التحقق: يتم التحقق عند كل فتح للتطبيق
  * وعند أول فتح لصفحة "حول التطبيق" في كل جلسة إعدادات.
  *
@@ -51,7 +56,7 @@ public final class UpdateRepository {
 
     private final Context appContext;
     private final UpdatePreferenceManager preferences;
-    private final GitHubReleaseApi releaseApi;
+    private final UpdateSource updateSource;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     // null = لا يتوجد تحديث متوفر
@@ -71,7 +76,7 @@ public final class UpdateRepository {
     private UpdateRepository(@NonNull Context context) {
         appContext = context.getApplicationContext();
         preferences = new UpdatePreferenceManager(appContext);
-        releaseApi = new GitHubReleaseApi(BuildConfig.UPDATE_INCLUDE_PRERELEASES);
+        updateSource = createUpdateSource();
         availableUpdate = new MutableLiveData<>(loadStoredUpdate());
     }
 
@@ -100,11 +105,28 @@ public final class UpdateRepository {
         if (stored == null) {
             return null;
         }
-        if (!VersionComparator.isNewer(stored.getVersionName(), BuildConfig.VERSION_NAME)) {
+        if (!stored.isNewerThan(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)) {
             preferences.clearAvailableUpdate();
             return null;
         }
         return stored;
+    }
+
+    /**
+     * مصدر معرفة التحديث يتبع مكان تثبيت التطبيق (مثل وجهة زر التحديث):
+     * Play ← Play In-App Updates، و Galaxy Store ← خادم Galaxy Store، وغير ذلك ← GitHub.
+     */
+    @NonNull
+    private UpdateSource createUpdateSource() {
+        switch (InstallSourceResolver.resolve(appContext)) {
+            case GOOGLE_PLAY:
+                return new PlayStoreUpdateSource(appContext);
+            case GALAXY_STORE:
+                return new GalaxyStoreUpdateSource(appContext);
+            case GITHUB:
+            default:
+                return new GitHubUpdateSource(BuildConfig.UPDATE_INCLUDE_PRERELEASES);
+        }
     }
 
     // ───────────────────────── الحالة المراقَبة ─────────────────────────
@@ -175,7 +197,7 @@ public final class UpdateRepository {
 
         checkInFlight = true;
         disposables.add(
-                Single.fromCallable(() -> Optional.ofNullable(releaseApi.fetchLatestRelease()))
+                Single.fromCallable(updateSource::checkForUpdate)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -185,15 +207,11 @@ public final class UpdateRepository {
         );
     }
 
-    private void onCheckSucceeded(@NonNull Optional<UpdateInfo> latestRelease) {
+    private void onCheckSucceeded(@NonNull Optional<UpdateInfo> availableUpdate) {
         checkInFlight = false;
 
-        UpdateInfo update = null;
-        if (latestRelease.isPresent()
-                && VersionComparator.isNewer(
-                        latestRelease.get().getVersionName(), BuildConfig.VERSION_NAME)) {
-            update = latestRelease.get();
-        }
+        // المصدر يرجع التحديث فقط إذا كان أحدث من النسخة المثبتة
+        UpdateInfo update = availableUpdate.orElse(null);
 
         applyAvailableUpdate(update);
         finishCheck(update != null
@@ -213,7 +231,9 @@ public final class UpdateRepository {
         UpdateInfo current = availableUpdate.getValue();
         boolean unchanged = current == null
                 ? update == null
-                : update != null && current.getVersionName().equals(update.getVersionName());
+                : update != null
+                        && current.getVersionName().equals(update.getVersionName())
+                        && current.getVersionCode() == update.getVersionCode();
 
         if (update != null) {
             preferences.saveAvailableUpdate(update);

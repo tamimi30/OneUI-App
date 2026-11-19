@@ -44,8 +44,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 import dev.oneuiproject.oneui.design.R;
+import com.oneui.fontviewer.ui.widget.drawable.NavigationBadgeDrawable;
 import dev.oneuiproject.oneui.utils.internal.ToolbarLayoutUtils;
-import dev.oneuiproject.oneui.view.internal.NavigationBadgeIcon;
 
 /**
  * Custom collapsing Appbar like in any App from Samsung. Includes a {@link SearchView} and Samsung's ActionMode.
@@ -312,8 +312,8 @@ public class OneUiToolBarLayout extends LinearLayout {
         setExpanded(!isLandscape & mExpanded);
 
         if (mNavigationBadgeIcon != null) {
-            NavigationBadgeIcon badgeIcon
-                    = (NavigationBadgeIcon) mNavigationBadgeIcon
+            NavigationBadgeDrawable badgeIcon
+                    = (NavigationBadgeDrawable) mNavigationBadgeIcon
                     .getDrawable(1);
             badgeIcon.setOrientation(isLandscape);
         }
@@ -596,13 +596,13 @@ public class OneUiToolBarLayout extends LinearLayout {
     public void setNavigationButtonBadge(int count) {
         if (mNavigationIcon != null) {
             if (count != 0) {
-                NavigationBadgeIcon badgeIcon;
+                NavigationBadgeDrawable badgeIcon;
                 if (mNavigationBadgeIcon == null) {
-                    badgeIcon = new NavigationBadgeIcon(mContext);
+                    badgeIcon = new NavigationBadgeDrawable(mContext);
                     mNavigationBadgeIcon = new LayerDrawable(
                             new Drawable[]{mNavigationIcon, badgeIcon});
                 } else {
-                    badgeIcon = (NavigationBadgeIcon) mNavigationBadgeIcon
+                    badgeIcon = (NavigationBadgeDrawable) mNavigationBadgeIcon
                             .getDrawable(1);
                 }
 

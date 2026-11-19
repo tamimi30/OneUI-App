@@ -14,7 +14,7 @@ import com.oneui.fontviewer.ui.widget.preference.UpdateCardPreference;
 /**
  * يتحكم ببطاقة "يتوفر تحديث جديد" في أعلى الإعدادات.
  *
- * البطاقة معرّفة في preferences.xml (مع فاصل تحتها) وتُحذف هنا إذا لم يكن هناك تحديث
+ * البطاقة معرّفة في preferences.xml وتُحذف هنا إذا لم يكن هناك تحديث
  * أو إذا ضغط المستخدم "ليس الآن" في جلسة الإعدادات الحالية.
  *
  * مهم: {@link #attach()} يجب أن تُستدعى من onCreatePreferences (قبل ربط القائمة بالمحوّل)،
@@ -26,7 +26,6 @@ import com.oneui.fontviewer.ui.widget.preference.UpdateCardPreference;
 public final class UpdateCardController {
 
     private static final String KEY_UPDATE_CARD = "update_card";
-    private static final String KEY_UPDATE_CARD_GAP = "update_card_gap";
 
     private final PreferenceFragmentCompat mFragment;
     private final UpdateRepository mRepository;
@@ -84,10 +83,6 @@ public final class UpdateCardController {
         Preference card = screen.findPreference(KEY_UPDATE_CARD);
         if (card != null) {
             screen.removePreference(card);
-        }
-        Preference gap = screen.findPreference(KEY_UPDATE_CARD_GAP);
-        if (gap != null) {
-            screen.removePreference(gap);
         }
     }
 }
