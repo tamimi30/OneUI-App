@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     app:expanded="false"
     app:title="@string/app_name"
-    android:layoutDirection="locale"
     app:subtitle="@string/app_subtitle">
 
     <FrameLayout
