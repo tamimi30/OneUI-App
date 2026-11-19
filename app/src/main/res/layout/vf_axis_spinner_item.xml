@@ -25,10 +25,10 @@
         android:textColor="?android:attr/textColorSecondary"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
-        android:paddingStart="6dp"
-        android:paddingEnd="6dp"
+        android:paddingStart="7dp"
+        android:paddingEnd="7dp"
         android:layout_marginTop="-4dp"
-        android:layout_marginStart="-6dp"
+        android:layout_marginStart="-7dp"
         android:background="@drawable/axis_name_ripple"
         android:clickable="true"
         android:focusable="true"
@@ -39,10 +39,10 @@
         android:layout_height="0dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:text="Monospaced"
+        android:text="متناسب المسافة"
         app:maxFontLevel="medium"
         android:layout_marginBottom="5dp"
-        android:layout_marginEnd="25dp" />
+        android:layout_marginEnd="0dp" />
 
     <com.oneui.fontviewer.ui.widget.AxisSpinner
         android:id="@+id/axis_spinner"
