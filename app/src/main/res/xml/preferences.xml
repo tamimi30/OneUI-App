@@ -2,6 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- بطاقة التحديث: تُحذف برمجياً من SettingsFragment إذا لم يتوفر تحديث، والفاصل تحتها يُحذف معها -->
+    <com.oneui.fontviewer.ui.widget.preference.UpdateCardPreference
+        android:key="update_card"
+        android:persistent="false"
+        android:title="@string/update_card_title" />
+
+    <PreferenceCategory android:key="update_card_gap" />
+
     <PreferenceCategory
         android:title="@string/settings_theme">
 

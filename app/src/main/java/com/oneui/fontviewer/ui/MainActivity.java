@@ -38,6 +38,8 @@ import com.oneui.fontviewer.ui.features.home.HomeActivity;
 import com.oneui.fontviewer.service.BatchOperationState;
 import com.oneui.fontviewer.ui.navigation.drawerlist.DrawerListItem;
 import com.oneui.fontviewer.ui.navigation.NavManager;
+import com.oneui.fontviewer.ui.navigation.UpdateBadgeController;
+import com.oneui.fontviewer.data.repository.UpdateRepository;
 import com.oneui.fontviewer.ui.base.BaseActivity;
 
 public class MainActivity extends BaseActivity
@@ -108,6 +110,8 @@ public class MainActivity extends BaseActivity
 
         setupDrawerButton();
 
+        setupUpdateBadge();
+
         if (savedInstanceState != null) {
             mLocalFontsCount    = savedInstanceState.getInt(KEY_LOCAL_FONTS_COUNT, 0);
             mSystemFontsCount   = savedInstanceState.getInt(KEY_SYSTEM_FONTS_COUNT, 0);
@@ -128,6 +132,11 @@ public class MainActivity extends BaseActivity
         handleIntent(getIntent());
 
         requestNotificationPermissionIfNeeded();
+
+        // التحقق من التحديث عند فتح التطبيق فقط (وليس عند إعادة البناء بسبب تغيير اللغة أو الثيم)
+        if (savedInstanceState == null) {
+            UpdateRepository.getInstance(this).checkForUpdateOnLaunch();
+        }
 
         long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
         long remainingDelay = Math.max(0L, 4500L - elapsedTime);
@@ -286,6 +295,16 @@ public class MainActivity extends BaseActivity
             mDrawerLayout.setDrawerButtonIcon(getDrawable(dev.oneuiproject.oneui.R.drawable.ic_oui_settings_outline));
             mDrawerLayout.setDrawerButtonTooltip(getText(R.string.drawer_settings));
             mDrawerLayout.setDrawerButtonOnClickListener(v -> openSettingsActivity());
+        }
+    }
+
+    /**
+     * المؤشر البرتقالي (N / ج) على أيقونة الدرج وأيقونة الإعدادات يظهر عند توفر تحديث ويختفي بزواله.
+     */
+    private void setupUpdateBadge() {
+        if (mDrawerLayout != null) {
+            new UpdateBadgeController(mDrawerLayout)
+                    .bind(this, UpdateRepository.getInstance(this).getAvailableUpdate());
         }
     }
 

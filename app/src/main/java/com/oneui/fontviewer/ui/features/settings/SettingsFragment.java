@@ -29,6 +29,7 @@ import dev.oneuiproject.oneui.utils.PreferenceUtils;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.FontViewerApp;
 import com.oneui.fontviewer.ui.features.settings.about.AboutActivity;
+import com.oneui.fontviewer.ui.features.settings.update.UpdateCardController;
 import com.oneui.fontviewer.data.repository.SettingsRepository;
 import com.oneui.fontviewer.ui.anim.TransitionUtils;
 
@@ -64,6 +65,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        // بطاقة التحديث (أعلى القائمة) تُحذف هنا إذا لم يتوفر تحديث، لنفس سبب بطاقة الروابط أدناه:
+        // أي تغيير في عناصر القائمة يجب أن يحدث قبل ربطها بالمحوّل وليس بعده.
+        new UpdateCardController(this).attach();
 
         // بطاقة الروابط تُضاف هنا (قبل ربط القائمة بالمحوّل) وليس في onStart أو onResume. إضافتها بعد الربط
         // تجعل المحوّل يضيفها لاحقاً في رسالة مؤجلة، أي بعد أول رسم للقائمة، فتطول القائمة بعد أن استعاد

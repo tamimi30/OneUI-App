@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.base.BaseActivity;
 import com.oneui.fontviewer.data.repository.SettingsRepository;
+import com.oneui.fontviewer.data.repository.UpdateRepository;
 import com.oneui.fontviewer.ui.anim.TransitionUtils;
 
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
@@ -26,6 +27,14 @@ public class SettingsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // فتح الإعدادات من جديد يبدأ جلسة جديدة: تعود بطاقة التحديث إذا كان المستخدم أخفاها بـ "ليس الآن"،
+        // ويعود مؤشر التحميل في صفحة "حول التطبيق" عند أول فتح لها. إعادة البناء بسبب تغيير اللغة أو الثيم
+        // (savedInstanceState != null) لا تنهي الجلسة. يجب أن يتم هذا قبل إنشاء SettingsFragment.
+        if (savedInstanceState == null) {
+            UpdateRepository.getInstance(this).beginSettingsSession();
+        }
+
         mDisplayedLanguage = getResources().getConfiguration().getLocales().get(0).toLanguageTag();
         setContentView(R.layout.activity_settings);
 

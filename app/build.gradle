@@ -30,6 +30,11 @@ android {
         resourceConfigurations += ['en', 'ar']
         
         missingDimensionStrategy 'version', 'release'
+
+        // هل يعتبر التحقق من التحديث إصدارات GitHub المعلّمة كـ pre-release تحديثاً؟
+        // true أثناء التجربة (نرفع نسخة تجريبية على GitHub كـ pre-release ونختبر ظهور التحديث).
+        // اجعلها false عند النشر الرسمي كي لا يُعرض على المستخدمين إلا الإصدارات المستقرة.
+        buildConfigField "boolean", "UPDATE_INCLUDE_PRERELEASES", "true"
     }
 
     buildTypes {

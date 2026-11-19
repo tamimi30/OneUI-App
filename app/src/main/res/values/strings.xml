@@ -32,7 +32,7 @@
 	<string name="about_title">About Font Viewer Plus</string>
 	<string name="about_button_licenses">Source licenses</string>
 	<string name="about_licenses">Open source licenses</string>
-	<string name="about_button_status">Status</string>
+	<string name="about_button_github" translatable="false">GitHub</string>
     
     <!-- Home -->
     <string name="drawer_home">Home</string>
@@ -253,7 +253,7 @@
 
     <!-- Update check -->
     <string name="update_card_title">A new update is available</string>
-    <string name="update_card_summary">Update to get the latest features</string>
+    <string name="update_card_summary">A new version of %1$s is available. Update to try the latest features.</string>
     <string name="update_card_update">Update</string>
     <string name="update_card_not_now">Not now</string>
     <string name="update_open_store_failed">Couldn\'t open the update page</string>
