@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.oneui.fontviewer.ui.widget.textview.OneUiTextView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="18sp"
+    app:maxFontLevel="medium"
+    android:textStyle="bold"
+    android:paddingStart="11dp"
+    android:paddingEnd="6dp"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp"
+    android:fontFamily="sec-roboto-light"
+    android:textColor="@color/switch_btn_text_color"
+    android:singleLine="true"
+    android:ellipsize="end"
+    android:gravity="center_vertical" />

@@ -1,0 +1,27 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+    android:tint="@color/oui_primary_icon_color">
+
+  <!-- الرأس والعينان فقط (بدون الهوائيات) -->
+  <path
+      android:fillColor="@color/oui_primary_icon_color"
+      android:pathData="M70,720Q40,720 43.5,690.2Q57,600.3 105.5,523Q162,433 256,380L300,356Q386,320 480,320Q574,320 660,356L704,380Q798,433 854.5,523Q903,600.3 916.5,690.2Q920,720 890,720ZM315.5,595.5Q330,581 330,560Q330,539 315.5,524.5Q301,510 280,510Q259,510 244.5,524.5Q230,539 230,560Q230,581 244.5,595.5Q259,610 280,610Q301,610 315.5,595.5ZM715.5,595.5Q730,581 730,560Q730,539 715.5,524.5Q701,510 680,510Q659,510 644.5,524.5Q630,539 630,560Q630,581 644.5,595.5Q659,610 680,610Q701,610 715.5,595.5Z"/>
+
+  <!-- الهوائي الأيسر: سماكة 60 -->
+  <path
+      android:pathData="M206.5,244.4L278,368"
+      android:strokeColor="@color/oui_primary_icon_color"
+      android:strokeWidth="60"
+      android:strokeLineCap="round" />
+
+  <!-- الهوائي الأيمن: سماكة 60 -->
+  <path
+      android:pathData="M753.5,244.4L682,368"
+      android:strokeColor="@color/oui_primary_icon_color"
+      android:strokeWidth="60"
+      android:strokeLineCap="round" />
+
+</vector>

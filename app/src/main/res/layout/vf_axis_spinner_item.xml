@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:layout_marginEnd="13dp"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:background="@drawable/vf_axis_item_bg"
+    android:visibility="gone">
+
+    <com.oneui.fontviewer.ui.widget.textview.OneUiTextView
+        android:id="@+id/axis_name_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="28dp"
+        android:textSize="14sp"
+        app:maxFontLevel="medium"
+        android:textColor="?android:attr/textColorSecondary"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_marginTop="-4dp"
+        android:layout_marginStart="-8dp"
+        android:background="@drawable/axis_name_ripple"
+        android:clickable="true"
+        android:focusable="true"
+        android:tooltipText="@string/axis_info_button_description" />
+        
+    <com.oneui.fontviewer.ui.widget.textview.OneUiTextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="متناسب المسافة"
+        app:maxFontLevel="medium"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="22dp" />
+
+    <com.oneui.fontviewer.ui.widget.AxisSpinner
+        android:id="@+id/axis_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="-11dp" 
+        android:layout_marginEnd="-12.8dp"
+        android:layout_marginBottom="-7dp"
+        android:background="@drawable/vf_axis_spinner_background" />
+
+</LinearLayout>
