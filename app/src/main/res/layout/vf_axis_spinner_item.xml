@@ -42,7 +42,7 @@
         android:text="Monospaced"
         app:maxFontLevel="medium"
         android:layout_marginBottom="5dp"
-        android:layout_marginEnd="24dp" />
+        android:layout_marginEnd="25dp" />
 
     <com.oneui.fontviewer.ui.widget.AxisSpinner
         android:id="@+id/axis_spinner"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="-11dp" 
         android:layout_marginEnd="-15dp"
-        android:layout_marginBottom="-6dp"
+        android:layout_marginBottom="-7dp"
         android:background="@drawable/vf_axis_spinner_background" />
 
 </LinearLayout>
