@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:paddingStart="18dp"
         android:paddingEnd="24dp"
-        android:paddingTop="19dp"
+        android:paddingTop="25dp"
         android:paddingBottom="5dp"
         app:errorEnabled="true"
         app:hintEnabled="false">
