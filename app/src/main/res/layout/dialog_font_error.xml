@@ -10,5 +10,5 @@
     android:textSize="13sp"
     app:maxFontLevel="large"
     android:fontFamily="sec-roboto-light"
-    android:lineSpacingExtra="4dp"
+    android:lineSpacingExtra="4sp"
     android:textColor="@color/description_text_color" />
