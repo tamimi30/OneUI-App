@@ -21,7 +21,6 @@ import com.oneui.fontviewer.ui.widget.layout.SortByItemLayout;
 import com.oneui.fontviewer.data.systemfont.SystemFontCache;
 import com.oneui.fontviewer.data.systemfont.SystemFontInfo;
 import com.oneui.fontviewer.data.systemfont.SystemFontPreferenceManager;
-import com.oneui.fontviewer.utils.FileUtils;
 import com.oneui.fontviewer.data.settings.SettingsRepository;
 
 

@@ -318,14 +318,6 @@ public class SearchCoordinator {
         return isSearchExpanded;
     }
 
-    @NonNull
-    public String getCurrentSearchQuery() {
-        if (searchView != null) {
-            return searchView.getQuery().toString();
-        }
-        return savedSearchQuery;
-    }
-
     public void onFragmentChanged(DrawerListItem newDrawerListItem) {
         if (lastDrawerListItem != null && !lastDrawerListItem.equals(newDrawerListItem)) {
             collapseSearch();

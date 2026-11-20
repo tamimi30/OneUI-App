@@ -516,10 +516,6 @@ public class LocalFontListViewModel extends AndroidViewModel {
         }
     }
     
-    public String getSavedFolderPath() {
-        return preferenceManager.getFontFolderPath();
-    }
-    
     public boolean hasSavedFolder() {
         return preferenceManager.hasFontFolderPath();
     }

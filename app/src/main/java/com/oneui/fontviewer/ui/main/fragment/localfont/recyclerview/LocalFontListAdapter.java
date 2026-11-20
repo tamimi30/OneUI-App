@@ -20,9 +20,7 @@ import com.oneui.fontviewer.data.localfont.LocalFontPreferenceManager;
 import com.oneui.fontviewer.ui.main.list.search.SearchHighlighter;
 import com.oneui.fontviewer.ui.main.list.sort.SortHeaderViewHolder;
 import com.oneui.fontviewer.ui.widget.layout.SortByItemLayout;
-import com.oneui.fontviewer.utils.FileUtils;
 import com.oneui.fontviewer.data.settings.SettingsRepository;
-import com.oneui.fontviewer.ui.main.fragment.localfont.LocalFontListViewModel;
 import com.oneui.fontviewer.data.localfont.model.FontFileInfoWithMetadata;
 
 

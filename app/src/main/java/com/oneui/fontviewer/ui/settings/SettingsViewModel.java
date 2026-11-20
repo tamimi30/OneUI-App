@@ -32,7 +32,6 @@ public class SettingsViewModel extends AndroidViewModel {
     
     private final MutableLiveData<Boolean> fontPreviewEnabled = new MutableLiveData<>();
     private final MutableLiveData<Boolean> translationEnabled = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> notificationsEnabled = new MutableLiveData<>();
 
     private final MutableLiveData<String> previewText = new MutableLiveData<>();
     
@@ -96,16 +95,6 @@ public class SettingsViewModel extends AndroidViewModel {
                 .subscribe(
                     translationEnabled::setValue,
                     error -> Log.e(TAG, "Error observing translation", error)
-                )
-        );
-
-        disposables.add(
-            dataStore.getNotificationsEnabled()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    notificationsEnabled::setValue,
-                    error -> Log.e(TAG, "Error observing notifications", error)
                 )
         );
 

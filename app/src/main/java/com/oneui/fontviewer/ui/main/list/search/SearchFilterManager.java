@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Locale;
 
 import com.oneui.fontviewer.data.common.list.FontFileInfo;
-import com.oneui.fontviewer.utils.FileUtils;
 
 public class SearchFilterManager {
     

@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.oneui.fontviewer.data.common.room.FontDatabase;
 import com.oneui.fontviewer.data.common.room.FontEntity;
-import com.oneui.fontviewer.data.common.variable.VariableFontAxisExtractor;
 import com.oneui.fontviewer.data.common.variable.VariableTypefaceFactory;
 
 import java.io.File;
@@ -136,27 +135,9 @@ public class SystemFontCache {
         return memoryCache.computeIfAbsent(fontPath, path -> loadTypefaceInternal(path, 0, 0));
     }
     
-    public Typeface getTypefaceWithWeight(String fontPath, float weight, int ttcIndex) {
-        if (fontPath == null || fontPath.isEmpty()) {
-            return null;
-        }
-        
-        Log.d(TAG, "Loading typeface with weight: " + weight + ", ttcIndex: " + ttcIndex);
-        
-        Typeface typeface = loadTypefaceInternal(fontPath, weight, ttcIndex);
-        
-        if (typeface != null) {
-            Log.d(TAG, "Successfully created typeface with weight: " + weight);
-        } else {
-            Log.e(TAG, "Failed to create typeface with weight: " + weight);
-        }
-        
-        return typeface;
-    }
-
     /**
      * نسخة عامة تدعم تطبيق عدة محاور دفعة واحدة (وزن، عرض، ميل، تدرج، استدارة، تباعد أحادي...)
-     * على خط النظام، بنفس فلسفة getTypefaceWithWeight.
+     * على خط النظام.
      */
     public Typeface getTypefaceWithAxes(String fontPath, Map<String, Float> axisValues, int ttcIndex) {
         if (fontPath == null || fontPath.isEmpty()) {

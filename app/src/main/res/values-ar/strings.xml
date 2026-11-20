@@ -36,7 +36,6 @@
     <!-- Home -->
     <string name="drawer_home">الرئيسية</string>
     <string name="title_features">الميزات الرئيسية</string>
-    <string name="swipe_up">إسحب للأعلى</string>
     <string name="feature1">يتم عرض المحتوى والتحكم به بسهولة</string>
     <string name="feature2">تصميم بسيط وسهل الاستخدام</string>
     <string name="feature3">عناصر واجهة مستخدم متناسقة لتجربة أفضل</string>
@@ -197,7 +196,6 @@
     
     <!-- System Fonts -->
     <string name="drawer_system_fonts">خطوط النظام</string>
-    <string name="system_fonts_empty">No system fonts found</string>
     <string name="system_fonts_api_unavailable">System Fonts API is not available</string>
     <string name="system_fonts_requires_api_29">This feature requires Android 10 (API 29) or higher</string>
     
@@ -228,7 +226,6 @@
 	<string name="rename_dialog_hint">أدخل اسماً جديداً</string>
 	<string name="success_renamed">تمت إعادة التسمية بنجاح</string>
     <string name="error_rename_failed">فشلت إعادة التسمية</string>
-    <string name="error_delete_failed">فشل الحذف</string>
     <string name="error_file_exists">اسم الملف مستخدم مسبقاً</string>
     <string name="error_invalid_name">اسم غير صالح</string>
     

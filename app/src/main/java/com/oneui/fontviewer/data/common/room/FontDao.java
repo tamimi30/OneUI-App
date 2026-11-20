@@ -97,13 +97,6 @@ public interface FontDao {
     @Query("SELECT * FROM fonts WHERE is_cached = 1 ORDER BY last_access_time DESC")
     List<FontEntity> getCachedFonts();
     
-    @Query("UPDATE fonts SET is_cached = 0, updated_at = :timestamp WHERE is_system_font = 1")
-    int resetSystemFontsCacheStatus(long timestamp);
-    
-    @Query("UPDATE fonts SET is_cached = 0, updated_at = :timestamp WHERE is_system_font = 0")
-    int resetLocalFontsCacheStatus(long timestamp);
-    
-    
     @Query("SELECT COUNT(*) FROM fonts")
     LiveData<Integer> getTotalFontsCount();
     

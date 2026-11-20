@@ -68,9 +68,6 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
     private boolean mIsDialogHidden = false;
 
-    @Nullable
-    private OperationType mCurrentOperationType;
-
     private boolean mIsBatchOperationRunning = false;
 
     @Nullable
@@ -309,8 +306,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
             dismissNotificationForOperation(result.operationType);
 
-            mIsDialogHidden       = false;
-            mCurrentOperationType = null;
+            mIsDialogHidden = false;
 
             mViewModel.clearOperationResult();
 
@@ -390,8 +386,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
 
     private void showRestoreProgressAndExecute(@NonNull List<FontEntity> fonts) {
-        mCurrentOperationType = OperationType.RESTORE;
-        mIsDialogHidden       = false;
+        mIsDialogHidden = false;
 
         mCurrentProgressDialog = ActionDialogs.createRestoreProgressDialog(
                 mContext,
@@ -419,9 +414,6 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
     private void showDeleteProgressAndExecute(@NonNull List<FontEntity> fonts,
                                                boolean isEmptyAll) {
-        mCurrentOperationType = isEmptyAll
-                ? OperationType.EMPTY_TRASH
-                : OperationType.DELETE_PERMANENTLY;
         mIsDialogHidden = false;
 
         mCurrentProgressDialog = ActionDialogs.createDeleteProgressDialog(

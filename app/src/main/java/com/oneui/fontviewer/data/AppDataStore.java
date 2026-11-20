@@ -47,7 +47,6 @@ public class AppDataStore {
     private final Preferences.Key<Boolean> KEY_THEME_AUTO;
     private final Preferences.Key<Boolean> KEY_FONT_PREVIEW_ENABLED;
     private final Preferences.Key<Boolean> KEY_TRANSLATION_ENABLED;
-    private final Preferences.Key<Boolean> KEY_NOTIFICATIONS_ENABLED;
     private final Preferences.Key<String> KEY_PREVIEW_TEXT;
     private final Preferences.Key<String> KEY_LAST_OPENED_FONT_PATH;
     private final Preferences.Key<String> KEY_FOLDER_PATH;
@@ -89,7 +88,6 @@ public class AppDataStore {
     public static final boolean DEFAULT_THEME_AUTO = true;
     public static final boolean DEFAULT_FONT_PREVIEW_ENABLED = true;
     public static final boolean DEFAULT_TRANSLATION_ENABLED = false;
-    public static final boolean DEFAULT_NOTIFICATIONS_ENABLED = true;
     public static final String DEFAULT_PREVIEW_TEXT = 
             "The quick brown fox jumps over the lazy dog.\n\n" +
             "0123456789";
@@ -115,7 +113,6 @@ public class AppDataStore {
         KEY_THEME_AUTO = PreferencesKeys.booleanKey("theme_auto");
         KEY_FONT_PREVIEW_ENABLED = PreferencesKeys.booleanKey("font_preview_enabled");
         KEY_TRANSLATION_ENABLED = PreferencesKeys.booleanKey("translation_enabled");
-        KEY_NOTIFICATIONS_ENABLED = PreferencesKeys.booleanKey("notifications_enabled");
         KEY_PREVIEW_TEXT = PreferencesKeys.stringKey("preview_text");
         KEY_LAST_OPENED_FONT_PATH = PreferencesKeys.stringKey("last_opened_font_path");
         KEY_FOLDER_PATH = PreferencesKeys.stringKey("folder_path");
@@ -299,25 +296,6 @@ public class AppDataStore {
         return update(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
             mutablePrefs.set(KEY_TRANSLATION_ENABLED, enabled);
-            return Single.just(mutablePrefs);
-        });
-    }
-    
-    // ════════════════════════════════════════════════════════════
-    // Notifications
-    // ════════════════════════════════════════════════════════════
-    
-    public Flowable<Boolean> getNotificationsEnabled() {
-        return data().map(prefs -> 
-            prefs.get(KEY_NOTIFICATIONS_ENABLED) != null ? 
-            prefs.get(KEY_NOTIFICATIONS_ENABLED) : DEFAULT_NOTIFICATIONS_ENABLED
-        );
-    }
-    
-    public Single<Preferences> setNotificationsEnabled(boolean enabled) {
-        return update(prefs -> {
-            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            mutablePrefs.set(KEY_NOTIFICATIONS_ENABLED, enabled);
             return Single.just(mutablePrefs);
         });
     }
@@ -682,15 +660,4 @@ public class AppDataStore {
         );
     }
     
-    // ════════════════════════════════════════════════════════════
-    // Clear All
-    // ════════════════════════════════════════════════════════════
-    
-    public Single<Preferences> clearAll() {
-        return update(prefs -> {
-            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            mutablePrefs.clear();
-            return Single.just(mutablePrefs);
-        });
-    }
                     }

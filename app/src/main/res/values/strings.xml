@@ -37,7 +37,6 @@
     <!-- Home -->
     <string name="drawer_home">Home</string>
     <string name="title_features">Main features</string>
-    <string name="swipe_up">Swipe up</string>
     <string name="feature1">Content is displayed and controlled easily</string>
     <string name="feature2">Simple and easy to use design</string>
     <string name="feature3">Consistent UI elements for better experience</string>
@@ -198,7 +197,6 @@
     
     <!-- System fonts -->
     <string name="drawer_system_fonts">System fonts</string>
-    <string name="system_fonts_empty">No system fonts found</string>
     <string name="system_fonts_api_unavailable">System Fonts API is not available</string>
     <string name="system_fonts_requires_api_29">This feature requires Android 10 (API 29) or higher</string>
     
@@ -229,7 +227,6 @@
 	<string name="rename_dialog_hint">Enter new name</string>
 	<string name="success_renamed">Renamed successfully</string>
     <string name="error_rename_failed">The renaming failed</string>
-    <string name="error_delete_failed">Deletion failed</string>
     <string name="error_file_exists">The file name already in use</string>
     <string name="error_invalid_name">Invalid name</string>
     

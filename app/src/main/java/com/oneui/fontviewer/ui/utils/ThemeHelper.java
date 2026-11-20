@@ -29,8 +29,4 @@ public class ThemeHelper {
             }
         }
     }
-    
-    public static void initializeFromSettings(Context context) {
-        applyTheme(context);
-    }
 }
