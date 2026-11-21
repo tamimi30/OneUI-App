@@ -86,6 +86,10 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
     private boolean mIsBatchOperationRunning = false;
 
+    // هل عُرضت في هذه الواجهة قائمة مفضلة حقيقية واحدة على الأقل؟ نؤجّل تحديثات القائمة أثناء العملية الجارية
+    // فقط بعد عرض أول قائمة، حتى لا تبقى الواجهة فارغة (رسالة "لا توجد خطوط في المفضلة بعد") عند إعادة إنشائها
+    private boolean mHasAppliedFavorites = false;
+
     @Nullable
     private List<FontFileInfoWithMetadata> mPendingFavoritesUpdate = null;
 
@@ -197,11 +201,14 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     private void setupViewModelObservers() {
         mViewModel.getFavoritesLiveData().observe(this, favorites -> {
             if (favorites != null) {
-                if (mIsBatchOperationRunning) {
+                // عند فتح التطبيق من إشعار التقدم بعد حذفه من التطبيقات الأخيرة تُنشأ الواجهة من جديد والعملية ما زالت جارية،
+                // فلا نؤجّل أول قائمة، وإلا تبقى الواجهة فارغة طوال العملية. نؤجّل ما يصل بعدها فقط
+                if (mIsBatchOperationRunning && mHasAppliedFavorites) {
                     mPendingFavoritesUpdate = new ArrayList<>(favorites);
                     return;
                 }
 
+                mHasAppliedFavorites = true;
                 mCurrentFavoritesList = new ArrayList<>(favorites);
 
                 if (mAdapter != null) {
@@ -757,6 +764,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         mPendingFavoritesUpdate = null;
         mIsBatchOperationRunning = false;
+        mHasAppliedFavorites = false;
         mCurrentProgressDialog = null;
 
         mDrawerLayout = null;
