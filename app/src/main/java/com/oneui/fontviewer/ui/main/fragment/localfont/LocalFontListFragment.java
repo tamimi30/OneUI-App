@@ -106,6 +106,10 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
     private boolean mIsBatchOperationRunning = false;
 
+    // هل عُرضت في هذه الواجهة قائمة خطوط واحدة على الأقل؟ نؤجّل تحديثات القائمة أثناء العملية الجارية فقط
+    // بعد عرض أول قائمة، أما أول قائمة فنعرضها فوراً حتى لا تبقى الواجهة فارغة (رسالة "لا توجد خطوط")
+    private boolean mHasAppliedFonts = false;
+
     @Nullable
     private List<FontFileInfoWithMetadata> mPendingFontsUpdate = null;
 
@@ -278,11 +282,15 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 notifyMainActivityReadyOnce();
                 mAwaitingInitialFontsLoad = false;
 
-                if (mIsBatchOperationRunning) {
+                // عند فتح التطبيق من إشعار التقدم بعد حذفه من التطبيقات الأخيرة تُنشأ الواجهة من جديد والعملية ما زالت جارية،
+                // فلو أجّلنا أول قائمة تبقى الواجهة فارغة وتظهر رسالة "لا توجد خطوط في هذا المجلد" طوال العملية.
+                // لذلك لا نؤجّل إلا بعد أن تكون قد عُرضت قائمة فعلاً
+                if (mIsBatchOperationRunning && mHasAppliedFonts) {
                     mPendingFontsUpdate = new ArrayList<>(fonts);
                     return;
                 }
 
+                mHasAppliedFonts = true;
                 updateCurrentFontsList(fonts);
 
                 if (mAdapter != null) {
@@ -1035,6 +1043,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         mPendingFontsUpdate = null;
         mIsBatchOperationRunning = false;
+        mHasAppliedFonts = false;
 
         if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) {
             try {
