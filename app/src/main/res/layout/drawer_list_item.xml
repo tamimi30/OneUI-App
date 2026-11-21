@@ -30,6 +30,7 @@
             android:layout_weight="1"
             android:paddingVertical="12dp"
             android:textSize="17sp"
+            android:textDirection="locale"
             android:textColor="?android:textColorPrimary"
             android:singleLine="true"
             android:ellipsize="end" />
