@@ -129,7 +129,13 @@ public class MainActivity extends BaseActivity
         setupDrawer();
         updateDrawerTitle(mCurrentDrawerListItem);
 
-        handleIntent(getIntent());
+        // لا نعالج توجيه الإشعار (الشاشة المستهدفة) إلا عند فتح جديد للنشاط (savedInstanceState == null).
+        // عند تفعيل "عدم الاحتفاظ بالأنشطة" يُهدم النشاط ويُعاد بناؤه، ويعيد getIntent() عندها الـ Intent الأصلي الذي
+        // أُنشئ به السجل في النظام (وهو Intent الإشعار الذي ضُغط عليه سابقاً ويحمل EXTRA_TARGET_FRAGMENT).
+        // أما حذف الـ extras في handleIntent فيمسّ نسخة العملية فقط ولا يمسّ نسخة النظام. لذلك كان كل إعادة بناء
+        // لاحقة تعيد التنقل إلى شاشة الإشعار القديمة بدلاً من آخر شاشة دخل إليها المستخدم.
+        // أما الإشعار الذي يصل والنشاط حيّ أو مُعاد بناؤه فيصل عبر onNewIntent وتُعالجه بشكل صحيح.
+        handleIntent(getIntent(), savedInstanceState == null);
 
         requestNotificationPermissionIfNeeded();
 
@@ -170,13 +176,18 @@ public class MainActivity extends BaseActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        handleIntent(intent);
+        handleIntent(intent, true);
     }
 
-    private void handleIntent(Intent intent) {
+    /**
+     * @param shouldHandleNavigation هل يُسمح بمعالجة توجيه الإشعار (الشاشة المستهدفة وإعادة فتح ديالوج التقدم).
+     *                               يكون false عند إعادة بناء النشاط (savedInstanceState != null) كي لا يُعاد
+     *                               تطبيق Intent قديم على شاشة اختارها المستخدم بعده.
+     */
+    private void handleIntent(Intent intent, boolean shouldHandleNavigation) {
         mSearchCoordinator.handleSearchIntent(intent);
 
-        if (intent != null) {
+        if (intent != null && shouldHandleNavigation) {
             
 
             boolean fromNotif = intent.getBooleanExtra("from_notification", false);
