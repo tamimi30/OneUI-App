@@ -90,6 +90,16 @@ public class NavManager {
 
         transaction.commitNow();
 
+        // الشاشة المعروضة يجب أن تكون واجهتها مرئية دائماً. التسخين الصامت في MainActivity يجعل واجهة الفرجمنت
+        // INVISIBLE وهو ظاهر، وإن جاء التنقل إليه بعد ذلك فإن show() وحدها لا تعيد الظهور لفرجمنت ظاهر أصلاً
+        Fragment shownFragment = mHost.getFragment(drawerListItem);
+        if (shownFragment != null && shownFragment.isAdded()) {
+            View shownView = shownFragment.getView();
+            if (shownView != null && shownView.getVisibility() != View.VISIBLE) {
+                shownView.setVisibility(View.VISIBLE);
+            }
+        }
+
         mHost.setCurrentDrawerListItem(drawerListItem);
         if (mHost.getSearchCoordinator() != null) {
             mHost.getSearchCoordinator().onFragmentChanged(drawerListItem);
