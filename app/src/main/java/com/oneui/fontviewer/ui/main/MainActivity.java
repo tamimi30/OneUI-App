@@ -385,6 +385,14 @@ public class MainActivity extends BaseActivity
     }
 
     private void warmUpFragmentSilently(DrawerListItem drawerListItemToShow) {
+        // إن كانت الشاشة المراد تسخينها هي الشاشة الحالية نفسها فلا نسخّنها. يحدث هذا عند فتح التطبيق من إشعار التقدم
+        // بعد حذفه من التطبيقات الأخيرة: handleIntent تنقل التطبيق مباشرة إلى شاشة العملية (المفضلة أو سلة المحذوفات)،
+        // ثم يصل دورها في التسخين فتُجعل واجهتها INVISIBLE وهي معروضة. وبما أن show() لا يعيد الظهور لفرجمنت ظاهر أصلاً،
+        // تبقى الواجهة غير مرئية (شاشة سوداء) حتى يخفيها التنقل لقائمة أخرى ثم يُظهرها من جديد.
+        if (drawerListItemToShow == mCurrentDrawerListItem) {
+            drawerListItemToShow = null;
+        }
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         for (DrawerListItem s : DrawerListItem.values()) {
