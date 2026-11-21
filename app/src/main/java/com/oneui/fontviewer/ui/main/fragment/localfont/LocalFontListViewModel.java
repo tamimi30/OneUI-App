@@ -82,7 +82,9 @@ public class LocalFontListViewModel extends AndroidViewModel {
         
         fontsLiveData = new MutableLiveData<>();
 
-        favoritesLiveData = new MutableLiveData<>(new ArrayList<>());
+        // بلا قيمة ابتدائية: القيمة الفارغة المبدئية كانت تصل للواجهة قبل قائمة المفضلة الحقيقية،
+        // فتعرض رسالة "لا توجد خطوط في المفضلة بعد" بالخطأ
+        favoritesLiveData = new MutableLiveData<>();
         
         mLocalFontsSource = repository.getLocalFonts();
         mLocalFontsObserver = entities -> {
