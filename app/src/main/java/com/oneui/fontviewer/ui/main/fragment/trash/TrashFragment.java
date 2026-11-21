@@ -70,6 +70,10 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
     private boolean mIsBatchOperationRunning = false;
 
+    // هل عُرضت في هذه الواجهة قائمة سلة محذوفات واحدة على الأقل؟ نؤجّل تحديثات القائمة أثناء العملية الجارية
+    // فقط بعد عرض أول قائمة، حتى لا تبقى الواجهة بلا قائمة ولا رسالة عند إعادة إنشائها
+    private boolean mHasAppliedTrash = false;
+
     @Nullable
     private List<FontEntity> mPendingTrashUpdate = null;
 
@@ -256,11 +260,14 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mViewModel.getTrashedFontsLiveData().observe(getViewLifecycleOwner(), fonts -> {
             if (fonts == null) return;
 
-            if (mIsBatchOperationRunning) {
+            // عند فتح التطبيق من إشعار التقدم بعد حذفه من التطبيقات الأخيرة تُنشأ الواجهة من جديد والعملية ما زالت جارية،
+            // فلا نؤجّل أول قائمة، وإلا لا يظهر شيء طوال العملية. نؤجّل ما يصل بعدها فقط
+            if (mIsBatchOperationRunning && mHasAppliedTrash) {
                 mPendingTrashUpdate = new ArrayList<>(fonts);
                 return;
             }
 
+            mHasAppliedTrash = true;
             boolean isEmpty = fonts.isEmpty();
             updateEmptyState(isEmpty);
             mAdapter.submitList(isEmpty ? null : fonts);
@@ -633,6 +640,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mPendingTrashUpdate = null;
         mPendingTrashCount = null;
         mIsBatchOperationRunning = false;
+        mHasAppliedTrash = false;
 
         mDrawerLayout = null;
         mRecyclerView = null;
