@@ -13,7 +13,7 @@
         android:paddingStart="18dp"
         android:paddingEnd="24dp"
         android:paddingTop="27dp"
-        android:paddingBottom="0dp"
+        android:paddingBottom="6dp"
         app:errorEnabled="true"
         app:hintEnabled="false">
 
