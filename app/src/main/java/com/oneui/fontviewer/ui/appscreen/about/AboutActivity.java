@@ -18,7 +18,7 @@ import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.update.UpdateRepository;
 import com.oneui.fontviewer.data.update.model.UpdateCheckState;
 import com.oneui.fontviewer.ui.appscreen.license.LicensesActivity;
-import com.oneui.fontviewer.ui.core.utils.UpdateLauncher;
+import com.oneui.fontviewer.ui.core.update.UpdateLauncher;
 import com.oneui.fontviewer.utils.update.AppLinks;
 
 public class AboutActivity extends AppCompatActivity {
