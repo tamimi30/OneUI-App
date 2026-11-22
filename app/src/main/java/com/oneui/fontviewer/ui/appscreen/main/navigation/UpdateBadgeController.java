@@ -1,4 +1,4 @@
-package com.oneui.fontviewer.ui.core.utils;
+package com.oneui.fontviewer.ui.appscreen.main.navigation;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
