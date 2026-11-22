@@ -10,7 +10,7 @@
         android:paddingBottom="4dp"
         android:paddingStart="6dp"
         android:paddingEnd="6dp"
-        android:background="@drawable/sort_btn_ripple"
+        android:background="@drawable/sort_by_text_ripple"
         android:gravity="center_vertical">
 
         <ImageView
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:padding="4dp"
         android:layout_marginEnd="9dp"
-        android:background="@drawable/sort_btn_ripple_oval"
+        android:background="@drawable/sort_by_icon_ripple"
         android:gravity="center">
 
         <ImageView
