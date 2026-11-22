@@ -38,7 +38,7 @@
                     android:scrollbars="none"
                     android:overScrollMode="always"
                     android:clipToOutline="true"
-                    android:layout_marginBottom="0dp"
+                    android:layout_marginBottom="18dp"
                     android:background="@drawable/vf_axis_container_bg">
 
                     <LinearLayout
