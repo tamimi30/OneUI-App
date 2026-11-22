@@ -10,7 +10,7 @@
     android:visibility="gone"
     app:cardBackgroundColor="@color/fab_bg_color"
     app:cardCornerRadius="18dp"
-    app:cardElevation="4dp"
+    app:cardElevation="8dp"
     app:strokeColor="@color/fab_stroke_color"
     app:strokeWidth="2.0px">
 
