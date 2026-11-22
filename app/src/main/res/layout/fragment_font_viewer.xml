@@ -41,8 +41,9 @@
                         android:id="@+id/variable_axes_row"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingVertical="13dp"
                         android:paddingStart="13dp"
+                        android:clipToPadding="false"
+                        android:clipChildren="false"
                         android:layoutDirection="locale" />
 
                 </com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView>
