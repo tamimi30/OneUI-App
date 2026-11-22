@@ -29,12 +29,12 @@
                 android:layout_height="wrap_content"
                 app:roundedCorners="top_left|top_right"
                 android:background="@color/oui_background_color"
-                android:paddingStart="13dp"
                 android:orientation="vertical">
 
                 <com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingStart="13dp"
                     android:scrollbars="none"
                     android:overScrollMode="always">
 
