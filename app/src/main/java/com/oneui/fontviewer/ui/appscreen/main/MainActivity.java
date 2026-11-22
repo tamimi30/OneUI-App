@@ -26,7 +26,6 @@ import com.oneui.fontviewer.ui.core.widget.layout.OneUiDrawerLayout;
 
 import com.oneui.fontviewer.ui.appscreen.fontviewer.FontViewerActivity;
 import com.oneui.fontviewer.data.fontviewer.FontPrefetcher;
-import com.oneui.fontviewer.ui.core.utils.AxisLabelProvider;
 import com.oneui.fontviewer.ui.appscreen.main.fragment.localfont.LocalFontListFragment;
 import com.oneui.fontviewer.ui.appscreen.main.fragment.systemfont.SystemFontListFragment;
 import com.oneui.fontviewer.ui.appscreen.main.fragment.favorite.FavoriteFontListFragment;
@@ -603,7 +602,7 @@ public class MainActivity extends BaseActivity
         }
 
         // ★ تجهيز الخط وتحليل محاوره في خيط خلفي قبل فتح الشاشة، ليكون جاهزاً عند رسم أول إطار ولا يحجب الخيط الرئيسي ★
-        FontPrefetcher.prefetch(AxisLabelProvider.of(this), AxisLabelProvider.localeTagsOf(this), fontPath, ttcIndex, isSystemFont);
+        FontPrefetcher.prefetch(this, fontPath, ttcIndex, isSystemFont);
 
         Intent intent = new Intent(this, FontViewerActivity.class);
         intent.putExtra(FontViewerActivity.EXTRA_FONT_PATH, fontPath);
