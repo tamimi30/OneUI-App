@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="trash_days_remaining">
+        <item quantity="zero">اليوم</item>
+        <item quantity="one">يوم واحد</item>
+        <item quantity="two">يومان</item>
+        <item quantity="few">%d أيام</item>
+        <item quantity="many">%d يوماً</item>
+        <item quantity="other">%d يوم</item>
+    </plurals>
+
+    <plurals name="font_count_subtitle">
+        <item quantity="zero">لا توجد خطوط</item>
+        <item quantity="one">خط واحد</item>
+        <item quantity="two">خطين</item>
+        <item quantity="few">%d خطوط</item>
+        <item quantity="many">%d خط</item>
+        <item quantity="other">%d خط</item>
+    </plurals>
+
+    <plurals name="dialog_move_to_trash_question">
+        <item quantity="one">هل تريد نقل ملف واحد إلى سلة المحذوفات؟</item>
+        <item quantity="two">هل تريد نقل ملفين إلى سلة المحذوفات؟</item>
+        <item quantity="few">هل تريد نقل %d ملفات إلى سلة المحذوفات؟</item>
+        <item quantity="many">هل تريد نقل %d ملفاً إلى سلة المحذوفات؟</item>
+        <item quantity="other">هل تريد نقل %d ملف إلى سلة المحذوفات؟</item>
+    </plurals>
+
+    <plurals name="dialog_delete_permanently_question">
+        <item quantity="one">هل تريد حذف ملف واحد نهائياً؟</item>
+        <item quantity="two">هل تريد حذف ملفين نهائياً؟</item>
+        <item quantity="few">هل تريد حذف %d ملفات نهائياً؟</item>
+        <item quantity="many">هل تريد حذف %d ملفاً نهائياً؟</item>
+        <item quantity="other">هل تريد حذف %d ملف نهائياً؟</item>
+    </plurals>
+
+    <plurals name="progress_moving_to_trash">
+        <item quantity="one">جارٍ نقل الملف الى سلة المحذوفات…</item>
+        <item quantity="other">جارٍ نقل الملفات الى سلة المحذوفات…</item>
+    </plurals>
+
+    <plurals name="progress_restoring">
+        <item quantity="one">جارٍ استعادة الملف…</item>
+        <item quantity="other">جارٍ استعادة الملفات…</item>
+    </plurals>
+
+    <plurals name="progress_deleting">
+        <item quantity="one">جارٍ حذف الملف نهائياً…</item>
+        <item quantity="other">جارٍ حذف الملفات نهائياً…</item>
+    </plurals>
+</resources>
