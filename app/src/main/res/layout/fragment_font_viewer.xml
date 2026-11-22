@@ -34,6 +34,7 @@
                 <com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingStart="13dp"
                     android:scrollbars="none"
                     android:overScrollMode="always">
 
@@ -41,7 +42,6 @@
                         android:id="@+id/variable_axes_row"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingStart="13dp"
                         android:layoutDirection="locale" />
 
                 </com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView>
