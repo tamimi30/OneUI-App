@@ -38,7 +38,8 @@
                     android:scrollbars="none"
                     android:overScrollMode="always"
                     android:clipToOutline="true"
-                    android:layout_marginBottom="18dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="10dp"
                     android:background="@drawable/vf_axis_container_bg">
 
                     <LinearLayout
@@ -61,6 +62,7 @@
             android:layout_height="match_parent"
             android:paddingVertical="27dp"
             android:paddingHorizontal="24dp"
+            app:roundedCorners="bottom_left|bottom_right"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
