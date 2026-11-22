@@ -35,7 +35,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scrollbars="none"
-                    android:background="@color/oui_background_color"
                     android:overScrollMode="always">
 
                     <LinearLayout
@@ -43,9 +42,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="13dp"
-                        android:clipToPadding="false"
-                        android:clipChildren="false"
-                        android:background="@color/oui_background_color"
                         android:layoutDirection="locale" />
 
                 </com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView>
