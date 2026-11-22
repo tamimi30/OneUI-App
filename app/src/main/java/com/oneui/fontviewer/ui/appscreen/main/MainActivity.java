@@ -38,7 +38,7 @@ import com.oneui.fontviewer.ui.appscreen.home.HomeActivity;
 import com.oneui.fontviewer.service.BatchOperationState;
 import com.oneui.fontviewer.ui.appscreen.main.navigation.drawer.DrawerListItem;
 import com.oneui.fontviewer.ui.appscreen.main.navigation.NavManager;
-import com.oneui.fontviewer.ui.core.utils.UpdateBadgeController;
+import com.oneui.fontviewer.ui.appscreen.main.navigation.UpdateBadgeController;
 import com.oneui.fontviewer.data.update.UpdateRepository;
 import com.oneui.fontviewer.ui.core.base.BaseActivity;
 
