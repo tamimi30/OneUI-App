@@ -37,8 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scrollbars="none"
-                    android:overScrollMode="always"
-                    android:paddingVertical="13dp">
+                    android:overScrollMode="always">
 
                     <LinearLayout
                         android:id="@+id/variable_axes_row"
