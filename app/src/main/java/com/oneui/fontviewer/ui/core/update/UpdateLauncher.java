@@ -1,4 +1,4 @@
-package com.oneui.fontviewer.ui.core.utils;
+package com.oneui.fontviewer.ui.core.update;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
