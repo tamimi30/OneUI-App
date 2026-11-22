@@ -36,7 +36,6 @@
                     android:layout_height="wrap_content"
                     android:scrollbars="none"
                     android:overScrollMode="always"
-                    android:clipToOutline="true"
                     android:paddingStart="13dp"
                     android:paddingVertical="13dp">
 
