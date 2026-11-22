@@ -12,6 +12,7 @@
     android:clipChildren="false"
     android:orientation="vertical"
     android:gravity="center_vertical"
+    android:elevation="4dp"
     android:background="@drawable/vf_axis_item_bg"
     android:visibility="gone">
 
