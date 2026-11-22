@@ -29,8 +29,6 @@
                 android:layout_height="wrap_content"
                 app:roundedCorners="top_left|top_right"
                 android:background="@color/oui_background_color"
-                android:paddingVertical="13dp"
-                android:paddingStart="13dp"
                 android:orientation="vertical">
 
                 <com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView
@@ -43,6 +41,8 @@
                         android:id="@+id/variable_axes_row"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingVertical="13dp"
+                        android:paddingStart="13dp"
                         android:layoutDirection="locale" />
 
                 </com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView>
