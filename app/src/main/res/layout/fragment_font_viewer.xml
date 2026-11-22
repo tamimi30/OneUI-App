@@ -51,6 +51,37 @@
             </dev.oneuiproject.oneui.widget.RoundLinearLayout>
             
         </LinearLayout>
+        
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/Theme.MaterialComponents.DayNight"
+            android:layout_marginTop="13dp"
+            android:layout_marginBottom="13dp"
+            android:layout_marginEnd="13dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/sesl_black"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="4dp"
+            app:strokeColor="@color/oui_list_divider_color"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:theme="@style/AppTheme"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:clipToPadding="false"
+                android:clipChildren="false"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+                	
+            </LinearLayout>
+                	
+        </com.google.android.material.card.MaterialCardView>
 
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
