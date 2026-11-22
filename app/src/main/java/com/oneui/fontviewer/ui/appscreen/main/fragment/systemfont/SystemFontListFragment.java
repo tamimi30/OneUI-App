@@ -31,7 +31,7 @@ import java.util.concurrent.Executors;
 
 import com.oneui.fontviewer.ui.appscreen.main.navigation.drawer.DrawerListItem;
 import com.oneui.fontviewer.ui.appscreen.main.MainActivity;
-import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
 import com.oneui.fontviewer.data.common.list.FontFileInfo;
 import com.oneui.fontviewer.ui.appscreen.main.search.SearchFilterManager;
 import com.oneui.fontviewer.ui.appscreen.main.search.SearchViewModel;
@@ -65,7 +65,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     private SystemFontListViewModel mViewModel;
     private SearchViewModel mSearchViewModel;
     private FontPreviewSettingsViewModel mSettingsViewModel;
-    private List<FontEntity> mCurrentFontsList = new ArrayList<>();
+    private List<FontItem> mCurrentFontsList = new ArrayList<>();
 
     private boolean mIsFirstLoad = true;
 
@@ -155,7 +155,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
                 updateMainActivityFontsCount(fonts.size());
 
                 List<String> pathsToPreload = new ArrayList<>();
-                for (FontEntity font : fonts) {
+                for (FontItem font : fonts) {
                     pathsToPreload.add(font.getPath());
                 }
                 SystemFontCache.getInstance().preloadFonts(pathsToPreload);
@@ -344,7 +344,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         }
 
         List<FontFileInfo> rawFonts = new ArrayList<>();
-        for (FontEntity font : mCurrentFontsList) {
+        for (FontItem font : mCurrentFontsList) {
             rawFonts.add(new FontFileInfo(
                 font.getFileName(),
                 font.getPath(),
@@ -357,7 +357,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         mSearchManager.updateFontsList(rawFonts);
 
         if (mAdapter != null) {
-            mAdapter.setAllFontsInfo(convertEntitiesToSystemFontInfo(mCurrentFontsList));
+            mAdapter.setAllFontsInfo(convertItemsToSystemFontInfo(mCurrentFontsList));
 
             mAdapter.updateFilteredFonts(
                 mSearchManager.getFilteredFonts(),
@@ -379,25 +379,25 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
         }
     }
 
-    private List<SystemFontInfo> convertEntitiesToSystemFontInfo(
-            List<FontEntity> entities) {
+    private List<SystemFontInfo> convertItemsToSystemFontInfo(
+            List<FontItem> items) {
         List<SystemFontInfo> result = new ArrayList<>();
-        for (FontEntity entity : entities) {
+        for (FontItem item : items) {
             SystemFontInfo info =
                 new SystemFontInfo(
-                    entity.getFileName(),
-                    entity.getPath(),
-                    entity.getSize(),
-                    entity.getLastModified(),
+                    item.getFileName(),
+                    item.getPath(),
+                    item.getSize(),
+                    item.getLastModified(),
                     400,
                     0,
-                    entity.getTtcIndex(),
+                    item.getTtcIndex(),
                     null
                 );
-            if (entity.getRealName() != null && !entity.getRealName().isEmpty()) {
-                info.setRealName(entity.getRealName());
+            if (item.getRealName() != null && !item.getRealName().isEmpty()) {
+                info.setRealName(item.getRealName());
             }
-            info.setWeightWidthLabel(entity.getWeightWidthLabel());
+            info.setWeightWidthLabel(item.getWeightWidthLabel());
             result.add(info);
         }
         return result;

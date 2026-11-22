@@ -13,6 +13,8 @@ import androidx.lifecycle.LiveData;
 import com.oneui.fontviewer.data.common.room.FontDao;
 import com.oneui.fontviewer.data.common.room.FontDatabase;
 import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
+import com.oneui.fontviewer.data.common.room.FontMapper;
 import com.oneui.fontviewer.data.common.list.FontFileInfo;
 import com.oneui.fontviewer.data.localfont.file.LocalFontDirectory;
 import com.oneui.fontviewer.utils.metadata.FontMetadataReader;
@@ -50,20 +52,20 @@ public class LocalFontRepository {
         return INSTANCE;
     }
 
-    public LiveData<List<FontEntity>> getAllFonts() {
-        return fontDao.getAllFonts();
+    public LiveData<List<FontItem>> getAllFonts() {
+        return FontMapper.toItemsLive(fontDao.getAllFonts());
     }
 
-    public LiveData<List<FontEntity>> getLocalFonts() {
-        return fontDao.getLocalFonts();
+    public LiveData<List<FontItem>> getLocalFonts() {
+        return FontMapper.toItemsLive(fontDao.getLocalFonts());
     }
 
-    public List<FontEntity> getLocalFontsSync() {
-        return fontDao.getLocalFontsSync();
+    public List<FontItem> getLocalFontsSync() {
+        return FontMapper.toItems(fontDao.getLocalFontsSync());
     }
 
-    public LiveData<FontEntity> getFontByPath(String path) {
-        return fontDao.getFontByPath(path);
+    public LiveData<FontItem> getFontByPath(String path) {
+        return FontMapper.toItemLive(fontDao.getFontByPath(path));
     }
 
     public LiveData<Integer> getTotalFontsCount() {
@@ -74,69 +76,69 @@ public class LocalFontRepository {
         return fontDao.getLocalFontsCount();
     }
 
-    public LiveData<List<FontEntity>> getFontsSortedByName(boolean isSystem, boolean ascending) {
+    public LiveData<List<FontItem>> getFontsSortedByName(boolean isSystem, boolean ascending) {
         if (ascending) {
-            return fontDao.getFontsSortedByName(isSystem);
+            return FontMapper.toItemsLive(fontDao.getFontsSortedByName(isSystem));
         } else {
-            return fontDao.getFontsSortedByNameDesc(isSystem);
+            return FontMapper.toItemsLive(fontDao.getFontsSortedByNameDesc(isSystem));
         }
     }
 
-    public LiveData<List<FontEntity>> getFontsSortedByDate(boolean isSystem, boolean ascending) {
+    public LiveData<List<FontItem>> getFontsSortedByDate(boolean isSystem, boolean ascending) {
         if (ascending) {
-            return fontDao.getFontsSortedByDate(isSystem);
+            return FontMapper.toItemsLive(fontDao.getFontsSortedByDate(isSystem));
         } else {
-            return fontDao.getFontsSortedByDateDesc(isSystem);
+            return FontMapper.toItemsLive(fontDao.getFontsSortedByDateDesc(isSystem));
         }
     }
 
-    public LiveData<List<FontEntity>> getFontsSortedBySize(boolean isSystem, boolean ascending) {
+    public LiveData<List<FontItem>> getFontsSortedBySize(boolean isSystem, boolean ascending) {
         if (ascending) {
-            return fontDao.getFontsSortedBySize(isSystem);
+            return FontMapper.toItemsLive(fontDao.getFontsSortedBySize(isSystem));
         } else {
-            return fontDao.getFontsSortedBySizeDesc(isSystem);
+            return FontMapper.toItemsLive(fontDao.getFontsSortedBySizeDesc(isSystem));
         }
     }
 
-    public LiveData<List<FontEntity>> searchFonts(boolean isSystem, String query) {
-        return fontDao.searchFonts(isSystem, query);
+    public LiveData<List<FontItem>> searchFonts(boolean isSystem, String query) {
+        return FontMapper.toItemsLive(fontDao.searchFonts(isSystem, query));
     }
 
 
-    public LiveData<List<FontEntity>> getFavoriteFonts() {
-        return fontDao.getFavoriteFonts();
+    public LiveData<List<FontItem>> getFavoriteFonts() {
+        return FontMapper.toItemsLive(fontDao.getFavoriteFonts());
     }
 
     public LiveData<Integer> getFavoriteFontsCount() {
         return fontDao.getFavoriteFontsCount();
     }
 
-    public LiveData<List<FontEntity>> getFavoritesSortedByName(boolean ascending) {
+    public LiveData<List<FontItem>> getFavoritesSortedByName(boolean ascending) {
         if (ascending) {
-            return fontDao.getFavoriteFontsSortedByName();
+            return FontMapper.toItemsLive(fontDao.getFavoriteFontsSortedByName());
         } else {
-            return fontDao.getFavoriteFontsSortedByNameDesc();
+            return FontMapper.toItemsLive(fontDao.getFavoriteFontsSortedByNameDesc());
         }
     }
 
-    public LiveData<List<FontEntity>> getFavoritesSortedByDate(boolean ascending) {
+    public LiveData<List<FontItem>> getFavoritesSortedByDate(boolean ascending) {
         if (ascending) {
-            return fontDao.getFavoriteFontsSortedByDate();
+            return FontMapper.toItemsLive(fontDao.getFavoriteFontsSortedByDate());
         } else {
-            return fontDao.getFavoriteFontsSortedByDateDesc();
+            return FontMapper.toItemsLive(fontDao.getFavoriteFontsSortedByDateDesc());
         }
     }
 
-    public LiveData<List<FontEntity>> getFavoritesSortedBySize(boolean ascending) {
+    public LiveData<List<FontItem>> getFavoritesSortedBySize(boolean ascending) {
         if (ascending) {
-            return fontDao.getFavoriteFontsSortedBySize();
+            return FontMapper.toItemsLive(fontDao.getFavoriteFontsSortedBySize());
         } else {
-            return fontDao.getFavoriteFontsSortedBySizeDesc();
+            return FontMapper.toItemsLive(fontDao.getFavoriteFontsSortedBySizeDesc());
         }
     }
 
-    public LiveData<List<FontEntity>> searchFavoriteFonts(String query) {
-        return fontDao.searchFavoriteFonts(query);
+    public LiveData<List<FontItem>> searchFavoriteFonts(String query) {
+        return FontMapper.toItemsLive(fontDao.searchFavoriteFonts(query));
     }
 
     public void updateFavoriteStatus(String path, boolean isFavorite, OnCompleteListener listener) {
@@ -185,10 +187,10 @@ public class LocalFontRepository {
     }
 
 
-    public void insert(FontEntity font, OnCompleteListener listener) {
+    public void insert(FontItem font, OnCompleteListener listener) {
         executorService.execute(() -> {
             try {
-                long id = fontDao.insert(font);
+                long id = fontDao.insert(FontMapper.toEntity(font));
                 if (listener != null) {
                     listener.onComplete(id > 0);
                 }
@@ -201,10 +203,10 @@ public class LocalFontRepository {
         });
     }
 
-    public void insertAll(List<FontEntity> fonts, OnCompleteListener listener) {
+    public void insertAll(List<FontItem> fonts, OnCompleteListener listener) {
         executorService.execute(() -> {
             try {
-                List<Long> ids = fontDao.insertAll(fonts);
+                List<Long> ids = fontDao.insertAll(FontMapper.toEntities(fonts));
                 if (listener != null) {
                     listener.onComplete(ids != null && ids.size() == fonts.size());
                 }
@@ -217,10 +219,10 @@ public class LocalFontRepository {
         });
     }
 
-    public void update(FontEntity font, OnCompleteListener listener) {
+    public void update(FontItem font, OnCompleteListener listener) {
         executorService.execute(() -> {
             try {
-                int rows = fontDao.update(font);
+                int rows = fontDao.update(FontMapper.toEntity(font));
                 if (listener != null) {
                     listener.onComplete(rows > 0);
                 }
@@ -233,10 +235,10 @@ public class LocalFontRepository {
         });
     }
 
-    public void delete(FontEntity font, OnCompleteListener listener) {
+    public void delete(FontItem font, OnCompleteListener listener) {
         executorService.execute(() -> {
             try {
-                int rows = fontDao.delete(font);
+                int rows = fontDao.delete(FontMapper.toEntity(font));
                 if (listener != null) {
                     listener.onComplete(rows > 0);
                 }

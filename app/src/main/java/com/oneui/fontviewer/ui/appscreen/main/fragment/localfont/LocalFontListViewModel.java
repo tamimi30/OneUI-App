@@ -21,7 +21,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
-import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.localfont.LocalFontCache;
 import com.oneui.fontviewer.data.localfont.LocalFontRepository;
@@ -47,12 +47,12 @@ public class LocalFontListViewModel extends AndroidViewModel {
     private final LocalFontPreferenceManager preferenceManager;
     private final MutableLiveData<Boolean> isLoadingLiveData;
     private final MutableLiveData<String>  errorMessageLiveData;
-    private final MutableLiveData<List<FontEntity>> fontsLiveData;
+    private final MutableLiveData<List<FontItem>> fontsLiveData;
 
-    private final MutableLiveData<List<FontEntity>> favoritesLiveData;
+    private final MutableLiveData<List<FontItem>> favoritesLiveData;
 
     private boolean mIsFolderSyncing = false;
-    private List<FontEntity> mPendingSyncFonts = null;
+    private List<FontItem> mPendingSyncFonts = null;
 
     // أقل مدة بين فحصين صامتين متتاليين للمجلد، حتى لا يتكرر الفحص عند التنقل السريع بين التطبيقات
     private static final long MIN_SILENT_REFRESH_INTERVAL_MS = 2000;
@@ -65,10 +65,10 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
     // نحتفظ بمرجع الـ LiveData الأصلية ومرجع الـ Observer لكل منهما
     // حتى نقدر نفك ربطهما صح في onCleared() ونمنعهما من الاستمرار بالعمل بعد موت الـ ViewModel
-    private final LiveData<List<FontEntity>> mLocalFontsSource;
-    private final LiveData<List<FontEntity>> mFavoriteFontsSource;
-    private final Observer<List<FontEntity>> mLocalFontsObserver;
-    private final Observer<List<FontEntity>> mFavoriteFontsObserver;
+    private final LiveData<List<FontItem>> mLocalFontsSource;
+    private final LiveData<List<FontItem>> mFavoriteFontsSource;
+    private final Observer<List<FontItem>> mLocalFontsObserver;
+    private final Observer<List<FontItem>> mFavoriteFontsObserver;
     
 
     public LocalFontListViewModel(@NonNull Application application) {
@@ -87,21 +87,21 @@ public class LocalFontListViewModel extends AndroidViewModel {
         favoritesLiveData = new MutableLiveData<>();
         
         mLocalFontsSource = repository.getLocalFonts();
-        mLocalFontsObserver = entities -> {
-            if (entities != null) {
+        mLocalFontsObserver = items -> {
+            if (items != null) {
                 if (mIsFolderSyncing) {
-                    mPendingSyncFonts = entities;
+                    mPendingSyncFonts = items;
                 } else {
-                    publishFontsAfterPreload(entities, null);
+                    publishFontsAfterPreload(items, null);
                 }
             }
         };
         mLocalFontsSource.observeForever(mLocalFontsObserver);
 
         mFavoriteFontsSource = repository.getFavoriteFonts();
-        mFavoriteFontsObserver = entities -> {
-            if (entities != null) {
-                favoritesLiveData.postValue(entities);
+        mFavoriteFontsObserver = items -> {
+            if (items != null) {
+                favoritesLiveData.postValue(items);
             }
         };
         mFavoriteFontsSource.observeForever(mFavoriteFontsObserver);
@@ -111,7 +111,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
      * يحمّل معاينات الخطوط لكل عناصر القائمة داخل LocalFontCache على خيط
      * خلفي، ثم يُرسل القائمة لواجهة المستخدم فقط بعد اكتمال التحميل.
      */
-    private void publishFontsAfterPreload(List<FontEntity> entities, @Nullable Runnable onPublished) {
+    private void publishFontsAfterPreload(List<FontItem> items, @Nullable Runnable onPublished) {
         if (fontPreloadExecutor.isShutdown()) {
             // الـ ViewModel اتقفلت (onCleared) بالفعل — منحاولش ننفذ حاجة على Executor مقفول
             Log.w(TAG, "publishFontsAfterPreload: executor is shut down, skipping");
@@ -120,11 +120,11 @@ public class LocalFontListViewModel extends AndroidViewModel {
         try {
             fontPreloadExecutor.execute(() -> {
                 List<String> paths = new ArrayList<>();
-                for (FontEntity entity : entities) {
-                    paths.add(entity.getPath());
+                for (FontItem item : items) {
+                    paths.add(item.getPath());
                 }
                 LocalFontCache.getInstance().preloadFontsBlocking(paths);
-                fontsLiveData.postValue(entities);
+                fontsLiveData.postValue(items);
                 if (onPublished != null) {
                     onPublished.run();
                 }
@@ -135,14 +135,14 @@ public class LocalFontListViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<FontFileInfoWithMetadata>> getFontsLiveData() {
-        return Transformations.map(fontsLiveData, entities -> {
-            if (entities == null) {
+        return Transformations.map(fontsLiveData, items -> {
+            if (items == null) {
                 return new ArrayList<>();
             }
             
             List<FontFileInfoWithMetadata> result = new ArrayList<>();
-            for (FontEntity entity : entities) {
-                result.add(new FontFileInfoWithMetadata(entity));
+            for (FontItem item : items) {
+                result.add(new FontFileInfoWithMetadata(item));
             }
             return result;
         });
@@ -150,14 +150,14 @@ public class LocalFontListViewModel extends AndroidViewModel {
 
 
     public LiveData<List<FontFileInfoWithMetadata>> getFavoritesLiveData() {
-        return Transformations.map(favoritesLiveData, entities -> {
-            if (entities == null) {
+        return Transformations.map(favoritesLiveData, items -> {
+            if (items == null) {
                 return new ArrayList<>();
             }
 
             List<FontFileInfoWithMetadata> result = new ArrayList<>();
-            for (FontEntity entity : entities) {
-                result.add(new FontFileInfoWithMetadata(entity));
+            for (FontItem item : items) {
+                result.add(new FontFileInfoWithMetadata(item));
             }
             return result;
         });
@@ -197,26 +197,26 @@ public class LocalFontListViewModel extends AndroidViewModel {
         String newPath = renameResult.getNewPath();
         long newLastModified = renameResult.getNewLastModified();
         
-        List<FontEntity> currentList = fontsLiveData.getValue();
+        List<FontItem> currentList = fontsLiveData.getValue();
         if (currentList != null) {
-            List<FontEntity> updatedList = new ArrayList<>(currentList);
+            List<FontItem> updatedList = new ArrayList<>(currentList);
             
             for (int i = 0; i < updatedList.size(); i++) {
-                FontEntity entity = updatedList.get(i);
-                if (entity.getPath().equals(oldPath)) {
-                    FontEntity updatedEntity = new FontEntity(
+                FontItem item = updatedList.get(i);
+                if (item.getPath().equals(oldPath)) {
+                    FontItem updatedItem = new FontItem(
                         newPath,
                         newFileName
                     );
-                    updatedEntity.setSize(entity.getSize());
-                    updatedEntity.setLastModified(newLastModified);
-                    updatedEntity.setRealName(entity.getRealName());
-                    updatedEntity.setAccessCount(entity.getAccessCount());
-                    updatedEntity.setLastAccessTime(entity.getLastAccessTime());
-                    updatedEntity.setWeightWidthLabel(entity.getWeightWidthLabel());
-                    updatedEntity.setFavorite(entity.isFavorite());
+                    updatedItem.setSize(item.getSize());
+                    updatedItem.setLastModified(newLastModified);
+                    updatedItem.setRealName(item.getRealName());
+                    updatedItem.setAccessCount(item.getAccessCount());
+                    updatedItem.setLastAccessTime(item.getLastAccessTime());
+                    updatedItem.setWeightWidthLabel(item.getWeightWidthLabel());
+                    updatedItem.setFavorite(item.isFavorite());
                     
-                    updatedList.set(i, updatedEntity);
+                    updatedList.set(i, updatedItem);
                     break;
                 }
             }
@@ -224,26 +224,26 @@ public class LocalFontListViewModel extends AndroidViewModel {
             fontsLiveData.postValue(updatedList);
         }
 
-        List<FontEntity> currentFavorites = favoritesLiveData.getValue();
+        List<FontItem> currentFavorites = favoritesLiveData.getValue();
         if (currentFavorites != null) {
-            List<FontEntity> updatedFavorites = new ArrayList<>(currentFavorites);
+            List<FontItem> updatedFavorites = new ArrayList<>(currentFavorites);
 
             for (int i = 0; i < updatedFavorites.size(); i++) {
-                FontEntity entity = updatedFavorites.get(i);
-                if (entity.getPath().equals(oldPath)) {
-                    FontEntity updatedEntity = new FontEntity(
+                FontItem item = updatedFavorites.get(i);
+                if (item.getPath().equals(oldPath)) {
+                    FontItem updatedItem = new FontItem(
                         newPath,
                         newFileName
                     );
-                    updatedEntity.setSize(entity.getSize());
-                    updatedEntity.setLastModified(newLastModified);
-                    updatedEntity.setRealName(entity.getRealName());
-                    updatedEntity.setAccessCount(entity.getAccessCount());
-                    updatedEntity.setLastAccessTime(entity.getLastAccessTime());
-                    updatedEntity.setWeightWidthLabel(entity.getWeightWidthLabel());
-                    updatedEntity.setFavorite(true); 
+                    updatedItem.setSize(item.getSize());
+                    updatedItem.setLastModified(newLastModified);
+                    updatedItem.setRealName(item.getRealName());
+                    updatedItem.setAccessCount(item.getAccessCount());
+                    updatedItem.setLastAccessTime(item.getLastAccessTime());
+                    updatedItem.setWeightWidthLabel(item.getWeightWidthLabel());
+                    updatedItem.setFavorite(true); 
                     
-                    updatedFavorites.set(i, updatedEntity);
+                    updatedFavorites.set(i, updatedItem);
                     break;
                 }
             }
@@ -264,22 +264,22 @@ public class LocalFontListViewModel extends AndroidViewModel {
                                           Runnable onComplete) {
         if (paths.isEmpty()) return;
 
-        List<FontEntity> currentList = fontsLiveData.getValue();
+        List<FontItem> currentList = fontsLiveData.getValue();
         if (currentList == null || currentList.isEmpty()) {
             Log.w(TAG, "moveFontsToTrashInMemory: font list is empty");
             if (onComplete != null) new Handler(Looper.getMainLooper()).post(onComplete);
             return;
         }
 
-        List<FontEntity> fontsToMove = new ArrayList<>();
-        for (FontEntity entity : currentList) {
-            if (paths.contains(entity.getPath())) {
-                fontsToMove.add(entity);
+        List<FontItem> fontsToMove = new ArrayList<>();
+        for (FontItem item : currentList) {
+            if (paths.contains(item.getPath())) {
+                fontsToMove.add(item);
             }
         }
 
         if (fontsToMove.isEmpty()) {
-            Log.w(TAG, "moveFontsToTrashInMemory: no matching entities found for given paths");
+            Log.w(TAG, "moveFontsToTrashInMemory: no matching items found for given paths");
             if (onComplete != null) new Handler(Looper.getMainLooper()).post(onComplete);
             return;
         }
@@ -460,7 +460,7 @@ public class LocalFontListViewModel extends AndroidViewModel {
                         mIsFolderSyncing = false;
 
                         // إن وصل تحديث من قاعدة البيانات أثناء الفحص (مثل استخراج اسم خط) لا نضيّعه
-                        List<FontEntity> pending = mPendingSyncFonts;
+                        List<FontItem> pending = mPendingSyncFonts;
                         mPendingSyncFonts = null;
                         if (pending != null) {
                             publishFontsAfterPreload(pending, null);
@@ -469,13 +469,13 @@ public class LocalFontListViewModel extends AndroidViewModel {
                     return;
                 }
 
-                List<FontEntity> freshFontsFromDb;
+                List<FontItem> freshFontsFromDb;
                 try {
                     freshFontsFromDb = repository.getLocalFontsSync();
                 } catch (Exception e) {
                     freshFontsFromDb = null;
                 }
-                final List<FontEntity> finalFreshFonts = freshFontsFromDb;
+                final List<FontItem> finalFreshFonts = freshFontsFromDb;
 
                 long elapsedTime = System.currentTimeMillis() - startTime;
                 long delay = showLoading ? Math.max(0, 2500 - elapsedTime) : 0;
@@ -483,13 +483,13 @@ public class LocalFontListViewModel extends AndroidViewModel {
                 new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                     mIsFolderSyncing = false;
 
-                    List<FontEntity> toPublish;
+                    List<FontItem> toPublish;
                     if (finalFreshFonts != null) {
                         toPublish = finalFreshFonts;
                     } else if (mPendingSyncFonts != null) {
                         toPublish = mPendingSyncFonts;
                     } else {
-                        List<FontEntity> currentFonts = fontsLiveData.getValue();
+                        List<FontItem> currentFonts = fontsLiveData.getValue();
                         toPublish = currentFonts != null ? currentFonts : new ArrayList<>();
                     }
                     mPendingSyncFonts = null;

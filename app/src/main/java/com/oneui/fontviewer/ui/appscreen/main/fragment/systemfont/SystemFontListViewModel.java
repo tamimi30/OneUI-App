@@ -9,7 +9,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
 import com.oneui.fontviewer.data.systemfont.SystemFontRepository;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class SystemFontListViewModel extends AndroidViewModel {
     private static final String TAG = "SystemFontListViewModel";
     
     private final SystemFontRepository repository;
-    private final LiveData<List<FontEntity>> fontsLiveData;
+    private final LiveData<List<FontItem>> fontsLiveData;
     private final MutableLiveData<Boolean> isLoadingLiveData;
     private final MutableLiveData<String> errorMessageLiveData;
     private final MutableLiveData<Boolean> isApiAvailableLiveData;
@@ -34,7 +34,7 @@ public class SystemFontListViewModel extends AndroidViewModel {
         isApiAvailableLiveData = new MutableLiveData<>(checkApiAvailability());
     }
     
-    public LiveData<List<FontEntity>> getFontsLiveData() {
+    public LiveData<List<FontItem>> getFontsLiveData() {
         return fontsLiveData;
     }
      

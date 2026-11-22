@@ -1,6 +1,6 @@
 package com.oneui.fontviewer.data.localfont.model;
 
-import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
 
 public class FontFileInfoWithMetadata {
     private final String name;
@@ -11,14 +11,14 @@ public class FontFileInfoWithMetadata {
     private final String weightWidthLabel;
     private final boolean isFavorite;
     
-    public FontFileInfoWithMetadata(FontEntity entity) {
-        this.name             = entity.getFileName();
-        this.path             = entity.getPath();
-        this.size             = entity.getSize();
-        this.lastModified     = entity.getLastModified();
-        this.realName         = entity.getRealName();
-        this.weightWidthLabel = entity.getWeightWidthLabel(); 
-        this.isFavorite       = entity.isFavorite();          
+    public FontFileInfoWithMetadata(FontItem item) {
+        this.name             = item.getFileName();
+        this.path             = item.getPath();
+        this.size             = item.getSize();
+        this.lastModified     = item.getLastModified();
+        this.realName         = item.getRealName();
+        this.weightWidthLabel = item.getWeightWidthLabel(); 
+        this.isFavorite       = item.isFavorite();          
     }
     
     

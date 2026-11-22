@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
 import com.oneui.fontviewer.ui.core.widget.layout.SelectableLinearLayout;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final String PAYLOAD_UPDATE_SELECTION = "UPDATE_SELECTION";
 
     private final Context context;
-    private List<FontEntity> mItems = new ArrayList<>();
+    private List<FontItem> mItems = new ArrayList<>();
 
     private boolean isSelectionMode = false;
 
@@ -67,8 +67,8 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
-    public void submitList(@Nullable List<FontEntity> newList) {
-        List<FontEntity> safeNew = (newList != null) ? newList : Collections.emptyList();
+    public void submitList(@Nullable List<FontItem> newList) {
+        List<FontItem> safeNew = (newList != null) ? newList : Collections.emptyList();
 
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(
                 new TrashDiffCallback(mItems, safeNew));
@@ -101,7 +101,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (selectedIds.isEmpty()) return;
 
         Set<Long> present = new HashSet<>();
-        for (FontEntity font : mItems) {
+        for (FontItem font : mItems) {
             long id = font.getId();
             present.add(id);
         }
@@ -170,7 +170,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
     private void bindItem(@NonNull TrashItemViewHolder holder,
-                          @NonNull FontEntity font,
+                          @NonNull FontItem font,
                           int position) {
         holder.fontNameTextView.setText(font.getDisplayName());
 
@@ -249,7 +249,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public void setItemSelected(int adapterPosition, boolean selected) {
-        FontEntity font = getItemAtAdapterPosition(adapterPosition);
+        FontItem font = getItemAtAdapterPosition(adapterPosition);
         if (font == null) return;
 
         long id = font.getId();
@@ -267,7 +267,7 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public boolean isItemSelected(int adapterPosition) {
-        FontEntity font = getItemAtAdapterPosition(adapterPosition);
+        FontItem font = getItemAtAdapterPosition(adapterPosition);
         if (font == null) return false;
 
         long id = font.getId();
@@ -280,11 +280,11 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     // العناصر المحددة بترتيب ظهورها في القائمة
     @NonNull
-    public List<FontEntity> getSelectedFonts() {
-        List<FontEntity> result = new ArrayList<>(selectedIds.size());
+    public List<FontItem> getSelectedFonts() {
+        List<FontItem> result = new ArrayList<>(selectedIds.size());
         if (selectedIds.isEmpty()) return result;
 
-        for (FontEntity font : mItems) {
+        for (FontItem font : mItems) {
             long id = font.getId();
             if (selectedIds.contains(id)) result.add(font);
         }
@@ -298,12 +298,12 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     
 
     @NonNull
-    public List<FontEntity> getAllFonts() {
+    public List<FontItem> getAllFonts() {
         return new ArrayList<>(mItems);
     }
 
     @Nullable
-    public FontEntity getItemAtAdapterPosition(int adapterPosition) {
+    public FontItem getItemAtAdapterPosition(int adapterPosition) {
         int itemIndex = adapterPosition - 1;
         if (itemIndex < 0 || itemIndex >= mItems.size()) return null;
         return mItems.get(itemIndex);
@@ -351,11 +351,11 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private static class TrashDiffCallback extends DiffUtil.Callback {
 
-        private final List<FontEntity> oldList;
-        private final List<FontEntity> newList;
+        private final List<FontItem> oldList;
+        private final List<FontItem> newList;
 
-        TrashDiffCallback(@NonNull List<FontEntity> oldList,
-                          @NonNull List<FontEntity> newList) {
+        TrashDiffCallback(@NonNull List<FontItem> oldList,
+                          @NonNull List<FontItem> newList) {
             this.oldList = oldList;
             this.newList = newList;
         }
@@ -370,8 +370,8 @@ public class TrashListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         @Override
         public boolean areContentsTheSame(int oldPos, int newPos) {
-            FontEntity o = oldList.get(oldPos);
-            FontEntity n = newList.get(newPos);
+            FontItem o = oldList.get(oldPos);
+            FontItem n = newList.get(newPos);
             return o.getFileName().equals(n.getFileName())
                     && o.getDeletedAt() == n.getDeletedAt()
                     && o.isTrashed() == n.isTrashed();

@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
 import com.oneui.fontviewer.ui.appscreen.main.fragment.trash.recyclerview.TrashListAdapter;
 
 import java.util.List;
@@ -36,9 +36,9 @@ public class TrashSelectionManager {
 
 
     public interface SelectionActionListener {
-        void onRestoreRequested(List<FontEntity> fonts);
+        void onRestoreRequested(List<FontItem> fonts);
 
-        void onDeletePermanentlyRequested(List<FontEntity> fonts);
+        void onDeletePermanentlyRequested(List<FontItem> fonts);
     }
 
 

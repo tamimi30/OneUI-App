@@ -15,6 +15,8 @@ import androidx.lifecycle.LiveData;
 import com.oneui.fontviewer.data.common.room.FontDao;
 import com.oneui.fontviewer.data.common.room.FontDatabase;
 import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
+import com.oneui.fontviewer.data.common.room.FontMapper;
 import com.oneui.fontviewer.utils.metadata.FontMetadataReader;
 import com.oneui.fontviewer.utils.metadata.FontWeightWidthExtractor;
 
@@ -45,8 +47,8 @@ public class SystemFontRepository {
         return INSTANCE;
     }
 
-    public LiveData<List<FontEntity>> getSystemFonts() {
-        return fontDao.getSystemFonts();
+    public LiveData<List<FontItem>> getSystemFonts() {
+        return FontMapper.toItemsLive(fontDao.getSystemFonts());
     }
 
     public LiveData<Integer> getSystemFontsCount() {
@@ -349,15 +351,19 @@ public class SystemFontRepository {
         });
     }
 
-    public LiveData<FontEntity> getFontByPath(String path) {
-        return fontDao.getFontByPath(path);
+    public LiveData<FontItem> getFontByPath(String path) {
+        return FontMapper.toItemLive(fontDao.getFontByPath(path));
     }
 
-    public LiveData<List<FontEntity>> searchSystemFonts(String query) {
-        return fontDao.searchFonts(true, query);
+    public LiveData<List<FontItem>> searchSystemFonts(String query) {
+        return FontMapper.toItemsLive(fontDao.searchFonts(true, query));
     }
 
-    public LiveData<List<FontEntity>> getSystemFontsSorted(SortType sortType, boolean ascending) {
+    public LiveData<List<FontItem>> getSystemFontsSorted(SortType sortType, boolean ascending) {
+        return FontMapper.toItemsLive(getSystemFontsSortedEntities(sortType, ascending));
+    }
+
+    private LiveData<List<FontEntity>> getSystemFontsSortedEntities(SortType sortType, boolean ascending) {
         switch (sortType) {
             case DATE:
                 return ascending ? fontDao.getFontsSortedByDate(true)

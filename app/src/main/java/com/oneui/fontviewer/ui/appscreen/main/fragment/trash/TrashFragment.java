@@ -33,7 +33,7 @@ import com.oneui.fontviewer.ui.core.widget.layout.OneUiDrawerLayout;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.appscreen.main.navigation.drawer.DrawerListItem;
 import com.oneui.fontviewer.ui.appscreen.main.MainActivity;
-import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
 import com.oneui.fontviewer.ui.core.dialog.ActionDialogs;
 import com.oneui.fontviewer.ui.appscreen.main.list.UiStateManager;
 import com.oneui.fontviewer.ui.appscreen.main.list.ItemDecoration;
@@ -75,7 +75,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     private boolean mHasAppliedTrash = false;
 
     @Nullable
-    private List<FontEntity> mPendingTrashUpdate = null;
+    private List<FontItem> mPendingTrashUpdate = null;
 
     @Nullable
     private Integer mPendingTrashCount = null;
@@ -238,12 +238,12 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mSelectionManager.setActionListener(new TrashSelectionManager.SelectionActionListener() {
 
             @Override
-            public void onRestoreRequested(List<FontEntity> fonts) {
+            public void onRestoreRequested(List<FontItem> fonts) {
                 handleRestoreAction(fonts);
             }
 
             @Override
-            public void onDeletePermanentlyRequested(List<FontEntity> fonts) {
+            public void onDeletePermanentlyRequested(List<FontItem> fonts) {
                 handleDeletePermanentlyAction(fonts);
             }
         });
@@ -360,7 +360,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
 
 
     public void handleEmptyTrash() {
-        List<FontEntity> allFonts = mAdapter.getAllFonts();
+        List<FontItem> allFonts = mAdapter.getAllFonts();
         if (allFonts.isEmpty()) return;
 
         ActionDialogs.showDeletePermanentlyDialog(
@@ -370,7 +370,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         );
     }
 
-    private void handleRestoreAction(@NonNull List<FontEntity> fonts) {
+    private void handleRestoreAction(@NonNull List<FontItem> fonts) {
         if (fonts.isEmpty()) return;
 
         mSelectionManager.setSelecting(false);
@@ -378,7 +378,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         showRestoreProgressAndExecute(fonts);
     }
 
-    private void handleDeletePermanentlyAction(@NonNull List<FontEntity> fonts) {
+    private void handleDeletePermanentlyAction(@NonNull List<FontItem> fonts) {
         if (fonts.isEmpty()) return;
 
         ActionDialogs.showDeletePermanentlyDialog(
@@ -392,7 +392,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
     }
 
 
-    private void showRestoreProgressAndExecute(@NonNull List<FontEntity> fonts) {
+    private void showRestoreProgressAndExecute(@NonNull List<FontItem> fonts) {
         mIsDialogHidden = false;
 
         mCurrentProgressDialog = ActionDialogs.createRestoreProgressDialog(
@@ -419,7 +419,7 @@ public class TrashFragment extends Fragment implements AppBarLayout.OnOffsetChan
         mViewModel.restoreFonts(fonts);
     }
 
-    private void showDeleteProgressAndExecute(@NonNull List<FontEntity> fonts,
+    private void showDeleteProgressAndExecute(@NonNull List<FontItem> fonts,
                                                boolean isEmptyAll) {
         mIsDialogHidden = false;
 

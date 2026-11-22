@@ -15,7 +15,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
 import com.oneui.fontviewer.data.trash.TrashRepository;
 import com.oneui.fontviewer.service.BatchOperationState;
 import com.oneui.fontviewer.service.OperationForegroundService;
@@ -45,7 +45,7 @@ public class TrashViewModel extends AndroidViewModel {
         repository.deleteExpiredItems(null);
     }
 
-    public LiveData<List<FontEntity>> getTrashedFontsLiveData() {
+    public LiveData<List<FontItem>> getTrashedFontsLiveData() {
         return repository.getTrashedFonts();
     }
 
@@ -61,7 +61,7 @@ public class TrashViewModel extends AndroidViewModel {
         return _operationResult;
     } 
 
-    public void restoreFonts(@NonNull List<FontEntity> fonts) {
+    public void restoreFonts(@NonNull List<FontItem> fonts) {
         if (fonts.isEmpty()) return;
 
         BatchOperationState.setSourceScreen(DrawerListItem.TRASH.name());
@@ -118,7 +118,7 @@ public class TrashViewModel extends AndroidViewModel {
         );
     }
 
-    public void deletePermanently(@NonNull List<FontEntity> fonts) {
+    public void deletePermanently(@NonNull List<FontItem> fonts) {
         if (fonts.isEmpty()) return;
 
         BatchOperationState.setSourceScreen(DrawerListItem.TRASH.name());

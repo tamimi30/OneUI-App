@@ -8,6 +8,8 @@ import androidx.lifecycle.LiveData;
 import com.oneui.fontviewer.data.common.room.FontDao;
 import com.oneui.fontviewer.data.common.room.FontDatabase;
 import com.oneui.fontviewer.data.common.room.FontEntity;
+import com.oneui.fontviewer.data.common.model.FontItem;
+import com.oneui.fontviewer.data.common.room.FontMapper;
 
 import java.io.File;
 import java.util.List;
@@ -43,8 +45,8 @@ public class TrashRepository {
     }
 
 
-    public LiveData<List<FontEntity>> getTrashedFonts() {
-        return fontDao.getTrashFonts();
+    public LiveData<List<FontItem>> getTrashedFonts() {
+        return FontMapper.toItemsLive(fontDao.getTrashFonts());
     }
 
     public LiveData<Integer> getTrashedFontsCount() {
@@ -53,7 +55,7 @@ public class TrashRepository {
 
 
     public void moveToTrashBatch(Context context,
-                                  List<FontEntity> fonts,
+                                  List<FontItem> fonts,
                                   AtomicBoolean cancelFlag,
                                   OnProgressListener progressListener,
                                   OnBatchCompleteListener completeListener) {
@@ -71,7 +73,7 @@ public class TrashRepository {
                         break;
                     }
 
-                    FontEntity font = fonts.get(i);
+                    FontItem font = fonts.get(i);
 
                     File sourceFile = new File(font.getPath());
                     if (!sourceFile.exists()) {
@@ -127,7 +129,7 @@ public class TrashRepository {
 
 
     public void restoreBatch(Context context,
-                              List<FontEntity> fonts,
+                              List<FontItem> fonts,
                               AtomicBoolean cancelFlag,
                               OnProgressListener progressListener,
                               OnBatchCompleteListener completeListener) {
@@ -145,7 +147,7 @@ public class TrashRepository {
                         break;
                     }
 
-                    FontEntity font = fonts.get(i);
+                    FontItem font = fonts.get(i);
 
                     File trashedFile = new File(font.getPath());
                     if (!trashedFile.exists()) {
@@ -209,7 +211,7 @@ public class TrashRepository {
 
 
     public void deletePermanentlyBatch(Context context,
-                                        List<FontEntity> fonts,
+                                        List<FontItem> fonts,
                                         AtomicBoolean cancelFlag,
                                         OnProgressListener progressListener,
                                         OnBatchCompleteListener completeListener) {
@@ -226,7 +228,7 @@ public class TrashRepository {
                         break;
                     }
 
-                    FontEntity font = fonts.get(i);
+                    FontItem font = fonts.get(i);
 
                     boolean fileDeleted = TrashFileManager.deletePermanently(font.getPath());
 
