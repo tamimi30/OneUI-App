@@ -4,18 +4,23 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.ui.appscreen.main.MainActivity;
 
 public final class OperationNotifications {
 
     public static final String CHANNEL_ID = "trash_ops";
+
+    // مفاتيح الـ extras التي يضعها الإشعار في Intent فتح التطبيق، وتقرؤها الواجهة عند الاستلام
+    public static final String EXTRA_TARGET_FRAGMENT   = "target_fragment";
+    public static final String EXTRA_FROM_NOTIFICATION = "from_notification";
 
     public static final int NOTIF_ID_MOVE    = 1001;
     public static final int NOTIF_ID_RESTORE = 1002;
@@ -41,18 +46,26 @@ public final class OperationNotifications {
         nm.createNotificationChannel(channel);
     }
 
-    @NonNull
+    @Nullable
     private static PendingIntent buildContentIntent(@NonNull Context context) {
-        Intent openIntent = new Intent(context, MainActivity.class);
+        // نحدد نشاط الدخول الرئيسي للتطبيق من المانيفست بدل الإشارة إلى صنف من طبقة الواجهة،
+        // ونستخدم مكوّنه فقط (دون action/category الخاصة بالمشغّل) حتى يصل الـ Intent عبر onNewIntent.
+        Intent launchIntent = context.getPackageManager()
+                .getLaunchIntentForPackage(context.getPackageName());
+        ComponentName entry = launchIntent != null ? launchIntent.getComponent() : null;
+        if (entry == null) return null;
+
+        Intent openIntent = new Intent();
+        openIntent.setComponent(entry);
         openIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         String sourceScreen = BatchOperationState.getSourceScreen();
         if (sourceScreen != null) {
-            openIntent.putExtra(MainActivity.EXTRA_TARGET_FRAGMENT, sourceScreen);
+            openIntent.putExtra(EXTRA_TARGET_FRAGMENT, sourceScreen);
         }
 
-        openIntent.putExtra("from_notification", true);
+        openIntent.putExtra(EXTRA_FROM_NOTIFICATION, true);
 
         return PendingIntent.getActivity(context, PI_REQUEST_CONTENT, openIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
@@ -80,7 +93,7 @@ public final class OperationNotifications {
                 .setProgress(total, progress, false)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
-                .setContentIntent(buildContentIntent(context))
+                .setContentIntent(buildContentIntent(context)) // قد تكون null فلا يُضاف إجراء فتح
                 .addAction(0,
                         context.getString(android.R.string.cancel),
                         buildCancelIntent(context));
