@@ -135,3 +135,63 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
 }
+
+// ───────────────────────── حارس طبقات المشروع ─────────────────────────
+// المشروع وحدة Gradle واحدة، فلا يمنع المترجم أي ملف من استيراد أي ملف آخر. هذه المهمة تفرض الفصل الذي أُنجز:
+//  1) كود data وutils وservice والملفات الجذرية لا تستورد شيئاً من حزمة ui
+//     (الاستثناء الوحيد: FontViewerApp، فهو نقطة تركيب التطبيق ويهيّئ الثيم وتتبّع الأنشطة).
+//  2) كود data وutils لا يستخدم R (نصوص العرض مكانها ui).
+//  3) كود data وutils وservice والملفات الجذرية لا تستورد مكتبات الواجهة (View وWidget وAppCompat وFragment ...).
+// تعمل تلقائياً قبل كل بناء (preBuild)، ويمكن تشغيلها وحدها بالأمر: ./gradlew checkLayering
+tasks.register('checkLayering') {
+    group = 'verification'
+    description = 'يفشل اذا استوردت طبقات data او utils او service شيئاً من ui او استخدمت R او مكتبات الواجهة'
+
+    def srcRoot = file('src/main/java/com/oneui/fontviewer')
+    inputs.dir(srcRoot)
+
+    doLast {
+        def uiPackage = 'com.oneui.fontviewer.ui.'
+        def toolkitPackages = [
+            'android.view.', 'android.widget.', 'androidx.appcompat.', 'androidx.fragment.',
+            'androidx.recyclerview.', 'androidx.preference.', 'dev.oneuiproject.', 'com.google.android.material.'
+        ]
+        def rootFilesAllowedToUseUi = ['FontViewerApp.java']
+        def violations = []
+
+        srcRoot.eachFileRecurse(groovy.io.FileType.FILES) { f ->
+            if (!f.name.endsWith('.java')) return
+
+            def rel = srcRoot.toPath().relativize(f.toPath()).toString().replace('\\', '/')
+            def layer = rel.contains('/') ? rel.substring(0, rel.indexOf('/')) : '(root)'
+            if (layer == 'ui') return
+
+            def usesUiAllowed = (layer == '(root)') && rootFilesAllowedToUseUi.contains(f.name)
+
+            f.readLines('UTF-8').eachWithIndex { line, index ->
+                def trimmed = line.trim()
+                if (trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('/*')) return
+
+                def where = rel + ':' + (index + 1)
+
+                if (line.contains(uiPackage) && !usesUiAllowed) {
+                    violations << (where + ' [' + layer + '] لا يجوز أن تعتمد هذه الطبقة على ui')
+                }
+                if ((layer == 'data' || layer == 'utils') && (line =~ /\bcom\.oneui\.fontviewer\.R\b/)) {
+                    violations << (where + ' [' + layer + '] لا يجوز استخدام R في هذه الطبقة (نصوص العرض مكانها ui)')
+                }
+                if (trimmed.startsWith('import ') && toolkitPackages.any { trimmed.contains(it) }) {
+                    violations << (where + ' [' + layer + '] لا يجوز استيراد مكتبات الواجهة: ' + trimmed)
+                }
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            throw new GradleException('انتهاك فصل الطبقات (' + violations.size() + '):\n  ' + violations.join('\n  '))
+        }
+    }
+}
+
+tasks.matching { it.name == 'preBuild' }.configureEach {
+    dependsOn 'checkLayering'
+}

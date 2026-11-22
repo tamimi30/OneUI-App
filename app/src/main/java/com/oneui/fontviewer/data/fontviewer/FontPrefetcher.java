@@ -1,16 +1,14 @@
 package com.oneui.fontviewer.data.fontviewer;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
 
+import com.oneui.fontviewer.utils.variable.InstanceLabelResolver;
 import com.oneui.fontviewer.utils.variable.VariableFontAxisExtractor;
-import com.oneui.fontviewer.utils.variable.VariableTypefaceFactory;
 import com.oneui.fontviewer.data.localfont.LocalFontCache;
 import com.oneui.fontviewer.data.systemfont.SystemFontCache;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,19 +31,6 @@ public final class FontPrefetcher {
     private static final String TAG = "FontPrefetcher";
 
     private static final int CACHE_MAX_ENTRIES = 3;
-
-    // القيم الافتراضية الاحتياطية لكل محور، تُستخدم فقط اذا تعذّرت قراءة القيمة الافتراضية الفعلية
-    // من جدول fvar الخاص بالخط نفسه (تطابق AXIS_FALLBACK_DEFAULTS في FontViewerFragment)
-    private static final float DEFAULT_FONT_WEIGHT = 400f;
-    private static final Map<String, Float> AXIS_FALLBACK_DEFAULTS = new HashMap<>();
-    static {
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_WGHT, DEFAULT_FONT_WEIGHT);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_WDTH, 100f);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_ITAL, 0f);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_GRAD, 0f);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_ROND, 0f);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_MONO, 0f);
-    }
 
     private static final Map<String, PrefetchedFont> sCache = new LinkedHashMap<>();
     private static final ExecutorService sExecutor = Executors.newSingleThreadExecutor(runnable -> {
@@ -77,14 +62,12 @@ public final class FontPrefetcher {
     /**
      * تُستدعى من MainActivity قبل startActivity. لا تحجب الخيط الرئيسي: كل العمل في خيط خلفي مستقل.
      * تتجاهل الخطوط القادمة من Uri (تُنسخ أولاً ولها مسارها الخاص).
+     * labels يحوّل مفاتيح أسماء قيم المحاور الى نصوص اللغة الحالية، وlocaleTags وسوم هذه اللغة (جزء من مفتاح التجهيز).
      */
-    public static void prefetch(Context context, String path, int ttcIndex, boolean systemFont) {
-        if (context == null || path == null || path.isEmpty() || path.startsWith("content://")) {
+    public static void prefetch(InstanceLabelResolver labels, String localeTags, String path, int ttcIndex, boolean systemFont) {
+        if (labels == null || path == null || path.isEmpty() || path.startsWith("content://")) {
             return;
         }
-
-        final Context taskContext = context;
-        final String localeTags = localeTagsOf(context);
 
         sExecutor.execute(() -> {
             try {
@@ -93,40 +76,13 @@ public final class FontPrefetcher {
                     return;
                 }
 
-                // هذا المنطق يطابق loadFontFromPathWithAxes عند resetToDefaults = true (فتح خط جديد من القائمة)
-                boolean isVar = VariableFontAxisExtractor.isVariableFont(fontFile, ttcIndex);
+                // هذا المنطق يطابق FontViewerRepository.loadFont عند resetToDefaults = true (فتح خط جديد من القائمة)
+                FontViewerRepository.AxisAnalysis analysis = FontViewerRepository.analyzeAxes(fontFile, ttcIndex, labels);
+                boolean isVar = analysis.isVariable;
+                Map<String, List<VariableFontAxisExtractor.VariableInstance>> axisInstancesMap = analysis.axisInstancesMap;
+                Map<String, Float> axisDefaults = analysis.axisDefaults;
 
-                Map<String, List<VariableFontAxisExtractor.VariableInstance>> axisInstancesMap = new LinkedHashMap<>();
-                Map<String, Float> axisDefaults = new LinkedHashMap<>();
-
-                if (isVar) {
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_WGHT, VariableFontAxisExtractor.extractVariableInstances(taskContext, fontFile, ttcIndex));
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_WDTH, VariableFontAxisExtractor.extractWidthInstances(taskContext, fontFile, ttcIndex));
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_ITAL, VariableFontAxisExtractor.extractItalicInstances(taskContext, fontFile, ttcIndex));
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_GRAD, VariableFontAxisExtractor.extractGradeInstances(taskContext, fontFile, ttcIndex));
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_ROND, VariableFontAxisExtractor.extractRoundnessInstances(taskContext, fontFile, ttcIndex));
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_MONO, VariableFontAxisExtractor.extractMonoInstances(taskContext, fontFile, ttcIndex));
-
-                    for (Map.Entry<String, List<VariableFontAxisExtractor.VariableInstance>> entry : axisInstancesMap.entrySet()) {
-                        String axisTag = entry.getKey();
-                        List<VariableFontAxisExtractor.VariableInstance> instances = entry.getValue();
-
-                        if (instances == null || instances.isEmpty()) {
-                            continue;
-                        }
-
-                        Float fallbackBoxed = AXIS_FALLBACK_DEFAULTS.get(axisTag);
-                        float fallback = fallbackBoxed != null ? fallbackBoxed : 0f;
-                        axisDefaults.put(axisTag, VariableFontAxisExtractor.readAxisDefaultValue(fontFile, ttcIndex, axisTag, fallback));
-                    }
-                }
-
-                Typeface typeface;
-                if (systemFont) {
-                    typeface = SystemFontCache.getInstance().getTypefaceWithAxes(path, axisDefaults, ttcIndex);
-                } else {
-                    typeface = VariableTypefaceFactory.createTypefaceWithAxes(fontFile, axisDefaults, ttcIndex);
-                }
+                Typeface typeface = FontViewerRepository.createTypeface(path, fontFile, axisDefaults, ttcIndex, systemFont);
 
                 // أي فشل: لا نخزّن شيئاً، فيتولى مسار التحميل الخلفي القديم معالجة الخطأ وعرض رسالته كما كان
                 if (typeface == null) {
@@ -151,8 +107,8 @@ public final class FontPrefetcher {
     /**
      * يأخذ نتيجة التجهيز المسبق لهذا الخط (ويزيلها من الذاكرة المؤقتة)، أو null اذا لم تكن جاهزة.
      */
-    public static PrefetchedFont take(Context context, String path, int ttcIndex, boolean systemFont) {
-        String key = buildKey(path, ttcIndex, systemFont, localeTagsOf(context));
+    public static PrefetchedFont take(String localeTags, String path, int ttcIndex, boolean systemFont) {
+        String key = buildKey(path, ttcIndex, systemFont, localeTags);
         synchronized (sCache) {
             return sCache.remove(key);
         }
@@ -180,9 +136,5 @@ public final class FontPrefetcher {
     private static String buildKey(String path, int ttcIndex, boolean systemFont, String localeTags) {
         File file = new File(path);
         return path + "|" + ttcIndex + "|" + systemFont + "|" + file.lastModified() + "|" + file.length() + "|" + localeTags;
-    }
-
-    private static String localeTagsOf(Context context) {
-        return context.getResources().getConfiguration().getLocales().toLanguageTags();
     }
 }

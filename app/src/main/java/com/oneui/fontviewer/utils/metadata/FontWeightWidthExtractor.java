@@ -1,9 +1,6 @@
 package com.oneui.fontviewer.utils.metadata;
 
-import android.content.Context;
 import android.util.Log;
-
-import com.oneui.fontviewer.R;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -12,8 +9,6 @@ public class FontWeightWidthExtractor {
 
     private static final String TAG = "FontWeightWidthExtractor";
 
-
-    private static final String VF_PREFIX = "VF";
 
     // الصيغة المخزّنة: "وزن|عرض|متغير" (مثل 400|5|1)، ولا تتغير بتغير لغة التطبيق
     private static final String RAW_SEPARATOR = "|";
@@ -41,13 +36,28 @@ public class FontWeightWidthExtractor {
         }
     }
 
-    // تحويل الصيغة المخزّنة لنص يُعرض حسب لغة التطبيق. أي نص لا يطابق الصيغة
-    // (مثل النصوص القديمة المخزّنة سابقاً) يُعاد كما هو
-    public static String formatLabel(Context context, String raw) {
-        if (raw == null || raw.isEmpty()) return raw;
+    /**
+     * الصيغة المخزّنة بعد تحليلها: فئة الوزن وفئة العرض (من جدول OS/2) وهل الخط متغير.
+     * تحويلها لنص معروض حسب لغة التطبيق يتم في طبقة الواجهة (FontLabelFormatter).
+     */
+    public static final class ParsedLabel {
+        public final int weightClass;
+        public final int widthClass;
+        public final boolean variable;
+
+        ParsedLabel(int weightClass, int widthClass, boolean variable) {
+            this.weightClass = weightClass;
+            this.widthClass = widthClass;
+            this.variable = variable;
+        }
+    }
+
+    // تحليل الصيغة المخزّنة. أي نص لا يطابق الصيغة (مثل النصوص القديمة المخزّنة سابقاً) يُعاد null
+    public static ParsedLabel parse(String raw) {
+        if (raw == null || raw.isEmpty()) return null;
 
         String[] parts = raw.split("\\|", -1);
-        if (parts.length != 3) return raw;
+        if (parts.length != 3) return null;
 
         int weightClass;
         int widthClass;
@@ -55,13 +65,10 @@ public class FontWeightWidthExtractor {
             weightClass = Integer.parseInt(parts[0]);
             widthClass  = Integer.parseInt(parts[1]);
         } catch (NumberFormatException e) {
-            return raw;
+            return null;
         }
 
-        String label = buildLabel(getWeightName(context, weightClass), getWidthName(context, widthClass));
-        if (label == null) return null;
-
-        return "1".equals(parts[2]) ? VF_PREFIX + " • " + label : label;
+        return new ParsedLabel(weightClass, widthClass, "1".equals(parts[2]));
     }
 
     private static int[] readWeightWidth(File fontFile, int ttcIndex) {
@@ -157,48 +164,6 @@ public class FontWeightWidthExtractor {
         raf.read(b);
         return ((long)(b[0] & 0xFF) << 24) | ((long)(b[1] & 0xFF) << 16)
              | ((long)(b[2] & 0xFF) <<  8) |  (long)(b[3] & 0xFF);
-    }
-
-    private static String buildLabel(String weight, String width) {
-        boolean hasWeight = weight != null && !weight.isEmpty();
-        boolean hasWidth  = width  != null && !width.isEmpty();
-        if (!hasWeight && !hasWidth) return null;
-        if (!hasWeight) return width;
-        if (!hasWidth)  return weight;
-        return weight + " • " + width;
-    }
-
-
-    public static String getWeightName(Context context, int w) {
-        if (w <= 0) return null;
-
-        switch (w) {
-            case 100: return context.getString(R.string.font_info_weight_thin);
-            case 200: return context.getString(R.string.font_info_weight_extra_light);
-            case 300: return context.getString(R.string.font_info_weight_light);
-            case 400: return context.getString(R.string.font_info_weight_regular);
-            case 500: return context.getString(R.string.font_info_weight_medium);
-            case 600: return context.getString(R.string.font_info_weight_semi_bold);
-            case 700: return context.getString(R.string.font_info_weight_bold);
-            case 800: return context.getString(R.string.font_info_weight_extra_bold);
-            case 900: return context.getString(R.string.font_info_weight_black);
-            default: return context.getString(R.string.font_info_weight_other, w);
-        }
-    }
-
-    public static String getWidthName(Context context, int d) {
-        switch (d) {
-            case 1: return context.getString(R.string.font_info_width_ultra_condensed);
-            case 2: return context.getString(R.string.font_info_width_extra_condensed);
-            case 3: return context.getString(R.string.font_info_width_condensed);
-            case 4: return context.getString(R.string.font_info_width_semi_condensed);
-            case 5: return null; 
-            case 6: return context.getString(R.string.font_info_width_semi_expanded);
-            case 7: return context.getString(R.string.font_info_width_expanded);
-            case 8: return context.getString(R.string.font_info_width_extra_expanded);
-            case 9: return context.getString(R.string.font_info_width_ultra_expanded);
-            default: return null;
-        }
     }
 
     private static boolean hasWidthName(int d) {
