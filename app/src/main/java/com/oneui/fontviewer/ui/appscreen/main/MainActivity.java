@@ -36,6 +36,7 @@ import com.oneui.fontviewer.ui.appscreen.main.search.SearchCoordinator;
 import com.oneui.fontviewer.ui.appscreen.settings.SettingsActivity;
 import com.oneui.fontviewer.ui.appscreen.home.HomeActivity;
 import com.oneui.fontviewer.service.BatchOperationState;
+import com.oneui.fontviewer.service.OperationNotifications;
 import com.oneui.fontviewer.ui.appscreen.main.navigation.drawer.DrawerListItem;
 import com.oneui.fontviewer.ui.appscreen.main.navigation.NavManager;
 import com.oneui.fontviewer.ui.appscreen.main.navigation.UpdateBadgeController;
@@ -68,7 +69,7 @@ public class MainActivity extends BaseActivity
 
     private static final int PERM_REQUEST_POST_NOTIFICATIONS = 1001;
 
-    public static final String EXTRA_TARGET_FRAGMENT = "target_fragment";
+    public static final String EXTRA_TARGET_FRAGMENT = OperationNotifications.EXTRA_TARGET_FRAGMENT;
 
     private int mLocalFontsCount    = 0;
     private int mSystemFontsCount   = 0;
@@ -190,10 +191,10 @@ public class MainActivity extends BaseActivity
         if (intent != null && shouldHandleNavigation) {
             
 
-            boolean fromNotif = intent.getBooleanExtra("from_notification", false);
+            boolean fromNotif = intent.getBooleanExtra(OperationNotifications.EXTRA_FROM_NOTIFICATION, false);
             if (fromNotif) {
                 BatchOperationState.setShouldReopenDialog(true);
-                intent.removeExtra("from_notification");
+                intent.removeExtra(OperationNotifications.EXTRA_FROM_NOTIFICATION);
             }
 
             String targetDrawerListItemName = intent.getStringExtra(EXTRA_TARGET_FRAGMENT);
