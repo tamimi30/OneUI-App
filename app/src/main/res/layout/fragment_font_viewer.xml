@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:overScrollMode="always"
-    android:scrollbarStyle="outsideOverlay"
     android:scrollbars="vertical"
     android:fillViewport="true">
 
@@ -38,17 +37,13 @@
                     android:scrollbars="none"
                     android:overScrollMode="always"
                     android:clipToOutline="true"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="10dp"
-                    android:background="@drawable/vf_axis_container_bg">
+                    android:paddingStart="13dp"
+                    android:paddingVertical="13dp">
 
                     <LinearLayout
                         android:id="@+id/variable_axes_row"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:clipChildren="false"
-                        android:paddingEnd="-13dp"
                         android:layoutDirection="locale" />
 
                 </com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView>
