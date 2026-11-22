@@ -1,4 +1,4 @@
-package com.oneui.fontviewer.ui.appscreen.main.navigation;
+package com.oneui.fontviewer.ui.core.utils;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
