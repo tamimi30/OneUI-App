@@ -9,7 +9,7 @@ import androidx.preference.PreferenceScreen;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.update.UpdateRepository;
-import com.oneui.fontviewer.ui.core.utils.UpdateLauncher;
+import com.oneui.fontviewer.ui.core.update.UpdateLauncher;
 import com.oneui.fontviewer.ui.core.widget.preference.UpdateCardPreference;
 
 /**
