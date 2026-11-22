@@ -59,7 +59,6 @@
             android:layout_marginTop="13dp"
             android:layout_marginBottom="13dp"
             android:layout_marginEnd="13dp"
-            android:visibility="gone"
             app:cardBackgroundColor="@color/sesl_black"
             app:cardCornerRadius="18dp"
             app:cardElevation="4dp"
