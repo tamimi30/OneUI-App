@@ -1,11 +1,7 @@
 package com.oneui.fontviewer.utils.variable;
 
-import android.content.Context;
 import android.graphics.fonts.Font;
 import android.graphics.fonts.FontVariationAxis;
-
-
-import com.oneui.fontviewer.R;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -164,7 +160,7 @@ public class VariableFontAxisExtractor {
         return false;
     }
     
-    public static List<VariableInstance> extractVariableInstances(Context context, File fontFile, int ttcIndex) {
+    public static List<VariableInstance> extractVariableInstances(InstanceLabelResolver labels, File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
         
         
@@ -178,15 +174,15 @@ public class VariableFontAxisExtractor {
             float minWeight = range[0];
             float maxWeight = range[1];
             
-            addWeightIfInRange(instances, context.getString(R.string.font_info_weight_thin), 100, minWeight, maxWeight);
-            addWeightIfInRange(instances, context.getString(R.string.font_info_weight_extra_light), 200, minWeight, maxWeight);
-            addWeightIfInRange(instances, context.getString(R.string.font_info_weight_light), 300, minWeight, maxWeight);
-            addWeightIfInRange(instances, context.getString(R.string.font_info_weight_regular), 400, minWeight, maxWeight);
-            addWeightIfInRange(instances, context.getString(R.string.font_info_weight_medium), 500, minWeight, maxWeight);
-            addWeightIfInRange(instances, context.getString(R.string.font_info_weight_semi_bold), 600, minWeight, maxWeight);
-            addWeightIfInRange(instances, context.getString(R.string.font_info_weight_bold), 700, minWeight, maxWeight);
-            addWeightIfInRange(instances, context.getString(R.string.font_info_weight_extra_bold), 800, minWeight, maxWeight);
-            addWeightIfInRange(instances, context.getString(R.string.font_info_weight_black), 900, minWeight, maxWeight);
+            addWeightIfInRange(instances, labels.nameOf(InstanceLabel.WEIGHT_THIN), 100, minWeight, maxWeight);
+            addWeightIfInRange(instances, labels.nameOf(InstanceLabel.WEIGHT_EXTRA_LIGHT), 200, minWeight, maxWeight);
+            addWeightIfInRange(instances, labels.nameOf(InstanceLabel.WEIGHT_LIGHT), 300, minWeight, maxWeight);
+            addWeightIfInRange(instances, labels.nameOf(InstanceLabel.WEIGHT_REGULAR), 400, minWeight, maxWeight);
+            addWeightIfInRange(instances, labels.nameOf(InstanceLabel.WEIGHT_MEDIUM), 500, minWeight, maxWeight);
+            addWeightIfInRange(instances, labels.nameOf(InstanceLabel.WEIGHT_SEMI_BOLD), 600, minWeight, maxWeight);
+            addWeightIfInRange(instances, labels.nameOf(InstanceLabel.WEIGHT_BOLD), 700, minWeight, maxWeight);
+            addWeightIfInRange(instances, labels.nameOf(InstanceLabel.WEIGHT_EXTRA_BOLD), 800, minWeight, maxWeight);
+            addWeightIfInRange(instances, labels.nameOf(InstanceLabel.WEIGHT_BLACK), 900, minWeight, maxWeight);
             
         } catch (Exception e) {
             android.util.Log.e(TAG, "Failed to extract instances", e);
@@ -205,7 +201,7 @@ public class VariableFontAxisExtractor {
      * Condensed = 75%, Normal = 100%, Expanded = 125% — تماماً كما يحدث مع الوزن (Bold = 700 مثلاً)،
      * وليس الحد الأدنى/الأقصى الفعلي للخط.
      */
-    public static List<VariableInstance> extractWidthInstances(Context context, File fontFile, int ttcIndex) {
+    public static List<VariableInstance> extractWidthInstances(InstanceLabelResolver labels, File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
 
         float[] range = readAxisRangeFromFvar(fontFile, ttcIndex, AXIS_WDTH);
@@ -216,9 +212,9 @@ public class VariableFontAxisExtractor {
         float minWidth = range[0];
         float maxWidth = range[2];
 
-        addNamedInstanceIfInRange(instances, context.getString(R.string.font_info_width_condensed), AXIS_WDTH, 75f, minWidth, maxWidth);
-        addNamedInstanceIfInRange(instances, context.getString(R.string.font_info_width_normal), AXIS_WDTH, 100f, minWidth, maxWidth);
-        addNamedInstanceIfInRange(instances, context.getString(R.string.font_info_width_expanded), AXIS_WDTH, 125f, minWidth, maxWidth);
+        addNamedInstanceIfInRange(instances, labels.nameOf(InstanceLabel.WIDTH_CONDENSED), AXIS_WDTH, 75f, minWidth, maxWidth);
+        addNamedInstanceIfInRange(instances, labels.nameOf(InstanceLabel.WIDTH_NORMAL), AXIS_WDTH, 100f, minWidth, maxWidth);
+        addNamedInstanceIfInRange(instances, labels.nameOf(InstanceLabel.WIDTH_EXPANDED), AXIS_WDTH, 125f, minWidth, maxWidth);
 
         return instances;
     }
@@ -226,7 +222,7 @@ public class VariableFontAxisExtractor {
     /**
      * محور الميل (ital). محور ثنائي عادة: 0 = Upright، 1 = Italic.
      */
-    public static List<VariableInstance> extractItalicInstances(Context context, File fontFile, int ttcIndex) {
+    public static List<VariableInstance> extractItalicInstances(InstanceLabelResolver labels, File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
 
         float[] range = readAxisRangeFromFvar(fontFile, ttcIndex, AXIS_ITAL);
@@ -237,8 +233,8 @@ public class VariableFontAxisExtractor {
         float minItal = range[0];
         float maxItal = range[2];
 
-        addNamedInstanceIfInRange(instances, context.getString(R.string.font_info_italic_upright), AXIS_ITAL, 0f, minItal, maxItal);
-        addNamedInstanceIfInRange(instances, context.getString(R.string.font_info_axis_italic), AXIS_ITAL, 1f, minItal, maxItal);
+        addNamedInstanceIfInRange(instances, labels.nameOf(InstanceLabel.ITALIC_UPRIGHT), AXIS_ITAL, 0f, minItal, maxItal);
+        addNamedInstanceIfInRange(instances, labels.nameOf(InstanceLabel.ITALIC_ITALIC), AXIS_ITAL, 1f, minItal, maxItal);
 
         return instances;
     }
@@ -248,7 +244,7 @@ public class VariableFontAxisExtractor {
      * High = الحد الأقصى الذي يدعمه الخط، Normal = القيمة الافتراضية الفعلية المسجّلة في fvar
      * (وليست 0 دائماً، فبعض الخطوط تجعل قيمتها الافتراضية مختلفة).
      */
-    public static List<VariableInstance> extractGradeInstances(Context context, File fontFile, int ttcIndex) {
+    public static List<VariableInstance> extractGradeInstances(InstanceLabelResolver labels, File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
 
         float[] range = readAxisRangeFromFvar(fontFile, ttcIndex, AXIS_GRAD);
@@ -261,11 +257,11 @@ public class VariableFontAxisExtractor {
         float maxGrade     = range[2];
 
         if (minGrade < defaultGrade) {
-            instances.add(new VariableInstance(context.getString(R.string.font_info_grade_low), AXIS_GRAD, minGrade));
+            instances.add(new VariableInstance(labels.nameOf(InstanceLabel.GRADE_LOW), AXIS_GRAD, minGrade));
         }
-        instances.add(new VariableInstance(context.getString(R.string.font_info_width_normal), AXIS_GRAD, defaultGrade));
+        instances.add(new VariableInstance(labels.nameOf(InstanceLabel.WIDTH_NORMAL), AXIS_GRAD, defaultGrade));
         if (maxGrade > defaultGrade) {
-            instances.add(new VariableInstance(context.getString(R.string.font_info_grade_high), AXIS_GRAD, maxGrade));
+            instances.add(new VariableInstance(labels.nameOf(InstanceLabel.GRADE_HIGH), AXIS_GRAD, maxGrade));
         }
 
         return instances;
@@ -274,7 +270,7 @@ public class VariableFontAxisExtractor {
     /**
      * محور الاستدارة (ROND). Sharp = الحد الأدنى الفعلي، Rounded = الحد الأقصى الفعلي للخط.
      */
-    public static List<VariableInstance> extractRoundnessInstances(Context context, File fontFile, int ttcIndex) {
+    public static List<VariableInstance> extractRoundnessInstances(InstanceLabelResolver labels, File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
 
         float[] range = readAxisRangeFromFvar(fontFile, ttcIndex, AXIS_ROND);
@@ -286,8 +282,8 @@ public class VariableFontAxisExtractor {
         float maxRound = range[2];
 
         if (maxRound > minRound) {
-            instances.add(new VariableInstance(context.getString(R.string.font_info_roundness_sharp), AXIS_ROND, minRound));
-            instances.add(new VariableInstance(context.getString(R.string.font_info_roundness_rounded), AXIS_ROND, maxRound));
+            instances.add(new VariableInstance(labels.nameOf(InstanceLabel.ROUNDNESS_SHARP), AXIS_ROND, minRound));
+            instances.add(new VariableInstance(labels.nameOf(InstanceLabel.ROUNDNESS_ROUNDED), AXIS_ROND, maxRound));
         }
 
         return instances;
@@ -297,7 +293,7 @@ public class VariableFontAxisExtractor {
      * محور التباعد الأحادي (MONO). Proportional = الحد الأدنى (القيمة الأصغر)،
      * Monospaced = الحد الأقصى (القيمة الأكبر) — مرتبة تصاعدياً حسب القيمة كما هو مطلوب.
      */
-    public static List<VariableInstance> extractMonoInstances(Context context, File fontFile, int ttcIndex) {
+    public static List<VariableInstance> extractMonoInstances(InstanceLabelResolver labels, File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
 
         float[] range = readAxisRangeFromFvar(fontFile, ttcIndex, AXIS_MONO);
@@ -309,8 +305,8 @@ public class VariableFontAxisExtractor {
         float maxMono = range[2];
 
         if (maxMono > minMono) {
-            instances.add(new VariableInstance(context.getString(R.string.font_info_mono_proportional), AXIS_MONO, minMono));
-            instances.add(new VariableInstance(context.getString(R.string.font_info_mono_monospaced), AXIS_MONO, maxMono));
+            instances.add(new VariableInstance(labels.nameOf(InstanceLabel.MONO_PROPORTIONAL), AXIS_MONO, minMono));
+            instances.add(new VariableInstance(labels.nameOf(InstanceLabel.MONO_MONOSPACED), AXIS_MONO, maxMono));
         }
 
         return instances;

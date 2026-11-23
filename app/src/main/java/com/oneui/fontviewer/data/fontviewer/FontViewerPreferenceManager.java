@@ -200,7 +200,7 @@ public class FontViewerPreferenceManager {
         }
     }
 
-    // ★ دالتان عامتان (Generic) للحفظ والاسترجاع حسب وسم المحور، تُستخدمان من FontViewerFragment
+    // ★ دالتان عامتان (Generic) للحفظ والاسترجاع حسب وسم المحور، تُستخدمان من FontViewerRepository
     //   بدل استدعاء الدالة المخصصة لكل محور يدوياً في كل مرة ★
     public void saveFontAxisValue(String axisTag, float value) {
         if (VariableFontAxisExtractor.AXIS_WGHT.equals(axisTag)) {

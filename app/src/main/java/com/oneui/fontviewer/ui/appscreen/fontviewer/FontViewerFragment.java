@@ -40,22 +40,18 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import com.oneui.fontviewer.ui.core.dialog.FontSizeDialog;
 import com.oneui.fontviewer.ui.core.dialog.AxisInfoDialog;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.utils.variable.VariableFontAxisExtractor;
 import com.oneui.fontviewer.data.fontviewer.FontPrefetcher;
-import com.oneui.fontviewer.data.settings.SettingsRepository;
-import com.oneui.fontviewer.data.fontviewer.FontViewerFileManager;
-import com.oneui.fontviewer.data.fontviewer.FontViewerPreferenceManager;
-import com.oneui.fontviewer.data.systemfont.SystemFontCache;
-import com.oneui.fontviewer.utils.metadata.FontMetadataReader;
+import com.oneui.fontviewer.data.fontviewer.FontViewerRepository;
+import com.oneui.fontviewer.ui.core.utils.AxisLabelProvider;
+import com.oneui.fontviewer.ui.core.utils.FontLabelFormatter;
 import com.oneui.fontviewer.ui.core.viewmodel.FontPreviewSettingsViewModel;
-import com.oneui.fontviewer.utils.metadata.FontWeightWidthExtractor;
 import com.oneui.fontviewer.ui.appscreen.fontviewer.utils.BoldItalicFormatting;
+import com.oneui.fontviewer.utils.variable.InstanceLabelResolver;
 import com.oneui.fontviewer.utils.variable.VariableTypefaceFactory;
 
 public class FontViewerFragment extends Fragment {
@@ -76,19 +72,6 @@ public class FontViewerFragment extends Fragment {
     private static final float DEFAULT_FONT_SIZE   = 34f;
     private static final float MIN_FONT_SIZE       = 12f;
     private static final float MAX_FONT_SIZE       = 520f;
-    private static final float DEFAULT_FONT_WEIGHT = 400f;
-
-    // القيم الافتراضية الاحتياطية لكل محور، تُستخدم فقط اذا تعذّرت قراءة القيمة الافتراضية الفعلية
-    // من جدول fvar الخاص بالخط نفسه
-    private static final Map<String, Float> AXIS_FALLBACK_DEFAULTS = new HashMap<>();
-    static {
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_WGHT, DEFAULT_FONT_WEIGHT);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_WDTH, 100f);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_ITAL, 0f);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_GRAD, 0f);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_ROND, 0f);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_MONO, 0f);
-    }
 
     private static float sSessionFontSize = -1f;
 
@@ -129,11 +112,9 @@ public class FontViewerFragment extends Fragment {
 
     private OnFontChangedListener fontChangedListener;
 
-    private final ExecutorService bgExecutor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private FontViewerFileManager fileManager;
-    private FontViewerPreferenceManager preferenceManager;
+    private FontViewerViewModel viewModel;
     private FontPreviewSettingsViewModel settingsViewModel;
     private BoldItalicFormatting formattingHelper = new BoldItalicFormatting();
 
@@ -182,9 +163,6 @@ public class FontViewerFragment extends Fragment {
         if (context instanceof OnFontChangedListener) {
             fontChangedListener = (OnFontChangedListener) context;
         }
-
-        fileManager    = new FontViewerFileManager(context);
-        preferenceManager = new FontViewerPreferenceManager(context);
     }
 
     @Override
@@ -199,6 +177,7 @@ public class FontViewerFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
+        viewModel = new ViewModelProvider(this).get(FontViewerViewModel.class);
         settingsViewModel = new ViewModelProvider(requireActivity()).get(FontPreviewSettingsViewModel.class);
 
         currentFontSize = (sSessionFontSize > 0f) ? sSessionFontSize : DEFAULT_FONT_SIZE;
@@ -339,11 +318,6 @@ public class FontViewerFragment extends Fragment {
         allAxisUis               = null;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        bgExecutor.shutdownNow();
-    }
     private void onFontSizeChanged(float newSize) {
         currentFontSize = newSize;
         applyFontSize();
@@ -377,7 +351,7 @@ public class FontViewerFragment extends Fragment {
             return;
         }
 
-        preferenceManager.saveFontAxisValue(axisTag, newValue);
+        viewModel.saveFontAxisValue(axisTag, newValue);
 
         ValueAnimator runningAnimator = axisAnimators.get(axisTag);
         if (runningAnimator != null && runningAnimator.isRunning()) {
@@ -411,17 +385,13 @@ public class FontViewerFragment extends Fragment {
                 currentAxisValues.put(axisTag, newValue);
 
                 // بناء Typeface النهائي في الخلفية لضمان استقرار خصائص الخط عند تغيير حجمه أو محاوره لاحقاً
-                final Map<String, Float> snapshot = new LinkedHashMap<>(currentAxisValues);
-                bgExecutor.execute(() -> {
-                    Typeface finalTypeface;
-                    if (isSystemFont) {
-                        finalTypeface = SystemFontCache.getInstance()
-                                .getTypefaceWithAxes(currentFontPath, snapshot, currentTtcIndex);
-                    } else {
-                        finalTypeface = VariableTypefaceFactory.createTypefaceWithAxes(fontFile, snapshot, currentTtcIndex);
-                    }
+                final String rebuildPath = currentFontPath;
+                if (rebuildPath == null) {
+                    return;
+                }
+                viewModel.rebuildTypeface(rebuildPath, currentAxisValues, currentTtcIndex, isSystemFont, finalTypeface -> {
                     if (finalTypeface != null) {
-                        mainHandler.post(() -> currentTypeface = finalTypeface);
+                        currentTypeface = finalTypeface;
                     }
                 });
             }
@@ -436,7 +406,7 @@ public class FontViewerFragment extends Fragment {
             return;
         }
 
-        String previewText = SettingsRepository.getPreviewText(requireContext());
+        String previewText = viewModel.getPreviewText();
         previewSentence.setText(previewText);
 
         if (currentTypeface != null) {
@@ -544,8 +514,7 @@ public class FontViewerFragment extends Fragment {
             originalFontPath = extractRealPathFromUri(path);
         }
 
-        preferenceManager.saveLastViewedFont(path, fileName, realName);
-        preferenceManager.saveLastViewedFontOriginalPath(originalFontPath);
+        viewModel.saveLastViewedFont(path, fileName, realName, originalFontPath);
 
         notifyFontChangedImmediate();
 
@@ -561,7 +530,7 @@ public class FontViewerFragment extends Fragment {
 
         // ★ لم تكن البيانات جاهزة: نطبّق الخط فوراً من الذاكرة المؤقتة (Instant Cache Hit) إن وُجد، فلا يظهر الخط الافتراضي،
         //   ثم نتابع التحميل الكامل في الخلفية كالمعتاد. اذا لم تُنشأ الواجهة بعد يُطبَّق في onViewCreated عبر updatePreviewTexts ★
-        Typeface cachedTypeface = FontPrefetcher.getCachedTypeface(path, ttcIndex, isSystemFont);
+        Typeface cachedTypeface = viewModel.getCachedTypeface(path, ttcIndex, isSystemFont);
         if (cachedTypeface != null) {
             currentTypeface = cachedTypeface;
             if (previewSentence != null) {
@@ -583,7 +552,7 @@ public class FontViewerFragment extends Fragment {
             return false;
         }
 
-        FontPrefetcher.PrefetchedFont data = FontPrefetcher.take(context, path, ttcIndex, systemFont);
+        FontPrefetcher.PrefetchedFont data = viewModel.takePrefetched(AxisLabelProvider.localeTagsOf(context), path, ttcIndex, systemFont);
         if (data == null) {
             Log.d(TAG, "Prefetch miss - falling back to background load: " + path);
             return false;
@@ -591,9 +560,7 @@ public class FontViewerFragment extends Fragment {
         Log.d(TAG, "Prefetch hit - applying font synchronously: " + path);
 
         // خط جديد: كل محاوره تعود الى قيمها الافتراضية ونحفظها (نفس ما يفعله التحميل الخلفي عند resetToDefaults)
-        for (Map.Entry<String, Float> entry : data.axisDefaults.entrySet()) {
-            preferenceManager.saveFontAxisValue(entry.getKey(), entry.getValue());
-        }
+        viewModel.saveFontAxisValues(data.axisDefaults);
 
         currentTypeface = data.typeface;
         isVariableFont  = data.isVariable;
@@ -633,17 +600,7 @@ public class FontViewerFragment extends Fragment {
     }
 
     private String extractRealPathFromUri(String pathOrUri) {
-        if (pathOrUri == null) return null;
-
-        if (pathOrUri.startsWith("content://")) {
-            Uri uri = Uri.parse(pathOrUri);
-            String realPath = fileManager.getRealPathFromUri(uri);
-            if (realPath != null && !realPath.isEmpty()) {
-                return realPath;
-            }
-        }
-
-        return pathOrUri;
+        return viewModel.resolveOriginalPath(pathOrUri);
     }
 
     private void notifyFontChangedImmediate() {
@@ -671,146 +628,78 @@ public class FontViewerFragment extends Fragment {
      * 3) غير ذلك (فتح آخر خط تم عرضه عند فتح التطبيق): نستخدم آخر قيمة محفوظة لهذا المحور.
      */
     private void loadFontFromPathWithAxes(String path, Map<String, Float> restoreAxisValues, boolean resetToDefaults) {
-        bgExecutor.execute(() -> {
-            try {
-                File fontFile = new File(path);
-                if (!fontFile.exists()) {
-                    mainHandler.post(this::resetFontDisplay);
-                    return;
-                }
+        Context axisValuesContext = getContext();
+        if (axisValuesContext == null) {
+            return;
+        }
+        // Context يُستخدم لقراءة أسماء قيم المحاور من strings.xml حسب لغة التطبيق
+        InstanceLabelResolver axisLabels = AxisLabelProvider.of(axisValuesContext);
 
-                boolean isVar = VariableFontAxisExtractor.isVariableFont(fontFile, currentTtcIndex);
-                // Context يُستخدم لقراءة أسماء قيم المحاور من strings.xml حسب لغة التطبيق
-                Context axisValuesContext = requireContext();
+        viewModel.loadFont(path, currentTtcIndex, isSystemFont, restoreAxisValues, resetToDefaults, axisLabels, result -> {
+            switch (result.status) {
+                case FILE_MISSING:
+                    resetFontDisplay();
+                    break;
 
-                // خريطة وسم المحور الى قائمة القيم المسمّاة المتاحة له
-                Map<String, List<VariableFontAxisExtractor.VariableInstance>> axisInstancesMap = new LinkedHashMap<>();
-                // القيم المختارة فعلياً لكل محور مدعوم
-                Map<String, Float> resolvedAxisValues = new LinkedHashMap<>();
+                case SUCCESS:
+                    currentTypeface = result.typeface;
+                    isVariableFont  = result.isVariable;
 
-                if (isVar) {
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_WGHT, VariableFontAxisExtractor.extractVariableInstances(axisValuesContext, fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_WDTH, VariableFontAxisExtractor.extractWidthInstances(axisValuesContext, fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_ITAL, VariableFontAxisExtractor.extractItalicInstances(axisValuesContext, fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_GRAD, VariableFontAxisExtractor.extractGradeInstances(axisValuesContext, fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_ROND, VariableFontAxisExtractor.extractRoundnessInstances(axisValuesContext, fontFile, currentTtcIndex));
-                    axisInstancesMap.put(VariableFontAxisExtractor.AXIS_MONO, VariableFontAxisExtractor.extractMonoInstances(axisValuesContext, fontFile, currentTtcIndex));
+                    currentAxisValues.clear();
+                    currentAxisValues.putAll(result.resolvedAxisValues);
 
-                    for (Map.Entry<String, List<VariableFontAxisExtractor.VariableInstance>> entry : axisInstancesMap.entrySet()) {
-                        String axisTag = entry.getKey();
-                        List<VariableFontAxisExtractor.VariableInstance> instances = entry.getValue();
-
-                        if (instances == null || instances.isEmpty()) {
-                            continue;
-                        }
-
-                        Float fallbackBoxed = AXIS_FALLBACK_DEFAULTS.get(axisTag);
-                        float fallback = fallbackBoxed != null ? fallbackBoxed : 0f;
-                        float fontDefault = VariableFontAxisExtractor.readAxisDefaultValue(fontFile, currentTtcIndex, axisTag, fallback);
-
-                        float resolvedValue;
-                        if (restoreAxisValues != null && restoreAxisValues.containsKey(axisTag)) {
-                            resolvedValue = restoreAxisValues.get(axisTag);
-                        } else if (resetToDefaults) {
-                            resolvedValue = fontDefault;
-                            preferenceManager.saveFontAxisValue(axisTag, resolvedValue);
-                        } else {
-                            resolvedValue = preferenceManager.getFontAxisValue(axisTag, fontDefault);
-                        }
-
-                        resolvedAxisValues.put(axisTag, resolvedValue);
-                    }
-                }
-
-                Typeface typeface;
-
-                try {
-                    if (isSystemFont) {
-                        SystemFontCache cache = SystemFontCache.getInstance();
-                        typeface = cache.getTypefaceWithAxes(path, resolvedAxisValues, currentTtcIndex);
+                    if (result.isVariable && !result.resolvedAxisValues.isEmpty()) {
+                        setupAxisSpinners(result.axisInstancesMap);
                     } else {
-                        typeface = VariableTypefaceFactory.createTypefaceWithAxes(fontFile, resolvedAxisValues, currentTtcIndex);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "★ Typeface creation failed - font might be corrupted", e);
-                    mainHandler.post(() -> {
-                        currentFontRealName = null;
-                        currentTypeface     = null;
-
-                        if (fontChangedListener != null) {
-                            fontChangedListener.onFontChanged(currentFontRealName, currentFontFileName);
-                            Log.d(TAG, "★ Updated title to 'Unknown Font' for corrupted font");
-                        }
-
-                        hideAxisUi();
-
-                        Typeface defaultTypeface = Typeface.DEFAULT;
-                        if (previewSentence != null) {
-                            previewSentence.setTypeface(defaultTypeface);
-                        }
-
-                        Toast.makeText(requireContext(),
-                            getString(R.string.font_viewer_error_loading_font) +
-                            " (" + getString(R.string.unknown_font) + ")",
-                            Toast.LENGTH_LONG).show();
-                    });
-                    return;
-                }
-
-                if (typeface != null) {
-                    final Typeface finalTypeface   = typeface;
-                    final boolean finalIsVariable  = isVar;
-                    final Map<String, List<VariableFontAxisExtractor.VariableInstance>> finalInstancesMap = axisInstancesMap;
-                    final Map<String, Float> finalResolvedValues = resolvedAxisValues;
-
-                    mainHandler.post(() -> {
-                        currentTypeface = finalTypeface;
-                        isVariableFont  = finalIsVariable;
-
-                        currentAxisValues.clear();
-                        currentAxisValues.putAll(finalResolvedValues);
-
-                        if (finalIsVariable && !finalResolvedValues.isEmpty()) {
-                            setupAxisSpinners(finalInstancesMap);
-                        } else {
-                            showWeightLabel(currentWeightWidthLabel);
-                        }
-
-                        applyFontToPreviewTexts();
-                        Log.d(TAG, "Font typeface loaded and applied successfully");
-                    });
-                } else {
-                    throw new Exception("Failed to create Typeface - returned null");
-                }
-
-            } catch (Exception e) {
-                mainHandler.post(() -> {
-                   
-                    currentFontRealName = null;
-
-
-                    if (fontChangedListener != null) {
-                        fontChangedListener.onFontChanged(currentFontRealName, currentFontFileName);
-                        Log.d(TAG, "★ Updated title to 'Unknown Font' after general error");
+                        showWeightLabel(currentWeightWidthLabel);
                     }
 
-                    hideAxisUi();
+                    applyFontToPreviewTexts();
+                    Log.d(TAG, "Font typeface loaded and applied successfully");
+                    break;
 
-                    currentTypeface = null;
-                    Typeface defaultTypeface = Typeface.DEFAULT;
-                    if (previewSentence != null) {
-                        previewSentence.setTypeface(defaultTypeface);
-                    }
-
-                    Toast.makeText(requireContext(),
-                        getString(R.string.font_viewer_error_loading_font) +
-                        " (" + getString(R.string.unknown_font) + ")",
-                        Toast.LENGTH_SHORT).show();
-
-                    Log.e(TAG, "Error creating typeface from path: " + path, e);
-                });
+                default:
+                    onFontLoadFailed(path, result);
+                    break;
             }
         });
+    }
+
+    /**
+     * يعرض حالة الفشل: الخط تالف (TYPEFACE_ERROR) أو خطأ عام (ERROR). في الحالتين يصبح اسم الخط "غير معروف"
+     * وتُخفى بطاقات المحاور ويُعرض الخط الافتراضي، مع رسالة طويلة للخط التالف وقصيرة للخطأ العام.
+     */
+    private void onFontLoadFailed(String path, FontViewerRepository.LoadResult result) {
+        boolean corruptedFont = result.status == FontViewerRepository.LoadStatus.TYPEFACE_ERROR;
+
+        currentFontRealName = null;
+        currentTypeface     = null;
+
+        if (fontChangedListener != null) {
+            fontChangedListener.onFontChanged(currentFontRealName, currentFontFileName);
+            Log.d(TAG, corruptedFont
+                    ? "★ Updated title to 'Unknown Font' for corrupted font"
+                    : "★ Updated title to 'Unknown Font' after general error");
+        }
+
+        hideAxisUi();
+
+        Typeface defaultTypeface = Typeface.DEFAULT;
+        if (previewSentence != null) {
+            previewSentence.setTypeface(defaultTypeface);
+        }
+
+        Context context = getContext();
+        if (context != null) {
+            Toast.makeText(context,
+                context.getString(R.string.font_viewer_error_loading_font) +
+                " (" + context.getString(R.string.unknown_font) + ")",
+                corruptedFont ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
+        }
+
+        if (!corruptedFont) {
+            Log.e(TAG, "Error creating typeface from path: " + path, result.error);
+        }
     }
 
 
@@ -926,7 +815,7 @@ public class FontViewerFragment extends Fragment {
 
         variableAxesContainer.setVisibility(View.GONE);
 
-        String displayLabel = FontWeightWidthExtractor.formatLabel(weightLabelText.getContext(), label);
+        String displayLabel = FontLabelFormatter.formatLabel(weightLabelText.getContext(), label);
 
         if (displayLabel != null && !displayLabel.isEmpty()) {
             weightLabelText.setText(displayLabel);
@@ -942,52 +831,39 @@ public class FontViewerFragment extends Fragment {
     }
 
     public void loadFontFromUri(Uri uri, String fileName) {
-        originalFontPath = fileManager.getRealPathFromUri(uri);
+        originalFontPath = viewModel.getRealPathFromUri(uri);
         if (originalFontPath == null || originalFontPath.isEmpty()) {
             originalFontPath = android.net.Uri.decode(uri.toString());
         }
         isSystemFont     = false;
 
-        bgExecutor.execute(() -> {
-            File copiedFont = fileManager.copyFontForViewing(uri, fileName);
+        viewModel.importFont(uri, fileName, imported -> {
+            if (!isAdded()) {
+                return;
+            }
 
-            if (copiedFont != null && copiedFont.exists()) {
-                String realName = null;
-
-                try {
-                    realName = FontMetadataReader.extractFontName(copiedFont, 0);
-                    currentWeightWidthLabel = FontWeightWidthExtractor.extract(copiedFont, 0);
-                } catch (Exception e) {
-                    Log.e(TAG, "Failed to extract font metadata from URI", e);
-                }
+            if (imported != null) {
+                File copiedFont = imported.file;
+                String realName = imported.realName;
+                currentWeightWidthLabel = imported.weightWidthLabel;
 
                 if (realName == null || realName.isEmpty() || "Unknown Font".equals(realName) || getString(R.string.unknown_font).equals(realName)) {
                     String finalFileName = fileName != null ? fileName : copiedFont.getName();
-                    realName = null;
 
-                    final String finalRealName = realName;
-                    mainHandler.post(() -> {
-                        loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
+                    loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, null, 0, false);
 
-                        Toast.makeText(requireContext(),
-                            R.string.toast_font_name_extraction_warning,
-                            Toast.LENGTH_SHORT).show();
-                    });
+                    Toast.makeText(requireContext(),
+                        R.string.toast_font_name_extraction_warning,
+                        Toast.LENGTH_SHORT).show();
                 } else {
                     final String finalFileName = fileName != null ? fileName : copiedFont.getName();
-                    final String finalRealName = realName;
 
-
-                    mainHandler.post(() -> {
-                        loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, finalRealName, 0, false);
-                    });
+                    loadFontFromPath(copiedFont.getAbsolutePath(), finalFileName, realName, 0, false);
                 }
             } else {
-                mainHandler.post(() -> {
-                    Toast.makeText(requireContext(),
-                            getString(R.string.font_viewer_error_loading_font),
-                            Toast.LENGTH_SHORT).show();
-                });
+                Toast.makeText(requireContext(),
+                        getString(R.string.font_viewer_error_loading_font),
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -1065,50 +941,34 @@ public class FontViewerFragment extends Fragment {
         // قراءة آخر خط عُرض (الإعدادات + فحص الملف + استخراج وزنه وعرضه من الملف) كانت تتم على الخيط الرئيسي أثناء
         // إنشاء الشاشة. بعد إعادة تشغيل الجهاز تكون ملفات الخطوط خارج ذاكرة النظام المؤقتة، فتتأخر القراءة وتتجمد
         // الواجهة. لذلك تُنفَّذ الآن في الخلفية، ثم تُطبَّق النتيجة على الخيط الرئيسي.
-        bgExecutor.execute(() -> {
-            String lastPath     = preferenceManager.getLastViewedFontPath();
-            String lastFileName = preferenceManager.getLastViewedFontFileName();
-            String lastRealName = preferenceManager.getLastViewedFontRealName();
-
-            if (lastPath != null && !lastPath.isEmpty()) {
-                File localFile = new File(lastPath);
-                if (localFile.exists()) {
-                    final String weightWidthLabel = FontWeightWidthExtractor.extract(localFile, 0);
-
-                    String lastOriginalPath = preferenceManager.getLastViewedFontOriginalPath();
-                    final String resolvedOriginalPath = (lastOriginalPath != null && !lastOriginalPath.isEmpty())
-                            ? lastOriginalPath
-                            : extractRealPathFromUri(lastPath);
-
-                    mainHandler.post(() -> {
-                        // الشاشة أُغلقت، أو اختار المستخدم خطاً آخر أثناء القراءة في الخلفية: لا نكتب فوق اختياره
-                        if (!isAdded() || (currentFontPath != null && !currentFontPath.isEmpty())) {
-                            return;
-                        }
-
-                        currentFontPath     = lastPath;
-                        currentFontFileName = lastFileName;
-                        currentFontRealName = lastRealName;
-                        currentTtcIndex     = 0;
-                        isSystemFont        = false;
-                        currentWeightWidthLabel = weightWidthLabel;
-
-                        if (currentFontRealName != null && (currentFontRealName.isEmpty() || currentFontRealName.equals(getString(R.string.unknown_font)))) {
-                            currentFontRealName = null;
-                        }
-
-                        if (originalFontPath == null || originalFontPath.isEmpty()) {
-                            originalFontPath = resolvedOriginalPath;
-                        }
-
-                        notifyFontChangedImmediate();
-                        // اعادة فتح آخر خط تم عرضه: نستخدم آخر قيمة محفوظة لكل محور من محاوره
-                        loadFontFromPathWithAxes(lastPath, null, false);
-                    });
-                } else {
-                    preferenceManager.clearLastViewedFont();
-                }
+        viewModel.loadLastViewedFont(last -> {
+            if (last == null) {
+                return;
             }
+
+            // الشاشة أُغلقت، أو اختار المستخدم خطاً آخر أثناء القراءة في الخلفية: لا نكتب فوق اختياره
+            if (!isAdded() || (currentFontPath != null && !currentFontPath.isEmpty())) {
+                return;
+            }
+
+            currentFontPath     = last.path;
+            currentFontFileName = last.fileName;
+            currentFontRealName = last.realName;
+            currentTtcIndex     = 0;
+            isSystemFont        = false;
+            currentWeightWidthLabel = last.weightWidthLabel;
+
+            if (currentFontRealName != null && (currentFontRealName.isEmpty() || currentFontRealName.equals(getString(R.string.unknown_font)))) {
+                currentFontRealName = null;
+            }
+
+            if (originalFontPath == null || originalFontPath.isEmpty()) {
+                originalFontPath = last.originalPath;
+            }
+
+            notifyFontChangedImmediate();
+            // اعادة فتح آخر خط تم عرضه: نستخدم آخر قيمة محفوظة لكل محور من محاوره
+            loadFontFromPathWithAxes(last.path, null, false);
         });
     }
 
@@ -1117,35 +977,8 @@ public class FontViewerFragment extends Fragment {
             return new HashMap<>();
         }
 
-        File fontFile = new File(currentFontPath);
-
-        Map<String, String> metadata = FontMetadataReader.extractMetadataWithTtcIndex(fontFile, currentTtcIndex);
-
-        if (metadata == null) {
-            metadata = new HashMap<>();
-        }
-
-        String displayPath = (originalFontPath != null && !originalFontPath.isEmpty())
-            ? originalFontPath
-            : currentFontPath;
-
-        metadata.put("Path", displayPath);
-        metadata.put("FileName", currentFontFileName != null ? currentFontFileName : "");
-
-        if (!metadata.containsKey("FullName")) {
-            if (currentFontRealName == null || currentFontRealName.isEmpty() || currentFontRealName.equals(getString(R.string.unknown_font))) {
-                metadata.put("FullName", getString(R.string.unknown_font));
-                metadata.put("Warning", "Font metadata could not be extracted - file may be corrupted");
-            } else {
-                metadata.put("FullName", currentFontRealName);
-            }
-        }
-
-        if (currentTtcIndex > 0) {
-            metadata.put("TTC Index", String.valueOf(currentTtcIndex));
-        }
-
-        return metadata;
+        return viewModel.buildMetadata(currentFontPath, originalFontPath, currentFontFileName,
+                currentFontRealName, currentTtcIndex, getString(R.string.unknown_font));
     }
 
     @Override
