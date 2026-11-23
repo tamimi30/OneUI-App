@@ -3,12 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:theme="@style/Theme.MaterialComponents.DayNight"
-    style="@style/AxisCardStyle"
-    android:layout_marginTop="16dp"
-    android:layout_marginBottom="16dp"
+    android:layout_marginTop="13dp"
+    android:layout_marginBottom="2dp"
     android:layout_marginEnd="13dp"
-    android:visibility="gone">
+    android:visibility="gone"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/oui_list_divider_color"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
