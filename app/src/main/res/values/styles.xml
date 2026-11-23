@@ -28,15 +28,6 @@
         <item name="cardCornerRadius">28dp</item>
     </style>
 
-    <!-- Axis card style (بطاقات محاور الخط المتغير في الأعلى) -->
-    <style name="AxisCardStyle" parent="Widget.MaterialComponents.CardView">
-        <item name="cardBackgroundColor">@color/fab_bg_color</item>
-        <item name="cardElevation">6dp</item>
-        <item name="strokeColor">@color/fab_stroke_color</item>
-        <item name="strokeWidth">2.0px</item>
-        <item name="cardCornerRadius">18dp</item>
-    </style>
-
     <!-- AppInfoLayout -->
     <style name="OneUI.AppInfoButton" parent="Widget.AppCompat.TextView">
         <item name="android:layout_width">wrap_content</item>
