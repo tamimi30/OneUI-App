@@ -1,0 +1,663 @@
+package com.oneui.fontviewer.data;
+
+import android.content.Context;
+import android.util.Log;
+
+import androidx.datastore.preferences.core.MutablePreferences;
+import androidx.datastore.preferences.core.Preferences;
+import androidx.datastore.preferences.core.PreferencesFactory;
+import androidx.datastore.preferences.core.PreferencesKeys;
+import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
+import androidx.datastore.rxjava3.RxDataStore;
+
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.functions.Function;
+import io.reactivex.rxjava3.processors.BehaviorProcessor;
+import io.reactivex.rxjava3.processors.FlowableProcessor;
+
+/**
+ * AppDataStore - the single app-wide DataStore.
+ * Holds the user settings and the persisted state of each feature
+ * (local/system/favorite lists, sorting, font viewer).
+ * All SharedPreferences removed and replaced with DataStore.
+ * Note: the persisted file name stays "settings" (DATASTORE_NAME) so existing user data is kept.
+ */
+public class AppDataStore {
+    
+    private static final String TAG = "AppDataStore";
+    private static final String DATASTORE_NAME = "settings";
+    private static volatile AppDataStore INSTANCE;
+
+    private final RxDataStore<Preferences> dataStore;
+
+    // ★ نسخة محفوظة في الذاكرة من آخر إعدادات قُرئت من القرص ★
+    // السبب: أجزاء كثيرة من التطبيق تستدعي blockingFirst() على الخيط الرئيسي أثناء الإقلاع
+    // (Application وSortManager ومدراء التفضيلات والمحوّلات وattachBaseContext ...)، وكل استدعاء منها
+    // كان يمر عبر طابور DataStore وخيوط الـ IO ويُبقي الخيط الرئيسي ينتظر. بعد إعادة تشغيل الجهاز يكون
+    // القرص والمعالج مشغولين بإقلاع النظام، فتتراكم هذه الانتظارات المتتالية حتى تتجاوز 5 ثوانٍ ويظهر
+    // "التطبيق لا يستجيب" (ANR). الآن يُقرأ الملف مرة واحدة فقط في الخلفية عند إنشاء الكائن،
+    // وتعود كل القراءات التالية فورياً من الذاكرة، مع بقاء كل Flowable يتلقى التحديثات كما كان.
+    private final BehaviorProcessor<Preferences> snapshotSource = BehaviorProcessor.create();
+    private final FlowableProcessor<Preferences> snapshot = snapshotSource.toSerialized();
+
+    // Core keys
+    private final Preferences.Key<Integer> KEY_LANGUAGE_MODE;
+    private final Preferences.Key<Integer> KEY_THEME_MODE;
+    private final Preferences.Key<Boolean> KEY_THEME_AUTO;
+    private final Preferences.Key<Boolean> KEY_FONT_PREVIEW_ENABLED;
+    private final Preferences.Key<Boolean> KEY_TRANSLATION_ENABLED;
+    private final Preferences.Key<String> KEY_PREVIEW_TEXT;
+    private final Preferences.Key<String> KEY_LAST_OPENED_FONT_PATH;
+    private final Preferences.Key<String> KEY_FOLDER_PATH;
+
+    
+    
+    // Local fonts keys (Local fonts)
+    private final Preferences.Key<String> KEY_SORT_TYPE;
+    private final Preferences.Key<Boolean> KEY_SORT_ASCENDING;
+    private final Preferences.Key<String> KEY_LAST_OPENED_SYSTEM_FONT_PATH;
+
+    // ★ System fonts sort keys — منفصلة تماماً عن مفاتيح المجلد المحلي ★
+    private final Preferences.Key<String> KEY_SYSTEM_SORT_TYPE;
+    private final Preferences.Key<Boolean> KEY_SYSTEM_SORT_ASCENDING;
+
+    // ★ Favorites sort keys — منفصلة تماماً لتجنب أي تعارض مع القوائم الأخرى ★
+    private final Preferences.Key<String> KEY_FAVORITES_SORT_TYPE;
+    private final Preferences.Key<Boolean> KEY_FAVORITES_SORT_ASCENDING;
+
+    // ★ Favorites last opened font key — منفصل تماماً عن مفتاح الخطوط المحلية ★
+    private final Preferences.Key<String> KEY_LAST_OPENED_FAVORITE_FONT_PATH;
+    
+    // Font viewer keys
+    private final Preferences.Key<String> KEY_VIEWER_FONT_PATH;
+    private final Preferences.Key<String> KEY_VIEWER_FILE_NAME;
+    private final Preferences.Key<String> KEY_VIEWER_REAL_NAME;
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_WEIGHT;
+
+    // ★ مفاتيح محاور الخط المتغير الإضافية: العرض، التدرج، الاستدارة، الميل، والتباعد الأحادي ★
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_WIDTH;
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_GRADE;
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_ROUNDNESS;
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_ITALIC_AXIS;
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_MONO;
+    
+    // Default values
+    public static final int DEFAULT_LANGUAGE_MODE = 0;
+    public static final int DEFAULT_THEME_MODE = 0;
+    public static final boolean DEFAULT_THEME_AUTO = true;
+    public static final boolean DEFAULT_FONT_PREVIEW_ENABLED = true;
+    public static final boolean DEFAULT_TRANSLATION_ENABLED = false;
+    public static final String DEFAULT_PREVIEW_TEXT = 
+            "The quick brown fox jumps over the lazy dog.\n\n" +
+            "0123456789";
+    public static final float DEFAULT_VIEWER_FONT_WEIGHT = 400f;
+
+    // ★ القيم الافتراضية لمحاور الخط المتغير الإضافية ★
+    public static final float DEFAULT_VIEWER_FONT_WIDTH       = 100f;
+    public static final float DEFAULT_VIEWER_FONT_GRADE       = 0f;
+    public static final float DEFAULT_VIEWER_FONT_ROUNDNESS   = 0f;
+    public static final float DEFAULT_VIEWER_FONT_ITALIC_AXIS = 0f;
+    public static final float DEFAULT_VIEWER_FONT_MONO        = 0f;
+    
+    
+    private AppDataStore(Context context) {
+        dataStore = new RxPreferenceDataStoreBuilder(
+                context.getApplicationContext(),
+                DATASTORE_NAME
+        ).build();
+        
+        // Initialize core keys
+        KEY_LANGUAGE_MODE = PreferencesKeys.intKey("language_mode");
+        KEY_THEME_MODE = PreferencesKeys.intKey("theme_mode");
+        KEY_THEME_AUTO = PreferencesKeys.booleanKey("theme_auto");
+        KEY_FONT_PREVIEW_ENABLED = PreferencesKeys.booleanKey("font_preview_enabled");
+        KEY_TRANSLATION_ENABLED = PreferencesKeys.booleanKey("translation_enabled");
+        KEY_PREVIEW_TEXT = PreferencesKeys.stringKey("preview_text");
+        KEY_LAST_OPENED_FONT_PATH = PreferencesKeys.stringKey("last_opened_font_path");
+        KEY_FOLDER_PATH = PreferencesKeys.stringKey("folder_path");
+
+        
+        
+        // Initialize FontList (Local) keys
+        KEY_SORT_TYPE = PreferencesKeys.stringKey("sort_type");
+        KEY_SORT_ASCENDING = PreferencesKeys.booleanKey("sort_ascending");
+        KEY_LAST_OPENED_SYSTEM_FONT_PATH = PreferencesKeys.stringKey("last_opened_system_font_path");
+
+        // ★ Initialize System Font sort keys ★
+        KEY_SYSTEM_SORT_TYPE = PreferencesKeys.stringKey("system_sort_type");
+        KEY_SYSTEM_SORT_ASCENDING = PreferencesKeys.booleanKey("system_sort_ascending");
+
+        // ★ Initialize Favorites sort keys ★
+        KEY_FAVORITES_SORT_TYPE = PreferencesKeys.stringKey("favorites_sort_type");
+        KEY_FAVORITES_SORT_ASCENDING = PreferencesKeys.booleanKey("favorites_sort_ascending");
+
+        // ★ Initialize Favorites last opened font key ★
+        KEY_LAST_OPENED_FAVORITE_FONT_PATH = PreferencesKeys.stringKey("last_opened_favorite_font_path");
+        
+        // Initialize Font Viewer keys
+        KEY_VIEWER_FONT_PATH = PreferencesKeys.stringKey("viewer_font_path");
+        KEY_VIEWER_FILE_NAME = PreferencesKeys.stringKey("viewer_file_name");
+        KEY_VIEWER_REAL_NAME = PreferencesKeys.stringKey("viewer_real_name");
+        KEY_VIEWER_FONT_WEIGHT = PreferencesKeys.floatKey("viewer_font_weight");
+
+        // ★ Initialize additional variable-axis keys ★
+        KEY_VIEWER_FONT_WIDTH       = PreferencesKeys.floatKey("viewer_font_width");
+        KEY_VIEWER_FONT_GRADE       = PreferencesKeys.floatKey("viewer_font_grade");
+        KEY_VIEWER_FONT_ROUNDNESS   = PreferencesKeys.floatKey("viewer_font_roundness");
+        KEY_VIEWER_FONT_ITALIC_AXIS = PreferencesKeys.floatKey("viewer_font_italic_axis");
+        KEY_VIEWER_FONT_MONO        = PreferencesKeys.floatKey("viewer_font_mono");
+
+        startSnapshotSync();
+    }
+
+    /**
+     * يبدأ اشتراكاً واحداً دائماً على DataStore يُغذّي النسخة المحفوظة في الذاكرة.
+     * القراءة الفعلية من القرص تحدث على خيط DataStore الخاص به، فلا تحجب الخيط الذي أنشأ الكائن.
+     */
+    private void startSnapshotSync() {
+        dataStore.data().subscribe(
+                this::publishSnapshot,
+                error -> {
+                    // تعذّرت قراءة الملف (تلف مثلاً): نمرر إعدادات فارغة ليأخذ كل قارئ قيمه الافتراضية
+                    // بدل أن ينتظر للأبد، وهذا نفس ما كان يحدث سابقاً حين يلتقط المستدعي الاستثناء
+                    Log.e(TAG, "Failed to read settings, falling back to defaults", error);
+                    if (!snapshotSource.hasValue()) {
+                        snapshot.onNext(PreferencesFactory.createEmpty());
+                    }
+                }
+        );
+    }
+
+    /**
+     * ينشر الإعدادات الجديدة للنسخة المحفوظة، ويتجاهل القيمة المطابقة تماماً للحالية
+     * (كما كان DataStore يفعل) حتى لا يتلقى المراقبون تحديثاً مكرراً لا تغيير فيه.
+     */
+    private void publishSnapshot(Preferences prefs) {
+        Preferences current = snapshotSource.getValue();
+        if (current == null || !current.equals(prefs)) {
+            snapshot.onNext(prefs);
+        }
+    }
+
+    /**
+     * مصدر البيانات الذي تقرأ منه كل دوال get...: النسخة المحفوظة في الذاكرة بدل بدء قراءة جديدة من DataStore.
+     * أول قارئ ينتظر فقط إلى أن تصل القراءة الأولى من القرص، وكل من بعده يحصل على القيمة فوراً.
+     */
+    private Flowable<Preferences> data() {
+        return snapshot.onBackpressureLatest();
+    }
+
+    /**
+     * كل الكتابات تمر من هنا: بعد نجاح الحفظ نحدّث النسخة المحفوظة فوراً قبل أن يستلم المستدعي نتيجة النجاح،
+     * فإذا قرأ المستدعي القيمة مباشرة بعد الحفظ (مثل applyTheme بعد setThemeMode) وجد القيمة الجديدة لا القديمة.
+     */
+    private Single<Preferences> update(Function<Preferences, Single<Preferences>> transform) {
+        return dataStore.updateDataAsync(transform).doOnSuccess(this::publishSnapshot);
+    }
+
+    public static AppDataStore getInstance(Context context) {
+        if (INSTANCE == null) {
+            synchronized (AppDataStore.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new AppDataStore(context);
+                }
+            }
+        }
+        return INSTANCE;
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Language Mode
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<Integer> getLanguageMode() {
+        return data().map(prefs -> 
+            prefs.get(KEY_LANGUAGE_MODE) != null ? 
+            prefs.get(KEY_LANGUAGE_MODE) : DEFAULT_LANGUAGE_MODE
+        );
+    }
+    
+    public Single<Preferences> setLanguageMode(int mode) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_LANGUAGE_MODE, mode);
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Theme Mode
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<Integer> getThemeMode() {
+        return data().map(prefs -> 
+            prefs.get(KEY_THEME_MODE) != null ? 
+            prefs.get(KEY_THEME_MODE) : DEFAULT_THEME_MODE
+        );
+    }
+    
+    public Single<Preferences> setThemeMode(int mode) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_THEME_MODE, mode);
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    public Flowable<Boolean> getThemeAuto() {
+        return data().map(prefs -> 
+            prefs.get(KEY_THEME_AUTO) != null ? 
+            prefs.get(KEY_THEME_AUTO) : DEFAULT_THEME_AUTO
+        );
+    }
+    
+    public Single<Preferences> setThemeAuto(boolean auto) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_THEME_AUTO, auto);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    
+    
+    // ════════════════════════════════════════════════════════════
+    // Font Preview
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<Boolean> getFontPreviewEnabled() {
+        return data().map(prefs -> 
+            prefs.get(KEY_FONT_PREVIEW_ENABLED) != null ? 
+            prefs.get(KEY_FONT_PREVIEW_ENABLED) : DEFAULT_FONT_PREVIEW_ENABLED
+        );
+    }
+    
+    public Single<Preferences> setFontPreviewEnabled(boolean enabled) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_FONT_PREVIEW_ENABLED, enabled);
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Translation
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<Boolean> getTranslationEnabled() {
+        return data().map(prefs -> 
+            prefs.get(KEY_TRANSLATION_ENABLED) != null ? 
+            prefs.get(KEY_TRANSLATION_ENABLED) : DEFAULT_TRANSLATION_ENABLED
+        );
+    }
+    
+    public Single<Preferences> setTranslationEnabled(boolean enabled) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_TRANSLATION_ENABLED, enabled);
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Preview Text
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<String> getPreviewText() {
+        return data().map(prefs -> 
+            prefs.get(KEY_PREVIEW_TEXT) != null ? 
+            prefs.get(KEY_PREVIEW_TEXT) : DEFAULT_PREVIEW_TEXT
+        );
+    }
+    
+    public Single<Preferences> setPreviewText(String text) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_PREVIEW_TEXT, text);
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Last Opened Font (Local)
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<String> getLastOpenedFontPath() {
+        return data().map(prefs -> 
+            prefs.get(KEY_LAST_OPENED_FONT_PATH)
+        );
+    }
+    
+    public Single<Preferences> setLastOpenedFontPath(String path) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            if (path != null) {
+                mutablePrefs.set(KEY_LAST_OPENED_FONT_PATH, path);
+            } else {
+                mutablePrefs.remove(KEY_LAST_OPENED_FONT_PATH);
+            }
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Last Opened Font (Favorites)
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<String> getLastOpenedFavoriteFontPath() {
+        return data().map(prefs -> 
+            prefs.get(KEY_LAST_OPENED_FAVORITE_FONT_PATH)
+        );
+    }
+    
+    public Single<Preferences> setLastOpenedFavoriteFontPath(String path) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            if (path != null) {
+                mutablePrefs.set(KEY_LAST_OPENED_FAVORITE_FONT_PATH, path);
+            } else {
+                mutablePrefs.remove(KEY_LAST_OPENED_FAVORITE_FONT_PATH);
+            }
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Folder Path
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<String> getFolderPath() {
+        return data().map(prefs -> 
+            prefs.get(KEY_FOLDER_PATH)
+        );
+    }
+    
+    public Single<Preferences> setFolderPath(String path) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            if (path != null) {
+                mutablePrefs.set(KEY_FOLDER_PATH, path);
+            } else {
+                mutablePrefs.remove(KEY_FOLDER_PATH);
+            }
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Sort Options (Local Folder Fonts)
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<String> getSortType() {
+        return data().map(prefs -> 
+            prefs.get(KEY_SORT_TYPE) != null ? 
+            prefs.get(KEY_SORT_TYPE) : "NAME"
+        );
+    }
+    
+    public Single<Preferences> setSortType(String type) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_SORT_TYPE, type);
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    public Flowable<Boolean> getSortAscending() {
+        return data().map(prefs -> 
+            prefs.get(KEY_SORT_ASCENDING) != null ? 
+            prefs.get(KEY_SORT_ASCENDING) : true
+        );
+    }
+    
+    public Single<Preferences> setSortAscending(boolean ascending) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_SORT_ASCENDING, ascending);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Sort Options (System Fonts) ★ منفصلة تماماً لتجنب التجمد ★
+    // ════════════════════════════════════════════════════════════
+
+    public Flowable<String> getSystemSortType() {
+        return data().map(prefs ->
+            prefs.get(KEY_SYSTEM_SORT_TYPE) != null ? prefs.get(KEY_SYSTEM_SORT_TYPE) : "NAME"
+        );
+    }
+
+    public Single<Preferences> setSystemSortType(String type) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_SYSTEM_SORT_TYPE, type);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Boolean> getSystemSortAscending() {
+        return data().map(prefs ->
+            prefs.get(KEY_SYSTEM_SORT_ASCENDING) != null ? prefs.get(KEY_SYSTEM_SORT_ASCENDING) : true
+        );
+    }
+
+    public Single<Preferences> setSystemSortAscending(boolean ascending) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_SYSTEM_SORT_ASCENDING, ascending);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Sort Options (Favorites) ★ منفصلة تماماً لتجنب أي تعارض ★
+    // ════════════════════════════════════════════════════════════
+
+    public Flowable<String> getFavoritesSortType() {
+        return data().map(prefs ->
+            prefs.get(KEY_FAVORITES_SORT_TYPE) != null ? prefs.get(KEY_FAVORITES_SORT_TYPE) : "NAME"
+        );
+    }
+
+    public Single<Preferences> setFavoritesSortType(String type) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_FAVORITES_SORT_TYPE, type);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Boolean> getFavoritesSortAscending() {
+        return data().map(prefs ->
+            prefs.get(KEY_FAVORITES_SORT_ASCENDING) != null ? prefs.get(KEY_FAVORITES_SORT_ASCENDING) : true
+        );
+    }
+
+    public Single<Preferences> setFavoritesSortAscending(boolean ascending) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_FAVORITES_SORT_ASCENDING, ascending);
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Last Opened System Font
+    // ════════════════════════════════════════════════════════════
+    
+    public Flowable<String> getLastOpenedSystemFontPath() {
+        return data().map(prefs -> 
+            prefs.get(KEY_LAST_OPENED_SYSTEM_FONT_PATH)
+        );
+    }
+    
+    public Single<Preferences> setLastOpenedSystemFontPath(String path) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            if (path != null) {
+                mutablePrefs.set(KEY_LAST_OPENED_SYSTEM_FONT_PATH, path);
+            } else {
+                mutablePrefs.remove(KEY_LAST_OPENED_SYSTEM_FONT_PATH);
+            }
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Last Viewed Font
+    // ════════════════════════════════════════════════════════════
+    
+    public Single<Preferences> setLastViewedFont(String path, String fileName, String realName) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            if (path != null) mutablePrefs.set(KEY_VIEWER_FONT_PATH, path);
+            if (fileName != null) mutablePrefs.set(KEY_VIEWER_FILE_NAME, fileName);
+            if (realName != null) {
+                mutablePrefs.set(KEY_VIEWER_REAL_NAME, realName);
+            } else {
+                mutablePrefs.remove(KEY_VIEWER_REAL_NAME);
+            }
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    public Single<Preferences> clearLastViewedFont() {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.remove(KEY_VIEWER_FONT_PATH);
+            mutablePrefs.remove(KEY_VIEWER_FILE_NAME);
+            mutablePrefs.remove(KEY_VIEWER_REAL_NAME);
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    public Flowable<String> getViewerFontPath() {
+        return data().map(prefs -> prefs.get(KEY_VIEWER_FONT_PATH));
+    }
+    
+    public Flowable<String> getViewerFileName() {
+        return data().map(prefs -> prefs.get(KEY_VIEWER_FILE_NAME));
+    }
+    
+    public Flowable<String> getViewerRealName() {
+        return data().map(prefs -> prefs.get(KEY_VIEWER_REAL_NAME));
+    }
+    
+    
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Font Weight
+    // ════════════════════════════════════════════════════════════
+    
+    public Single<Preferences> setViewerFontWeight(float weight) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_WEIGHT, weight);
+            return Single.just(mutablePrefs);
+        });
+    }
+    
+    public Flowable<Float> getViewerFontWeight() {
+        return data().map(prefs -> 
+            prefs.get(KEY_VIEWER_FONT_WEIGHT) != null ? 
+            prefs.get(KEY_VIEWER_FONT_WEIGHT) : DEFAULT_VIEWER_FONT_WEIGHT
+        );
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Width Axis (wdth)
+    // ════════════════════════════════════════════════════════════
+
+    public Single<Preferences> setViewerFontWidth(float width) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_WIDTH, width);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Float> getViewerFontWidth() {
+        return data().map(prefs ->
+            prefs.get(KEY_VIEWER_FONT_WIDTH) != null ?
+            prefs.get(KEY_VIEWER_FONT_WIDTH) : DEFAULT_VIEWER_FONT_WIDTH
+        );
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Grade Axis (GRAD)
+    // ════════════════════════════════════════════════════════════
+
+    public Single<Preferences> setViewerFontGrade(float grade) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_GRADE, grade);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Float> getViewerFontGrade() {
+        return data().map(prefs ->
+            prefs.get(KEY_VIEWER_FONT_GRADE) != null ?
+            prefs.get(KEY_VIEWER_FONT_GRADE) : DEFAULT_VIEWER_FONT_GRADE
+        );
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Roundness Axis (ROND)
+    // ════════════════════════════════════════════════════════════
+
+    public Single<Preferences> setViewerFontRoundness(float roundness) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_ROUNDNESS, roundness);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Float> getViewerFontRoundness() {
+        return data().map(prefs ->
+            prefs.get(KEY_VIEWER_FONT_ROUNDNESS) != null ?
+            prefs.get(KEY_VIEWER_FONT_ROUNDNESS) : DEFAULT_VIEWER_FONT_ROUNDNESS
+        );
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Italic Axis (ital)
+    // ════════════════════════════════════════════════════════════
+
+    public Single<Preferences> setViewerFontItalicAxis(float italValue) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_ITALIC_AXIS, italValue);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Float> getViewerFontItalicAxis() {
+        return data().map(prefs ->
+            prefs.get(KEY_VIEWER_FONT_ITALIC_AXIS) != null ?
+            prefs.get(KEY_VIEWER_FONT_ITALIC_AXIS) : DEFAULT_VIEWER_FONT_ITALIC_AXIS
+        );
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // Font Viewer - Mono Axis (MONO)
+    // ════════════════════════════════════════════════════════════
+
+    public Single<Preferences> setViewerFontMono(float monoValue) {
+        return update(prefs -> {
+            MutablePreferences mutablePrefs = prefs.toMutablePreferences();
+            mutablePrefs.set(KEY_VIEWER_FONT_MONO, monoValue);
+            return Single.just(mutablePrefs);
+        });
+    }
+
+    public Flowable<Float> getViewerFontMono() {
+        return data().map(prefs ->
+            prefs.get(KEY_VIEWER_FONT_MONO) != null ?
+            prefs.get(KEY_VIEWER_FONT_MONO) : DEFAULT_VIEWER_FONT_MONO
+        );
+    }
+    
+                    }
