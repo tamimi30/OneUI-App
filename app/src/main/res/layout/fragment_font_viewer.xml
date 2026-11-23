@@ -35,8 +35,7 @@
                 <com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="3dp"
+                    android:paddingStart="13dp"
                     android:clipToPadding="false"
                     android:clipChildren="false"
                     android:scrollbars="none"
