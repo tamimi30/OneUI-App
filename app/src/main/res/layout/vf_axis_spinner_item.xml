@@ -8,7 +8,7 @@
     android:layout_marginBottom="2dp"
     android:layout_marginEnd="13dp"
     android:visibility="gone"
-    app:cardBackgroundColor="@android:color/transparent"
+    app:cardBackgroundColor="@color/vf_axis_bg_color"
     app:cardCornerRadius="18dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/oui_list_divider_color"
