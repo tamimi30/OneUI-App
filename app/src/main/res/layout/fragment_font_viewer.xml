@@ -36,6 +36,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingStart="13dp"
+                    android:clipToPadding="false"
+                    android:clipChildren="false"
                     android:scrollbars="none"
                     android:overScrollMode="always">
 
@@ -50,25 +52,6 @@
             </dev.oneuiproject.oneui.widget.RoundLinearLayout>
             
         </LinearLayout>
-        
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:theme="@style/Theme.MaterialComponents.DayNight"
-            app:cardBackgroundColor="@color/fab_bg_color"
-            app:cardCornerRadius="28dp"
-            app:cardElevation="4dp"
-            app:strokeColor="@color/fab_stroke_color"
-            app:strokeWidth="2.0px">
-
-            <LinearLayout
-                android:layout_width="112dp"
-                android:layout_height="56dp"
-                android:theme="@style/AppTheme"
-                android:orientation="vertical"
-                android:gravity="center_vertical" />
-                	
-        </com.google.android.material.card.MaterialCardView>
 
         <dev.oneuiproject.oneui.widget.RoundLinearLayout
             android:layout_width="match_parent"
