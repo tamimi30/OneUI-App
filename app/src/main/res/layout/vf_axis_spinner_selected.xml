@@ -14,5 +14,4 @@
     android:fontFamily="sec-roboto-light"
     android:textColor="@color/switch_btn_text_color"
     android:singleLine="true"
-    android:ellipsize="end"
-    android:gravity="center_vertical" />
+    android:ellipsize="end" />
