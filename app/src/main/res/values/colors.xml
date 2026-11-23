@@ -21,7 +21,7 @@
     
     <color name="fab_bg_color">@color/sesl_menu_popup_background_color</color>
     <color name="fab_stroke_color">#fffcfcfc</color>
-    <color name="vf_axes_bg_color">@color/sesl_white</color>
+    <color name="vf_axis_bg_color">@color/sesl_white</color>
     
     <color name="oui_appinfolayout_button_bg_color">#e4e4e7</color>
     
