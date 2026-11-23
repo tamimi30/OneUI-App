@@ -10,7 +10,6 @@
     android:visibility="gone"
     app:cardBackgroundColor="@color/vf_axis_bg_color"
     app:cardCornerRadius="18dp"
-    app:cardElevation="12dp"
     app:strokeColor="@color/oui_grid_menu_dialog_item_ripple_color"
     app:strokeWidth="1dp">
 
@@ -54,7 +53,7 @@
             android:text="متناسب المسافة"
             app:maxFontLevel="medium"
             android:layout_marginBottom="5dp"
-            android:layout_marginEnd="21dp" />
+            android:layout_marginEnd="22dp" />
 
         <com.oneui.fontviewer.ui.core.widget.OneUiSwitchCompat
             android:id="@+id/axis_switch"
