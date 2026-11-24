@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -41,7 +42,7 @@ import com.oneui.fontviewer.service.OperationNotifications;
 import com.oneui.fontviewer.ui.appscreen.main.navigation.drawer.DrawerListItem;
 import com.oneui.fontviewer.ui.appscreen.main.navigation.NavManager;
 import com.oneui.fontviewer.ui.appscreen.main.navigation.UpdateBadgeController;
-import com.oneui.fontviewer.data.update.UpdateRepository;
+import com.oneui.fontviewer.ui.core.viewmodel.UpdateViewModel;
 import com.oneui.fontviewer.ui.core.base.BaseActivity;
 
 public class MainActivity extends BaseActivity
@@ -143,7 +144,7 @@ public class MainActivity extends BaseActivity
 
         // التحقق من التحديث عند فتح التطبيق فقط (وليس عند إعادة البناء بسبب تغيير اللغة أو الثيم)
         if (savedInstanceState == null) {
-            UpdateRepository.getInstance(this).checkForUpdateOnLaunch();
+            new ViewModelProvider(this).get(UpdateViewModel.class).checkForUpdateOnLaunch();
         }
 
         long elapsedTime = System.currentTimeMillis() - mSplashStartTime;
@@ -317,7 +318,7 @@ public class MainActivity extends BaseActivity
     private void setupUpdateBadge() {
         if (mDrawerLayout != null) {
             new UpdateBadgeController(mDrawerLayout)
-                    .bind(this, UpdateRepository.getInstance(this).getAvailableUpdate());
+                    .bind(this, new ViewModelProvider(this).get(UpdateViewModel.class).getAvailableUpdate());
         }
     }
 

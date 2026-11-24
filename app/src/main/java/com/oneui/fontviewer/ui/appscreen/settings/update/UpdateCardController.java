@@ -3,13 +3,14 @@ package com.oneui.fontviewer.ui.appscreen.settings.update;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.data.update.UpdateRepository;
 import com.oneui.fontviewer.ui.core.update.UpdateLauncher;
+import com.oneui.fontviewer.ui.core.viewmodel.UpdateViewModel;
 import com.oneui.fontviewer.ui.core.widget.preference.UpdateCardPreference;
 
 /**
@@ -29,16 +30,16 @@ public final class UpdateCardController {
     private static final String KEY_UPDATE_CARD = "update_card";
 
     private final PreferenceFragmentCompat mFragment;
-    private final UpdateRepository mRepository;
+    private final UpdateViewModel mViewModel;
 
     public UpdateCardController(@NonNull PreferenceFragmentCompat fragment) {
         mFragment = fragment;
-        mRepository = UpdateRepository.getInstance(fragment.requireContext());
+        mViewModel = new ViewModelProvider(fragment.requireActivity()).get(UpdateViewModel.class);
     }
 
     /** تُستدعى من onCreatePreferences بعد setPreferencesFromResource. */
     public void attach() {
-        boolean shouldShow = mRepository.isUpdateAvailable() && !mRepository.isUpdateCardDismissed();
+        boolean shouldShow = mViewModel.isUpdateAvailable() && !mViewModel.isUpdateCardDismissed();
         if (!shouldShow) {
             removeCard();
             return;
@@ -60,7 +61,7 @@ public final class UpdateCardController {
 
         // إذا اختفى التحديث أثناء فتح الإعدادات (مثلاً أكد التحقق في "حول التطبيق" أنه غير متوفر)
         // نحذف البطاقة فقط. لا نضيفها أبداً بعد بناء الشاشة، انظر تعليق الكلاس.
-        mRepository.getAvailableUpdate().observe(mFragment, update -> {
+        mViewModel.getAvailableUpdate().observe(mFragment, update -> {
             if (update == null) {
                 removeCard();
             }
@@ -68,12 +69,13 @@ public final class UpdateCardController {
     }
 
     private void onNotNowClicked() {
-        mRepository.dismissUpdateCard();
+        mViewModel.dismissUpdateCard();
         removeCard();
     }
 
     private void onUpdateClicked() {
-        UpdateLauncher.open(mFragment.requireContext(), mRepository.getAvailableUpdateNow());
+        UpdateLauncher.open(mFragment.requireContext(), mViewModel.getInstallSource(),
+                mViewModel.getAvailableUpdateNow());
     }
 
     private void removeCard() {

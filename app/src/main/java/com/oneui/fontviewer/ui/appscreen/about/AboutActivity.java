@@ -10,15 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import dev.oneuiproject.oneui.layout.AppInfoLayout;
 import dev.oneuiproject.oneui.widget.Toast;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.data.update.UpdateRepository;
 import com.oneui.fontviewer.data.update.model.UpdateCheckState;
 import com.oneui.fontviewer.ui.appscreen.license.LicensesActivity;
 import com.oneui.fontviewer.ui.core.update.UpdateLauncher;
+import com.oneui.fontviewer.ui.core.viewmodel.UpdateViewModel;
 import com.oneui.fontviewer.utils.update.AppLinks;
 
 public class AboutActivity extends AppCompatActivity {
@@ -26,7 +27,7 @@ public class AboutActivity extends AppCompatActivity {
     private static final String TAG = "AboutActivity";
 
     private AppInfoLayout appInfoLayout;
-    private UpdateRepository updateRepository;
+    private UpdateViewModel updateViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +45,15 @@ public class AboutActivity extends AppCompatActivity {
         // appInfoLayout.addOptionalText("النص هنا");
         // (حُذف النصان التجريبيان Extra 1 و Extra 2 فقط، والمكتبة ما زالت تدعم النصوص الإضافية)
 
-        updateRepository = UpdateRepository.getInstance(this);
+        updateViewModel = new ViewModelProvider(this).get(UpdateViewModel.class);
 
         appInfoLayout.setMainButtonClickListener(new AppInfoLayout.OnClickListener() {
             @Override
             public void onUpdateClicked(View v) {
                 // نفس تطبيقات سامسونج: ننتقل إلى المتجر ونغلق صفحة "حول التطبيق"
                 boolean opened = UpdateLauncher.open(
-                        AboutActivity.this, updateRepository.getAvailableUpdateNow());
+                        AboutActivity.this, updateViewModel.getInstallSource(),
+                        updateViewModel.getAvailableUpdateNow());
                 if (opened) {
                     finish();
                 } else {
@@ -62,14 +64,14 @@ public class AboutActivity extends AppCompatActivity {
 
             @Override
             public void onRetryClicked(View v) {
-                updateRepository.retryCheck();
+                updateViewModel.retryCheck();
             }
         });
 
         // يعرض مؤشر التحميل ثم النتيجة. أول فتح للصفحة في جلسة الإعدادات يتحقق من التحديث،
         // والفتح التالي في نفس الجلسة يعرض النتيجة المحفوظة فوراً بدون مؤشر تحميل.
-        updateRepository.getCheckState().observe(this, this::showCheckState);
-        updateRepository.requestAboutPageCheck();
+        updateViewModel.getCheckState().observe(this, this::showCheckState);
+        updateViewModel.requestAboutPageCheck();
     }
 
     private void showCheckState(UpdateCheckState state) {

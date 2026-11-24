@@ -9,7 +9,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.oneui.fontviewer.data.update.InstallSourceResolver;
 import com.oneui.fontviewer.data.update.model.InstallSource;
 import com.oneui.fontviewer.data.update.model.UpdateInfo;
 import com.oneui.fontviewer.utils.update.AppLinks;
@@ -28,8 +27,8 @@ public final class UpdateLauncher {
     }
 
     /** @return true إذا تم فتح وجهة التحديث بنجاح. */
-    public static boolean open(@NonNull Context context, @Nullable UpdateInfo updateInfo) {
-        InstallSource installSource = InstallSourceResolver.resolve(context);
+    public static boolean open(@NonNull Context context, @NonNull InstallSource installSource,
+                               @Nullable UpdateInfo updateInfo) {
         String packageName = context.getPackageName();
 
         switch (installSource) {
