@@ -254,5 +254,6 @@
     <string name="update_card_update">تحديث</string>
     <string name="update_card_not_now">ليس الآن</string>
     <string name="update_open_store_failed">تعذّر فتح صفحة التحديث</string>
+    <string name="update_check_failed">تعذّر التحقق من التحديثات حالياً. حاول مرة أخرى لاحقاً.</string>
 
 </resources>

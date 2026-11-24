@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -85,6 +86,18 @@ public class AboutActivity extends AppCompatActivity {
             case NO_CONNECTION:
                 appInfoLayout.setStatus(AppInfoLayout.NO_CONNECTION);
                 break;
+            case CHECK_FAILED: {
+                // زر "إعادة المحاولة" في المكتبة مرتبط بالحالة NO_CONNECTION نفسها، فنستخدمها،
+                // ثم نستبدل نصها (يقول إن شبكة الهاتف غير مستقرة) بنص يناسب فشل غير الاتصال.
+                // setStatus يضع النص فوراً، فيمكن تبديله مباشرة بعده
+                appInfoLayout.setStatus(AppInfoLayout.NO_CONNECTION);
+                TextView statusText = appInfoLayout.findViewById(
+                        dev.oneuiproject.oneui.design.R.id.app_info_update_notice);
+                if (statusText != null) {
+                    statusText.setText(R.string.update_check_failed);
+                }
+                break;
+            }
             case CHECKING:
             case IDLE:
             default:

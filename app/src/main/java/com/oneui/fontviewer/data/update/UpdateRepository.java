@@ -221,8 +221,11 @@ public final class UpdateRepository {
         checkInFlight = false;
         Log.w(TAG, "Update check failed: " + error.getMessage());
 
-        // عند فشل التحقق لا نمس المؤشر الحالي: التحديث الذي عرفناه سابقاً يبقى ظاهراً
-        finishCheck(UpdateCheckState.NO_CONNECTION);
+        // عند فشل التحقق لا نمس المؤشر الحالي: التحديث الذي عرفناه سابقاً يبقى ظاهراً.
+        // رفض المصدر للطلب أو ردّه بما لا يُفهم يعني أن الاتصال سليم، فلا نقول للمستخدم إن شبكته غير مستقرة
+        finishCheck(error instanceof UpdateServerException
+                ? UpdateCheckState.CHECK_FAILED
+                : UpdateCheckState.NO_CONNECTION);
     }
 
     private void applyAvailableUpdate(@Nullable UpdateInfo update) {

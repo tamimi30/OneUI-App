@@ -254,5 +254,6 @@
     <string name="update_card_update">Update</string>
     <string name="update_card_not_now">Not now</string>
     <string name="update_open_store_failed">Couldn\'t open the update page</string>
+    <string name="update_check_failed">Can\'t check for updates right now. Please try again later.</string>
 
 </resources>
