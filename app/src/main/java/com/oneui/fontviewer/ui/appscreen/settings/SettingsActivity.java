@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.core.base.BaseActivity;
-import com.oneui.fontviewer.data.settings.SettingsRepository;
+import com.oneui.fontviewer.ui.core.utils.LocaleHelper;
 import com.oneui.fontviewer.ui.core.viewmodel.UpdateViewModel;
 import com.oneui.fontviewer.ui.core.anim.TransitionUtils;
 
@@ -72,7 +72,7 @@ public class SettingsActivity extends BaseActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if (!SettingsRepository.getLocale(this).toLanguageTag().equals(mDisplayedLanguage)) {
+        if (!LocaleHelper.getCurrentLocaleTag(this).equals(mDisplayedLanguage)) {
             // بين وصول التغيير وإعادة بناء الشاشة (~150ms) تتفاعل عناصر الشاشة الحيّة القديمة معه
             // (عناوين الأقسام تقفز، الـ App bar ينطوي ويتوسع...)، فنغطيها بصورة اللقطة حتى تبدأ
             // الشاشة الجديدة.

@@ -30,7 +30,6 @@ import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.core.base.ActivityTracker;
 import com.oneui.fontviewer.ui.appscreen.about.AboutActivity;
 import com.oneui.fontviewer.ui.appscreen.settings.update.UpdateCardController;
-import com.oneui.fontviewer.data.settings.SettingsRepository;
 import com.oneui.fontviewer.ui.core.anim.TransitionUtils;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
@@ -111,7 +110,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return;
         }
 
-        int actualLang = SettingsRepository.getSystemAssignedLanguage(requireContext());
+        int actualLang = viewModel.getSystemAssignedLanguage();
         if (dataStoreLang != actualLang) {
             languagePreference.setValue(String.valueOf(actualLang));
             viewModel.syncLanguageModeFromSystem(actualLang);
@@ -212,7 +211,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 // التقاط صورة للثيم الحالي قبل تغييره (لأنيميشن تغيير الثيم)
                 TransitionUtils.prepareForThemeChange(requireActivity());
 
-                if (mode == SettingsRepository.THEME_DARK) {
+                if (viewModel.isDarkThemeMode(mode)) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -242,8 +241,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     if (enabled) {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                     } else {
-                        int savedMode = SettingsRepository.getThemeMode(mContext);
-                        if (savedMode == SettingsRepository.THEME_DARK) {
+                        int savedMode = viewModel.getSavedThemeMode();
+                        if (viewModel.isDarkThemeMode(savedMode)) {
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                         } else {
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
