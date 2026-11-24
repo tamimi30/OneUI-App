@@ -28,11 +28,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layoutDirection="locale"
-                android:paddingTop="20dp"
-                android:paddingStart="13dp"
                 android:clipToPadding="false"
                 android:clipChildren="false"
-                android:background="@drawable/round_scrollview_bg"
                 android:scrollbars="none"
                 android:overScrollMode="always">
 
@@ -40,6 +37,10 @@
                     android:id="@+id/variable_axes_row"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingTop="20dp"
+                    android:paddingStart="13dp"
+                    android:clipToOutline="true"
+                    android:background="@drawable/round_scrollview_bg"
                     android:layoutDirection="locale" />
 
             </com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView>
@@ -51,6 +52,7 @@
             android:layout_height="match_parent"
             android:paddingVertical="27dp"
             android:paddingHorizontal="24dp"
+            app:roundedCorners="bottom_left|bottom_right"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
