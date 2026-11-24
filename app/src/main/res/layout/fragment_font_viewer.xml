@@ -10,7 +10,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/oui_background_color"
         android:orientation="vertical">
 
         <LinearLayout
@@ -53,6 +52,7 @@
             android:layout_height="match_parent"
             android:paddingVertical="27dp"
             android:paddingHorizontal="24dp"
+            app:roundedCorners="bottom_left|bottom_right"
             android:background="@color/oui_background_color"
             android:orientation="vertical">
 
