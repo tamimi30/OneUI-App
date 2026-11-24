@@ -24,32 +24,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/vf_axes_title" />
-                
-            <dev.oneuiproject.oneui.widget.RoundLinearLayout
+
+            <com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:roundedCorners="top_left|top_right"
-                android:background="@color/oui_background_color"
-                android:orientation="vertical">
+                android:paddingStart="13dp"
+                android:paddingVertical="18dp"
+                android:clipToPadding="false"
+                android:clipChildren="false"
+                android:scrollbars="none"
+                android:overScrollMode="always">
 
-                <com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:id="@+id/variable_axes_row"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="13dp"
-                    android:clipToPadding="false"
-                    android:clipChildren="false"
-                    android:scrollbars="none"
-                    android:overScrollMode="always">
+                    android:layoutDirection="locale" />
 
-                    <LinearLayout
-                        android:id="@+id/variable_axes_row"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layoutDirection="locale" />
-
-                </com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView>
-                
-            </dev.oneuiproject.oneui.widget.RoundLinearLayout>
+            </com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView>
             
         </LinearLayout>
 
