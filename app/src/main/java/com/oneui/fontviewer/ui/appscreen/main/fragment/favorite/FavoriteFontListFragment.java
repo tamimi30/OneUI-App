@@ -36,7 +36,6 @@ import com.oneui.fontviewer.ui.core.widget.layout.OneUiDrawerLayout;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.appscreen.main.navigation.drawer.DrawerListItem;
 import com.oneui.fontviewer.ui.appscreen.main.MainActivity;
-import com.oneui.fontviewer.data.trash.TrashRepository;
 import com.oneui.fontviewer.ui.core.dialog.RenameFontDialog;
 import com.oneui.fontviewer.data.common.list.FontFileInfo;
 import com.oneui.fontviewer.ui.appscreen.main.sort.SortManager;
@@ -44,7 +43,6 @@ import com.oneui.fontviewer.ui.core.widget.layout.SortByItemLayout;
 import com.oneui.fontviewer.ui.appscreen.main.list.UiStateManager;
 import com.oneui.fontviewer.ui.appscreen.main.list.ItemDecoration;
 import com.oneui.fontviewer.ui.appscreen.main.fragment.localfont.recyclerview.LocalFontListAdapter;
-import com.oneui.fontviewer.data.localfont.LocalFontCache;
 import com.oneui.fontviewer.ui.appscreen.main.fragment.localfont.manager.LocalFontSelectionManager;
 import com.oneui.fontviewer.ui.appscreen.main.search.SearchFilterManager;
 import com.oneui.fontviewer.ui.appscreen.main.search.SearchViewModel;
@@ -222,7 +220,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
                 for (FontFileInfoWithMetadata font : favorites) {
                     pathsToPreload.add(font.getPath());
                 }
-                LocalFontCache.getInstance().preloadFonts(pathsToPreload);
+                mViewModel.preloadFonts(pathsToPreload);
             }
         });
 
@@ -327,7 +325,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
     private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        mAdapter = new LocalFontListAdapter(mContext, mExecutor, true);
+        mAdapter = new LocalFontListAdapter(mContext, mExecutor, mViewModel, true);
 
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
 
@@ -509,7 +507,7 @@ public class FavoriteFontListFragment extends Fragment implements AppBarLayout.O
 
         mCurrentProgressDialog.show();
 
-        TrashRepository.OnProgressListener progressListener = (current, total) ->
+        LocalFontListViewModel.OnTrashProgressListener progressListener = (current, total) ->
                 mMainHandler.post(() -> {
                     if (mCurrentProgressDialog != null && mCurrentProgressDialog.isShowing()) {
                         mCurrentProgressDialog.setProgress(current);

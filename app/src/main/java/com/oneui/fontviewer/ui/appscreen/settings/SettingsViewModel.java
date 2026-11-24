@@ -110,6 +110,20 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
 
+    /** اللغة التي سجّلها النظام فعلياً للتطبيق (قراءة مباشرة، وليست من DataStore). */
+    public int getSystemAssignedLanguage() {
+        return SettingsRepository.getSystemAssignedLanguage(getApplication());
+    }
+
+    /** آخر وضع ثيم محفوظ (قراءة مباشرة من DataStore). */
+    public int getSavedThemeMode() {
+        return SettingsRepository.getThemeMode(getApplication());
+    }
+
+    public boolean isDarkThemeMode(int mode) {
+        return mode == SettingsRepository.THEME_DARK;
+    }
+
     public LiveData<Integer> getLanguageMode() {
         return languageMode;
     }

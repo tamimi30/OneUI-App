@@ -4,15 +4,12 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:theme="@style/Theme.MaterialComponents.DayNight"
-    android:layout_marginTop="16dp"
-    android:layout_marginBottom="13dp"
     android:layout_marginEnd="13dp"
     android:visibility="gone"
     app:cardBackgroundColor="@color/vf_axis_bg_color"
     app:cardCornerRadius="20dp"
-    app:cardElevation="12dp"
     app:strokeColor="@color/oui_grid_menu_dialog_item_ripple_color"
-    app:strokeWidth="2.0px">
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -60,9 +57,10 @@
             android:id="@+id/axis_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:layout_marginStart="-11dp"
-            android:layout_marginEnd="-12.8dp"
-            android:layout_marginBottom="-6dp"
+            android:layout_marginEnd="-13dp"
+            android:layout_marginBottom="-7dp"
             android:background="@drawable/vf_axis_spinner_background" />
 
     </LinearLayout>

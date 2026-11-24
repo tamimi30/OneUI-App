@@ -12,6 +12,7 @@ import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -22,7 +23,6 @@ import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.core.base.BaseActivity;
 import com.oneui.fontviewer.ui.core.dialog.FontInfoDialog;
 import com.oneui.fontviewer.ui.core.dialog.FontErrorDialog;
-import com.oneui.fontviewer.data.translation.TranslationRepository;
 import com.oneui.fontviewer.utils.FileUtils;
 import com.oneui.fontviewer.ui.core.anim.FormatBarAnimator;
 import com.oneui.fontviewer.ui.core.widget.drawable.TextDrawable;
@@ -214,17 +214,17 @@ public class FontViewerActivity extends BaseActivity
             return;
         }
 
-        TranslationRepository translationRepository = new TranslationRepository(this);
-        if (translationRepository.isTranslationEnabled()) {
+        FontTranslationViewModel translationViewModel = new ViewModelProvider(this).get(FontTranslationViewModel.class);
+        if (translationViewModel.isTranslationEnabled()) {
             boolean[] isFinished = {false};
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (!isFinished[0]) showLoadingDialog();
             }, 250);
 
-            translationRepository.translateMetadata(meta, new TranslationRepository.TranslationCallback() {
+            translationViewModel.translateMetadata(meta, new FontTranslationViewModel.Callback() {
                 @Override
-                public void onTranslationComplete(Map<String, String> translatedData) {
+                public void onComplete(Map<String, String> translatedData) {
                     runOnUiThread(() -> {
                         isFinished[0] = true;
                         dismissLoadingDialogThenRun(() -> showFontInfoDialog(translatedData));
@@ -232,7 +232,7 @@ public class FontViewerActivity extends BaseActivity
                 }
 
                 @Override
-                public void onTranslationFailed(String error) {
+                public void onFailed(String error) {
                     runOnUiThread(() -> {
                         isFinished[0] = true;
                         dismissLoadingDialogThenRun(() -> {

@@ -18,10 +18,8 @@ import com.oneui.fontviewer.data.common.list.FontFileInfo;
 import com.oneui.fontviewer.ui.appscreen.main.search.SearchHighlighter;
 import com.oneui.fontviewer.ui.appscreen.main.sort.SortHeaderViewHolder;
 import com.oneui.fontviewer.ui.core.widget.layout.SortByItemLayout;
-import com.oneui.fontviewer.data.systemfont.SystemFontCache;
 import com.oneui.fontviewer.data.systemfont.SystemFontInfo;
-import com.oneui.fontviewer.data.systemfont.SystemFontPreferenceManager;
-import com.oneui.fontviewer.data.settings.SettingsRepository;
+import com.oneui.fontviewer.ui.appscreen.main.fragment.systemfont.SystemFontListViewModel;
 
 
 import java.util.ArrayList;
@@ -40,7 +38,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private static final String PAYLOAD_UPDATE_LAST_OPENED = "UPDATE_LAST_OPENED";
 
     private final Context context;
-    private final SystemFontPreferenceManager preferenceManager;
+    private final SystemFontListViewModel viewModel;
     private final SearchHighlighter highlighter;
     private final Handler mainHandler;
     private final ExecutorService executor;
@@ -121,14 +119,14 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                          int ttcIndex, String weightWidthLabel);
     }
 
-    public SystemFontListAdapter(Context context, ExecutorService executor) {
+    public SystemFontListAdapter(Context context, ExecutorService executor, SystemFontListViewModel viewModel) {
         this.context           = context;
-        this.preferenceManager = new SystemFontPreferenceManager(context);
+        this.viewModel         = viewModel;
         this.highlighter       = new SearchHighlighter(context);
         this.mainHandler       = new Handler(Looper.getMainLooper());
         this.executor          = executor;
 
-        this.mCurrentLastOpenedPath = preferenceManager.getLastOpenedFont();
+        this.mCurrentLastOpenedPath = viewModel.getLastOpenedFont();
 
         this.fontsInfoMap       = new HashMap<>();
         this.currentSearchQuery = "";
@@ -142,7 +140,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         
 
-        this.mIsFontPreviewEnabled = SettingsRepository.isFontPreviewEnabled(context);
+        this.mIsFontPreviewEnabled = viewModel.isFontPreviewEnabled();
 
         this.mSortedList = new SortedList<>(
             FontFileInfo.class,
@@ -184,7 +182,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void saveLastOpenedAndUpdate(String path) {
         String prevPath = mCurrentLastOpenedPath;
         mCurrentLastOpenedPath = path;
-        preferenceManager.saveLastOpenedFont(path);
+        viewModel.saveLastOpenedFont(path);
 
         notifyLastOpenedChanged(prevPath, path);
     }
@@ -273,7 +271,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private void applyHighlight(SystemFontViewHolder holder, FontFileInfo fontInfo) {
         boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
         String displayName     = fontInfo.getDisplayName();
-        boolean isLastOpened   = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+        boolean isLastOpened   = viewModel.isLastOpenedFont(fontInfo.getPath());
 
         if (isSearchActive) isLastOpened = false;
 
@@ -406,7 +404,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             if (payloads.contains(PAYLOAD_UPDATE_LAST_OPENED) && holder instanceof SystemFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
-                boolean isLastOpened  = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+                boolean isLastOpened  = viewModel.isLastOpenedFont(fontInfo.getPath());
                 
                 if (isSearchActive) isLastOpened = false;
                 
@@ -431,7 +429,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         String weightWidthLabel = (sfi != null) ? sfi.getWeightWidthLabel() : null;
 
         boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
-        boolean isLastOpened   = preferenceManager.isLastOpenedFont(path);
+        boolean isLastOpened   = viewModel.isLastOpenedFont(path);
 
         if (isSearchActive) isLastOpened = false;
 
@@ -452,8 +450,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private void loadFontPreview(SystemFontViewHolder holder, String path) {
-        SystemFontCache cache = SystemFontCache.getInstance();
-        Typeface cached       = cache.getIfCached(path);
+        Typeface cached = viewModel.getCachedTypeface(path);
 
         if (cached != null) {
             holder.setTypeface(cached);
@@ -461,7 +458,7 @@ public class SystemFontListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             holder.setDefaultTypeface(null);
             if (executor != null && !executor.isShutdown()) {
                 executor.execute(() -> {
-                    Typeface loaded = cache.getTypeface(path);
+                    Typeface loaded = viewModel.loadTypeface(path);
                     if (loaded != null) {
                         mainHandler.post(() -> {
                             if (path.equals(holder.getTag())) holder.setTypeface(loaded);

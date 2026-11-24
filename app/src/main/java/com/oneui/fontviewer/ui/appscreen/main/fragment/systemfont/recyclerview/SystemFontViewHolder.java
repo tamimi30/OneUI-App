@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oneui.fontviewer.R;
-import com.oneui.fontviewer.utils.metadata.FontWeightWidthExtractor;
+import com.oneui.fontviewer.ui.core.utils.FontLabelFormatter;
 import com.oneui.fontviewer.ui.appscreen.main.search.SearchHighlighter;
 
 public class SystemFontViewHolder extends RecyclerView.ViewHolder {
@@ -38,7 +38,7 @@ public class SystemFontViewHolder extends RecyclerView.ViewHolder {
         bindLastOpened(isLastOpened);
 
         if (weightWidthView != null) {
-            String formattedLabel = FontWeightWidthExtractor.formatLabel(itemView.getContext(), weightWidthLabel);
+            String formattedLabel = FontLabelFormatter.formatLabel(itemView.getContext(), weightWidthLabel);
             String label = (formattedLabel != null && !formattedLabel.isEmpty())
                     ? formattedLabel
                     : itemView.getContext().getString(R.string.unknown_font);

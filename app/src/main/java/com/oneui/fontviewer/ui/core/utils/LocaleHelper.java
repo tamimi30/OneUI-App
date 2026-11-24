@@ -15,6 +15,11 @@ public class LocaleHelper {
 
     private static final String TAG = "LocaleHelper";
 
+    /** وسم لغة التطبيق الحالية (مثل ar أو en) كما تحددها الإعدادات. */
+    public static String getCurrentLocaleTag(Context context) {
+        return SettingsRepository.getLocale(context).toLanguageTag();
+    }
+
     @SuppressWarnings("deprecation")
     public static Context wrapContext(Context context) {
         // من أندرويد 13 فما فوق، النظام (LocaleManager) هو من يضع لغة التطبيق في إعدادات كل شاشة.

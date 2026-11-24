@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutDirection="locale"
     android:overScrollMode="always"
     android:scrollbars="vertical"
     android:fillViewport="true">
@@ -10,7 +11,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/oui_background_color"
         android:orientation="vertical">
 
         <LinearLayout
@@ -35,6 +35,8 @@
                 <com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layoutDirection="locale"
+                    android:paddingTop="20dp"
                     android:paddingStart="13dp"
                     android:clipToPadding="false"
                     android:clipChildren="false"
@@ -66,7 +68,7 @@
                 android:id="@+id/weight_label_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
+                android:textColor="?android:textColorSecondary"
                 android:textSize="17sp"
                 android:layout_marginBottom="14dp"
                 android:visibility="gone" />

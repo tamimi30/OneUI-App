@@ -6,11 +6,12 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.core.base.BaseActivity;
-import com.oneui.fontviewer.data.settings.SettingsRepository;
-import com.oneui.fontviewer.data.update.UpdateRepository;
+import com.oneui.fontviewer.ui.core.utils.LocaleHelper;
+import com.oneui.fontviewer.ui.core.viewmodel.UpdateViewModel;
 import com.oneui.fontviewer.ui.core.anim.TransitionUtils;
 
 import dev.oneuiproject.oneui.layout.ToolbarLayout;
@@ -32,7 +33,7 @@ public class SettingsActivity extends BaseActivity {
         // ويعود مؤشر التحميل في صفحة "حول التطبيق" عند أول فتح لها. إعادة البناء بسبب تغيير اللغة أو الثيم
         // (savedInstanceState != null) لا تنهي الجلسة. يجب أن يتم هذا قبل إنشاء SettingsFragment.
         if (savedInstanceState == null) {
-            UpdateRepository.getInstance(this).beginSettingsSession();
+            new ViewModelProvider(this).get(UpdateViewModel.class).beginSettingsSession();
         }
 
         mDisplayedLanguage = getResources().getConfiguration().getLocales().get(0).toLanguageTag();
@@ -71,7 +72,7 @@ public class SettingsActivity extends BaseActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if (!SettingsRepository.getLocale(this).toLanguageTag().equals(mDisplayedLanguage)) {
+        if (!LocaleHelper.getCurrentLocaleTag(this).equals(mDisplayedLanguage)) {
             // بين وصول التغيير وإعادة بناء الشاشة (~150ms) تتفاعل عناصر الشاشة الحيّة القديمة معه
             // (عناوين الأقسام تقفز، الـ App bar ينطوي ويتوسع...)، فنغطيها بصورة اللقطة حتى تبدأ
             // الشاشة الجديدة.

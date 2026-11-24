@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.oneui.fontviewer.data.update.UpdateServerException;
 import com.oneui.fontviewer.data.update.model.UpdateInfo;
 import com.oneui.fontviewer.utils.update.AppLinks;
 import com.oneui.fontviewer.utils.update.VersionComparator;
@@ -58,12 +59,12 @@ public class GitHubReleaseApi {
             int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
                 Log.w(TAG, "GitHub API returned HTTP " + responseCode);
-                throw new IOException("HTTP " + responseCode);
+                throw new UpdateServerException("HTTP " + responseCode);
             }
 
             return parseLatestRelease(readFully(connection.getInputStream()));
         } catch (JSONException e) {
-            throw new IOException("Malformed GitHub response", e);
+            throw new UpdateServerException("Malformed GitHub response", e);
         } finally {
             if (connection != null) {
                 connection.disconnect();

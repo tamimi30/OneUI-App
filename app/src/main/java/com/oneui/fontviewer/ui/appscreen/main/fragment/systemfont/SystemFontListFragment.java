@@ -43,7 +43,6 @@ import com.oneui.fontviewer.ui.appscreen.main.fragment.systemfont.recyclerview.S
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.core.viewmodel.FontPreviewSettingsViewModel;
 import com.oneui.fontviewer.data.systemfont.SystemFontInfo;
-import com.oneui.fontviewer.data.systemfont.SystemFontCache;
 
 public class SystemFontListFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
@@ -158,7 +157,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
                 for (FontItem font : fonts) {
                     pathsToPreload.add(font.getPath());
                 }
-                SystemFontCache.getInstance().preloadFonts(pathsToPreload);
+                mViewModel.preloadFonts(pathsToPreload);
             }
         });
 
@@ -254,7 +253,7 @@ public class SystemFontListFragment extends Fragment implements AppBarLayout.OnO
     private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        mAdapter = new SystemFontListAdapter(mContext, mExecutor);
+        mAdapter = new SystemFontListAdapter(mContext, mExecutor, mViewModel);
 
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
             mViewModel.recordFontAccess(fontPath);

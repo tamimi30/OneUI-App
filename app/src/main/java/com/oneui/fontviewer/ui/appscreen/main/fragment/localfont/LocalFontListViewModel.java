@@ -1,6 +1,7 @@
 package com.oneui.fontviewer.ui.appscreen.main.fragment.localfont;
 
 import android.app.Application;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -30,6 +31,7 @@ import com.oneui.fontviewer.data.localfont.file.LocalFontDirectory;
 import com.oneui.fontviewer.data.localfont.file.FontFileManager;
 import com.oneui.fontviewer.data.trash.TrashRepository;
 import com.oneui.fontviewer.data.localfont.LocalFontPreferenceManager;
+import com.oneui.fontviewer.data.settings.SettingsRepository;
 import com.oneui.fontviewer.service.BatchOperationState;
 import com.oneui.fontviewer.service.OperationForegroundService;
 import com.oneui.fontviewer.service.OperationNotifications;
@@ -45,6 +47,8 @@ public class LocalFontListViewModel extends AndroidViewModel {
     private final LocalFontRepository repository;
     private final TrashRepository     trashRepository; 
     private final LocalFontPreferenceManager preferenceManager;
+    // يُنشأ عند أول استخدام لقائمة المفضلة: يحفظ آخر خط مفتوح فيها منفصلاً عن قائمة الخطوط الأساسية
+    private LocalFontPreferenceManager favoritesPreferenceManager;
     private final MutableLiveData<Boolean> isLoadingLiveData;
     private final MutableLiveData<String>  errorMessageLiveData;
     private final MutableLiveData<List<FontItem>> fontsLiveData;
@@ -259,8 +263,13 @@ public class LocalFontListViewModel extends AndroidViewModel {
     }
 
 
+    /** يستقبل تقدّم نقل الخطوط الى سلة المحذوفات (عدد المنجَز من الإجمالي). */
+    public interface OnTrashProgressListener {
+        void onProgress(int current, int total);
+    }
+
     public void moveFontsToTrashInMemory(@NonNull List<String> paths,
-                                          TrashRepository.OnProgressListener progressListener,
+                                          OnTrashProgressListener progressListener,
                                           Runnable onComplete) {
         if (paths.isEmpty()) return;
 
@@ -531,6 +540,43 @@ public class LocalFontListViewModel extends AndroidViewModel {
         mFavoriteFontsSource.removeObserver(mFavoriteFontsObserver);
         fontPreloadExecutor.shutdownNow();
     }
-    
-    
-                    }
+
+    // ───────────────────────── آخر خط مفتوح (القائمة الأساسية والمفضلة) ─────────────────────────
+
+    private LocalFontPreferenceManager lastOpenedPrefs(boolean favoritesList) {
+        if (!favoritesList) {
+            return preferenceManager;
+        }
+        if (favoritesPreferenceManager == null) {
+            favoritesPreferenceManager = new LocalFontPreferenceManager(getApplication(), true);
+        }
+        return favoritesPreferenceManager;
+    }
+
+    public void saveLastOpenedFont(boolean favoritesList, String fontPath) {
+        lastOpenedPrefs(favoritesList).saveLastOpenedFont(fontPath);
+    }
+
+    public boolean isLastOpenedFont(boolean favoritesList, String fontPath) {
+        return lastOpenedPrefs(favoritesList).isLastOpenedFont(fontPath);
+    }
+
+    // ───────────────────────── معاينة الخطوط ─────────────────────────
+
+    public boolean isFontPreviewEnabled() {
+        return SettingsRepository.isFontPreviewEnabled(getApplication());
+    }
+
+    public Typeface getCachedTypeface(String fontPath) {
+        return LocalFontCache.getInstance().getIfCached(fontPath);
+    }
+
+    // قد تكون ثقيلة اذا لم يكن الخط في الكاش، فتُستدعى من خيط خلفي
+    public Typeface loadTypeface(String fontPath) {
+        return LocalFontCache.getInstance().getTypeface(fontPath);
+    }
+
+    public void preloadFonts(List<String> fontPaths) {
+        LocalFontCache.getInstance().preloadFonts(fontPaths);
+    }
+}
