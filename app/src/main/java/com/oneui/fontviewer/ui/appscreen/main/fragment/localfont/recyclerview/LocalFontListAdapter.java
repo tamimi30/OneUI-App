@@ -15,12 +15,10 @@ import androidx.recyclerview.widget.SortedList;
 
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.data.common.list.FontFileInfo;
-import com.oneui.fontviewer.data.localfont.LocalFontCache;
-import com.oneui.fontviewer.data.localfont.LocalFontPreferenceManager;
+import com.oneui.fontviewer.ui.appscreen.main.fragment.localfont.LocalFontListViewModel;
 import com.oneui.fontviewer.ui.appscreen.main.search.SearchHighlighter;
 import com.oneui.fontviewer.ui.appscreen.main.sort.SortHeaderViewHolder;
 import com.oneui.fontviewer.ui.core.widget.layout.SortByItemLayout;
-import com.oneui.fontviewer.data.settings.SettingsRepository;
 import com.oneui.fontviewer.data.localfont.model.FontFileInfoWithMetadata;
 
 
@@ -46,7 +44,8 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final String PAYLOAD_UPDATE_LAST_OPENED = "UPDATE_LAST_OPENED";
 
     private final Context context;
-    private final LocalFontPreferenceManager preferenceManager;
+    private final LocalFontListViewModel viewModel;
+    private final boolean isFavoritesList;
     private final SearchHighlighter highlighter;
     private final Handler mainHandler;
     private final ExecutorService executor;
@@ -163,13 +162,14 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         boolean isFavorited(String fontPath);
     }
 
-    public LocalFontListAdapter(Context context, ExecutorService executor) {
-        this(context, executor, false);
+    public LocalFontListAdapter(Context context, ExecutorService executor, LocalFontListViewModel viewModel) {
+        this(context, executor, viewModel, false);
     }
 
-    public LocalFontListAdapter(Context context, ExecutorService executor, boolean isFavoritesList) {
+    public LocalFontListAdapter(Context context, ExecutorService executor, LocalFontListViewModel viewModel, boolean isFavoritesList) {
         this.context = context;
-        this.preferenceManager = new LocalFontPreferenceManager(context, isFavoritesList);
+        this.viewModel = viewModel;
+        this.isFavoritesList = isFavoritesList;
         this.highlighter = new SearchHighlighter(context);
         this.mainHandler = new Handler(Looper.getMainLooper());
         this.executor = executor;
@@ -186,7 +186,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         
 
-        this.mIsFontPreviewEnabled = SettingsRepository.isFontPreviewEnabled(context);
+        this.mIsFontPreviewEnabled = viewModel.isFontPreviewEnabled();
 
         this.mSortedList = new SortedList<>(
             FontFileInfo.class,
@@ -236,7 +236,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void saveLastOpenedAndUpdate(String path) {
-        preferenceManager.saveLastOpenedFont(path);
+        viewModel.saveLastOpenedFont(isFavoritesList, path);
         smartUpdate();
     }
 
@@ -380,7 +380,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
         }
 
-        boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+        boolean isLastOpened = viewModel.isLastOpenedFont(isFavoritesList, fontInfo.getPath());
         if (isSearchActive) isLastOpened = false;
         holder.updateLastOpenedHighlight(isLastOpened);
     }
@@ -534,7 +534,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             if (payloads.contains(PAYLOAD_UPDATE_LAST_OPENED) && holder instanceof LocalFontViewHolder) {
                 FontFileInfo fontInfo = mSortedList.get(position - 1);
-                boolean isLastOpened = preferenceManager.isLastOpenedFont(fontInfo.getPath());
+                boolean isLastOpened = viewModel.isLastOpenedFont(isFavoritesList, fontInfo.getPath());
                 
                 if (isSearchActive) isLastOpened = false;
                 
@@ -558,7 +558,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
         String weightWidthLabel = (metadata != null) ? metadata.getWeightWidthLabel() : null;
 
         boolean isSearchActive = currentSearchQuery != null && !currentSearchQuery.isEmpty();
-        boolean isLastOpened   = preferenceManager.isLastOpenedFont(path);
+        boolean isLastOpened   = viewModel.isLastOpenedFont(isFavoritesList, path);
 
         if (isSearchActive) isLastOpened = false;
 
@@ -602,8 +602,7 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private void loadFontPreview(LocalFontViewHolder holder, String path) {
-        LocalFontCache cache = LocalFontCache.getInstance();
-        Typeface cached = cache.getIfCached(path);
+        Typeface cached = viewModel.getCachedTypeface(path);
 
         if (cached != null) {
             holder.setTypeface(cached);
@@ -611,10 +610,10 @@ public class LocalFontListAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.setDefaultTypeface(null);
             if (executor != null && !executor.isShutdown()) {
                 executor.execute(() -> {
-                    Typeface loaded = cache.getTypeface(path);
+                    Typeface loaded = viewModel.loadTypeface(path);
                     if (loaded != null) {
                         mainHandler.post(() -> {
-                            if (!SettingsRepository.isFontPreviewEnabled(context)) return;
+                            if (!viewModel.isFontPreviewEnabled()) return;
                             if (path.equals(holder.getTag())) holder.setTypeface(loaded);
                         });
                     }

@@ -38,7 +38,6 @@ import com.oneui.fontviewer.ui.core.widget.layout.OneUiDrawerLayout;
 
 import com.oneui.fontviewer.ui.appscreen.main.navigation.drawer.DrawerListItem;
 import com.oneui.fontviewer.ui.appscreen.main.MainActivity;
-import com.oneui.fontviewer.data.trash.TrashRepository;
 import com.oneui.fontviewer.ui.core.dialog.RenameFontDialog;
 import com.oneui.fontviewer.data.common.list.FontFileInfo;
 import com.oneui.fontviewer.ui.appscreen.main.fragment.localfont.manager.LocalFontSelectionManager;
@@ -50,7 +49,6 @@ import com.oneui.fontviewer.ui.appscreen.main.search.SearchViewModel;
 import com.oneui.fontviewer.ui.appscreen.main.search.SearchFilterManager;
 import com.oneui.fontviewer.ui.appscreen.main.sort.SortManager;
 import com.oneui.fontviewer.ui.core.widget.layout.SortByItemLayout;
-import com.oneui.fontviewer.data.localfont.LocalFontCache;
 import com.oneui.fontviewer.ui.appscreen.main.fragment.localfont.recyclerview.LocalFontListAdapter;
 import com.oneui.fontviewer.R;
 import com.oneui.fontviewer.ui.core.viewmodel.FontPreviewSettingsViewModel;
@@ -308,7 +306,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
                 for (FontFileInfoWithMetadata font : fonts) {
                     pathsToPreload.add(font.getPath());
                 }
-                LocalFontCache.getInstance().preloadFonts(pathsToPreload);
+                mViewModel.preloadFonts(pathsToPreload);
             }
         });
 
@@ -507,7 +505,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         mRecyclerView.setItemViewCacheSize(20);
 
-        mAdapter = new LocalFontListAdapter(mContext, mExecutor);
+        mAdapter = new LocalFontListAdapter(mContext, mExecutor, mViewModel);
 
         mAdapter.setFontClickListener((fontPath, realName, fileName, ttcIndex, weightWidthLabel) -> {
             mViewModel.recordFontAccess(fontPath);
@@ -692,7 +690,7 @@ public class LocalFontListFragment extends Fragment implements AppBarLayout.OnOf
 
         mCurrentProgressDialog.show();
 
-        TrashRepository.OnProgressListener progressListener = (current, total) -> {
+        LocalFontListViewModel.OnTrashProgressListener progressListener = (current, total) -> {
             String progressTitle = getResources().getQuantityString(
                     R.plurals.progress_moving_to_trash, total);
             BatchOperationState.updateProgress(
