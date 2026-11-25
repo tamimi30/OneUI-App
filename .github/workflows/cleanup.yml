@@ -12,42 +12,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
           java-version: '25.0.5+100000002.0.LTS'
+          cache: 'gradle'
 
-      # تم استخدام الكاش لتسريع العملية
-      - name: Cache Gradle packages and Distribution
-        uses: actions/cache@v6
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            gradle-9.6.1
-          key: ${{ runner.os }}-gradle-9.6.1-v2-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-9.6.1-v2-
-
-      - name: Download and Setup Gradle
-        run: |
-          if [ -d "gradle-9.6.1" ]; then
-             echo "✅ Gradle 9.6.1 found in cache. Skipping download."
-          else
-             echo "⬇️ Gradle not found. Downloading..."
-             wget https://services.gradle.org/distributions/gradle-9.6.1-bin.zip -O gradle_dist.zip
-             unzip -q gradle_dist.zip
-             rm gradle_dist.zip
-          fi
-          echo "$(pwd)/gradle-9.6.1/bin" >> $GITHUB_PATH
-
-      # --- الإصلاح هنا ---
-      # تمت إزالة "--gradle-version 9.6.1" لتجنب فحص الشبكة
-      # وتمت إضافة "--no-daemon" لتوفير الذاكرة
-      - name: Generate Gradle Wrapper
-        run: ./gradle-9.6.1/bin/gradle wrapper --distribution-type all --no-daemon
-
+      # نستخدم Gradle wrapper الموجود في المستودع (الإصدار المحدد في gradle-wrapper.properties)
+      # بدل تنزيل Gradle وتوليد wrapper جديد: التوليد كان يكتب الإصدار 9.6.1 فوق 9.9.2 ثم يُلتزم به.
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
@@ -71,16 +44,9 @@ jobs:
           git config --global user.name "Cleanup-Bot"
           git config --global user.email "actions@github.com"
           
-          # حذف مجلد الجرادل المحمل يدوياً لكي لا يتم رفعه (اختياري)
-          rm -rf gradle-9.6.1/
-          
           # إضافة ملفات الجافا المعدلة
           git add app/src/main/java/**/*.java || true
           git add app/build.gradle || true
-          
-          # (نصيحة) إذا كنت تريد حفظ ملفات الـ wrapper الجديدة في الريبو، قم بإلغاء تعليق الأسطر التالية:
-          git add gradle/wrapper/
-          git add gradlew gradlew.bat
           
           if ! git diff --staged --quiet; then
             git commit -m "refactor: cleanup unused code [skip ci]"
