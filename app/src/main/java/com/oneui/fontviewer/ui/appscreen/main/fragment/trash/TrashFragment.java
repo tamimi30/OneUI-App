@@ -12,7 +12,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;                          
+import android.widget.TextView;     
+
+import com.oneui.fontviewer.data.trash.TrashRepository;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
