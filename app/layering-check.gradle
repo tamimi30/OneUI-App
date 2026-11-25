@@ -1,0 +1,203 @@
+// فحص الفصل بين طبقات التطبيق: يفشل البناء إذا خالف أي ملف قواعد الفصل أدناه.
+//
+// القواعد:
+//  1) لا ملف خارج ui (أي data وservice وutils وFontViewerApp) يستورد من ui، إلا ما في ALLOWED_UI_IMPORTS.
+//  2) لا ملف خارج ui يستورد مكتبات الواجهة (View وFragment وRecyclerView وmaterial وoneui وما شابه).
+//  3) لا ملف في ui يستورد من data مباشرة، إلا:
+//       - ملفات ViewModel (هي الطريق المعتمد إلى البيانات)
+//       - نماذج البيانات الخالصة (الحزم model وlist)
+//       - ما في ALLOWED_DATA_IMPORTS (استثناءات مبرَّرة، مع سبب كل منها)
+//
+// التعطيل المؤقت لبناء واحد:  ./gradlew assembleRelease -PskipLayeringCheck
+// التعطيل الدائم: احذف سطر  apply from: 'layering-check.gradle'  من app/build.gradle
+
+import java.io.File
+import java.io.IOException
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.Collections
+import java.util.HashMap
+import java.util.List
+import java.util.Map
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+// BEGIN CHECKER
+// منطق الفحص مكتوب بصياغة مشتركة بين Java وGroovy عمداً (بلا lambdas ولا dollar داخل النصوص)،
+// حتى يمكن ترجمته وتشغيله وحده لاختبار القواعد خارج Gradle.
+class LayeringChecker {
+
+    static final String BASE = "com.oneui.fontviewer.";
+
+    // مكتبات الواجهة التي لا يجوز استيرادها خارج ui
+    static final List<String> TOOLKIT_PREFIXES = Arrays.asList(
+            "android.view.",
+            "android.widget.",
+            "androidx.appcompat.",
+            "androidx.fragment.",
+            "androidx.recyclerview.",
+            "androidx.preference.",
+            "dev.oneuiproject.",
+            "com.google.android.material."
+    );
+
+    // نموذج بيانات خالص: كلاس داخل حزمة model أو list تحت data
+    static final Pattern PLAIN_MODEL = Pattern.compile(
+            "^com\\.oneui\\.fontviewer\\.data\\.([a-z0-9_]+\\.)*(model|list)\\.[A-Z]\\w*");
+
+    // نموذج بيانات خالص لكنه يقع خارج حزمة model
+    static final List<String> PLAIN_MODEL_CLASSES = Arrays.asList(
+            "com.oneui.fontviewer.data.systemfont.SystemFontInfo"
+    );
+
+    // الاستثناءات: ملف خارج ui يستورد من ui (المفتاح مسار الملف نسبةً إلى مجلد fontviewer)
+    static final Map<String, List<String>> ALLOWED_UI_IMPORTS = new HashMap<String, List<String>>();
+
+    // الاستثناءات: ملف في ui يستورد من data مباشرة (المفتاح مسار الملف نسبةً إلى مجلد fontviewer)
+    static final Map<String, List<String>> ALLOWED_DATA_IMPORTS = new HashMap<String, List<String>>();
+
+    static {
+        // FontViewerApp نقطة ربط الطبقات: يبدأ تهيئة الثيم وتتبّع الأنشطة، وهما من الواجهة
+        ALLOWED_UI_IMPORTS.put("FontViewerApp.java", Arrays.asList(
+                BASE + "ui.core.base.ActivityTracker",
+                BASE + "ui.core.utils.ThemeHelper"
+        ));
+
+        // يُستدعيان في attachBaseContext وonCreate قبل أن يتوفر أي ViewModel
+        ALLOWED_DATA_IMPORTS.put("ui/core/utils/ThemeHelper.java", Arrays.asList(
+                BASE + "data.AppDataStore",
+                BASE + "data.settings.SettingsRepository"
+        ));
+        ALLOWED_DATA_IMPORTS.put("ui/core/utils/LocaleHelper.java", Arrays.asList(
+                BASE + "data.settings.SettingsRepository"
+        ));
+
+        // يُنشأ في onAttach قبل الـ ViewModel، ولا يستخدم إلا دالتين ثابتتين بلا حالة لتحويل مسارات المجلدات
+        ALLOWED_DATA_IMPORTS.put("ui/appscreen/main/fragment/localfont/manager/LocalFontDirectoryPicker.java", Arrays.asList(
+                BASE + "data.localfont.file.LocalFontDirectory"
+        ));
+
+        // التجهيز المسبق للخط يجب أن يبدأ قبل startActivity مباشرة
+        ALLOWED_DATA_IMPORTS.put("ui/appscreen/main/MainActivity.java", Arrays.asList(
+                BASE + "data.fontviewer.FontPrefetcher"
+        ));
+
+        // أنواع نتائج فقط (PrefetchedFont وLoadResult وما شابه) تصل عبر FontViewerViewModel، لا وصولاً للبيانات
+        ALLOWED_DATA_IMPORTS.put("ui/appscreen/fontviewer/FontViewerFragment.java", Arrays.asList(
+                BASE + "data.fontviewer.FontPrefetcher",
+                BASE + "data.fontviewer.FontViewerRepository"
+        ));
+    }
+
+    static List<String> check(File root) throws IOException {
+        List<String> violations = new ArrayList<String>();
+
+        List<File> files = new ArrayList<File>();
+        collectJavaFiles(root, files);
+        Collections.sort(files);
+
+        Pattern importPattern = Pattern.compile("^\\s*import\\s+(static\\s+)?([\\w.]+(\\.\\*)?)\\s*;");
+
+        for (File file : files) {
+            String rel = root.toPath().relativize(file.toPath()).toString().replace("\\", "/");
+            boolean inUi = rel.startsWith("ui/");
+            boolean isViewModel = inUi && file.getName().endsWith("ViewModel.java");
+
+            List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+            for (String line : lines) {
+                Matcher matcher = importPattern.matcher(line);
+                if (!matcher.find()) {
+                    continue;
+                }
+                String imported = matcher.group(2);
+
+                if (!inUi) {
+                    if (imported.startsWith(BASE + "ui.") && !isAllowed(ALLOWED_UI_IMPORTS, rel, imported)) {
+                        violations.add(rel + " imports " + imported
+                                + "  [rule 1: data/service/utils must not depend on ui]");
+                    }
+                    if (startsWithAny(imported, TOOLKIT_PREFIXES)) {
+                        violations.add(rel + " imports " + imported
+                                + "  [rule 2: UI toolkit classes belong in the ui package]");
+                    }
+                } else if (!isViewModel
+                        && imported.startsWith(BASE + "data.")
+                        && !isPlainModel(imported)
+                        && !isAllowed(ALLOWED_DATA_IMPORTS, rel, imported)) {
+                    violations.add(rel + " imports " + imported
+                            + "  [rule 3: go through a ViewModel, or add a justified entry to ALLOWED_DATA_IMPORTS]");
+                }
+            }
+        }
+        return violations;
+    }
+
+    static void collectJavaFiles(File dir, List<File> out) {
+        File[] children = dir.listFiles();
+        if (children == null) {
+            return;
+        }
+        for (File child : children) {
+            if (child.isDirectory()) {
+                collectJavaFiles(child, out);
+            } else if (child.getName().endsWith(".java")) {
+                out.add(child);
+            }
+        }
+    }
+
+    static boolean isPlainModel(String imported) {
+        return PLAIN_MODEL.matcher(imported).find() || PLAIN_MODEL_CLASSES.contains(imported);
+    }
+
+    static boolean isAllowed(Map<String, List<String>> allowed, String rel, String imported) {
+        List<String> classes = allowed.get(rel);
+        return classes != null && classes.contains(imported);
+    }
+
+    static boolean startsWithAny(String value, List<String> prefixes) {
+        for (String prefix : prefixes) {
+            if (value.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+// END CHECKER
+
+abstract class CheckLayeringTask extends DefaultTask {
+
+    // مجلد com/oneui/fontviewer: مُدخل معلن، فلا يقرأ الفحص كائن project وقت التنفيذ (متوافق مع configuration cache)
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getSourceRoot()
+
+    @TaskAction
+    void check() {
+        List<String> violations = LayeringChecker.check(getSourceRoot().get().getAsFile())
+        if (!violations.isEmpty()) {
+            StringBuilder message = new StringBuilder()
+            message.append("Layering check failed with ").append(violations.size()).append(" violation(s):\n")
+            for (String violation : violations) {
+                message.append("  - ").append(violation).append("\n")
+            }
+            message.append("Rules and allowed exceptions: app/layering-check.gradle")
+            throw new GradleException(message.toString())
+        }
+    }
+}
+
+tasks.register('checkLayering', CheckLayeringTask) {
+    group = 'verification'
+    description = 'Fails the build if a source file violates the layering rules (data/service/utils vs ui).'
+    sourceRoot.set(layout.projectDirectory.dir('src/main/java/com/oneui/fontviewer'))
+    enabled = !providers.gradleProperty('skipLayeringCheck').isPresent()
+}
+
+// يعمل الفحص قبل أي بناء (Android Studio وGitHub Actions)
+tasks.matching { it.name == 'preBuild' }.configureEach {
+    dependsOn('checkLayering')
+}
