@@ -190,6 +190,22 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
         }
     }
 
+    // ═══════════════ اختبار مؤقت للفرضية: احذف هذه الكتلة كاملة بعد الانتهاء ═══════════════
+    // يحاكي وصول إشارة "بدأ التحميل" (التي تقفل الدرج) قبل أول رسم للشاشة، وهو التوقيت
+    // النادر الذي نشتبه به. يعمل فقط عندما يكون المتغير sIsDrawerOpened صحيحاً،
+    // أي عند العودة من الإعدادات والدرج كان مفتوحاً. لا يغيّر شيئاً غير ذلك.
+    private static final boolean DEBUG_FORCE_LOCK_RACE = true;
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (DEBUG_FORCE_LOCK_RACE && sIsDrawerOpened) {
+            lockDrawerIfAvailable(true);
+            postDelayed(this::updateDrawerLock, 1500);
+        }
+    }
+    // ═══════════════════════════════ نهاية الاختبار ═══════════════════════════════
+
     private void lockDrawerIfAvailable(boolean lock) {
         if (mDrawer != null) {
             if (lock) {
