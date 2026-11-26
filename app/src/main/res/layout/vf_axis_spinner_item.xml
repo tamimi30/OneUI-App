@@ -4,8 +4,12 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:theme="@style/Theme.MaterialComponents.DayNight"
-    style="@style/AxisCardStyle"
-    android:visibility="gone">
+    android:layout_marginEnd="13dp"
+    android:visibility="gone"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardCornerRadius="20dp"
+    app:strokeColor="@color/oui_grid_menu_dialog_item_ripple_color"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
