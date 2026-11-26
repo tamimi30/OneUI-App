@@ -10,7 +10,7 @@ public final class AppLinks {
     }
 
     public static final String GITHUB_OWNER = "tamimi30";
-    public static final String GITHUB_REPOSITORY = "OneUI-App";
+    public static final String GITHUB_REPOSITORY = "OneUI-Appp";
 
     // صفحة حسابي على GitHub (يفتحها زر GitHub في صفحة "حول التطبيق")
     public static final String GITHUB_PROFILE_URL = "https://github.com/" + GITHUB_OWNER;
