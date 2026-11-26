@@ -15,7 +15,7 @@
     
     <color name="fab_bg_color">@color/sesl_menu_popup_background_color_dark</color>
     <color name="fab_stroke_color">#ff3a3a3a</color>
-    <color name="axis_card_bg_color">#ff424242</color>
+    <color name="axis_card_bg_color">@color/sesl_black</color>
     
     <color name="oui_appinfolayout_button_bg_color">#2d2d30</color>
     
