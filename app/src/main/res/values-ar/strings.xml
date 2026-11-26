@@ -35,7 +35,7 @@
 	
     <!-- Update check -->
     <string name="update_card_title">يتوفر إصدار جديد</string>
-    <string name="update_card_summary">يتوفر إصدار جديد من %1$s. قم بالتحديث لتجربة أحدث الميزات.</string>
+    <string name="update_card_summary">يتوفر إصدار جديد من Font Viewer Plus. قم بالتحديث لتجربة أحدث الميزات.</string>
     <string name="update_card_update">تحديث</string>
     <string name="update_card_not_now">ليس الآن</string>
     <string name="update_open_store_failed">تعذّر فتح صفحة التحديث</string>

@@ -36,7 +36,7 @@
 	
 	<!-- Update check -->
     <string name="update_card_title">A new version is available</string>
-    <string name="update_card_summary">A new version of %1$s is available. Update to try the latest features.</string>
+    <string name="update_card_summary">A new version of Font Viewer Plus is available. Update to try the latest features.</string>
     <string name="update_card_update">Update</string>
     <string name="update_card_not_now">Not now</string>
     <string name="update_open_store_failed">Couldn\'t open the update page</string>

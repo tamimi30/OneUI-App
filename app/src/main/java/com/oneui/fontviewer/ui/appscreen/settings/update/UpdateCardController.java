@@ -51,8 +51,6 @@ public final class UpdateCardController {
         }
 
         Context context = mFragment.requireContext();
-        card.setSummary(context.getString(
-                R.string.update_card_summary, context.getString(R.string.app_name)));
         card.setButtons(
                 context.getString(R.string.update_card_not_now),
                 v -> onNotNowClicked(),

@@ -6,6 +6,7 @@
     <com.oneui.fontviewer.ui.core.widget.preference.UpdateCardPreference
         android:key="update_card"
         android:persistent="false"
+        android:summary="@string/update_card_summary"
         android:title="@string/update_card_title" />
 
     <PreferenceCategory
