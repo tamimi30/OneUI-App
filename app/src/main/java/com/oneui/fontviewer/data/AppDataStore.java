@@ -80,7 +80,7 @@ public class AppDataStore {
     private final Preferences.Key<Float> KEY_VIEWER_FONT_GRADE;
     private final Preferences.Key<Float> KEY_VIEWER_FONT_ROUNDNESS;
     private final Preferences.Key<Float> KEY_VIEWER_FONT_ITALIC_AXIS;
-    private final Preferences.Key<Float> KEY_VIEWER_FONT_MONO;
+    private final Preferences.Key<Float> KEY_VIEWER_FONT_MONOSPACE;
     
     // Default values
     public static final int DEFAULT_LANGUAGE_MODE = 0;
@@ -98,7 +98,7 @@ public class AppDataStore {
     public static final float DEFAULT_VIEWER_FONT_GRADE       = 0f;
     public static final float DEFAULT_VIEWER_FONT_ROUNDNESS   = 0f;
     public static final float DEFAULT_VIEWER_FONT_ITALIC_AXIS = 0f;
-    public static final float DEFAULT_VIEWER_FONT_MONO        = 0f;
+    public static final float DEFAULT_VIEWER_FONT_MONOSPACE   = 0f;
     
     
     private AppDataStore(Context context) {
@@ -146,7 +146,7 @@ public class AppDataStore {
         KEY_VIEWER_FONT_GRADE       = PreferencesKeys.floatKey("viewer_font_grade");
         KEY_VIEWER_FONT_ROUNDNESS   = PreferencesKeys.floatKey("viewer_font_roundness");
         KEY_VIEWER_FONT_ITALIC_AXIS = PreferencesKeys.floatKey("viewer_font_italic_axis");
-        KEY_VIEWER_FONT_MONO        = PreferencesKeys.floatKey("viewer_font_mono");
+        KEY_VIEWER_FONT_MONOSPACE   = PreferencesKeys.floatKey("viewer_font_monospace");
 
         startSnapshotSync();
     }
@@ -642,21 +642,21 @@ public class AppDataStore {
     }
 
     // ════════════════════════════════════════════════════════════
-    // Font Viewer - Mono Axis (MONO)
+    // Font Viewer - Monospace Axis (MONO)
     // ════════════════════════════════════════════════════════════
 
-    public Single<Preferences> setViewerFontMono(float monoValue) {
+    public Single<Preferences> setViewerFontMonospace(float monospaceValue) {
         return update(prefs -> {
             MutablePreferences mutablePrefs = prefs.toMutablePreferences();
-            mutablePrefs.set(KEY_VIEWER_FONT_MONO, monoValue);
+            mutablePrefs.set(KEY_VIEWER_FONT_MONOSPACE, monospaceValue);
             return Single.just(mutablePrefs);
         });
     }
 
-    public Flowable<Float> getViewerFontMono() {
+    public Flowable<Float> getViewerFontMonospace() {
         return data().map(prefs ->
-            prefs.get(KEY_VIEWER_FONT_MONO) != null ?
-            prefs.get(KEY_VIEWER_FONT_MONO) : DEFAULT_VIEWER_FONT_MONO
+            prefs.get(KEY_VIEWER_FONT_MONOSPACE) != null ?
+            prefs.get(KEY_VIEWER_FONT_MONOSPACE) : DEFAULT_VIEWER_FONT_MONOSPACE
         );
     }
     

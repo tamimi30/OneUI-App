@@ -41,7 +41,7 @@ public class FontViewerRepository {
         AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_ITAL, 0f);
         AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_GRAD, 0f);
         AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_ROND, 0f);
-        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_MONO, 0f);
+        AXIS_FALLBACK_DEFAULTS.put(VariableFontAxisExtractor.AXIS_MONOSPACE, 0f);
     }
 
     private final Context appContext;
@@ -164,7 +164,7 @@ public class FontViewerRepository {
             axisInstancesMap.put(VariableFontAxisExtractor.AXIS_ITAL, VariableFontAxisExtractor.extractItalicInstances(labels, fontFile, ttcIndex));
             axisInstancesMap.put(VariableFontAxisExtractor.AXIS_GRAD, VariableFontAxisExtractor.extractGradeInstances(labels, fontFile, ttcIndex));
             axisInstancesMap.put(VariableFontAxisExtractor.AXIS_ROND, VariableFontAxisExtractor.extractRoundnessInstances(labels, fontFile, ttcIndex));
-            axisInstancesMap.put(VariableFontAxisExtractor.AXIS_MONO, VariableFontAxisExtractor.extractMonoInstances(labels, fontFile, ttcIndex));
+            axisInstancesMap.put(VariableFontAxisExtractor.AXIS_MONOSPACE, VariableFontAxisExtractor.extractMonospaceInstances(labels, fontFile, ttcIndex));
 
             for (Map.Entry<String, List<VariableFontAxisExtractor.VariableInstance>> entry : axisInstancesMap.entrySet()) {
                 String axisTag = entry.getKey();

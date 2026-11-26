@@ -29,9 +29,9 @@ public class SettingsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // فتح الإعدادات من جديد يبدأ جلسة جديدة: تعود بطاقة التحديث إذا كان المستخدم أخفاها بـ "ليس الآن"،
-        // ويعود مؤشر التحميل في صفحة "حول التطبيق" عند أول فتح لها. إعادة البناء بسبب تغيير اللغة أو الثيم
-        // (savedInstanceState != null) لا تنهي الجلسة. يجب أن يتم هذا قبل إنشاء SettingsFragment.
+        // فتح الإعدادات من جديد يبدأ جلسة جديدة: تعود بطاقة التحديث إذا كان المستخدم أخفاها بـ "ليس الآن".
+        // إعادة البناء بسبب تغيير اللغة أو الثيم (savedInstanceState != null) لا تنهي الجلسة.
+        // يجب أن يتم هذا قبل إنشاء SettingsFragment.
         if (savedInstanceState == null) {
             new ViewModelProvider(this).get(UpdateViewModel.class).beginSettingsSession();
         }

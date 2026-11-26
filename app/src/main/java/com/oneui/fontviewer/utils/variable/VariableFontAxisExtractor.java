@@ -37,7 +37,7 @@ public class VariableFontAxisExtractor {
     public static final String AXIS_ITAL = "ital";
     public static final String AXIS_GRAD = "GRAD";
     public static final String AXIS_ROND = "ROND";
-    public static final String AXIS_MONO = "MONO";
+    public static final String AXIS_MONOSPACE = "MONO";
     
     public static class VariableInstance {
         public String name;
@@ -293,20 +293,20 @@ public class VariableFontAxisExtractor {
      * محور التباعد الأحادي (MONO). Proportional = الحد الأدنى (القيمة الأصغر)،
      * Monospaced = الحد الأقصى (القيمة الأكبر) — مرتبة تصاعدياً حسب القيمة كما هو مطلوب.
      */
-    public static List<VariableInstance> extractMonoInstances(InstanceLabelResolver labels, File fontFile, int ttcIndex) {
+    public static List<VariableInstance> extractMonospaceInstances(InstanceLabelResolver labels, File fontFile, int ttcIndex) {
         List<VariableInstance> instances = new ArrayList<>();
 
-        float[] range = readAxisRangeFromFvar(fontFile, ttcIndex, AXIS_MONO);
+        float[] range = readAxisRangeFromFvar(fontFile, ttcIndex, AXIS_MONOSPACE);
         if (range == null) {
             return instances;
         }
 
-        float minMono = range[0];
-        float maxMono = range[2];
+        float minMonospace = range[0];
+        float maxMonospace = range[2];
 
-        if (maxMono > minMono) {
-            instances.add(new VariableInstance(labels.nameOf(InstanceLabel.MONO_PROPORTIONAL), AXIS_MONO, minMono));
-            instances.add(new VariableInstance(labels.nameOf(InstanceLabel.MONO_MONOSPACED), AXIS_MONO, maxMono));
+        if (maxMonospace > minMonospace) {
+            instances.add(new VariableInstance(labels.nameOf(InstanceLabel.MONOSPACE_PROPORTIONAL), AXIS_MONOSPACE, minMonospace));
+            instances.add(new VariableInstance(labels.nameOf(InstanceLabel.MONOSPACE_MONOSPACED), AXIS_MONOSPACE, maxMonospace));
         }
 
         return instances;

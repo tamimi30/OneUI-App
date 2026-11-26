@@ -89,7 +89,7 @@ public class FontViewerFragment extends Fragment {
     private AxisSwitchUi italicAxisUi;
     private AxisSpinnerUi gradeAxisUi;
     private AxisSpinnerUi roundnessAxisUi;
-    private AxisSpinnerUi monoAxisUi;
+    private AxisSpinnerUi monospaceAxisUi;
     // قائمة المحاور التي تُعرض بـ Spinner فقط (محور الميل مستثنى لأنه يُعرض بمفتاح)
     private List<AxisSpinnerUi> allAxisUis;
 
@@ -314,7 +314,7 @@ public class FontViewerFragment extends Fragment {
         italicAxisUi            = null;
         gradeAxisUi              = null;
         roundnessAxisUi          = null;
-        monoAxisUi               = null;
+        monospaceAxisUi          = null;
         allAxisUis               = null;
     }
 
@@ -433,7 +433,7 @@ public class FontViewerFragment extends Fragment {
                 R.string.font_info_axis_grade, R.string.axis_info_grade_dialog_title, R.drawable.axis_grade_info_img, R.string.axis_info_grade_description);
         roundnessAxisUi = inflateAxisItem(axesRow, VariableFontAxisExtractor.AXIS_ROND,
                 R.string.font_info_axis_roundness, R.string.axis_info_roundness_dialog_title, R.drawable.axis_roundness_info_img, R.string.axis_info_roundness_description);
-        monoAxisUi = inflateAxisItem(axesRow, VariableFontAxisExtractor.AXIS_MONO,
+        monospaceAxisUi = inflateAxisItem(axesRow, VariableFontAxisExtractor.AXIS_MONOSPACE,
                 R.string.font_info_axis_monospace, R.string.axis_info_monospace_dialog_title, R.drawable.axis_monospace_info_img, R.string.axis_info_monospace_description);
 
         allAxisUis = new ArrayList<>();
@@ -441,7 +441,7 @@ public class FontViewerFragment extends Fragment {
         allAxisUis.add(widthAxisUi);
         allAxisUis.add(gradeAxisUi);
         allAxisUis.add(roundnessAxisUi);
-        allAxisUis.add(monoAxisUi);
+        allAxisUis.add(monospaceAxisUi);
     }
 
     /**
