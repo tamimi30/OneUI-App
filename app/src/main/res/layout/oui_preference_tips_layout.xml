@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="22dp"
             android:textSize="18sp"
-            android:textColor="?android:textColorSecondary"
+            android:textColor="@color/oui_primary_text_color"
             android:textStyle="bold"
             android:fontFamily="@string/sesl_font_family_regular" />
 
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="8dp"
-        android:textColor="@color/oui_primary_text_color"
+        android:textColor="?android:textColorSecondary"
         android:textSize="14sp"
         android:lineSpacingExtra="4dp" />
 
