@@ -6,7 +6,7 @@
     android:theme="@style/Theme.MaterialComponents.DayNight"
     android:layout_marginEnd="13dp"
     android:visibility="gone"
-    style="@style/Widget.MaterialComponents.CardView"
+    app:cardBackgroundColor="?attr/colorSurface"
     app:cardCornerRadius="20dp"
     app:strokeColor="@color/oui_grid_menu_dialog_item_ripple_color"
     app:strokeWidth="1dp">
@@ -14,7 +14,6 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layoutDirection="locale"
         android:theme="@style/AppTheme"
         android:paddingTop="14dp"
         android:paddingBottom="14dp"
