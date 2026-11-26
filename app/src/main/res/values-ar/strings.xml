@@ -120,8 +120,8 @@
     <string name="font_info_grade_high">مرتفع</string>
     <string name="font_info_roundness_sharp">حاد</string>
     <string name="font_info_roundness_rounded">مستدير</string>
-    <string name="font_info_mono_monospaced">أحادي المسافة</string>
-    <string name="font_info_mono_proportional">متناسب المسافة</string>
+    <string name="font_info_monospace_monospaced">أحادي المسافة</string>
+    <string name="font_info_monospace_proportional">متناسب المسافة</string>
     <string name="font_info_script_latin">لاتيني</string>
     <string name="font_info_script_arabic">عربي</string>
     <string name="font_info_script_cyrillic">سيريلي</string>

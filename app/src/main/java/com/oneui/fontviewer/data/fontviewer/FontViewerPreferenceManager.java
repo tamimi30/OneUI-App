@@ -181,22 +181,22 @@ public class FontViewerPreferenceManager {
         }
     }
 
-    public void saveFontMono(float monoValue) {
-        dataStore.setViewerFontMono(monoValue)
+    public void saveFontMonospace(float monospaceValue) {
+        dataStore.setViewerFontMonospace(monospaceValue)
                 .subscribeOn(Schedulers.io())
                 .subscribe(
-                    prefs -> Log.d(TAG, "Saved font monospace: " + monoValue),
+                    prefs -> Log.d(TAG, "Saved font monospace: " + monospaceValue),
                     error -> Log.e(TAG, "Error saving font monospace: " + error.getMessage())
                 );
     }
 
-    public float getFontMono(float defaultMono) {
+    public float getFontMonospace(float defaultMonospace) {
         try {
-            Float value = dataStore.getViewerFontMono().blockingFirst();
-            return value != null ? value : defaultMono;
+            Float value = dataStore.getViewerFontMonospace().blockingFirst();
+            return value != null ? value : defaultMonospace;
         } catch (Exception e) {
             Log.e(TAG, "Error getting font monospace: " + e.getMessage());
-            return defaultMono;
+            return defaultMonospace;
         }
     }
 
@@ -213,8 +213,8 @@ public class FontViewerPreferenceManager {
             saveFontGrade(value);
         } else if (VariableFontAxisExtractor.AXIS_ROND.equals(axisTag)) {
             saveFontRoundness(value);
-        } else if (VariableFontAxisExtractor.AXIS_MONO.equals(axisTag)) {
-            saveFontMono(value);
+        } else if (VariableFontAxisExtractor.AXIS_MONOSPACE.equals(axisTag)) {
+            saveFontMonospace(value);
         } else {
             Log.w(TAG, "Unknown axis tag for saving: " + axisTag);
         }
@@ -231,8 +231,8 @@ public class FontViewerPreferenceManager {
             return getFontGrade(defaultValue);
         } else if (VariableFontAxisExtractor.AXIS_ROND.equals(axisTag)) {
             return getFontRoundness(defaultValue);
-        } else if (VariableFontAxisExtractor.AXIS_MONO.equals(axisTag)) {
-            return getFontMono(defaultValue);
+        } else if (VariableFontAxisExtractor.AXIS_MONOSPACE.equals(axisTag)) {
+            return getFontMonospace(defaultValue);
         }
         return defaultValue;
     }

@@ -121,8 +121,8 @@
     <string name="font_info_grade_high">High</string>
     <string name="font_info_roundness_sharp">Sharp</string>
     <string name="font_info_roundness_rounded">Rounded</string>
-    <string name="font_info_mono_monospaced">Monospaced</string>
-    <string name="font_info_mono_proportional">Proportional</string>
+    <string name="font_info_monospace_monospaced">Monospaced</string>
+    <string name="font_info_monospace_proportional">Proportional</string>
     <string name="font_info_script_latin">Latin</string>
     <string name="font_info_script_arabic">Arabic</string>
     <string name="font_info_script_cyrillic">Cyrillic</string>

@@ -57,8 +57,8 @@ public final class AxisLabelProvider implements InstanceLabelResolver {
             case ROUNDNESS_SHARP:    return context.getString(R.string.font_info_roundness_sharp);
             case ROUNDNESS_ROUNDED:  return context.getString(R.string.font_info_roundness_rounded);
 
-            case MONO_PROPORTIONAL:  return context.getString(R.string.font_info_mono_proportional);
-            case MONO_MONOSPACED:    return context.getString(R.string.font_info_mono_monospaced);
+            case MONOSPACE_PROPORTIONAL:  return context.getString(R.string.font_info_monospace_proportional);
+            case MONOSPACE_MONOSPACED:    return context.getString(R.string.font_info_monospace_monospaced);
 
             default:                 return label.name();
         }

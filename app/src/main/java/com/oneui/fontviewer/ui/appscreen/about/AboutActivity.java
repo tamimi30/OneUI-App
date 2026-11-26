@@ -69,10 +69,14 @@ public class AboutActivity extends AppCompatActivity {
             }
         });
 
-        // يعرض مؤشر التحميل ثم النتيجة. أول فتح للصفحة في جلسة الإعدادات يتحقق من التحديث،
-        // والفتح التالي في نفس الجلسة يعرض النتيجة المحفوظة فوراً بدون مؤشر تحميل.
+        // يعرض مؤشر التحميل ثم النتيجة. كل فتح جديد للصفحة يتحقق من التحديث من جديد.
+        // إعادة بناء الصفحة نفسها (تدوير الشاشة مثلاً، savedInstanceState != null) لا تعيد التحقق،
+        // وتعرض الحالة الحالية، إلا إذا كانت الحالة IDLE (مثلاً بعد إعادة إنشاء العملية).
         updateViewModel.getCheckState().observe(this, this::showCheckState);
-        updateViewModel.requestAboutPageCheck();
+        if (savedInstanceState == null
+                || updateViewModel.getCheckState().getValue() == UpdateCheckState.IDLE) {
+            updateViewModel.requestAboutPageCheck();
+        }
     }
 
     private void showCheckState(UpdateCheckState state) {

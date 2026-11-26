@@ -33,16 +33,16 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  *  - مؤشر "N / ج" البرتقالي على أيقونة الدرج وأيقونة الإعدادات، وبطاقة الإعدادات: {@link #getAvailableUpdate()}
  *  - صفحة "حول التطبيق" (مؤشر التحميل والنتيجة): {@link #getCheckState()}
  *
- * سلوك صفحة "حول التطبيق" (مطابق لتطبيقات سامسونج):
- *  - أول فتح لها داخل جلسة الإعدادات يتحقق من التحديث ويعرض مؤشر التحميل.
- *  - الفتح التالي في نفس الجلسة يعرض النتيجة المحفوظة فوراً بدون مؤشر تحميل.
- *  - جلسة الإعدادات تبدأ عند فتح الإعدادات وتنتهي بالخروج منها، فإذا دخلت الإعدادات
- *    مرة ثانية يعود التحقق مع مؤشر التحميل. (تغيير اللغة أو الثيم لا ينهي الجلسة.)
+ * سلوك صفحة "حول التطبيق":
+ *  - كل فتح لها يتحقق من التحديث ويعرض مؤشر التحميل، سواء كان أول فتح لها في جلسة الإعدادات
+ *    أو فتحاً متكرراً في نفس الجلسة.
+ *  - جلسة الإعدادات تبدأ عند فتح الإعدادات وتنتهي بالخروج منها، وتُستخدم الآن لبطاقة التحديث فقط
+ *    (زر "ليس الآن"). (تغيير اللغة أو الثيم لا ينهي الجلسة.)
  *
  * مصدر معرفة التحديث يتبع مكان تثبيت التطبيق: Play أو Galaxy Store أو GitHub (انظر createUpdateSource).
  *
  * لا يوجد أي انتظار زمني (مثل 24 ساعة) بين عمليات التحقق: يتم التحقق عند كل فتح للتطبيق
- * وعند أول فتح لصفحة "حول التطبيق" في كل جلسة إعدادات.
+ * وعند كل فتح لصفحة "حول التطبيق".
  *
  * جميع الدوال العامة تُستدعى من الخيط الرئيسي فقط.
  */
@@ -64,10 +64,6 @@ public final class UpdateRepository {
 
     private boolean checkInFlight = false;
 
-    // طُلب التحقق من صفحة "حول التطبيق" وننتظر نتيجته
-    private boolean aboutCheckRequested = false;
-    // تم التحقق من صفحة "حول التطبيق" مرة داخل جلسة الإعدادات الحالية
-    private boolean settingsSessionChecked = false;
     // ضغط المستخدم "ليس الآن" على بطاقة الإعدادات داخل الجلسة الحالية
     private boolean updateCardDismissed = false;
 
@@ -161,13 +157,10 @@ public final class UpdateRepository {
     }
 
     /**
-     * تطلبه صفحة "حول التطبيق" عند فتحها. يبدأ التحقق مع مؤشر تحميل فقط إذا لم يتم
-     * التحقق بعد في جلسة الإعدادات الحالية، وإلا تبقى النتيجة المحفوظة معروضة كما هي.
+     * تطلبه صفحة "حول التطبيق" عند كل فتح لها. يبدأ التحقق مع مؤشر تحميل دائماً،
+     * بغض النظر عن عدد مرات فتح الصفحة في جلسة الإعدادات نفسها.
      */
     public void requestAboutPageCheck() {
-        if (settingsSessionChecked) {
-            return;
-        }
         beginAboutCheck();
     }
 
@@ -177,7 +170,6 @@ public final class UpdateRepository {
     }
 
     private void beginAboutCheck() {
-        aboutCheckRequested = true;
         checkState.setValue(UpdateCheckState.CHECKING);
         startCheck();
     }
@@ -249,10 +241,6 @@ public final class UpdateRepository {
 
     private void finishCheck(@NonNull UpdateCheckState state) {
         checkState.setValue(state);
-        if (aboutCheckRequested) {
-            aboutCheckRequested = false;
-            settingsSessionChecked = true;
-        }
     }
 
     private boolean isNetworkAvailable() {
@@ -276,11 +264,9 @@ public final class UpdateRepository {
 
     /**
      * تُستدعى عند فتح شاشة الإعدادات من جديد (وليس عند إعادة بنائها بسبب تغيير اللغة أو الثيم).
-     * تعيد البطاقة، وتجعل أول فتح لصفحة "حول التطبيق" يتحقق من التحديث مع مؤشر تحميل.
+     * تعيد البطاقة إذا كان المستخدم أخفاها بـ "ليس الآن".
      */
     public void beginSettingsSession() {
-        settingsSessionChecked = false;
-        aboutCheckRequested = false;
         updateCardDismissed = false;
     }
 
