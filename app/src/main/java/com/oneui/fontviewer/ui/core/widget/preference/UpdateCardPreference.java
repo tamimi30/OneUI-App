@@ -1,7 +1,6 @@
 package com.oneui.fontviewer.ui.core.widget.preference;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,21 +53,7 @@ public class UpdateCardPreference extends TipsCardPreference {
 
     @Override
     public void onBindViewHolder(PreferenceViewHolder holder) {
-        // TipsCardPreference يفرض لونه على العنوان والملخص داخل onBindViewHolder فيتجاهل ألوان الـ layout،
-        // لذلك نقرأ الألوان من الـ layout قبل super ونعيدها بعده ليبقى ملف الـ layout هو المرجع.
-        TextView title = (TextView) holder.findViewById(android.R.id.title);
-        TextView summary = (TextView) holder.findViewById(android.R.id.summary);
-        ColorStateList titleColors = title != null ? title.getTextColors() : null;
-        ColorStateList summaryColors = summary != null ? summary.getTextColors() : null;
-
         super.onBindViewHolder(holder);
-
-        if (title != null && titleColors != null) {
-            title.setTextColor(titleColors);
-        }
-        if (summary != null && summaryColors != null) {
-            summary.setTextColor(summaryColors);
-        }
         bindButtons(holder.itemView);
     }
 
