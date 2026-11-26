@@ -40,7 +40,14 @@
                     android:clipToPadding="false"
                     android:clipChildren="false"
                     android:scrollbars="none"
-                    android:overScrollMode="always" />
+                    android:overScrollMode="always">
+
+                    <LinearLayout
+                        android:id="@+id/variable_axes_row"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </com.oneui.fontviewer.ui.core.widget.scrollview.OneUiHorizontalScrollView>
                 
             </dev.oneuiproject.oneui.widget.RoundLinearLayout>
             
