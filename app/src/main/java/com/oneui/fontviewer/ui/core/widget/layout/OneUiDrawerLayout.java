@@ -149,10 +149,12 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
 
         if (!isInEditMode()) {
             mDrawer.addDrawerListener(mDrawerListener);
-            if (sIsDrawerOpened) {
-                mDrawer.post(() -> mDrawerListener.onDrawerSlide(
-                        mDrawerContent, 1.f));
-            }
+            // الإزاحة تتبع حالة الدرج الفعلية لحظة التنفيذ، وليس المتغير الساكن الذي قد يكون قديماً
+            mDrawer.post(() -> {
+                if (mDrawer.isDrawerOpen(mDrawerContent)) {
+                    mDrawerListener.onDrawerSlide(mDrawerContent, 1.f);
+                }
+            });
         }
     }
 
@@ -184,10 +186,11 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
         super.onConfigurationChanged(newConfig);
         mIsRtl = newConfig.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
         setDrawerWidth();
-        if (sIsDrawerOpened) {
-            mDrawer.post(() -> mDrawerListener.onDrawerSlide(
-                    mDrawerContent, 1.f));
-        }
+        mDrawer.post(() -> {
+            if (mDrawer.isDrawerOpen(mDrawerContent)) {
+                mDrawerListener.onDrawerSlide(mDrawerContent, 1.f);
+            }
+        });
     }
 
     // ═══════════════ اختبار مؤقت للفرضية: احذف هذه الكتلة كاملة بعد الانتهاء ═══════════════
