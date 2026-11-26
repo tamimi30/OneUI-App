@@ -6,7 +6,7 @@
     android:theme="@style/Theme.MaterialComponents.DayNight"
     android:layout_marginEnd="13dp"
     android:visibility="gone"
-    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardBackgroundColor="@color/axis_card_bg_color"
     app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/oui_grid_menu_dialog_item_ripple_color"
