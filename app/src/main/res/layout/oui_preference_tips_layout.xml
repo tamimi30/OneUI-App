@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="22dp"
             android:textSize="18sp"
-            android:textColor="@color/oui_primary_text_color"
+            android:textColor="?android:textColorSecondary"
             android:textStyle="bold"
             android:fontFamily="@string/sesl_font_family_regular" />
 
