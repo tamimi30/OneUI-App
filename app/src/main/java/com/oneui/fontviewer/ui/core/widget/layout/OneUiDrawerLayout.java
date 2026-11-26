@@ -199,14 +199,14 @@ public class OneUiDrawerLayout extends OneUiToolBarLayout {
     // أي عند العودة من الإعدادات والدرج كان مفتوحاً. لا يغيّر شيئاً غير ذلك.
     private static final boolean DEBUG_FORCE_LOCK_RACE = true;
 
-    @Override
+  /*  @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (DEBUG_FORCE_LOCK_RACE && sIsDrawerOpened) {
             lockDrawerIfAvailable(true);
             postDelayed(this::updateDrawerLock, 1500);
         }
-    }
+    } **/
     // ═══════════════════════════════ نهاية الاختبار ═══════════════════════════════
 
     private void lockDrawerIfAvailable(boolean lock) {
