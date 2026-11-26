@@ -46,5 +46,9 @@
         <item name="android:maxLines">2</item>
         <item name="android:ellipsize">end</item>
     </style>
+    
+    <style name="AxisCardStyle" parent="Widget.MaterialComponents.CardView"">
+    	<item name="cardElevation">4dp</item>
+    </style>
 
 </resources>
