@@ -47,7 +47,7 @@
         <item name="android:ellipsize">end</item>
     </style>
     
-    <style name="AxisCardStyle" parent="Widget.MaterialComponents.CardView"">
+    <style name="AxisCardStyle" parent="Widget.MaterialComponents.CardView">
     	<item name="cardElevation">4dp</item>
     </style>
 
